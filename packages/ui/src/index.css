@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@source "./**/*.{ts,tsx}";
+
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/600.css";
+@import "@fontsource/ibm-plex-mono/700.css";
+
+@theme {
+    --color-surface-primary: lch(99% 0 282.863);
+    --color-surface-secondary: lch(93.75% 0 282.863);
+    --color-surface-tertiary: lch(91.417% 0 282.863);
+    --color-surface-quaternary: lch(97.542% 0 282.863);
+    --color-content-primary: lch(9.723% 0 282.863);
+    --color-content-secondary: lch(19.446% 1 282.863 / 1);
+    --color-content-tertiary: lch(38.893% 1 282.863 / 1);
+    --color-content-quaternary: lch(64.173% 1 282.863 / 1);
+    --color-stroke-primary: lch(94.207% 0 282.863 / 1);
+    --color-stroke-secondary: lch(87.817% 0 282.863 / 1);
+    --color-stroke-tertiary: lch(83.025% 0 282.863 / 1);
+
+    --spacing-micro: 0.125rem;
+    --spacing-microPlus: 0.25rem;
+    --spacing-mini: 0.5rem;
+    --spacing-miniPlus: 0.75rem;
+    --spacing-small: 1rem;
+    --spacing-smallPlus: 1.25rem;
+    --spacing-regular: 1.5rem;
+    --spacing-regularPlus: 2rem;
+    --spacing-large: 3rem;
+    --spacing-largePlus: 4rem;
+
+    --font-mono: "IBM Plex Mono", monospace;
+    --font-sans: "IBM Plex Mono", monospace;
+
+    --text-micro: .6875rem;
+    --text-microPlus: .6875rem;
+    --text-mini: .75rem;
+    --text-miniPlus: .75rem;
+    --text-small: .8125rem;
+    --text-smallPlus: .8125rem;
+    --text-regular: .9375rem;
+    --text-regularPlus: .9375rem;
+    --text-large: 1.125rem;
+    --text-largePlus: 1.125rem;
+    --text-title1: 2.25rem;
+    --text-title2: 1.5rem;
+    --text-title3: 1.25rem;
+
+    --duration-highlightFadeIn: 0s;
+    --duration-highlightFadeOut: .15s;
+    --duration-quickTransition: .1s;
+    --duration-regularTransition: .25s;
+    --duration-slowTransition: .35s;
+
+    --ease-inQuad: cubic-bezier(.55, .085, .68, .53);
+    --ease-inCubic: cubic-bezier(.55, .055, .675, .19);
+    --ease-inQuart: cubic-bezier(.895, .03, .685, .22);
+    --ease-inQuint: cubic-bezier(.755, .05, .855, .06);
+    --ease-inExpo: cubic-bezier(.95, .05, .795, .035);
+    --ease-inCirc: cubic-bezier(.6, .04, .98, .335);
+    --ease-outQuad: cubic-bezier(.25, .46, .45, .94);
+    --ease-outCubic: cubic-bezier(.215, .61, .355, 1);
+    --ease-outQuart: cubic-bezier(.165, .84, .44, 1);
+    --ease-outQuint: cubic-bezier(.23, 1, .32, 1);
+    --ease-outExpo: cubic-bezier(.19, 1, .22, 1);
+    --ease-outCirc: cubic-bezier(.075, .82, .165, 1);
+    --ease-inOutQuad: cubic-bezier(.455, .03, .515, .955);
+    --ease-inOutCubic: cubic-bezier(.645, .045, .355, 1);
+    --ease-inOutQuart: cubic-bezier(.77, 0, .175, 1);
+    --ease-inOutQuint: cubic-bezier(.86, 0, .07, 1);
+    --ease-inOutExpo: cubic-bezier(1, 0, 0, 1);
+    --ease-inOutCirc: cubic-bezier(.785, .135, .15, .86);
+}
