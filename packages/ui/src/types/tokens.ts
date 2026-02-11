@@ -11,7 +11,7 @@ export type EaseVariant = | "inQuad" | "inCubic" | "inQuart" | "inQuint" | "inEx
     | "inOutQuad" | "inOutCubic" | "inOutQuart" | "inOutQuint" | "inOutExpo" | "inOutCirc";
 
 export type BgClass = `bg-surface-${SurfaceVariant}` | "bg-transparent";
-export type TextClass = `text-content-${ContentVariant}` | "text-primary";
+export type TextColorClass = `text-content-${ContentVariant}` | "text-primary";
 export type BorderClass = `border-stroke-${StrokeVariant}` | "border-transparent";
 
 export type HoverBgClass = `hover:bg-surface-${SurfaceVariant}` | "hover:bg-transparent";
@@ -26,7 +26,9 @@ export type PaddingClass = `p-${SpacingStep}` | "p-0";
 export type PaddingXClass = `px-${SpacingStep}` | "px-0";
 export type PaddingYClass = `py-${SpacingStep}` | "py-0";
 
-export type MarginClass = `m-${SpacingStep}`;
+export type MarginClass = `m-${SpacingStep}` | "m-0";
+export type MarginXClass = `mx-${SpacingStep}` | "mx-0";
+export type MarginYClass = `my-${SpacingStep}` | "my-0";
 
 export type GapClass = `gap-${SpacingStep}`;
 
