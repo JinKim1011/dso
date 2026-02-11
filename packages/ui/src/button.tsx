@@ -9,10 +9,10 @@ import {
   PaddingYClass,
   TextSizeClass,
   HoverBgClass,
-  HoverTextClass,
+  HoverTextColorClass,
   HoverBorderClass,
   ActiveBgClass,
-  ActiveTextClass,
+  ActiveTextColorClass,
   ActiveBorderClass,
   MarginXClass,
   MarginYClass,
@@ -23,8 +23,8 @@ type ButtonSize = "mini" | "small" | "regular" | "large";
 
 const variantClasses: Record<ButtonVariant, {
   base: `${BgClass} ${TextColorClass} ${BorderClass}`;
-  hover: `${HoverBgClass} ${HoverTextClass} ${HoverBorderClass}`;
-  active: `${ActiveBgClass} ${ActiveTextClass} ${ActiveBorderClass}`;
+  hover: `${HoverBgClass} ${HoverTextColorClass} ${HoverBorderClass}`;
+  active: `${ActiveBgClass} ${ActiveTextColorClass} ${ActiveBorderClass}`;
 }> = {
   fill: {
     base: "bg-surface-quaternary text-content-primary border-transparent",
