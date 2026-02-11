@@ -15,11 +15,11 @@ export type TextColorClass = `text-content-${ContentVariant}` | "text-primary";
 export type BorderClass = `border-stroke-${StrokeVariant}` | "border-transparent";
 
 export type HoverBgClass = `hover:bg-surface-${SurfaceVariant}` | "hover:bg-transparent";
-export type HoverTextClass = `hover:text-content-${ContentVariant}` | "hover:text-primary";
+export type HoverTextColorClass = `hover:text-content-${ContentVariant}` | "hover:text-primary";
 export type HoverBorderClass = `hover:border-stroke-${StrokeVariant}` | "hover:border-transparent";
 
 export type ActiveBgClass = `active:bg-surface-${SurfaceVariant}` | "active:bg-transparent";
-export type ActiveTextClass = `active:text-content-${ContentVariant}` | "active:text-primary";
+export type ActiveTextColorClass = `active:text-content-${ContentVariant}` | "active:text-primary";
 export type ActiveBorderClass = `active:border-stroke-${StrokeVariant}` | "active:border-transparent";
 
 export type PaddingClass = `p-${SpacingStep}` | "p-0";
@@ -54,7 +54,7 @@ export const MotionSettings = {
         outCubic: [.215, .61, .355, 1],
         outQuart: [.165, .84, .44, 1],
         outQuint: [.23, 1, .32, 1],
-        outExpo: [.19, 1, .22, 1],
+        outExpo: [.16, 1, .3, 1],
         outCirc: [.075, .82, .165, 1],
         inOutQuad: [.455, .03, .515, .955],
         inOutCubic: [.645, .045, .355, 1],
