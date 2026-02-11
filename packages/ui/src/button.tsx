@@ -97,10 +97,10 @@ export const Button = ({
     "border",
     "inline-flex items-center justify-center",
     "transition-colors transition-transform",
-    "duration-quickTransition",
+    "duration-highlightFadeOut",
     "ease-outExpo",
-    // "hover:underline hover:underline-offset-[4px]",
-    "active:translate-y-0.5"
+    "active:translate-y-0.5 active:scale-[0.98]",
+    "cursor-pointer"
   ]
     .filter(Boolean)
     .join(" ");
