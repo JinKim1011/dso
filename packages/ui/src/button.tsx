@@ -30,7 +30,7 @@ const variantClasses: Record<
   }
 > = {
   fill: {
-    base: "bg-surface-quaternary text-content-primary border-transparent",
+    base: "bg-surface-primary text-content-primary border-transparent",
     hover:
       "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
     active:
@@ -39,9 +39,9 @@ const variantClasses: Record<
   outlined: {
     base: "bg-transparent text-content-primary border-stroke-primary",
     hover:
-      "hover:bg-surface-secondary hover:text-content-primary hover:border-stroke-secondary",
+      "hover:bg-surface-secondary hover:text-content-primary hover:border-stroke-primary",
     active:
-      "active:bg-surface-tertiary active:text-content-secondary active:border-stroke-tertiary",
+      "active:bg-surface-tertiary active:text-content-secondary active:border-stroke-primary",
   },
   void: {
     base: "bg-transparent text-content-primary border-transparent",
