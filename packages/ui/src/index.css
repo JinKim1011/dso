@@ -2,22 +2,64 @@
 
 @source "./**/*.{ts,tsx}";
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 @import "@fontsource/ibm-plex-mono/400.css";
 @import "@fontsource/ibm-plex-mono/600.css";
 @import "@fontsource/ibm-plex-mono/700.css";
 
+:root {
+    --bg-primary: oklch(99% 0 282.863);
+    --bg-secondary: oklch(97.542% 0 282.863);
+    --bg-tertiary: oklch(93.75% 0 282.863);
+    --bg-quaternary: oklch(91.417% 0 282.863);
+    
+    --text-primary: oklch(0.222 0.000 89.9);
+    --text-secondary: oklch(0.390 0.000 89.9);
+    --text-tertiary: oklch(0.580 0.000 89.9);
+    --text-quaternary:oklch(0.780 0.000 89.9);
+
+    --stroke-primary: oklch(0.89 0 0);
+    --stroke-secondary: oklch(0.930 0.000 89.9);
+    --stroke-tertiary: oklch(0.970 0.000 89.9);
+    
+    --color-accent: oklch(0.7062 0.198191 46.1095);
+}
+
+[data-theme='dark'] {
+    --bg-primary: oklch(15% 0 282.863);
+    --bg-secondary: oklch(19% 0 282.863);
+    --bg-tertiary: oklch(24% 0 282.863);
+    --bg-quaternary: oklch(28% 0 282.863);
+    
+    --text-primary: oklch(0.95 0.000 89.9);
+    --text-secondary: oklch(0.85 0.000 89.9);
+    --text-tertiary: oklch(0.70 0.000 89.9);
+    --text-quaternary: oklch(0.55 0.000 89.9);
+
+    --stroke-primary: oklch(0.35 0 0);
+    --stroke-secondary: oklch(0.30 0.000 89.9);
+    --stroke-tertiary: oklch(0.25 0.000 89.9);
+    
+    --accent: oklch(0.7062 0.198191 46.1095);
+}
+
 @theme {
-    --color-surface-primary: lch(99% 0 282.863);
-    --color-surface-secondary: lch(93.75% 0 282.863);
-    --color-surface-tertiary: lch(91.417% 0 282.863);
-    --color-surface-quaternary: lch(97.542% 0 282.863);
-    --color-content-primary: lch(9.723% 0 282.863);
-    --color-content-secondary: lch(19.446% 1 282.863 / 1);
-    --color-content-tertiary: lch(38.893% 1 282.863 / 1);
-    --color-content-quaternary: lch(64.173% 1 282.863 / 1);
-    --color-stroke-primary: lch(94.207% 0 282.863 / 1);
-    --color-stroke-secondary: lch(87.817% 0 282.863 / 1);
-    --color-stroke-tertiary: lch(83.025% 0 282.863 / 1);
+    --color-surface-primary: var(--bg-primary);
+    --color-surface-secondary: var(--bg-secondary);
+    --color-surface-tertiary:var(--bg-tertiary);
+    --color-surface-quaternary: var(--bg-quaternary);
+    
+    --color-content-primary: var(--text-primary);
+    --color-content-secondary: var(--text-secondary);
+    --color-content-tertiary: var(--text-tertiary);
+    --color-content-quaternary: var(--text-quaternary);
+
+    --color-stroke-primary: var(--stroke-primary);
+    --color-stroke-secondary: var(--stroke-secondary);
+    --color-stroke-tertiary: var(--stroke-secondary);
+
+    --color-accent: var(--accent);
 
     --spacing-micro: 0.125rem;
     --spacing-microPlus: 0.25rem;
