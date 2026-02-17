@@ -21,33 +21,45 @@ import {
 type ButtonVariant = "fill" | "outlined" | "void";
 type ButtonSize = "mini" | "small" | "regular" | "large";
 
-const variantClasses: Record<ButtonVariant, {
-  base: `${BgClass} ${TextColorClass} ${BorderClass}`;
-  hover: `${HoverBgClass} ${HoverTextColorClass} ${HoverBorderClass}`;
-  active: `${ActiveBgClass} ${ActiveTextColorClass} ${ActiveBorderClass}`;
-}> = {
+const variantClasses: Record<
+  ButtonVariant,
+  {
+    base: `${BgClass} ${TextColorClass} ${BorderClass}`;
+    hover: `${HoverBgClass} ${HoverTextColorClass} ${HoverBorderClass}`;
+    active: `${ActiveBgClass} ${ActiveTextColorClass} ${ActiveBorderClass}`;
+  }
+> = {
   fill: {
-    base: "bg-surface-quaternary text-content-primary border-transparent",
-    hover: "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
-    active: "active:bg-surface-tertiary active:text-content-secondary active:border-transparent"
+    base: "bg-surface-primary text-content-primary border-transparent",
+    hover:
+      "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
+    active:
+      "active:bg-surface-tertiary active:text-content-secondary active:border-transparent",
   },
   outlined: {
     base: "bg-transparent text-content-primary border-stroke-primary",
-    hover: "hover:bg-surface-secondary hover:text-content-primary hover:border-stroke-secondary",
-    active: "active:bg-surface-tertiary active:text-content-secondary active:border-stroke-tertiary"
+    hover:
+      "hover:bg-surface-secondary hover:text-content-primary hover:border-stroke-primary",
+    active:
+      "active:bg-surface-tertiary active:text-content-secondary active:border-stroke-primary",
   },
   void: {
     base: "bg-transparent text-content-primary border-transparent",
-    hover: "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
-    active: "active:bg-surface-tertiary active:text-content-secondary active:border-transparent"
-  }
-}
+    hover:
+      "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
+    active:
+      "active:bg-surface-tertiary active:text-content-secondary active:border-transparent",
+  },
+};
 
-const sizeClasses: Record<ButtonSize, {
-  base: `${TextSizeClass} ${PaddingXClass} ${PaddingYClass}`,
-  hover: `-${MarginXClass} -${MarginYClass}`,
-  active: `-${MarginXClass} -${MarginYClass}`,
-}> = {
+const sizeClasses: Record<
+  ButtonSize,
+  {
+    base: `${TextSizeClass} ${PaddingXClass} ${PaddingYClass}`;
+    hover: `-${MarginXClass} -${MarginYClass}`;
+    active: `-${MarginXClass} -${MarginYClass}`;
+  }
+> = {
   mini: {
     base: "text-mini px-micro py-0",
     hover: "-mx-micro -my-0",
@@ -67,10 +79,13 @@ const sizeClasses: Record<ButtonSize, {
     base: "text-regular px-mini py-mini",
     hover: "-mx-mini -my-mini",
     active: "-mx-mini -my-mini",
-  }
-}
+  },
+};
 
-export interface ButtonProps extends Omit<React.ComponentPropsWithoutRef<"button">, "className"> {
+export interface ButtonProps extends Omit<
+  React.ComponentPropsWithoutRef<"button">,
+  "className"
+> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   inline?: boolean;
@@ -85,7 +100,6 @@ export const Button = ({
   children,
   ...props
 }: ButtonProps) => {
-
   const className = [
     variantClasses[variant].base,
     variantClasses[variant].hover,
@@ -100,7 +114,7 @@ export const Button = ({
     "duration-highlightFadeOut",
     "ease-outExpo",
     "active:translate-y-0.5 active:scale-[0.98]",
-    "cursor-pointer"
+    "cursor-pointer",
   ]
     .filter(Boolean)
     .join(" ");
@@ -109,5 +123,5 @@ export const Button = ({
     <button {...props} className={className}>
       {children}
     </button>
-  )
-}
+  );
+};

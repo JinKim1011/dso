@@ -2,73 +2,115 @@
 
 @source "./**/*.{ts,tsx}";
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 @import "@fontsource/ibm-plex-mono/400.css";
 @import "@fontsource/ibm-plex-mono/600.css";
 @import "@fontsource/ibm-plex-mono/700.css";
 
+:root {
+  --bg-primary: oklch(99% 0 282.863);
+  --bg-secondary: oklch(97.542% 0 282.863);
+  --bg-tertiary: oklch(93.75% 0 282.863);
+  --bg-quaternary: oklch(91.417% 0 282.863);
+
+  --text-primary: oklch(0.222 0 89.9);
+  --text-secondary: oklch(0.39 0 89.9);
+  --text-tertiary: oklch(0.58 0 89.9);
+  --text-quaternary: oklch(0.78 0 89.9);
+
+  --stroke-primary: oklch(0.89 0 0);
+  --stroke-secondary: oklch(0.93 0 89.9);
+  --stroke-tertiary: oklch(0.97 0 89.9);
+
+  --accent: oklch(0.7062 0.198191 46.1095);
+}
+
+[data-theme="dark"] {
+  --bg-primary: oklch(15% 0 282.863);
+  --bg-secondary: oklch(19% 0 282.863);
+  --bg-tertiary: oklch(24% 0 282.863);
+  --bg-quaternary: oklch(28% 0 282.863);
+
+  --text-primary: oklch(0.95 0 89.9);
+  --text-secondary: oklch(0.85 0 89.9);
+  --text-tertiary: oklch(0.7 0 89.9);
+  --text-quaternary: oklch(0.55 0 89.9);
+
+  --stroke-primary: oklch(0.35 0 0);
+  --stroke-secondary: oklch(0.3 0 89.9);
+  --stroke-tertiary: oklch(0.25 0 89.9);
+
+  --accent: oklch(0.7062 0.198191 46.1095);
+}
+
 @theme {
-    --color-surface-primary: lch(99% 0 282.863);
-    --color-surface-secondary: lch(93.75% 0 282.863);
-    --color-surface-tertiary: lch(91.417% 0 282.863);
-    --color-surface-quaternary: lch(97.542% 0 282.863);
-    --color-content-primary: lch(9.723% 0 282.863);
-    --color-content-secondary: lch(19.446% 1 282.863 / 1);
-    --color-content-tertiary: lch(38.893% 1 282.863 / 1);
-    --color-content-quaternary: lch(64.173% 1 282.863 / 1);
-    --color-stroke-primary: lch(94.207% 0 282.863 / 1);
-    --color-stroke-secondary: lch(87.817% 0 282.863 / 1);
-    --color-stroke-tertiary: lch(83.025% 0 282.863 / 1);
+  --color-surface-primary: var(--bg-primary);
+  --color-surface-secondary: var(--bg-secondary);
+  --color-surface-tertiary: var(--bg-tertiary);
+  --color-surface-quaternary: var(--bg-quaternary);
 
-    --spacing-micro: 0.125rem;
-    --spacing-microPlus: 0.25rem;
-    --spacing-mini: 0.5rem;
-    --spacing-miniPlus: 0.75rem;
-    --spacing-small: 1rem;
-    --spacing-smallPlus: 1.25rem;
-    --spacing-regular: 1.5rem;
-    --spacing-regularPlus: 2rem;
-    --spacing-large: 3rem;
-    --spacing-largePlus: 4rem;
+  --color-content-primary: var(--text-primary);
+  --color-content-secondary: var(--text-secondary);
+  --color-content-tertiary: var(--text-tertiary);
+  --color-content-quaternary: var(--text-quaternary);
 
-    --font-mono: "IBM Plex Mono", monospace;
-    --font-sans: "IBM Plex Mono", monospace;
+  --color-stroke-primary: var(--stroke-primary);
+  --color-stroke-secondary: var(--stroke-secondary);
+  --color-stroke-tertiary: var(--stroke-tertiary);
 
-    --text-micro: .6875rem;
-    --text-microPlus: .6875rem;
-    --text-mini: .75rem;
-    --text-miniPlus: .75rem;
-    --text-small: .8125rem;
-    --text-smallPlus: .8125rem;
-    --text-regular: .9375rem;
-    --text-regularPlus: .9375rem;
-    --text-large: 1.125rem;
-    --text-largePlus: 1.125rem;
-    --text-title1: 2.25rem;
-    --text-title2: 1.5rem;
-    --text-title3: 1.25rem;
+  --color-accent: var(--accent);
 
-    --duration-highlightFadeIn: 0s;
-    --duration-highlightFadeOut: .15s;
-    --duration-quickTransition: .1s;
-    --duration-regularTransition: .25s;
-    --duration-slowTransition: .35s;
+  --spacing-micro: 0.125rem;
+  --spacing-microPlus: 0.25rem;
+  --spacing-mini: 0.5rem;
+  --spacing-miniPlus: 0.75rem;
+  --spacing-small: 1rem;
+  --spacing-smallPlus: 1.25rem;
+  --spacing-regular: 1.5rem;
+  --spacing-regularPlus: 2rem;
+  --spacing-large: 3rem;
+  --spacing-largePlus: 4rem;
 
-    --ease-inQuad: cubic-bezier(.55, .085, .68, .53);
-    --ease-inCubic: cubic-bezier(.55, .055, .675, .19);
-    --ease-inQuart: cubic-bezier(.895, .03, .685, .22);
-    --ease-inQuint: cubic-bezier(.755, .05, .855, .06);
-    --ease-inExpo: cubic-bezier(.95, .05, .795, .035);
-    --ease-inCirc: cubic-bezier(.6, .04, .98, .335);
-    --ease-outQuad: cubic-bezier(.25, .46, .45, .94);
-    --ease-outCubic: cubic-bezier(.215, .61, .355, 1);
-    --ease-outQuart: cubic-bezier(.165, .84, .44, 1);
-    --ease-outQuint: cubic-bezier(.23, 1, .32, 1);
-    --ease-outExpo: cubic-bezier(.19, 1, .22, 1);
-    --ease-outCirc: cubic-bezier(.075, .82, .165, 1);
-    --ease-inOutQuad: cubic-bezier(.455, .03, .515, .955);
-    --ease-inOutCubic: cubic-bezier(.645, .045, .355, 1);
-    --ease-inOutQuart: cubic-bezier(.77, 0, .175, 1);
-    --ease-inOutQuint: cubic-bezier(.86, 0, .07, 1);
-    --ease-inOutExpo: cubic-bezier(1, 0, 0, 1);
-    --ease-inOutCirc: cubic-bezier(.785, .135, .15, .86);
+  --font-mono: "IBM Plex Mono", monospace;
+  --font-sans: "IBM Plex Mono", monospace;
+
+  --text-micro: 0.6875rem;
+  --text-microPlus: 0.6875rem;
+  --text-mini: 0.75rem;
+  --text-miniPlus: 0.75rem;
+  --text-small: 0.8125rem;
+  --text-smallPlus: 0.8125rem;
+  --text-regular: 0.9375rem;
+  --text-regularPlus: 0.9375rem;
+  --text-large: 1.125rem;
+  --text-largePlus: 1.125rem;
+  --text-title1: 2.25rem;
+  --text-title2: 1.5rem;
+  --text-title3: 1.25rem;
+
+  --duration-highlightFadeIn: 0s;
+  --duration-highlightFadeOut: 0.15s;
+  --duration-quickTransition: 0.1s;
+  --duration-regularTransition: 0.25s;
+  --duration-slowTransition: 0.35s;
+
+  --ease-inQuad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  --ease-inCubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-inQuart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+  --ease-inQuint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+  --ease-inExpo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+  --ease-inCirc: cubic-bezier(0.6, 0.04, 0.98, 0.335);
+  --ease-outQuad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-outCubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-outQuart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-outQuint: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-outExpo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-outCirc: cubic-bezier(0.075, 0.82, 0.165, 1);
+  --ease-inOutQuad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  --ease-inOutCubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --ease-inOutQuart: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-inOutQuint: cubic-bezier(0.86, 0, 0.07, 1);
+  --ease-inOutExpo: cubic-bezier(1, 0, 0, 1);
+  --ease-inOutCirc: cubic-bezier(0.785, 0.135, 0.15, 0.86);
 }
