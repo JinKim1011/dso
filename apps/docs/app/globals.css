@@ -22,27 +22,25 @@ body {
 }
 
 h1 {
-  font-size: var(--font-title1);
+  font-size: var(--text-title1);
   color: var(--color-content-primary);
   margin-bottom: var(--spacing-regularPlus);
 }
 
 h2 {
-  font-size: var(--font-title2);
+  font-size: var(--text-title2);
   color: var(--color-content-primary);
-  margin-top: var(--spacing-large);
   margin: var(--spacing-large) 0 var(--spacing-small);
 }
 
 h3 {
-  font-size: var(--font-title3);
+  font-size: var(--text-title3);
   color: var(--color-content-primary);
-  margin-top: var(--spacing-large);
   margin: var(--spacing-large) 0 var(--spacing-miniPlus);
 }
 
 p {
-  font-size: var(--font-regular);
+  font-size: var(--text-regular);
   color: var(--color-content-secondary);
   margin-bottom: var(--spacing-small);
 }
