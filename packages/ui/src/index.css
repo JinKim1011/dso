@@ -14,10 +14,10 @@
   --bg-tertiary: oklch(93.75% 0 282.863);
   --bg-quaternary: oklch(91.417% 0 282.863);
 
-  --font-primary: oklch(0.222 0 89.9);
-  --font-secondary: oklch(0.39 0 89.9);
-  --font-tertiary: oklch(0.58 0 89.9);
-  --font-quaternary: oklch(0.78 0 89.9);
+  --text-primary: oklch(0.222 0 89.9);
+  --text-secondary: oklch(0.39 0 89.9);
+  --text-tertiary: oklch(0.58 0 89.9);
+  --text-quaternary: oklch(0.78 0 89.9);
 
   --stroke-primary: oklch(0.89 0 0);
   --stroke-secondary: oklch(0.93 0 89.9);
@@ -32,10 +32,10 @@
   --bg-tertiary: oklch(24% 0 282.863);
   --bg-quaternary: oklch(28% 0 282.863);
 
-  --font-primary: oklch(0.95 0 89.9);
-  --font-secondary: oklch(0.85 0 89.9);
-  --font-tertiary: oklch(0.7 0 89.9);
-  --font-quaternary: oklch(0.55 0 89.9);
+  --text-primary: oklch(0.95 0 89.9);
+  --text-secondary: oklch(0.85 0 89.9);
+  --text-tertiary: oklch(0.7 0 89.9);
+  --text-quaternary: oklch(0.55 0 89.9);
 
   --stroke-primary: oklch(0.35 0 0);
   --stroke-secondary: oklch(0.3 0 89.9);
@@ -50,10 +50,10 @@
   --color-surface-tertiary: var(--bg-tertiary);
   --color-surface-quaternary: var(--bg-quaternary);
 
-  --color-content-primary: var(--font-primary);
-  --color-content-secondary: var(--font-secondary);
-  --color-content-tertiary: var(--font-tertiary);
-  --color-content-quaternary: var(--font-quaternary);
+  --color-content-primary: var(--text-primary);
+  --color-content-secondary: var(--text-secondary);
+  --color-content-tertiary: var(--text-tertiary);
+  --color-content-quaternary: var(--text-quaternary);
 
   --color-stroke-primary: var(--stroke-primary);
   --color-stroke-secondary: var(--stroke-secondary);
