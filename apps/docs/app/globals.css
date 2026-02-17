@@ -1,3 +1,41 @@
 @import "@repo/ui/index.css";
-
 @source "./**/*.{ts,tsx}";
+
+/* CSS Reset & Initialization */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-mono);
+  background-color: var(--color-surface-primary);
+  color: var(--color-content-primary);
+}
+
+h1 {
+  font-size: var(--text-title1);
+  color: var(--color-content-primary);
+  margin-bottom: var(--spacing-regularPlus);
+}
+
+h2 {
+  font-size: var(--text-title2);
+  color: var(--color-content-primary);
+  margin-top: var(--spacing-large);
+  margin: var(--spacing-large) 0 var(--spacing-small);
+}
+
+p {
+  font-size: var(--text-regular);
+  color: var(--color-content-secondary);
+  margin-bottom: var(--spacing-small);
+}
