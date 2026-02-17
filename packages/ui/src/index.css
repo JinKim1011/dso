@@ -75,19 +75,19 @@
   --font-mono: "IBM Plex Mono", monospace;
   --font-sans: "IBM Plex Mono", monospace;
 
-  --font-micro: 0.6875rem;
-  --font-microPlus: 0.75rem;
-  --font-mini: 0.75rem;
-  --font-miniPlus: 0.8125rem;
-  --font-small: 0.8125rem;
-  --font-smallPlus: 0.875rem;
-  --font-regular: 0.9375rem;
-  --font-regularPlus: 1rem;
-  --font-large: 1.125rem;
-  --font-largePlus: 1.25rem;
-  --font-title1: 2.25rem;
-  --font-title2: 1.5rem;
-  --font-title3: 1.25rem;
+  --text-micro: 0.6875rem;
+  --text-microPlus: 0.75rem;
+  --text-mini: 0.75rem;
+  --text-miniPlus: 0.8125rem;
+  --text-small: 0.8125rem;
+  --text-smallPlus: 0.875rem;
+  --text-regular: 0.9375rem;
+  --text-regularPlus: 1rem;
+  --text-large: 1.125rem;
+  --text-largePlus: 1.25rem;
+  --text-title1: 2.25rem;
+  --text-title2: 1.5rem;
+  --text-title3: 1.25rem;
 
   --font-weight-micro: 400;
   --font-weight-microPlus: 400;
