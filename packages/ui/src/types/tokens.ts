@@ -35,6 +35,7 @@ export type FontSizeStep =
   | "title1"
   | "title2"
   | "title3";
+export type FontWeightStep = FontSizeStep;
 
 export type DurationVariant =
   | "highlightFadeIn"
@@ -98,7 +99,8 @@ export type MarginYClass = `my-${SpacingStep}` | "my-0";
 
 export type GapClass = `gap-${SpacingStep}`;
 
-export type TextSizeClass = `text-${FontSizeStep}`;
+export type FontSizeClass = `text-${FontSizeStep}`;
+export type FontWeightClass = `font-weight-${FontWeightStep}`;
 
 export type SpeedClass = `duration-${DurationVariant}`;
 export type EaseClass = `ease-${EaseVariant}`;
