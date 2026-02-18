@@ -5,9 +5,6 @@ import {
   BgClass,
   BorderClass,
   TextColorClass,
-  PaddingXClass,
-  PaddingYClass,
-  FontSizeClass,
   HoverBgClass,
   HoverTextColorClass,
   HoverBorderClass,
@@ -16,6 +13,7 @@ import {
   ActiveBorderClass,
   MarginXClass,
   MarginYClass,
+  typographyStyles,
 } from "./types/tokens";
 
 type ButtonVariant = "fill" | "outlined" | "void";
