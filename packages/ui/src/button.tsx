@@ -17,7 +17,7 @@ import {
 } from "./types/tokens";
 
 type ButtonVariant = "fill" | "outlined" | "void";
-type ButtonSize = "mini" | "small" | "regular" | "large";
+type ButtonSize = "sm" | "md" | "lg";
 
 const variantClasses: Record<
   ButtonVariant,
@@ -53,28 +53,23 @@ const variantClasses: Record<
 const sizeClasses: Record<
   ButtonSize,
   {
-    base: `${FontSizeClass} ${PaddingXClass} ${PaddingYClass}`;
+    base: string;
     hover: `-${MarginXClass} -${MarginYClass}`;
     active: `-${MarginXClass} -${MarginYClass}`;
   }
 > = {
-  mini: {
-    base: "text-mini px-micro py-0",
-    hover: "-mx-micro -my-0",
-    active: "-mx-micro -my-0",
-  },
-  small: {
-    base: "text-small px-microPlus py-0",
+  sm: {
+    base: `${typographyStyles["control-sm"]} px-microPlus py-0`,
     hover: "-mx-microPlus -my-micro",
     active: "-mx-microPlus -my-micro",
   },
-  regular: {
-    base: "text-small px-mini py-microPlus",
+  md: {
+    base: `${typographyStyles["control-md"]} px-mini py-microPlus`,
     hover: "-mx-mini -my-microPlus",
     active: "-mx-mini -my-microPlus",
   },
-  large: {
-    base: "text-regular px-mini py-mini",
+  lg: {
+    base: `${typographyStyles["control-md"]} px-mini py-mini`,
     hover: "-mx-mini -my-mini",
     active: "-mx-mini -my-mini",
   },
@@ -92,7 +87,7 @@ export interface ButtonProps extends Omit<
 
 export const Button = ({
   variant = "fill",
-  size = "regular",
+  size = "md",
   inline = false,
   fullWidth = false,
   children,
