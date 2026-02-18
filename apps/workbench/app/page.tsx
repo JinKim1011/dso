@@ -4,59 +4,47 @@ export default function Home() {
   return (
     <div className="gap-small flex flex-col">
       <div className="gap-mini flex items-center">
-        <Button variant="fill" size="large">
-          fill-large
+        <Button variant="fill" size="lg">
+          fill/lg
         </Button>
-        <Button variant="fill" size="regular">
-          fill-regular
+        <Button variant="fill" size="md">
+          fill/md
         </Button>
-        <Button variant="fill" size="small">
-          fill-small
-        </Button>
-        <Button variant="fill" size="mini">
-          fill-mini
+        <Button variant="fill" size="sm">
+          fill/sm
         </Button>
       </div>
       <div className="gap-mini flex items-center">
-        <Button variant="outlined" size="large">
-          outlined-large
+        <Button variant="outlined" size="lg">
+          outlined/lg
         </Button>
-        <Button variant="outlined" size="regular">
-          outlined-regular
+        <Button variant="outlined" size="md">
+          outlined/md
         </Button>
-        <Button variant="outlined" size="small">
-          outlined-small
-        </Button>
-        <Button variant="outlined" size="mini">
-          outlined-mini
+        <Button variant="outlined" size="sm">
+          outlined/sm
         </Button>
       </div>
       <div className="gap-mini flex items-center">
-        <Button variant="void" size="large">
-          void-large
+        <Button variant="void" size="lg">
+          void/lg
         </Button>
-        <Button variant="void" size="regular">
-          void-regular
+        <Button variant="void" size="md">
+          void/md
         </Button>
-        <Button variant="void" size="small">
-          void-small
-        </Button>
-        <Button variant="void" size="mini">
-          void-mini
+        <Button variant="void" size="sm">
+          void/sm
         </Button>
       </div>
       <div className="gap-mini flex items-center">
-        <Button variant="void" size="large" inline>
-          void-large-inline
+        <Button variant="void" size="lg" inline>
+          void/inline/lg
         </Button>
-        <Button variant="void" size="regular" inline>
-          void-regular-inline
+        <Button variant="void" size="md" inline>
+          void/inline/md
         </Button>
-        <Button variant="void" size="small" inline>
-          void-small-inline
-        </Button>
-        <Button variant="void" size="mini" inline>
-          void-mini-inline
+        <Button variant="void" size="sm" inline>
+          void/inlie/sm
         </Button>
       </div>
     </div>
