@@ -30,8 +30,13 @@ h1 {
 h2 {
   font-size: var(--text-title2);
   color: var(--color-content-primary);
-  margin-top: var(--spacing-large);
   margin: var(--spacing-large) 0 var(--spacing-small);
+}
+
+h3 {
+  font-size: var(--text-title3);
+  color: var(--color-content-primary);
+  margin: var(--spacing-large) 0 var(--spacing-miniPlus);
 }
 
 p {

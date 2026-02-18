@@ -76,18 +76,32 @@
   --font-sans: "IBM Plex Mono", monospace;
 
   --text-micro: 0.6875rem;
-  --text-microPlus: 0.6875rem;
+  --text-microPlus: 0.75rem;
   --text-mini: 0.75rem;
-  --text-miniPlus: 0.75rem;
+  --text-miniPlus: 0.8125rem;
   --text-small: 0.8125rem;
-  --text-smallPlus: 0.8125rem;
+  --text-smallPlus: 0.875rem;
   --text-regular: 0.9375rem;
-  --text-regularPlus: 0.9375rem;
+  --text-regularPlus: 1rem;
   --text-large: 1.125rem;
-  --text-largePlus: 1.125rem;
+  --text-largePlus: 1.25rem;
   --text-title1: 2.25rem;
   --text-title2: 1.5rem;
   --text-title3: 1.25rem;
+
+  --font-weight-micro: 400;
+  --font-weight-microPlus: 400;
+  --font-weight-mini: 400;
+  --font-weight-miniPlus: 400;
+  --font-weight-small: 400;
+  --font-weight-smallPlus: 400;
+  --font-weight-regular: 400;
+  --font-weight-regularPlus: 400;
+  --font-weight-large: 600;
+  --font-weight-largePlus: 600;
+  --font-weight-title1: 700;
+  --font-weight-title2: 700;
+  --font-weight-title3: 600;
 
   --duration-highlightFadeIn: 0s;
   --duration-highlightFadeOut: 0.15s;

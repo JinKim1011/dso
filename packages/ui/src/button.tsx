@@ -7,7 +7,7 @@ import {
   TextColorClass,
   PaddingXClass,
   PaddingYClass,
-  TextSizeClass,
+  FontSizeClass,
   HoverBgClass,
   HoverTextColorClass,
   HoverBorderClass,
@@ -55,7 +55,7 @@ const variantClasses: Record<
 const sizeClasses: Record<
   ButtonSize,
   {
-    base: `${TextSizeClass} ${PaddingXClass} ${PaddingYClass}`;
+    base: `${FontSizeClass} ${PaddingXClass} ${PaddingYClass}`;
     hover: `-${MarginXClass} -${MarginYClass}`;
     active: `-${MarginXClass} -${MarginYClass}`;
   }

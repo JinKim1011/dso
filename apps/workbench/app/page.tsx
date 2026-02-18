@@ -3,7 +3,7 @@ import { Button } from "@repo/ui/button";
 export default function Home() {
   return (
     <div className="gap-small flex flex-col">
-      <div className="gap-min flex">
+      <div className="gap-mini flex items-center">
         <Button variant="fill" size="large">
           fill-large
         </Button>
@@ -17,7 +17,7 @@ export default function Home() {
           fill-mini
         </Button>
       </div>
-      <div className="gap-mini flex">
+      <div className="gap-mini flex items-center">
         <Button variant="outlined" size="large">
           outlined-large
         </Button>
@@ -31,7 +31,7 @@ export default function Home() {
           outlined-mini
         </Button>
       </div>
-      <div className="gap-mini flex">
+      <div className="gap-mini flex items-center">
         <Button variant="void" size="large">
           void-large
         </Button>
@@ -45,7 +45,7 @@ export default function Home() {
           void-mini
         </Button>
       </div>
-      <div className="gap-mini flex">
+      <div className="gap-mini flex items-center">
         <Button variant="void" size="large" inline>
           void-large-inline
         </Button>
