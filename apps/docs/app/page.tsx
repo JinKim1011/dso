@@ -7,7 +7,7 @@ export default function Home() {
 
   return (
     <div className="">
-      <Button variant="outlined" size="regular" onClick={toggleTheme}>
+      <Button variant="fill" size="lg" onClick={toggleTheme}>
         {theme === "light" ? "Dark" : "Light"} Mode
       </Button>
       <main className="">
