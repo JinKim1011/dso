@@ -1,3 +1,5 @@
+export * from "./typography";
+
 export type SurfaceVariant =
   | "primary"
   | "secondary"
@@ -21,21 +23,6 @@ export type SpacingStep =
   | "regularPlus"
   | "large"
   | "largePlus";
-export type FontSizeStep =
-  | "micro"
-  | "microPlus"
-  | "mini"
-  | "miniPlus"
-  | "small"
-  | "smallPlus"
-  | "regular"
-  | "regularPlus"
-  | "large"
-  | "largePlus"
-  | "title1"
-  | "title2"
-  | "title3";
-export type FontWeightStep = FontSizeStep;
 
 export type DurationVariant =
   | "highlightFadeIn"
@@ -98,9 +85,6 @@ export type MarginXClass = `mx-${SpacingStep}` | "mx-0";
 export type MarginYClass = `my-${SpacingStep}` | "my-0";
 
 export type GapClass = `gap-${SpacingStep}`;
-
-export type FontSizeClass = `text-${FontSizeStep}`;
-export type FontWeightClass = `font-weight-${FontWeightStep}`;
 
 export type SpeedClass = `duration-${DurationVariant}`;
 export type EaseClass = `ease-${EaseVariant}`;
