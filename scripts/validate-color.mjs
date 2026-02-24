@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { extractUnionValues } from "./lib/typeParser.mjs";
 
 const CSS_PATH = path.resolve("./packages/ui/src/index.css");
 const COLOR_TS_PATH = path.resolve("./packages/ui/src/types/color.ts");
@@ -11,15 +12,22 @@ export function runColorAudit() {
   let errorCount = 0;
 
   // hardcoded variants and categories will be replaced in future
-  const variants = ["primary", "secondary", "tertiary", "quaternary"];
-  const categories = ["surface", "content", "stroke"];
+  const surfaceVariants = extractUnionValues(tsContent, "SurfaceVariant");
+  const contentVariants = extractUnionValues(tsContent, "ContentVariant");
+  const strokeVariants = extractUnionValues(tsContent, "StrokeVariant");
+  const allVariants = [
+    ...new Set([...surfaceVariants, ...contentVariants, ...strokeVariants]),
+  ];
+
+  const categoryVariantMap = {
+    surface: surfaceVariants,
+    content: contentVariants,
+    stroke: strokeVariants,
+  };
 
   console.log("\n 🔍 Checking for Broken Styles... (TS -> CSS)");
-  vsariant.forEach((variant) => {
-    categories.forEach((category) => {
-      // Stroke only goes up to tertiary in current types
-      if (category === "stroke" && variant === "quaternary") return;
-
+  Object.entries(categoryVariantMap).forEach(([category, variantList]) => {
+    variantList.forEach((variant) => {
       const expectedToken = `--color-${category}-${variant}`;
 
       if (!cssContent.includes(expectedToken)) {
@@ -38,7 +46,7 @@ export function runColorAudit() {
   cssTokens.forEach((token) => {
     const variant = token.split("-").pop();
 
-    if (!variants.includes(variant)) {
+    if (!allVariants.includes(variant)) {
       console.warn(
         `⚠️ GHOST TOKEN: ${token} exists in CSS but is not defined in color types(TS)`,
       );
