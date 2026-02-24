@@ -25,7 +25,7 @@ export function runColorAudit() {
     stroke: strokeVariants,
   };
 
-  console.log("\n 🔍 COLOR AUDIT: Checking for Broken Styles... (TS -> CSS)");
+  console.log("\n🔍 COLOR AUDIT: Checking for Broken Styles... (TS -> CSS)");
   Object.entries(categoryVariantMap).forEach(([category, variantList]) => {
     variantList.forEach((variant) => {
       const expectedToken = `--color-${category}-${variant}`;
@@ -39,7 +39,7 @@ export function runColorAudit() {
     });
   });
 
-  console.log("\n 🔍 COLOR AUDIT: hecking for Ghost Tokens... (CSS -> TS)");
+  console.log("\n🔍 COLOR AUDIT: hecking for Ghost Tokens... (CSS -> TS)");
   const cssTokens =
     cssContent.match(/--color-(surface|content|stroke)-[\w-]+/g) || [];
 
