@@ -39,7 +39,7 @@ export function runColorAudit() {
     });
   });
 
-  console.log("\n🔍 COLOR AUDIT: hecking for Ghost Tokens... (CSS -> TS)");
+  console.log("\n🔍 COLOR AUDIT: Checking for Ghost Tokens... (CSS -> TS)");
   const cssTokens =
     cssContent.match(/--color-(surface|content|stroke)-[\w-]+/g) || [];
 
