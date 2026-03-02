@@ -37,6 +37,20 @@ export function runTypographyAudit() {
     },
   ];
 
+  const tokenByType = Object.fromEntries(
+    RULES.map((rule) => [
+      rule.tsType,
+      extractUnionValues(tsContent, rule.tsType),
+    ]),
+  );
+
+  const tokenSetsByType = Object.fromEntries(
+    Object.entries(tokenByType).map(([type, values]) => [
+      type,
+      new Set(values),
+    ]),
+  );
+
   const atomicChecks = [
     { type: "FontSizeStep", prefix: "--text-" },
     { type: "FontWeightStep", prefix: "--font-" },
