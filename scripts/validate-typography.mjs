@@ -41,6 +41,48 @@ export function runTypographyAudit() {
     });
   });
 
+  const fontSizeSteps = new Set(extractUnionValues(tsContent, "FontSizeStep"));
+  const fontWeightSteps = new Set(
+    extractUnionValues(tsContent, "FontWeightStep"),
+  );
+  const lineHeightSteps = new Set(
+    extractUnionValues(tsContent, "LineHeightStep"),
+  );
+
+  console.log("\n🔍 TYPOGRAPHY AUDIT: Checking for Broken Composite styles...");
+
+  const compositeStyles = extractCompositeStyles(tsContent, "typographyStyles");
+
+  compositeStyles.forEach(({ variant, classes }) => {
+    classes.forEach((className) => {
+      let isValid = false;
+      let errorMessage = "";
+
+      if (className.startsWith("text-")) {
+        const value = className.replace("text-", "");
+        isValid = fontSizeSteps.has(value);
+        errorMessage = `unknown size "${value}"`;
+      } else if (className.startsWith("font-")) {
+        const value = className.replace("font-", "");
+        isValid = fontWeightSteps.has(value);
+        errorMessage = `unknown weight "${value}"`;
+      } else if (className.startsWith("leading-")) {
+        const value = className.replace("leading-", "");
+        isValid = lineHeightSteps.has(value);
+        errorMessage = `unknown line-height "${value}"`;
+      } else {
+        errorMessage = `illegal class format "${className}"`;
+      }
+
+      if (!isValid) {
+        console.error(
+          `❌ TYPOGRAPHY COMPOSITE STYLE DRIFT: ${variant} ${errorMessage}`,
+        );
+        errorCount++;
+      }
+    });
+  });
+
   return errorCount === 0;
 }
 
