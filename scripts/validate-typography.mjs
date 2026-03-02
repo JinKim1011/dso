@@ -51,6 +51,46 @@ export function runTypographyAudit() {
     ]),
   );
 
+  for (const rule of RULES) {
+    for (const token of tokenByType[rule.tsType]) {
+      const expected = `${rule.cssVariablePrefix}${token}`;
+      if (!cssContent.includes(expected)) {
+        console.error(
+          `❌ MISSING TYPOGRAPHY VARIABLES: ${token} in ${rule.tsType}, missing ${expected} in CSS`,
+        );
+        errorCount++;
+      }
+    }
+  }
+
+  function findRule(className) {
+    return RULES.find((rule) => className.startsWith(rule.classPrefix));
+  }
+
+  for (const { variant, classes } of compositeStyles) {
+    for (const className of classes) {
+      const rule = findRule(className);
+
+      if (!rule) {
+        console.error(
+          `❌ TYPOGRAPHY COMPOSITE STYLE DRIFT: ${variant} illegal class format "${className}"`,
+        );
+        errorCount++;
+        continue;
+      }
+
+      const value = className.slice(rule.classPrefix.length);
+      const isValid = tokenSetsByType[rule.tsType].has(value);
+
+      if (!isValid) {
+        console.error(
+          `❌ TYPOGRAPHY COMPOSITE STYLE DRIFT: ${variant} unknown ${rule.label} "${value}"`,
+        );
+        errorCount++;
+      }
+    }
+  }
+
   const atomicChecks = [
     { type: "FontSizeStep", prefix: "--text-" },
     { type: "FontWeightStep", prefix: "--font-" },
