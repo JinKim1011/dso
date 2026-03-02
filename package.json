@@ -6,7 +6,7 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types",
+    "check-types": "npm run validate:color-tokens && turbo run check-types",
     "validate:color-tokens": "node scripts/validate-color.mjs"
   },
   "devDependencies": {
