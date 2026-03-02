@@ -51,6 +51,10 @@ export function runTypographyAudit() {
     ]),
   );
 
+  console.log(
+    "\n🔍 TYPOGRAPHY AUDIT: Checking for Broken Styles... (TS -> CSS)",
+  );
+
   for (const rule of RULES) {
     for (const token of tokenByType[rule.tsType]) {
       const expected = `${rule.cssVariablePrefix}${token}`;
@@ -66,6 +70,10 @@ export function runTypographyAudit() {
   function findRule(className) {
     return RULES.find((rule) => className.startsWith(rule.classPrefix));
   }
+
+  console.log("\n🔍 TYPOGRAPHY AUDIT: Checking for Broken Composite styles...");
+
+  const compositeStyles = extractCompositeStyles(tsContent, "typographyStyles");
 
   for (const { variant, classes } of compositeStyles) {
     for (const className of classes) {
@@ -90,74 +98,6 @@ export function runTypographyAudit() {
       }
     }
   }
-
-  const atomicChecks = [
-    { type: "FontSizeStep", prefix: "--text-" },
-    { type: "FontWeightStep", prefix: "--font-" },
-    { type: "LineHeightStep", prefix: "--leading-" },
-  ];
-
-  console.log(
-    "\n🔍 TYPOGRAPHY AUDIT: Checking for Broken Styles... (TS -> CSS)",
-  );
-
-  atomicChecks.forEach(({ type, prefix }) => {
-    const tokens = extractUnionValues(tsContent, type);
-
-    tokens.forEach((token) => {
-      const expectedVariables = `${prefix}${token}`;
-
-      if (!cssContent.includes(expectedVariables)) {
-        console.error(
-          `❌ MISSING TYPOGRAPHY VARIABLES: ${token} in ${type} defined in TS, but ${expectedVariables} is missing in CSS`,
-        );
-        errorCount++;
-      }
-    });
-  });
-
-  const fontSizeSteps = new Set(extractUnionValues(tsContent, "FontSizeStep"));
-  const fontWeightSteps = new Set(
-    extractUnionValues(tsContent, "FontWeightStep"),
-  );
-  const lineHeightSteps = new Set(
-    extractUnionValues(tsContent, "LineHeightStep"),
-  );
-
-  console.log("\n🔍 TYPOGRAPHY AUDIT: Checking for Broken Composite styles...");
-
-  const compositeStyles = extractCompositeStyles(tsContent, "typographyStyles");
-
-  compositeStyles.forEach(({ variant, classes }) => {
-    classes.forEach((className) => {
-      let isValid = false;
-      let errorMessage = "";
-
-      if (className.startsWith("text-")) {
-        const value = className.replace("text-", "");
-        isValid = fontSizeSteps.has(value);
-        errorMessage = `unknown size "${value}"`;
-      } else if (className.startsWith("font-")) {
-        const value = className.replace("font-", "");
-        isValid = fontWeightSteps.has(value);
-        errorMessage = `unknown weight "${value}"`;
-      } else if (className.startsWith("leading-")) {
-        const value = className.replace("leading-", "");
-        isValid = lineHeightSteps.has(value);
-        errorMessage = `unknown line-height "${value}"`;
-      } else {
-        errorMessage = `illegal class format "${className}"`;
-      }
-
-      if (!isValid) {
-        console.error(
-          `❌ TYPOGRAPHY COMPOSITE STYLE DRIFT: ${variant} ${errorMessage}`,
-        );
-        errorCount++;
-      }
-    });
-  });
-
   return errorCount === 0;
 }
 
