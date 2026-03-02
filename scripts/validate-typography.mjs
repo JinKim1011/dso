@@ -1,6 +1,9 @@
 import fs from "fs";
 import path from "path";
-import { extractUnionValues } from "./lib/typeParser.mjs";
+import {
+  extractCompositeStyles,
+  extractUnionValues,
+} from "./lib/typeParser.mjs";
 
 const CSS_PATH = path.resolve("./packages/ui/src/index.css");
 const TYPOGRAPHY_TS_PATH = path.resolve(
