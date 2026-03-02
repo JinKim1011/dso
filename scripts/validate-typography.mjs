@@ -16,6 +16,27 @@ export function runTypographyAudit() {
 
   let errorCount = 0;
 
+  const RULES = [
+    {
+      classPrefix: "text-",
+      tsType: "FontSizeStep",
+      cssVariablePrefix: "--text-",
+      label: "size",
+    },
+    {
+      classPrefix: "font-",
+      tsType: "FontWeightStep",
+      cssVariablePrefix: "--font-",
+      lable: "weight",
+    },
+    {
+      classPrefix: "leading-",
+      tsType: "LineHeightStep",
+      cssVariablePrefix: "--leading-",
+      lable: "line-height",
+    },
+  ];
+
   const atomicChecks = [
     { type: "FontSizeStep", prefix: "--text-" },
     { type: "FontWeightStep", prefix: "--font-" },
