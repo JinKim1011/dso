@@ -27,13 +27,13 @@ export function runTypographyAudit() {
       classPrefix: "font-",
       tsType: "FontWeightStep",
       cssVariablePrefix: "--font-",
-      lable: "weight",
+      label: "weight",
     },
     {
       classPrefix: "leading-",
       tsType: "LineHeightStep",
       cssVariablePrefix: "--leading-",
-      lable: "line-height",
+      label: "line-height",
     },
   ];
 
