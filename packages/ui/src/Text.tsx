@@ -3,10 +3,21 @@ import { TypographyVariant, typographyStyles } from "./types/typography";
 
 interface TextProps {
   variant?: TypographyVariant;
-  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "label";
+  as?: TextElement;
   children: React.ReactNode;
   className?: String;
 }
+
+type TextElement =
+  | "h1"
+  | "h2"
+  | "h3"
+  | "h4"
+  | "h5"
+  | "h6"
+  | "p"
+  | "span"
+  | "label";
 
 export const Text = ({
   variant = "body-md",
