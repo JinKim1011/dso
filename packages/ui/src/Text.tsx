@@ -1,31 +1,21 @@
 import React from "react";
 import { TypographyVariant, typographyStyles } from "./types/typography";
 
-interface TextProps {
+type TextProps<T extends React.ElementType = "p"> = {
   variant?: TypographyVariant;
-  as?: TextElement;
+  as?: T;
   children: React.ReactNode;
-  className?: String;
-}
+  className?: string;
+} & Omit<React.ComponentPropsWithoutRef<T>, "as" | "className" | "children">;
 
-type TextElement =
-  | "h1"
-  | "h2"
-  | "h3"
-  | "h4"
-  | "h5"
-  | "h6"
-  | "p"
-  | "span"
-  | "label";
-
-export const Text = ({
+export const Text = <T extends React.ElementType = "p">({
   variant = "body-md",
-  as: Component = "p",
+  as,
   children,
   className = "",
   ...props
-}: TextProps) => {
+}: TextProps<T>) => {
+  const Component = as || "p";
   const baseStyles = typographyStyles[variant];
   const combinedClasss = `${baseStyles}${className}`.trim();
 
