@@ -1,5 +1,6 @@
 // Components
-export { Button } from "./button";
+export { Button } from "./Button";
+export { Text } from "./Text";
 
 // Hooks
 export { useTheme } from "./hooks/useTheme";
