@@ -1,10 +1,15 @@
-import React from "react";
+import type { ReactNode } from "react";
 import { TypographyVariant, typographyStyles } from "./types/typography";
 
 type TextProps<T extends React.ElementType = "p"> = {
   variant?: TypographyVariant;
+<<<<<<< HEAD
   as?: T;
   children: React.ReactNode;
+=======
+  as?: TextElement;
+  children: ReactNode;
+>>>>>>> 79154d7 (fix(Text): use type-only import for ReactNode in TextProps)
   className?: string;
 } & Omit<React.ComponentPropsWithoutRef<T>, "as" | "className" | "children">;
 
