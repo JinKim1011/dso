@@ -4,7 +4,7 @@ import { TypographyVariant, typographyStyles } from "./types/typography";
 type TextProps<T extends React.ElementType = "p"> = {
   variant?: TypographyVariant;
   as?: T;
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 } & Omit<React.ComponentPropsWithoutRef<T>, "as" | "className" | "children">;
 
