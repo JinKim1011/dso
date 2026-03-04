@@ -17,10 +17,10 @@ export const Text = <T extends React.ElementType = "p">({
 }: TextProps<T>) => {
   const Component = as || "p";
   const baseStyles = typographyStyles[variant];
-  const combinedClasss = `${baseStyles}${className}`.trim();
+  const combinedClassName = `${baseStyles}${className}`.trim();
 
   return (
-    <Component className={combinedClasss} {...props}>
+    <Component className={combinedClassName} {...props}>
       {children}
     </Component>
   );
