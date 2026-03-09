@@ -34,21 +34,21 @@ const variantClasses: Record<
     hover:
       "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
     active:
-      "active:bg-surface-tertiary active:text-content-secondary active:border-transparent",
+      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
   },
   outlined: {
     base: "bg-transparent text-content-primary border-stroke-primary",
     hover:
       "hover:bg-surface-secondary hover:text-content-primary hover:border-stroke-primary",
     active:
-      "active:bg-surface-tertiary active:text-content-secondary active:border-stroke-primary",
+      "active:bg-surface-quaternary active:text-content-primary active:border-stroke-primary",
   },
   void: {
     base: "bg-transparent text-content-primary border-transparent",
     hover:
       "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
     active:
-      "active:bg-surface-tertiary active:text-content-secondary active:border-transparent",
+      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
   },
 };
 
