@@ -14,6 +14,8 @@ import {
   MarginXClass,
   MarginYClass,
   typographyStyles,
+  IconName,
+  ICONS,
 } from "./types/tokens";
 
 type ButtonVariant = "fill" | "outlined" | "void";
@@ -83,6 +85,9 @@ export interface ButtonProps extends Omit<
   size?: ButtonSize;
   inline?: boolean;
   fullWidth?: boolean;
+  iconOnly?: boolean;
+  leftIconName?: IconName;
+  rightIconName?: IconName;
 }
 
 export const Button = ({
