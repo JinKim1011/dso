@@ -70,21 +70,21 @@ const sizeClasses: Record<
   }
 > = {
   sm: {
-    base: `${typographyStyles["control-sm"]} px-microPlus py-0`,
+    base: `${typographyStyles["control-sm"]} px-microPlus py-0 gap-micro`,
     hover: "-mx-microPlus -my-micro",
     active: "-mx-microPlus -my-micro",
     icon: "size-3.5 shrink-0",
     iconOnly: "p-microPlus",
   },
   md: {
-    base: `${typographyStyles["control-md"]} px-mini py-microPlus`,
+    base: `${typographyStyles["control-md"]} px-mini py-microPlus gap-microPlus`,
     hover: "-mx-mini -my-microPlus",
     active: "-mx-mini -my-microPlus",
     icon: "size-4 shrink-0",
     iconOnly: "p-mini",
   },
   lg: {
-    base: `${typographyStyles["control-md"]} px-mini py-mini`,
+    base: `${typographyStyles["control-md"]} px-mini py-mini gap-mini`,
     hover: "-mx-mini -my-mini",
     active: "-mx-mini -my-mini",
     icon: "size-5 shrink-0",
