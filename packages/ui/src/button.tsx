@@ -66,6 +66,7 @@ const sizeClasses: Record<
     hover: `-${MarginXClass} -${MarginYClass}`;
     active: `-${MarginXClass} -${MarginYClass}`;
     icon: string;
+    iconOnly: string;
   }
 > = {
   sm: {
@@ -73,18 +74,21 @@ const sizeClasses: Record<
     hover: "-mx-microPlus -my-micro",
     active: "-mx-microPlus -my-micro",
     icon: "size-3.5 shrink-0",
+    iconOnly: "p-microPlus",
   },
   md: {
     base: `${typographyStyles["control-md"]} px-mini py-microPlus`,
     hover: "-mx-mini -my-microPlus",
     active: "-mx-mini -my-microPlus",
     icon: "size-4 shrink-0",
+    iconOnly: "p-mini",
   },
   lg: {
     base: `${typographyStyles["control-md"]} px-mini py-mini`,
     hover: "-mx-mini -my-mini",
     active: "-mx-mini -my-mini",
     icon: "size-5 shrink-0",
+    iconOnly: "p-mini",
   },
 };
 
@@ -121,6 +125,7 @@ export const Button = ({
     sizeClasses[size].base,
     inline ? sizeClasses[size].hover : "",
     inline ? sizeClasses[size].active : "",
+    iconOnly ? sizeClasses[size].base : `${sizeClasses[size].iconOnly}`,
     fullWidth ? "w-full" : "w-auto",
     "border",
     "inline-flex items-center justify-center",
