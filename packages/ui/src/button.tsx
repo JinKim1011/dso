@@ -95,9 +95,14 @@ export const Button = ({
   size = "md",
   inline = false,
   fullWidth = false,
+  iconOnly = false,
+  leftIconName,
+  rightIconName,
   children,
   ...props
 }: ButtonProps) => {
+  const LeftIcon = leftIconName ? ICONS[leftIconName] : null;
+  const RightIcon = rightIconName ? ICONS[rightIconName] : null;
   const className = [
     variantClasses[variant].base,
     variantClasses[variant].hover,
