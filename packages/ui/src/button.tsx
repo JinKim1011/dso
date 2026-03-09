@@ -27,6 +27,7 @@ const variantClasses: Record<
     base: `${BgClass} ${TextColorClass} ${BorderClass}`;
     hover: `${HoverBgClass} ${HoverTextColorClass} ${HoverBorderClass}`;
     active: `${ActiveBgClass} ${ActiveTextColorClass} ${ActiveBorderClass}`;
+    inactive: `${ActiveBgClass} ${ActiveTextColorClass} ${ActiveBorderClass}`;
   }
 > = {
   fill: {
@@ -35,6 +36,8 @@ const variantClasses: Record<
       "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
     active:
       "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
+    inactive:
+      "active:bg-surface-tertiary active:text-content-quaternary active:border-transparent",
   },
   outlined: {
     base: "bg-transparent text-content-primary border-stroke-primary",
@@ -42,6 +45,8 @@ const variantClasses: Record<
       "hover:bg-surface-secondary hover:text-content-primary hover:border-stroke-primary",
     active:
       "active:bg-surface-quaternary active:text-content-primary active:border-stroke-primary",
+    inactive:
+      "active:bg-surface-tertiary active:text-content-quaternary active:border-stroke-primary",
   },
   void: {
     base: "bg-transparent text-content-primary border-transparent",
@@ -49,6 +54,8 @@ const variantClasses: Record<
       "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
     active:
       "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
+    inactive:
+      "active:bg-surface-tertiary active:text-content-quaternary active:border-transparent",
   },
 };
 
