@@ -128,7 +128,11 @@ export const Button = ({
 
   return (
     <button {...props} className={className}>
-      {children}
+      {LeftIcon && <LeftIcon aria-hidden className={sizeClasses[size].icon} />}
+      {!iconOnly && children}
+      {RightIcon && (
+        <RightIcon aria-hidden className={sizeClasses[size].icon} />
+      )}
     </button>
   );
 };
