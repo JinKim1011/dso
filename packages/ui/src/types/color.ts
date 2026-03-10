@@ -11,12 +11,15 @@ export type ContentVariant =
 export type StrokeVariant = "primary" | "secondary" | "tertiary";
 
 export type BgClass = `bg-surface-${SurfaceVariant}` | "bg-transparent";
+export type OverrideBGClass = BgClass;
 
 export type TextColorClass = `text-content-${ContentVariant}` | "text-primary";
+export type OverrideTextColorClass = TextColorClass;
 
 export type BorderClass =
   | `border-stroke-${StrokeVariant}`
   | "border-transparent";
+export type OverrideBorderClass = BorderClass;
 
 export type HoverBgClass =
   | `hover:bg-surface-${SurfaceVariant}`

@@ -6,6 +6,9 @@ import {
   BorderClass,
   TextColorClass,
   HoverBgClass,
+  OverrideBGClass,
+  OverrideBorderClass,
+  OverrideTextColorClass,
   HoverTextColorClass,
   HoverBorderClass,
   ActiveBgClass,
@@ -18,6 +21,7 @@ import {
 
 type ButtonVariant = "fill" | "outlined" | "void";
 type ButtonSize = "sm" | "md" | "lg";
+type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
 const variantClasses: Record<
   ButtonVariant,
@@ -32,21 +36,21 @@ const variantClasses: Record<
     hover:
       "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
     active:
-      "active:bg-surface-tertiary active:text-content-secondary active:border-transparent",
+      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
   },
   outlined: {
     base: "bg-transparent text-content-primary border-stroke-primary",
     hover:
       "hover:bg-surface-secondary hover:text-content-primary hover:border-stroke-primary",
     active:
-      "active:bg-surface-tertiary active:text-content-secondary active:border-stroke-primary",
+      "active:bg-surface-quaternary active:text-content-primary active:border-stroke-primary",
   },
   void: {
     base: "bg-transparent text-content-primary border-transparent",
     hover:
       "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
     active:
-      "active:bg-surface-tertiary active:text-content-secondary active:border-transparent",
+      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
   },
 };
 
@@ -56,22 +60,30 @@ const sizeClasses: Record<
     base: string;
     hover: `-${MarginXClass} -${MarginYClass}`;
     active: `-${MarginXClass} -${MarginYClass}`;
+    icon: string;
+    iconOnly: string;
   }
 > = {
   sm: {
-    base: `${typographyStyles["control-sm"]} px-microPlus py-0`,
+    base: `${typographyStyles["control-sm"]} px-microPlus py-0 gap-micro`,
     hover: "-mx-microPlus -my-micro",
     active: "-mx-microPlus -my-micro",
+    icon: "size-3.5 shrink-0",
+    iconOnly: "p-microPlus",
   },
   md: {
-    base: `${typographyStyles["control-md"]} px-mini py-microPlus`,
+    base: `${typographyStyles["control-md"]} px-mini py-microPlus gap-microPlus`,
     hover: "-mx-mini -my-microPlus",
     active: "-mx-mini -my-microPlus",
+    icon: "size-4 shrink-0",
+    iconOnly: "p-mini",
   },
   lg: {
-    base: `${typographyStyles["control-md"]} px-mini py-mini`,
+    base: `${typographyStyles["control-md"]} px-mini py-mini gap-mini`,
     hover: "-mx-mini -my-mini",
     active: "-mx-mini -my-mini",
+    icon: "size-5 shrink-0",
+    iconOnly: "p-mini",
   },
 };
 
@@ -83,6 +95,12 @@ export interface ButtonProps extends Omit<
   size?: ButtonSize;
   inline?: boolean;
   fullWidth?: boolean;
+  iconOnly?: boolean;
+  leftIcon?: IconComponent;
+  rightIcon?: IconComponent;
+  overrideBgClass?: OverrideBGClass;
+  overrideTextColorClass?: OverrideTextColorClass;
+  overrideBorderClass?: OverrideBorderClass;
 }
 
 export const Button = ({
@@ -90,6 +108,12 @@ export const Button = ({
   size = "md",
   inline = false,
   fullWidth = false,
+  iconOnly = false,
+  leftIcon: LeftIcon,
+  rightIcon: RightIcon,
+  overrideBgClass,
+  overrideTextColorClass,
+  overrideBorderClass,
   children,
   ...props
 }: ButtonProps) => {
@@ -100,7 +124,11 @@ export const Button = ({
     sizeClasses[size].base,
     inline ? sizeClasses[size].hover : "",
     inline ? sizeClasses[size].active : "",
+    iconOnly ? `${sizeClasses[size].iconOnly}` : sizeClasses[size].base,
     fullWidth ? "w-full" : "w-auto",
+    overrideBgClass,
+    overrideTextColorClass,
+    overrideBorderClass,
     "border",
     "inline-flex items-center justify-center",
     "transition-colors transition-transform",
@@ -114,7 +142,11 @@ export const Button = ({
 
   return (
     <button {...props} className={className}>
-      {children}
+      {LeftIcon && <LeftIcon aria-hidden className={sizeClasses[size].icon} />}
+      {!iconOnly && children}
+      {RightIcon && (
+        <RightIcon aria-hidden className={sizeClasses[size].icon} />
+      )}
     </button>
   );
 };
