@@ -6,6 +6,9 @@ import {
   BorderClass,
   TextColorClass,
   HoverBgClass,
+  OverrideBGClass,
+  OverrideBorderClass,
+  OverrideTextColorClass,
   HoverTextColorClass,
   HoverBorderClass,
   ActiveBgClass,
@@ -96,6 +99,9 @@ export interface ButtonProps extends Omit<
   iconOnly?: boolean;
   leftIconName?: IconName;
   rightIconName?: IconName;
+  overrideBgClass?: OverrideBGClass;
+  overrideTextColorClass?: OverrideTextColorClass;
+  overrideBorderClass?: OverrideBorderClass;
 }
 
 export const Button = ({
@@ -106,6 +112,9 @@ export const Button = ({
   iconOnly = false,
   leftIconName,
   rightIconName,
+  overrideBgClass,
+  overrideTextColorClass,
+  overrideBorderClass,
   children,
   ...props
 }: ButtonProps) => {
@@ -120,6 +129,9 @@ export const Button = ({
     inline ? sizeClasses[size].active : "",
     iconOnly ? `${sizeClasses[size].iconOnly}` : sizeClasses[size].base,
     fullWidth ? "w-full" : "w-auto",
+    overrideBgClass,
+    overrideTextColorClass,
+    overrideBorderClass,
     "border",
     "inline-flex items-center justify-center",
     "transition-colors transition-transform",
