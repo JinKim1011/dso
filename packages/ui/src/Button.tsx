@@ -29,7 +29,7 @@ const variantClasses: Record<
     base: `${BgClass} ${TextColorClass} ${BorderClass}`;
     hover: `${HoverBgClass} ${HoverTextColorClass} ${HoverBorderClass}`;
     active: `${ActiveBgClass} ${ActiveTextColorClass} ${ActiveBorderClass}`;
-    selected: `${ActiveBgClass} ${ActiveTextColorClass} ${ActiveBorderClass}`;
+    selected: `${BgClass} ${TextColorClass} ${BorderClass}`;
   }
 > = {
   fill: {
@@ -38,8 +38,7 @@ const variantClasses: Record<
       "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
     active:
       "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
-    selected:
-      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
+    selected: "bg-surface-quaternary text-content-primary border-transparent",
   },
   outlined: {
     base: "bg-transparent text-content-primary border-stroke-primary",
@@ -48,7 +47,7 @@ const variantClasses: Record<
     active:
       "active:bg-surface-quaternary active:text-content-primary active:border-stroke-primary",
     selected:
-      "active:bg-surface-quaternary active:text-content-primary active:border-stroke-primary",
+      "bg-surface-quaternary text-content-primary border-stroke-primary",
   },
   void: {
     base: "bg-transparent text-content-primary border-transparent",
@@ -56,8 +55,7 @@ const variantClasses: Record<
       "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
     active:
       "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
-    selected:
-      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
+    selected: "bg-surface-quaternary text-content-primary border-transparent",
   },
 };
 
@@ -108,6 +106,7 @@ export interface ButtonProps extends Omit<
   overrideBgClass?: OverrideBGClass;
   overrideTextColorClass?: OverrideTextColorClass;
   overrideBorderClass?: OverrideBorderClass;
+  selected?: boolean;
 }
 
 export const Button = ({
@@ -116,6 +115,7 @@ export const Button = ({
   inline = false,
   fullWidth = false,
   iconOnly = false,
+  selected = false,
   leftIcon: LeftIcon,
   rightIcon: RightIcon,
   overrideBgClass,
@@ -128,6 +128,7 @@ export const Button = ({
     variantClasses[variant].base,
     variantClasses[variant].hover,
     variantClasses[variant].active,
+    selected ? variantClasses[variant].selected : "",
     sizeClasses[size].base,
     inline ? sizeClasses[size].hover : "",
     inline ? sizeClasses[size].active : "",
