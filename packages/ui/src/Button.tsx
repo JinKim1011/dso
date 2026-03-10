@@ -17,12 +17,11 @@ import {
   MarginXClass,
   MarginYClass,
   typographyStyles,
-  IconName,
-  ICONS,
 } from "./types/tokens";
 
 type ButtonVariant = "fill" | "outlined" | "void";
 type ButtonSize = "sm" | "md" | "lg";
+type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
 const variantClasses: Record<
   ButtonVariant,
@@ -97,8 +96,8 @@ export interface ButtonProps extends Omit<
   inline?: boolean;
   fullWidth?: boolean;
   iconOnly?: boolean;
-  leftIconName?: IconName;
-  rightIconName?: IconName;
+  leftIcon?: IconComponent;
+  rightIcon?: IconComponent;
   overrideBgClass?: OverrideBGClass;
   overrideTextColorClass?: OverrideTextColorClass;
   overrideBorderClass?: OverrideBorderClass;
@@ -110,16 +109,14 @@ export const Button = ({
   inline = false,
   fullWidth = false,
   iconOnly = false,
-  leftIconName,
-  rightIconName,
+  leftIcon: LeftIcon,
+  rightIcon: RightIcon,
   overrideBgClass,
   overrideTextColorClass,
   overrideBorderClass,
   children,
   ...props
 }: ButtonProps) => {
-  const LeftIcon = leftIconName ? ICONS[leftIconName] : null;
-  const RightIcon = rightIconName ? ICONS[rightIconName] : null;
   const className = [
     variantClasses[variant].base,
     variantClasses[variant].hover,
