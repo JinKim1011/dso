@@ -125,7 +125,7 @@ export const Button = ({
     sizeClasses[size].base,
     inline ? sizeClasses[size].hover : "",
     inline ? sizeClasses[size].active : "",
-    iconOnly ? sizeClasses[size].base : `${sizeClasses[size].iconOnly}`,
+    iconOnly ? `${sizeClasses[size].iconOnly}` : sizeClasses[size].base,
     fullWidth ? "w-full" : "w-auto",
     "border",
     "inline-flex items-center justify-center",
