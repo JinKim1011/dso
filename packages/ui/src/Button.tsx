@@ -30,6 +30,8 @@ const variantClasses: Record<
     hover: `${HoverBgClass} ${HoverTextColorClass} ${HoverBorderClass}`;
     active: `${ActiveBgClass} ${ActiveTextColorClass} ${ActiveBorderClass}`;
     selected: `${BgClass} ${TextColorClass} ${BorderClass}`;
+    selectedHover: `${HoverBgClass} ${HoverTextColorClass} ${HoverBorderClass}`;
+    selectedActive: `${ActiveBgClass} ${ActiveTextColorClass} ${ActiveBorderClass}`;
   }
 > = {
   fill: {
@@ -39,6 +41,10 @@ const variantClasses: Record<
     active:
       "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
     selected: "bg-surface-quaternary text-content-primary border-transparent",
+    selectedHover:
+      "hover:bg-surface-quaternary hover:text-content-primary hover:border-transparent",
+    selectedActive:
+      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
   },
   outlined: {
     base: "bg-transparent text-content-primary border-stroke-primary",
@@ -48,6 +54,10 @@ const variantClasses: Record<
       "active:bg-surface-quaternary active:text-content-primary active:border-stroke-primary",
     selected:
       "bg-surface-quaternary text-content-primary border-stroke-primary",
+    selectedHover:
+      "hover:bg-surface-quaternary hover:text-content-primary hover:border-stroke-primary",
+    selectedActive:
+      "active:bg-surface-quaternary active:text-content-primary active:border-stroke-primary",
   },
   void: {
     base: "bg-transparent text-content-primary border-transparent",
@@ -56,6 +66,10 @@ const variantClasses: Record<
     active:
       "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
     selected: "bg-surface-quaternary text-content-primary border-transparent",
+    selectedHover:
+      "hover:bg-surface-quaternary hover:text-content-primary hover:border-transparent",
+    selectedActive:
+      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
   },
 };
 
@@ -129,10 +143,13 @@ export const Button = ({
     : sizeClasses[size].base;
 
   const className = [
-    variantClasses[variant].base,
-    variantClasses[variant].hover,
-    variantClasses[variant].active,
-    selected ? variantClasses[variant].selected : "",
+    selected
+      ? variantClasses[variant].selectedHover
+      : variantClasses[variant].hover,
+    selected
+      ? variantClasses[variant].selectedActive
+      : variantClasses[variant].active,
+    selected ? variantClasses[variant].selected : variantClasses[variant].base,
     paddingClass,
     inline ? sizeClasses[size].hover : "",
     inline ? sizeClasses[size].active : "",
