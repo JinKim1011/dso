@@ -124,15 +124,18 @@ export const Button = ({
   children,
   ...props
 }: ButtonProps) => {
+  const paddingClass = iconOnly
+    ? sizeClasses[size].iconOnly
+    : sizeClasses[size].base;
+
   const className = [
     variantClasses[variant].base,
     variantClasses[variant].hover,
     variantClasses[variant].active,
     selected ? variantClasses[variant].selected : "",
-    sizeClasses[size].base,
+    paddingClass,
     inline ? sizeClasses[size].hover : "",
     inline ? sizeClasses[size].active : "",
-    iconOnly ? `${sizeClasses[size].iconOnly}` : sizeClasses[size].base,
     fullWidth ? "w-full" : "w-fit",
     overrideBgClass,
     overrideTextColorClass,
