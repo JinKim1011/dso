@@ -9,6 +9,7 @@ type SegmentOption = {
   value: string;
   label?: string;
   iconName?: IconComponent;
+  ariaLabel?: string;
 };
 
 type SegmentedControlProps = {
@@ -43,6 +44,7 @@ export function SegmentedControl({
             key={option.value}
             variant="void"
             size={size}
+            aria-label={iconOnly ? option.ariaLabel : undefined}
             selected={isActive}
             iconOnly={iconOnly}
             leftIcon={option.iconName}
