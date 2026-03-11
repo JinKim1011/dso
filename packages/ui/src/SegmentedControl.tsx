@@ -1,9 +1,6 @@
 "use client";
 
-import type React from "react";
-import { Button } from "./Button";
-
-type IconComponent = React.ElementType;
+import { Button, type IconComponent } from "./Button";
 
 type SegmentOption = {
   value: string;
