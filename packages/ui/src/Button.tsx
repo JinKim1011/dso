@@ -133,7 +133,7 @@ export const Button = ({
     inline ? sizeClasses[size].hover : "",
     inline ? sizeClasses[size].active : "",
     iconOnly ? `${sizeClasses[size].iconOnly}` : sizeClasses[size].base,
-    fullWidth ? "w-full" : "w-auto",
+    fullWidth ? "w-full" : "w-fit",
     overrideBgClass,
     overrideTextColorClass,
     overrideBorderClass,
