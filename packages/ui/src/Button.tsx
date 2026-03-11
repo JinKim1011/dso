@@ -21,7 +21,7 @@ import {
 
 type ButtonVariant = "fill" | "outlined" | "void";
 type ButtonSize = "sm" | "md" | "lg";
-type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
+type IconComponent = React.ElementType;
 
 const variantClasses: Record<
   ButtonVariant,
