@@ -19,8 +19,12 @@ type SegmentedControlProps = {
   iconOnly?: boolean;
 };
 
-const baseStyles =
-  "bg-surface-primary p-microPlus gap-microPlus border-stroke-secondary inline-flex";
+const baseStyles = [
+  "inline-flex w-fit",
+  "p-microPlus gap-microPlus",
+  "bg-surface-primary",
+  "border border-stroke-secondary",
+].join(" ");
 
 export function SegmentedControl({
   options,
