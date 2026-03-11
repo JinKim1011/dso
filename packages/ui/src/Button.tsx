@@ -21,7 +21,11 @@ import {
 
 type ButtonVariant = "fill" | "outlined" | "void";
 type ButtonSize = "sm" | "md" | "lg";
-type IconComponent = React.ElementType;
+
+export type IconComponent = React.ElementType<{
+  className?: string;
+  "aria-hidden"?: boolean;
+}>;
 
 const variantClasses: Record<
   ButtonVariant,
