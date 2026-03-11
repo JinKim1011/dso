@@ -110,6 +110,7 @@ export interface ButtonProps extends Omit<
   React.ComponentPropsWithoutRef<"button">,
   "className"
 > {
+  type?: "button" | "submit" | "reset";
   variant?: ButtonVariant;
   size?: ButtonSize;
   inline?: boolean;
@@ -124,6 +125,7 @@ export interface ButtonProps extends Omit<
 }
 
 export const Button = ({
+  type = "button",
   variant = "fill",
   size = "md",
   inline = false,
@@ -169,7 +171,7 @@ export const Button = ({
     .join(" ");
 
   return (
-    <button {...props} className={className}>
+    <button type={type} {...props} className={className}>
       {LeftIcon && <LeftIcon aria-hidden className={sizeClasses[size].icon} />}
       {!iconOnly && children}
       {RightIcon && (
