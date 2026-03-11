@@ -21,7 +21,11 @@ import {
 
 type ButtonVariant = "fill" | "outlined" | "void";
 type ButtonSize = "sm" | "md" | "lg";
-type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
+
+export type IconComponent = React.ElementType<{
+  className?: string;
+  "aria-hidden"?: boolean;
+}>;
 
 const variantClasses: Record<
   ButtonVariant,
@@ -29,6 +33,9 @@ const variantClasses: Record<
     base: `${BgClass} ${TextColorClass} ${BorderClass}`;
     hover: `${HoverBgClass} ${HoverTextColorClass} ${HoverBorderClass}`;
     active: `${ActiveBgClass} ${ActiveTextColorClass} ${ActiveBorderClass}`;
+    selected: `${BgClass} ${TextColorClass} ${BorderClass}`;
+    selectedHover: `${HoverBgClass} ${HoverTextColorClass} ${HoverBorderClass}`;
+    selectedActive: `${ActiveBgClass} ${ActiveTextColorClass} ${ActiveBorderClass}`;
   }
 > = {
   fill: {
@@ -37,6 +44,11 @@ const variantClasses: Record<
       "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
     active:
       "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
+    selected: "bg-surface-quaternary text-content-primary border-transparent",
+    selectedHover:
+      "hover:bg-surface-quaternary hover:text-content-primary hover:border-transparent",
+    selectedActive:
+      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
   },
   outlined: {
     base: "bg-transparent text-content-primary border-stroke-primary",
@@ -44,12 +56,23 @@ const variantClasses: Record<
       "hover:bg-surface-secondary hover:text-content-primary hover:border-stroke-primary",
     active:
       "active:bg-surface-quaternary active:text-content-primary active:border-stroke-primary",
+    selected:
+      "bg-surface-quaternary text-content-primary border-stroke-primary",
+    selectedHover:
+      "hover:bg-surface-quaternary hover:text-content-primary hover:border-stroke-primary",
+    selectedActive:
+      "active:bg-surface-quaternary active:text-content-primary active:border-stroke-primary",
   },
   void: {
     base: "bg-transparent text-content-primary border-transparent",
     hover:
       "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
     active:
+      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
+    selected: "bg-surface-quaternary text-content-primary border-transparent",
+    selectedHover:
+      "hover:bg-surface-quaternary hover:text-content-primary hover:border-transparent",
+    selectedActive:
       "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
   },
 };
@@ -91,6 +114,7 @@ export interface ButtonProps extends Omit<
   React.ComponentPropsWithoutRef<"button">,
   "className"
 > {
+  type?: "button" | "submit" | "reset";
   variant?: ButtonVariant;
   size?: ButtonSize;
   inline?: boolean;
@@ -101,14 +125,17 @@ export interface ButtonProps extends Omit<
   overrideBgClass?: OverrideBGClass;
   overrideTextColorClass?: OverrideTextColorClass;
   overrideBorderClass?: OverrideBorderClass;
+  selected?: boolean;
 }
 
 export const Button = ({
+  type = "button",
   variant = "fill",
   size = "md",
   inline = false,
   fullWidth = false,
   iconOnly = false,
+  selected = false,
   leftIcon: LeftIcon,
   rightIcon: RightIcon,
   overrideBgClass,
@@ -117,15 +144,22 @@ export const Button = ({
   children,
   ...props
 }: ButtonProps) => {
+  const paddingClass = iconOnly
+    ? sizeClasses[size].iconOnly
+    : sizeClasses[size].base;
+
   const className = [
-    variantClasses[variant].base,
-    variantClasses[variant].hover,
-    variantClasses[variant].active,
-    sizeClasses[size].base,
+    selected
+      ? variantClasses[variant].selectedHover
+      : variantClasses[variant].hover,
+    selected
+      ? variantClasses[variant].selectedActive
+      : variantClasses[variant].active,
+    selected ? variantClasses[variant].selected : variantClasses[variant].base,
+    paddingClass,
     inline ? sizeClasses[size].hover : "",
     inline ? sizeClasses[size].active : "",
-    iconOnly ? `${sizeClasses[size].iconOnly}` : sizeClasses[size].base,
-    fullWidth ? "w-full" : "w-auto",
+    fullWidth ? "w-full" : "w-fit",
     overrideBgClass,
     overrideTextColorClass,
     overrideBorderClass,
@@ -141,7 +175,7 @@ export const Button = ({
     .join(" ");
 
   return (
-    <button {...props} className={className}>
+    <button type={type} {...props} className={className}>
       {LeftIcon && <LeftIcon aria-hidden className={sizeClasses[size].icon} />}
       {!iconOnly && children}
       {RightIcon && (
