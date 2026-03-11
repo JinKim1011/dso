@@ -3,7 +3,7 @@
 import type React from "react";
 import { Button } from "./Button";
 
-type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
+type IconComponent = React.ElementType;
 
 type SegmentOption = {
   value: string;
