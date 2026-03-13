@@ -9,7 +9,9 @@
     "check-types": "npm run validate:typography-tokens && npm run validate:color-tokens && turbo run check-types",
     "validate:color-tokens": "node scripts/validate-color.mjs",
     "validate:typography-tokens": "node scripts/validate-typography.mjs",
-    "scan": "node scripts/scan-components.mjs"
+    "scan": " npm run scan:compoents && npm run scan:tokens",
+    "scan:compoents": "node scripts/scan-components.mjs",
+    "scan:tokens": "node scripts/scan-tokens.mjs"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
