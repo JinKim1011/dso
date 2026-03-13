@@ -4,7 +4,7 @@ import path from "path";
 import { globSync } from "glob";
 
 const COMPONENTS_PATH = path.resolve("./packages/ui/src/components");
-const OUTPUT_PATH = path.resolve("./manifest.json");
+const OUTPUT_PATH = path.resolve("./design-components-manifest.json");
 
 const componentFiles = globSync(`${COMPONENTS_PATH}/**/*.tsx`);
 
