@@ -11,6 +11,7 @@ const componentFiles = globSync(`${COMPONENTS_PATH}/**/*.tsx`);
 const parser = docgen.withDefaultConfig({
   savePropValueAsString: true,
   shouldExtractLiteralValuesFromEnum: true,
+  shouldExtractValuesFromUnion: true,
   propFilter: (prop) => {
     if (prop.parent) {
       return !prop.parent.fileName.includes("@types/react");
