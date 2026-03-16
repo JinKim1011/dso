@@ -1,0 +1,260 @@
+[
+  {
+    "category": "typography",
+    "type": "FontSizeStep",
+    "value": [
+      "micro",
+      "microPlus",
+      "mini",
+      "miniPlus",
+      "small",
+      "smallPlus",
+      "regular",
+      "regularPlus",
+      "large",
+      "largePlus",
+      "title1",
+      "title2",
+      "title3"
+    ]
+  },
+  {
+    "category": "typography",
+    "type": "FontWeightStep",
+    "value": [
+      "regular",
+      "semibold",
+      "bold"
+    ]
+  },
+  {
+    "category": "typography",
+    "type": "LineHeightStep",
+    "value": [
+      "tight",
+      "normal",
+      "relaxed"
+    ]
+  },
+  {
+    "category": "typography",
+    "type": "TypographyVariant",
+    "value": [
+      "heading-xl",
+      "heading-lg",
+      "heading-md",
+      "body-md",
+      "body-md-strong",
+      "body-sm",
+      "body-sm-strong",
+      "label-sm",
+      "label-xs",
+      "meta-sm",
+      "meta-xs",
+      "control-md",
+      "control-sm",
+      "input-label-sm",
+      "input-helper-sm"
+    ]
+  },
+  {
+    "category": "spacing",
+    "type": "SpacingStep",
+    "value": [
+      "micro",
+      "microPlus",
+      "mini",
+      "miniPlus",
+      "small",
+      "smallPlus",
+      "regular",
+      "regularPlus",
+      "large",
+      "largePlus"
+    ]
+  },
+  {
+    "category": "spacing",
+    "type": "PaddingClass",
+    "value": [
+      "`p-${SpacingStep}`",
+      "p-0"
+    ]
+  },
+  {
+    "category": "spacing",
+    "type": "PaddingXClass",
+    "value": [
+      "`px-${SpacingStep}`",
+      "px-0"
+    ]
+  },
+  {
+    "category": "spacing",
+    "type": "PaddingYClass",
+    "value": [
+      "`py-${SpacingStep}`",
+      "py-0"
+    ]
+  },
+  {
+    "category": "spacing",
+    "type": "MarginClass",
+    "value": [
+      "`m-${SpacingStep}`",
+      "m-0"
+    ]
+  },
+  {
+    "category": "spacing",
+    "type": "MarginXClass",
+    "value": [
+      "`mx-${SpacingStep}`",
+      "mx-0"
+    ]
+  },
+  {
+    "category": "spacing",
+    "type": "MarginYClass",
+    "value": [
+      "`my-${SpacingStep}`",
+      "my-0"
+    ]
+  },
+  {
+    "category": "motion",
+    "type": "DurationVariant",
+    "value": [
+      "highlightFadeIn",
+      "highlightFadeOut",
+      "quickTransition",
+      "regularTransition",
+      "slowTransition"
+    ]
+  },
+  {
+    "category": "motion",
+    "type": "EaseVariant",
+    "value": [
+      "inQuad",
+      "inCubic",
+      "inQuart",
+      "inQuint",
+      "inExpo",
+      "inCirc",
+      "outQuad",
+      "outCubic",
+      "outQuart",
+      "outQuint",
+      "outExpo",
+      "outCirc",
+      "inOutQuad",
+      "inOutCubic",
+      "inOutQuart",
+      "inOutQuint",
+      "inOutExpo",
+      "inOutCirc"
+    ]
+  },
+  {
+    "category": "color",
+    "type": "SurfaceVariant",
+    "value": [
+      "primary",
+      "secondary",
+      "tertiary",
+      "quaternary"
+    ]
+  },
+  {
+    "category": "color",
+    "type": "ContentVariant",
+    "value": [
+      "primary",
+      "secondary",
+      "tertiary",
+      "quaternary"
+    ]
+  },
+  {
+    "category": "color",
+    "type": "StrokeVariant",
+    "value": [
+      "primary",
+      "secondary",
+      "tertiary"
+    ]
+  },
+  {
+    "category": "color",
+    "type": "BgClass",
+    "value": [
+      "`bg-surface-${SurfaceVariant}`",
+      "bg-transparent"
+    ]
+  },
+  {
+    "category": "color",
+    "type": "TextColorClass",
+    "value": [
+      "`text-content-${ContentVariant}`",
+      "text-primary"
+    ]
+  },
+  {
+    "category": "color",
+    "type": "BorderClass",
+    "value": [
+      "`border-stroke-${StrokeVariant}`",
+      "border-transparent"
+    ]
+  },
+  {
+    "category": "color",
+    "type": "HoverBgClass",
+    "value": [
+      "`hover:bg-surface-${SurfaceVariant}`",
+      "hover:bg-transparent"
+    ]
+  },
+  {
+    "category": "color",
+    "type": "HoverTextColorClass",
+    "value": [
+      "`hover:text-content-${ContentVariant}`",
+      "hover:text-primary"
+    ]
+  },
+  {
+    "category": "color",
+    "type": "HoverBorderClass",
+    "value": [
+      "`hover:border-stroke-${StrokeVariant}`",
+      "hover:border-transparent"
+    ]
+  },
+  {
+    "category": "color",
+    "type": "ActiveBgClass",
+    "value": [
+      "`active:bg-surface-${SurfaceVariant}`",
+      "active:bg-transparent"
+    ]
+  },
+  {
+    "category": "color",
+    "type": "ActiveTextColorClass",
+    "value": [
+      "`active:text-content-${ContentVariant}`",
+      "active:text-primary"
+    ]
+  },
+  {
+    "category": "color",
+    "type": "ActiveBorderClass",
+    "value": [
+      "`active:border-stroke-${StrokeVariant}`",
+      "active:border-transparent"
+    ]
+  }
+]
