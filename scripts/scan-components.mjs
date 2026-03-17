@@ -27,7 +27,15 @@ const manifest = componentFiles
     return docs.map((doc) => {
       if (!doc) return doc;
 
-      return doc;
+      const normalizedFilePath =
+        doc.filePath != null
+          ? path.relative(process.cwd(), doc.filePath)
+          : doc.filePath;
+
+      return {
+        ...doc,
+        filePath: normalizedFilePath,
+      };
     });
   })
   .filter(Boolean);
