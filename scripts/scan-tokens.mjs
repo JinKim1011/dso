@@ -26,9 +26,18 @@ function parseTokenFiles(filePath) {
       const typeName = node.name.getText(sourceFile);
 
       if (ts.isUnionTypeNode(node.type)) {
-        const values = node.type.types.map((t) =>
-          t.getText(sourceFile).replace(/['"]/g, ""),
-        );
+        const values = node.type.types.map((t) => {
+          const text = t.getText(sourceFile);
+
+          if (ts.isTemplateLiteralTypeNode) {
+            if (text.startsWith("`") && text.endsWith("`")) {
+              return text.slice(1, -1);
+            }
+
+            return text;
+          }
+          return text.replace(/[""]/g, "");
+        });
 
         results.push({
           category: fileName.replace(".ts", ""),
