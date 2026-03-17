@@ -44,14 +44,14 @@ export type TypographyRecipe = {
   lineHeight: LineHeightStep;
 };
 
-export const typographyStyles: Record<TypographyVariant, TypographyRecipe> = {
+export const typographyRecipes: Record<TypographyVariant, TypographyRecipe> = {
   "heading-xl": {
     fontSize: "title1",
     fontWeight: "bold",
     lineHeight: "tight",
   },
   "heading-lg": {
-    fontSize: "title3",
+    fontSize: "title2",
     fontWeight: "bold",
     lineHeight: "normal",
   },
@@ -121,3 +121,19 @@ export const typographyStyles: Record<TypographyVariant, TypographyRecipe> = {
     lineHeight: "normal",
   },
 };
+
+export function buildTypographyClass(recipe: TypographyRecipe): string {
+  return [
+    "text-" + recipe.fontSize,
+    "font-" + recipe.fontWeight,
+    "leading-" + recipe.lineHeight,
+  ].join(" ");
+}
+
+export const typographyStyles: Record<TypographyVariant, string> =
+  Object.fromEntries(
+    Object.entries(typographyRecipes).map(([variant, recipe]) => [
+      variant,
+      buildTypographyClass(recipe),
+    ]),
+  ) as Record<TypographyVariant, string>;
