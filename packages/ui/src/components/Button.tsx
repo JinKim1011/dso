@@ -17,7 +17,7 @@ import {
   MarginXClass,
   MarginYClass,
   typographyStyles,
-} from "./types/tokens";
+} from "../types/tokens";
 
 type ButtonVariant = "fill" | "outlined" | "void";
 type ButtonSize = "sm" | "md" | "lg";

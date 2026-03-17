@@ -1,0 +1,546 @@
+[
+  {
+    "tags": {},
+    "filePath": "dso-project/packages/ui/src/components/Text.tsx",
+    "description": "",
+    "displayName": "Text",
+    "methods": [],
+    "props": {
+      "variant": {
+        "defaultValue": {
+          "value": "body-md"
+        },
+        "description": "",
+        "name": "variant",
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Text.tsx",
+            "name": "TypeLiteral"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "enum",
+          "raw": "TypographyVariant",
+          "value": [
+            {
+              "value": "\"heading-xl\""
+            },
+            {
+              "value": "\"heading-lg\""
+            },
+            {
+              "value": "\"heading-md\""
+            },
+            {
+              "value": "\"body-md\""
+            },
+            {
+              "value": "\"body-md-strong\""
+            },
+            {
+              "value": "\"body-sm\""
+            },
+            {
+              "value": "\"body-sm-strong\""
+            },
+            {
+              "value": "\"label-sm\""
+            },
+            {
+              "value": "\"label-xs\""
+            },
+            {
+              "value": "\"meta-sm\""
+            },
+            {
+              "value": "\"meta-xs\""
+            },
+            {
+              "value": "\"control-md\""
+            },
+            {
+              "value": "\"control-sm\""
+            },
+            {
+              "value": "\"input-label-sm\""
+            },
+            {
+              "value": "\"input-helper-sm\""
+            }
+          ]
+        }
+      },
+      "as": {
+        "defaultValue": null,
+        "description": "",
+        "name": "as",
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Text.tsx",
+            "name": "TypeLiteral"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "ElementType<any, keyof IntrinsicElements>"
+        }
+      },
+      "className": {
+        "defaultValue": {
+          "value": ""
+        },
+        "description": "",
+        "name": "className",
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Text.tsx",
+            "name": "TypeLiteral"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "string"
+        }
+      }
+    }
+  },
+  {
+    "tags": {},
+    "filePath": "/Users/jin/project/dso-project/packages/ui/src/components/SegmentedControl.tsx",
+    "description": "",
+    "displayName": "SegmentedControl",
+    "methods": [],
+    "props": {
+      "options": {
+        "defaultValue": null,
+        "description": "",
+        "name": "options",
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/SegmentedControl.tsx",
+            "name": "TypeLiteral"
+          }
+        ],
+        "required": true,
+        "type": {
+          "name": "SegmentOption[]"
+        }
+      },
+      "value": {
+        "defaultValue": null,
+        "description": "",
+        "name": "value",
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/SegmentedControl.tsx",
+            "name": "TypeLiteral"
+          }
+        ],
+        "required": true,
+        "type": {
+          "name": "string"
+        }
+      },
+      "onChange": {
+        "defaultValue": null,
+        "description": "",
+        "name": "onChange",
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/SegmentedControl.tsx",
+            "name": "TypeLiteral"
+          }
+        ],
+        "required": true,
+        "type": {
+          "name": "(selected: string) => void"
+        }
+      },
+      "size": {
+        "defaultValue": {
+          "value": "md"
+        },
+        "description": "",
+        "name": "size",
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/SegmentedControl.tsx",
+            "name": "TypeLiteral"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "enum",
+          "raw": "\"sm\" | \"md\" | \"lg\"",
+          "value": [
+            {
+              "value": "\"sm\""
+            },
+            {
+              "value": "\"md\""
+            },
+            {
+              "value": "\"lg\""
+            }
+          ]
+        }
+      },
+      "iconOnly": {
+        "defaultValue": {
+          "value": "false"
+        },
+        "description": "",
+        "name": "iconOnly",
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/SegmentedControl.tsx",
+            "name": "TypeLiteral"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "boolean"
+        }
+      }
+    }
+  },
+  {
+    "tags": {},
+    "filePath": "/Users/jin/project/dso-project/packages/ui/src/components/Button.tsx",
+    "description": "",
+    "displayName": "Button",
+    "methods": [],
+    "props": {
+      "type": {
+        "defaultValue": {
+          "value": "button"
+        },
+        "description": "",
+        "name": "type",
+        "parent": {
+          "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+          "name": "ButtonProps"
+        },
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+            "name": "ButtonProps"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "enum",
+          "raw": "\"button\" | \"submit\" | \"reset\"",
+          "value": [
+            {
+              "value": "\"button\""
+            },
+            {
+              "value": "\"submit\""
+            },
+            {
+              "value": "\"reset\""
+            }
+          ]
+        }
+      },
+      "variant": {
+        "defaultValue": {
+          "value": "fill"
+        },
+        "description": "",
+        "name": "variant",
+        "parent": {
+          "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+          "name": "ButtonProps"
+        },
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+            "name": "ButtonProps"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "enum",
+          "raw": "ButtonVariant",
+          "value": [
+            {
+              "value": "\"fill\""
+            },
+            {
+              "value": "\"outlined\""
+            },
+            {
+              "value": "\"void\""
+            }
+          ]
+        }
+      },
+      "size": {
+        "defaultValue": {
+          "value": "md"
+        },
+        "description": "",
+        "name": "size",
+        "parent": {
+          "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+          "name": "ButtonProps"
+        },
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+            "name": "ButtonProps"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "enum",
+          "raw": "ButtonSize",
+          "value": [
+            {
+              "value": "\"sm\""
+            },
+            {
+              "value": "\"md\""
+            },
+            {
+              "value": "\"lg\""
+            }
+          ]
+        }
+      },
+      "inline": {
+        "defaultValue": {
+          "value": "false"
+        },
+        "description": "",
+        "name": "inline",
+        "parent": {
+          "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+          "name": "ButtonProps"
+        },
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+            "name": "ButtonProps"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "boolean"
+        }
+      },
+      "fullWidth": {
+        "defaultValue": {
+          "value": "false"
+        },
+        "description": "",
+        "name": "fullWidth",
+        "parent": {
+          "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+          "name": "ButtonProps"
+        },
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+            "name": "ButtonProps"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "boolean"
+        }
+      },
+      "iconOnly": {
+        "defaultValue": {
+          "value": "false"
+        },
+        "description": "",
+        "name": "iconOnly",
+        "parent": {
+          "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+          "name": "ButtonProps"
+        },
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+            "name": "ButtonProps"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "boolean"
+        }
+      },
+      "leftIcon": {
+        "defaultValue": null,
+        "description": "",
+        "name": "leftIcon",
+        "parent": {
+          "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+          "name": "ButtonProps"
+        },
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+            "name": "ButtonProps"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "IconComponent"
+        }
+      },
+      "rightIcon": {
+        "defaultValue": null,
+        "description": "",
+        "name": "rightIcon",
+        "parent": {
+          "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+          "name": "ButtonProps"
+        },
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+            "name": "ButtonProps"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "IconComponent"
+        }
+      },
+      "overrideBgClass": {
+        "defaultValue": null,
+        "description": "",
+        "name": "overrideBgClass",
+        "parent": {
+          "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+          "name": "ButtonProps"
+        },
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+            "name": "ButtonProps"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "enum",
+          "raw": "BgClass",
+          "value": [
+            {
+              "value": "\"bg-surface-primary\""
+            },
+            {
+              "value": "\"bg-surface-secondary\""
+            },
+            {
+              "value": "\"bg-surface-tertiary\""
+            },
+            {
+              "value": "\"bg-surface-quaternary\""
+            },
+            {
+              "value": "\"bg-transparent\""
+            }
+          ]
+        }
+      },
+      "overrideTextColorClass": {
+        "defaultValue": null,
+        "description": "",
+        "name": "overrideTextColorClass",
+        "parent": {
+          "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+          "name": "ButtonProps"
+        },
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+            "name": "ButtonProps"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "enum",
+          "raw": "TextColorClass",
+          "value": [
+            {
+              "value": "\"text-content-primary\""
+            },
+            {
+              "value": "\"text-content-secondary\""
+            },
+            {
+              "value": "\"text-content-tertiary\""
+            },
+            {
+              "value": "\"text-content-quaternary\""
+            },
+            {
+              "value": "\"text-primary\""
+            }
+          ]
+        }
+      },
+      "overrideBorderClass": {
+        "defaultValue": null,
+        "description": "",
+        "name": "overrideBorderClass",
+        "parent": {
+          "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+          "name": "ButtonProps"
+        },
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+            "name": "ButtonProps"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "enum",
+          "raw": "BorderClass",
+          "value": [
+            {
+              "value": "\"border-stroke-primary\""
+            },
+            {
+              "value": "\"border-stroke-secondary\""
+            },
+            {
+              "value": "\"border-stroke-tertiary\""
+            },
+            {
+              "value": "\"border-transparent\""
+            }
+          ]
+        }
+      },
+      "selected": {
+        "defaultValue": {
+          "value": "false"
+        },
+        "description": "",
+        "name": "selected",
+        "parent": {
+          "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+          "name": "ButtonProps"
+        },
+        "declarations": [
+          {
+            "fileName": "dso-project/packages/ui/src/components/Button.tsx",
+            "name": "ButtonProps"
+          }
+        ],
+        "required": false,
+        "type": {
+          "name": "boolean"
+        }
+      }
+    }
+  }
+]

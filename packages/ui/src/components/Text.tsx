@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { TypographyVariant, typographyStyles } from "./types/typography";
+import { TypographyVariant, typographyStyles } from "../types/typography";
 
 type TextProps<T extends React.ElementType = "p"> = {
   variant?: TypographyVariant;

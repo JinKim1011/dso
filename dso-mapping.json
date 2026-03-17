@@ -1,0 +1,15 @@
+{
+  "Button": {
+    "variant": "color",
+    "size": "spacing",
+    "overrideBgClass": "color",
+    "overrideTextColorClass": "color",
+    "overrideBorderClass": "color"
+  },
+  "Text": {
+    "variant": "typography"
+  },
+  "SegmentedControl": {
+    "size": "spacing"
+  }
+}
