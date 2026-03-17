@@ -14,29 +14,6 @@ export function extractUnionValues(tsContent, typeName) {
   return [...typeBlock.matchAll(literalPattern)].map((m) => m[1]);
 }
 
-export function extractCompositeStyles(tsContent, styleName) {
-  const escapedStyleName = styleName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const stylePattern = new RegExp(
-    `export\\s+const\\s+${escapedStyleName}\\s*:[\\s\\S]*?=\\s*\\{([\\s\\S]*?)\\};`,
-  );
-
-  const match = tsContent.match(stylePattern);
-
-  if (!match) return [];
-
-  const styleBlock = match[1];
-  const entryPattern = /["']([^"']+)["']\s*:\s*["']([^"']+)["']/g;
-
-  return [...styleBlock.matchAll(entryPattern)].map((entry) => {
-    const [, variant, classString] = entry;
-
-    return {
-      variant,
-      classes: classString.split(/\s+/).filter(Boolean),
-    };
-  });
-}
-
 export function extractTypographyReciepes(tsContent, styleName) {
   const escaped = styleName.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
   const pattern = new RegExp(
