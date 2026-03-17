@@ -21,8 +21,14 @@ const parser = docgen.withDefaultConfig({
 });
 
 const manifest = componentFiles
-  .map((file) => {
-    return parser.parse(file)[0];
+  .flatMap((file) => {
+    const docs = parser.parse(file) || [];
+
+    return docs.map((doc) => {
+      if (!doc) return doc;
+
+      return doc;
+    });
   })
   .filter(Boolean);
 
