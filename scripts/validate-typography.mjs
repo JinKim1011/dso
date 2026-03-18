@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import {
   extractUnionValues,
-  extractTypographyReciepes,
+  extractTypographyRecipes,
 } from "./lib/typeParser.mjs";
 
 const CSS_PATH = path.resolve("./packages/ui/src/index.css");
@@ -73,10 +73,7 @@ export function runTypographyAudit() {
 
   console.log("\n🔍 TYPOGRAPHY AUDIT: Checking for Broken Composite styles...");
 
-  const recipeStyles = extractTypographyReciepes(
-    tsContent,
-    "typographyRecipes",
-  );
+  const recipeStyles = extractTypographyRecipes(tsContent, "typographyRecipes");
 
   for (const { variant, classes } of recipeStyles) {
     for (const className of classes) {
