@@ -72,7 +72,7 @@ function parseTokenFiles(filePath) {
   const results = [];
 
   function visit(node) {
-    if (ts.isTypeAliasDeclaration(node)) {
+    if (ts.isTypeAliasDeclaration(node) && ts.isUnionTypeNode(node.type)) {
       const typeName = node.name.getText(sourceFile);
 
       if (ts.isUnionTypeNode(node.type)) {
