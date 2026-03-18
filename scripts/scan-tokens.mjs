@@ -93,6 +93,43 @@ function expandTemplateValue(template, valueIndex) {
   return resolved;
 }
 
+function attachClassUnionTemplateMetadata(entries) {
+  const valueIndex = buildUnionValueIndex(entries);
+
+  for (const entry of entries) {
+    if (entry.kind !== "class-union" || !Array.isArray(entry.value)) continue;
+
+    const literals = [];
+    const templates = [];
+
+    for (const item of entry.value) {
+      const references = [...item.matchAll(/\$\{([A-Za-z0-9_]+)}/g)].map(
+        (m) => m[1],
+      );
+
+      if (!references.length) {
+        literals.push(item);
+        continue;
+      }
+
+      const resolvedValues = expandTemplateValue(item, valueIndex);
+
+      templates.push({
+        template: item,
+        references,
+        resolvedValues,
+        status: resolvedValues.length ? "resolved" : "unresolved",
+      });
+    }
+
+    entry.templateMeta = {
+      mode: "template-first",
+      literals,
+      templates,
+    };
+  }
+}
+
 function attachTypographySemanticMap(entries, sourceText, fileName) {
   if (fileName !== "typography.ts") return;
 
