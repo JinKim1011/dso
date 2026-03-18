@@ -36,6 +36,28 @@ function normalizeUnionMember(typeNode, sourceFile) {
   return text.replace(/^["']|["']$/g, "");
 }
 
+const RULE_BY_TYPE = new Map(
+  TOKEN_CSS_VAR_RULES.map((rule) => [rule.type, rule]),
+);
+
+function enrichTokensWithCssValues(typeName, values, cssVarMap) {
+  const rule = RULE_BY_TYPE.get(typeName);
+
+  if (!rule?.cssVarPrefix) return undefined;
+
+  return values.map((name) => {
+    const cssVar = `${rule.cssVarPrefix}${name}`;
+    const cssValue = cssVarMap.get(cssVar) ?? null;
+
+    return {
+      name,
+      cssVar,
+      cssValue,
+      status: cssValue ? "matched" : "missing",
+    };
+  });
+}
+
 function parseTokenFiles(filePath) {
   const fileName = path.basename(filePath);
   const sourceText = fs.readFileSync(filePath, "utf-8");
