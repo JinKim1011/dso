@@ -64,7 +64,7 @@ function attachTypographySemanticMap(entries, sourceText, fileName) {
   if (fileName !== "typography.ts") return;
 
   const target = entries.find((entry) => entry.type === "TypographyVariant");
-  if (!target.length) return;
+  if (!target) return;
 
   const recipes = extractTypographyRecipes(sourceText, "typographyRecipes");
   if (!recipes.length) return;
