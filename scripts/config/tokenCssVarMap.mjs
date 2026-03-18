@@ -29,4 +29,6 @@ export const TOKEN_CSS_VAR_RULES = [
   { type: "ActiveBgClass", kind: "class-union" },
   { type: "ActiveTextColorClass", kind: "class-union" },
   { type: "ActiveBorderClass", kind: "class-union" },
+
+  { type: "TypographyVariant", kind: "semantic" },
 ];
