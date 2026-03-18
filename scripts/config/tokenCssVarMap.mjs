@@ -2,7 +2,6 @@ export const TOKEN_CSS_VAR_RULES = [
   { type: "FontSizeStep", cssVarPrefix: "--text-", kind: "primitive" },
   { type: "FontWeightStep", cssVarPrefix: "--font-", kind: "primitive" },
   { type: "LineHeightStep", cssVarPrefix: "--leading-", kind: "primitive" },
-  { type: "LineHeightStep", cssVarPrefix: "--leading-", kind: "primitive" },
   { type: "SpacingStep", cssVarPrefix: "--spacing-", kind: "primitive" },
   { type: "DurationVariant", cssVarPrefix: "--duration-", kind: "primitive" },
   { type: "EaseVariant", cssVarPrefix: "--ease-", kind: "primitive" },
