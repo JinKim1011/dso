@@ -86,7 +86,7 @@ function parseTokenFiles(filePath) {
         category: fileName.replace(".ts", ""),
         type: typeName,
         kind: rule?.kind ?? "unknown",
-        vlaue: values,
+        value: values,
       };
 
       if (tokens) {
