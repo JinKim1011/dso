@@ -74,27 +74,25 @@ function parseTokenFiles(filePath) {
   function visit(node) {
     if (ts.isTypeAliasDeclaration(node) && ts.isUnionTypeNode(node.type)) {
       const typeName = node.name.getText(sourceFile);
+      const values = node.type.types.map((typeNode) =>
+        normalizeUnionMember(typeNode, sourceFile),
+      );
 
-      if (ts.isUnionTypeNode(node.type)) {
-        const values = node.type.types.map((t) => {
-          const text = t.getText(sourceFile);
+      const rule = RULE_BY_TYPE.get(typeName);
+      const tokens = enrichTokensWithCssValues(typeName, values, cssVarMap);
 
-          if (ts.isTemplateLiteralTypeNode) {
-            if (text.startsWith("`") && text.endsWith("`")) {
-              return text.slice(1, -1);
-            }
+      const entry = {
+        category: fileName.replace(".ts", ""),
+        type: typeName,
+        kind: rule?.kind ?? "unknown",
+        vlaue: values,
+      };
 
-            return text;
-          }
-          return text.replace(/[""]/g, "");
-        });
-
-        results.push({
-          category: fileName.replace(".ts", ""),
-          type: typeName,
-          value: values,
-        });
+      if (tokens) {
+        entry.tokens = tokens;
       }
+
+      results.push(entry);
     }
 
     ts.forEachChild(node, visit);
