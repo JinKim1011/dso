@@ -60,6 +60,18 @@ function enrichTokensWithCssValues(typeName, values, cssVarMap) {
   });
 }
 
+function buildUnionValueIndex(entries) {
+  const index = new Map();
+
+  for (const entry of entries) {
+    if (Array.isArray(entry.value)) {
+      index.set(entry.type, entry.value);
+    }
+  }
+
+  return index;
+}
+
 function attachTypographySemanticMap(entries, sourceText, fileName) {
   if (fileName !== "typography.ts") return;
 
