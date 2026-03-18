@@ -5,6 +5,7 @@ import { TOKEN_CSS_VAR_RULES } from "./config/tokenCssVarMap.mjs";
 import ts from "typescript";
 
 const TOKENS_PATH = path.resolve("./packages/ui/src/types");
+const CSS_PATH = path.resolve("./packages/ui/src/index.css");
 const OUTPUT_PATH = path.resolve("./design-tokens-manifest.json");
 
 const tokenFiles = globSync(`${TOKENS_PATH}/**/*.ts`);
