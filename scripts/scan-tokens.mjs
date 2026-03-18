@@ -3,6 +3,7 @@ import path from "path";
 import { globSync } from "glob";
 import { TOKEN_CSS_VAR_RULES } from "./config/tokenCssVarMap.mjs";
 import ts from "typescript";
+import { extractTypographyRecipes } from "./lib/typeParser.mjs";
 
 const TOKENS_PATH = path.resolve("./packages/ui/src/types");
 const CSS_PATH = path.resolve("./packages/ui/src/index.css");
