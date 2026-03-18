@@ -73,12 +73,12 @@ export function runTypographyAudit() {
 
   console.log("\n🔍 TYPOGRAPHY AUDIT: Checking for Broken Composite styles...");
 
-  const compositeStyles = extractTypographyReciepes(
+  const recipeStyles = extractTypographyReciepes(
     tsContent,
-    "typographyStyles",
+    "typographyRecipes",
   );
 
-  for (const { variant, classes } of compositeStyles) {
+  for (const { variant, classes } of recipeStyles) {
     for (const className of classes) {
       const rule = findRule(className);
 
