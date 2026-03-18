@@ -8,7 +8,7 @@ export const TOKEN_CSS_VAR_RULES = [
   { type: "EaseVariant", cssVarPrefix: "--ease-", kind: "primitive" },
   { type: "SurfaceVariant", cssVarPrefix: "--bg-", kind: "primitive" },
   { type: "ContentVariant", cssVarPrefix: "--text-", kind: "primitive" },
-  { type: "StrokeVariant", cssVarPrefix: "--stroke", kind: "primitive" },
+  { type: "StrokeVariant", cssVarPrefix: "--stroke-", kind: "primitive" },
 
   { type: "PaddingClass", kind: "class-union" },
   { type: "PaddingXClass", kind: "class-union" },
