@@ -72,6 +72,27 @@ function buildUnionValueIndex(entries) {
   return index;
 }
 
+function expandTemplateValue(template, valueIndex) {
+  const placeholderRe = /\$\{([A-Za-z0-9_]+)\}/;
+  const match = template.macth(placeholderRe);
+
+  if (!match) return [template];
+
+  const refType = match[1];
+  const refValues = valueIndex.get(refType) || [];
+
+  if (!refValues.length) return [];
+
+  const resolved = [];
+
+  for (const refValue of refValues) {
+    const replaced = template.replace(match[0], refValue);
+    resolved.push(...expandTemplateValue(replaced, valueIndex));
+  }
+
+  return resolved;
+}
+
 function attachTypographySemanticMap(entries, sourceText, fileName) {
   if (fileName !== "typography.ts") return;
 
