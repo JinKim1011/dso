@@ -23,6 +23,19 @@ function extractCssVars(cssContent) {
   return map;
 }
 
+function normalizeUnionMember(typeNode, sourceFile) {
+  const text = typeNode.getText(sourceFile).trim();
+
+  if (ts.isTemplateLiteralTypeNode(typeNode)) {
+    if (text.startsWith("`") && text.endsWith("`")) {
+      return text.slice(1, -1);
+    }
+    return text;
+  }
+
+  return text.replace(/^["']|["']$/g, "");
+}
+
 function parseTokenFiles(filePath) {
   const fileName = path.basename(filePath);
   const sourceText = fs.readFileSync(filePath, "utf-8");
