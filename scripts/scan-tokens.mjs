@@ -120,6 +120,8 @@ function parseTokenFiles(filePath) {
   }
 
   visit(sourceFile);
+  attachTypographySemanticMap(results, sourceText, fileName);
+
   return results;
 }
 
