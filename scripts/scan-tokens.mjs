@@ -202,4 +202,6 @@ const manifest = tokenFiles
   .flatMap((file) => parseTokenFiles(file, cssVarMap))
   .filter(Boolean);
 
+attachClassUnionTemplateMetadata(manifest);
+
 fs.writeFileSync(OUTPUT_PATH, JSON.stringify(manifest, null, 2));
