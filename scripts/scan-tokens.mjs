@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { globSync } from "glob";
+import { TOKEN_CSS_VAR_RULES } from "./config/tokenCssVarMap.mjs";
 import ts from "typescript";
 
 const TOKENS_PATH = path.resolve("./packages/ui/src/types");
