@@ -103,8 +103,11 @@ function parseTokenFiles(filePath) {
   return results;
 }
 
+const cssContent = fs.readFileSync(CSS_PATH, "utf-8");
+const cssVarMap = extractCssVars(cssContent);
+
 const manifest = tokenFiles
-  .flatMap((file) => parseTokenFiles(file))
+  .flatMap((file) => parseTokenFiles(file, cssVarMap))
   .filter(Boolean);
 
 fs.writeFileSync(OUTPUT_PATH, JSON.stringify(manifest, null, 2));
