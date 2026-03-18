@@ -9,6 +9,20 @@ const OUTPUT_PATH = path.resolve("./design-tokens-manifest.json");
 
 const tokenFiles = globSync(`${TOKENS_PATH}/**/*.ts`);
 
+function extractCssVars(cssContent) {
+  const map = new Map();
+  const re = /(--[a-zA-Z0-9-]+)\s*:\s*([^;]+);/g;
+  let match;
+
+  while ((match = re.exec(cssContent)) !== null) {
+    const varName = match[1].trim();
+    const varValue = match[2].trim();
+    map.set(varName, varValue);
+  }
+
+  return map;
+}
+
 function parseTokenFiles(filePath) {
   const fileName = path.basename(filePath);
   const sourceText = fs.readFileSync(filePath, "utf-8");
