@@ -74,7 +74,7 @@ function buildUnionValueIndex(entries) {
 
 function expandTemplateValue(template, valueIndex) {
   const placeholderRe = /\$\{([A-Za-z0-9_]+)\}/;
-  const match = template.macth(placeholderRe);
+  const match = template.match(placeholderRe);
 
   if (!match) return [template];
 
