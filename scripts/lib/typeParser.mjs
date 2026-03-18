@@ -14,25 +14,31 @@ export function extractUnionValues(tsContent, typeName) {
   return [...typeBlock.matchAll(literalPattern)].map((m) => m[1]);
 }
 
-export function extractCompositeStyles(tsContent, styleName) {
-  const escapedStyleName = styleName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const stylePattern = new RegExp(
-    `export\\s+const\\s+${escapedStyleName}\\s*:[\\s\\S]*?=\\s*\\{([\\s\\S]*?)\\};`,
+export function extractTypographyRecipes(tsContent, styleName) {
+  const escaped = styleName.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
+  const pattern = new RegExp(
+    "export\\s+const\\s+" + escaped + "\\s*:[\\s\\S]*?=\\s*\\{([\\s\\S]*?)\\};",
   );
 
-  const match = tsContent.match(stylePattern);
+  const rootMatch = tsContent.match(pattern);
+  if (!rootMatch) return [];
 
-  if (!match) return [];
+  const block = rootMatch[1];
+  const entryPattern = /["']([^"']+)["']\s*:\s*\{([\s\S]*?)\}\s*,?/g;
 
-  const styleBlock = match[1];
-  const entryPattern = /["']([^"']+)["']\s*:\s*["']([^"']+)["']/g;
+  return [...block.matchAll(entryPattern)].map((entry) => {
+    const variant = entry[1];
+    const body = entry[2];
 
-  return [...styleBlock.matchAll(entryPattern)].map((entry) => {
-    const [, variant, classString] = entry;
+    const fontSizeMatch = body.match(/fontSize\s*:\s*["']([^"']+)["']/);
+    const fontWeightMatch = body.match(/fontWeight\s*:\s*["']([^"']+)["']/);
+    const lineHeightMatch = body.match(/lineHeight\s*:\s*["']([^"']+)["']/);
 
     return {
       variant,
-      classes: classString.split(/\s+/).filter(Boolean),
+      fontSize: fontSizeMatch ? fontSizeMatch[1] : null,
+      fontWeight: fontWeightMatch ? fontWeightMatch[1] : null,
+      lineHeight: lineHeightMatch ? lineHeightMatch[1] : null,
     };
   });
 }

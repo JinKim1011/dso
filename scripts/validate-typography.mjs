@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
 import {
-  extractCompositeStyles,
   extractUnionValues,
+  extractTypographyRecipes,
 } from "./lib/typeParser.mjs";
 
 const CSS_PATH = path.resolve("./packages/ui/src/index.css");
@@ -67,28 +67,23 @@ export function runTypographyAudit() {
     }
   }
 
-  function findRule(className) {
-    return RULES.find((rule) => className.startsWith(rule.classPrefix));
-  }
-
   console.log("\n🔍 TYPOGRAPHY AUDIT: Checking for Broken Composite styles...");
 
-  const compositeStyles = extractCompositeStyles(tsContent, "typographyStyles");
+  const recipeStyles = extractTypographyRecipes(tsContent, "typographyRecipes");
 
-  for (const { variant, classes } of compositeStyles) {
-    for (const className of classes) {
-      const rule = findRule(className);
+  for (const recipe of recipeStyles) {
+    const { variant, fontSize, fontWeight, lineHeight } = recipe;
+    const propertiesToCheck = [
+      { value: fontSize, property: "FontSizeStep" },
+      { value: fontWeight, property: "FontWeightStep" },
+      { value: lineHeight, property: "LineHeightStep" },
+    ];
 
-      if (!rule) {
-        console.error(
-          `❌ TYPOGRAPHY COMPOSITE STYLE DRIFT: ${variant} illegal class format "${className}"`,
-        );
-        errorCount++;
-        continue;
-      }
+    for (const { value, property } of propertiesToCheck) {
+      if (!value) continue;
 
-      const value = className.slice(rule.classPrefix.length);
-      const isValid = tokenSetsByType[rule.tsType].has(value);
+      const rule = RULES.find((r) => r.tsType === property);
+      const isValid = tokenSetsByType[property].has(value);
 
       if (!isValid) {
         console.error(
