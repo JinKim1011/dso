@@ -17,7 +17,7 @@ export function extractUnionValues(tsContent, typeName) {
 export function extractTypographyRecipes(tsContent, styleName) {
   const escaped = styleName.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
   const pattern = new RegExp(
-    "export\s+const\s+" + escaped + "\s:[\s\S]?=\s\{([\s\S]*?)\};",
+    "export\\s+const\\s+" + escaped + "\\s*:[\\s\\S]*?=\\s*\\{([\\s\\S]*?)\\};",
   );
 
   const rootMatch = tsContent.match(pattern);
