@@ -24,15 +24,15 @@ export function extractTypographyRecipes(tsContent, styleName) {
   if (!rootMatch) return [];
 
   const block = rootMatch[1];
-  const entryPattern = /"'["']\s*:\s*\{([\s\S]*?)\}\s*,?/g;
+  const entryPattern = /["']([^"']+)["']\s*:\s*\{([\s\S]*?)\}\s*,?/g;
 
   return [...block.matchAll(entryPattern)].map((entry) => {
     const variant = entry[1];
     const body = entry[2];
 
-    const fontSizeMatch = body.match(/fontSize\s*:\s*"'["']/);
-    const fontWeightMatch = body.match(/fontWeight\s*:\s*"'["']/);
-    const lineHeightMatch = body.match(/lineHeight\s*:\s*"'["']/);
+    const fontSizeMatch = body.match(/fontSize\s*:\s*["']([^"']+)["']/);
+    const fontWeightMatch = body.match(/fontWeight\s*:\s*["']([^"']+)["']/);
+    const lineHeightMatch = body.match(/lineHeight\s*:\s*["']([^"']+)["']/);
 
     return {
       variant,
