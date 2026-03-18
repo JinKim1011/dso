@@ -14,7 +14,7 @@ export function extractUnionValues(tsContent, typeName) {
   return [...typeBlock.matchAll(literalPattern)].map((m) => m[1]);
 }
 
-export function extractTypographyReciepes(tsContent, styleName) {
+export function extractTypographyRecipes(tsContent, styleName) {
   const escaped = styleName.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
   const pattern = new RegExp(
     "export\s+const\s+" + escaped + "\s:[\s\S]?=\s\{([\s\S]*?)\};",
