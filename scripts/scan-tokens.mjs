@@ -60,6 +60,25 @@ function enrichTokensWithCssValues(typeName, values, cssVarMap) {
   });
 }
 
+function attachTypographySemanticMap(entries, sourceText, fileName) {
+  if (fileName !== "typography.ts") return;
+
+  const target = entries.find((entry) => entry.type === "TypographyVariant");
+  if (!target.length) return;
+
+  const recipes = extractTypographyRecipes(sourceText, "typographyRecipes");
+  if (!recipes.length) return;
+
+  target.semanticMap = recipes.map((recipe) => ({
+    name: recipe.variant,
+    fontSize: recipe.fontSize,
+    fontWeight: recipe.fontWeight,
+    lineHeight: recipe.lineHeight,
+  }));
+
+  target.kind = "semantic";
+}
+
 function parseTokenFiles(filePath) {
   const fileName = path.basename(filePath);
   const sourceText = fs.readFileSync(filePath, "utf-8");
