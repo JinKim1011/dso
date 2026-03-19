@@ -12,17 +12,29 @@ const OUTPUT_PATH = path.resolve("./design-tokens-manifest.json");
 const tokenFiles = globSync(`${TOKENS_PATH}/**/*.ts`);
 
 function extractCssVars(cssContent) {
-  const map = new Map();
-  const re = /(--[a-zA-Z0-9-]+)\s*:\s*([^;]+);/g;
-  let match;
+  const readVars = (block) => {
+    const map = new Map();
+    const re = /(--[a-zA-Z0-9-]+)\s*:\s*([^;]+);/g;
+    let match;
 
-  while ((match = re.exec(cssContent)) !== null) {
-    const varName = match[1].trim();
-    const varValue = match[2].trim();
-    map.set(varName, varValue);
-  }
+    while ((match = re.exec(block)) !== null) {
+      const varName = match[1].trim();
+      const varValue = match[2].trim();
+      map.set(varName, varValue);
+    }
 
-  return map;
+    return map;
+  };
+
+  const rootBlockMatch = cssContent.match(/:root\s*\{([\s\S]*?)\}/);
+  const darkBlockMatch = cssContent.match(
+    /\[data-theme="dark"\]\s*\{([\s\S]*?)\}/,
+  );
+
+  return {
+    light: readVars(rootBlockMatch ? rootBlockMatch[1] : ""),
+    dark: readVars(darkBlockMatch ? darkBlockMatch[1] : ""),
+  };
 }
 
 function normalizeUnionMember(typeNode, sourceFile) {
