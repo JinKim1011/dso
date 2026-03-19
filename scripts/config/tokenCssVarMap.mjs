@@ -53,6 +53,12 @@ export const TOKEN_CSS_VAR_RULES = [
     cssVarPrefix: "--stroke-",
     kind: "primitive",
   },
+  {
+    category: "color",
+    type: "AccentVariant",
+    cssVarPrefix: "--accent-",
+    kind: "primitive",
+  },
 
   { category: "spacing", type: "PaddingClass", kind: "class-union" },
   { category: "spacing", type: "PaddingXClass", kind: "class-union" },
