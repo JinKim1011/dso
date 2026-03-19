@@ -61,13 +61,17 @@ function enrichTokensWithCssValues(typeName, values, cssVarMap) {
 
   return values.map((name) => {
     const cssVar = `${rule.cssVarPrefix}${name}`;
-    const cssValue = cssVarMap.get(cssVar) ?? null;
+    const light = cssVarMap.light.get(cssVar) ?? null;
+    const dark = cssVarMap.dark.get(cssVar) ?? null;
 
     return {
       name,
       cssVar,
-      cssValue,
-      status: cssValue ? "matched" : "missing",
+      values: { light, dark },
+      status: {
+        light: light ? "matched" : "missing",
+        dark: dark ? "matched" : "missing",
+      },
     };
   });
 }
