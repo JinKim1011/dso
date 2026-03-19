@@ -61,24 +61,36 @@ const RULE_BY_TYPE = new Map(
   TOKEN_CSS_VAR_RULES.map((rule) => [rule.type, rule]),
 );
 
-function enrichTokensWithCssValues(typeName, values, cssVarMap) {
+function enrichTokensWithCssValues(category, typeName, values, cssVarMap) {
   const rule = RULE_BY_TYPE.get(typeName);
 
   if (!rule?.cssVarPrefix) return undefined;
 
   return values.map((name) => {
     const cssVar = `${rule.cssVarPrefix}${name}`;
-    const light = cssVarMap.light.get(cssVar) ?? null;
-    const dark = cssVarMap.dark.get(cssVar) ?? null;
+
+    if (category === "color") {
+      const light = cssVarMap.light.get(cssVar) ?? null;
+      const dark = cssVarMap.dark.get(cssVar) ?? null;
+
+      return {
+        name,
+        cssVar,
+        values: { light, dark },
+        status: {
+          light: light ? "matched" : "missing",
+          dark: dark ? "matched" : "missing",
+        },
+      };
+    }
+
+    const value = cssVarMap.base.get(cssVar) ?? null;
 
     return {
       name,
       cssVar,
-      values: { light, dark },
-      status: {
-        light: light ? "matched" : "missing",
-        dark: dark ? "matched" : "missing",
-      },
+      value,
+      status: value ? "matched" : "missing",
     };
   });
 }
