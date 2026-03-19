@@ -240,7 +240,7 @@ const cssContent = fs.readFileSync(CSS_PATH, "utf-8");
 const cssVarMap = extractCssVars(cssContent);
 
 const manifest = tokenFiles
-  .flatMap((file) => parseTokenFiles(file, cssVarMap))
+  .flatMap((file) => parseTokenFiles(file))
   .filter(Boolean);
 
 attachClassUnionTemplateMetadata(manifest);
