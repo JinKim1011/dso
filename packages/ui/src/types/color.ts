@@ -12,6 +12,8 @@ export type ContentVariant =
 
 export type StrokeVariant = "primary" | "secondary" | "tertiary";
 
+export type AccentVariant = "default" | "subtle" | "strong" | "muted";
+
 export type BgClass = `bg-surface-${SurfaceVariant}` | "bg-transparent";
 
 export type OverrideBGClass = BgClass;
