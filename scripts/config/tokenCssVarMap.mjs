@@ -62,6 +62,8 @@ export const TOKEN_CSS_VAR_RULES = [
   { category: "spacing", type: "MarginXClass", kind: "class-union" },
   { category: "spacing", type: "MarginYClass", kind: "class-union" },
 
+  { category: "spacing", type: "GapClass", kind: "class-union" }
+
   { category: "color", type: "BgClass", kind: "class-union" },
   { category: "color", type: "TextColorClass", kind: "class-union" },
   { category: "color", type: "BorderClass", kind: "class-union" },
