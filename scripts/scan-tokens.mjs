@@ -205,10 +205,16 @@ function parseTokenFiles(filePath) {
       );
 
       const rule = RULE_BY_TYPE.get(typeName);
-      const tokens = enrichTokensWithCssValues(typeName, values, cssVarMap);
+      const category = rule?.category;
+      const tokens = enrichTokensWithCssValues(
+        category,
+        typeName,
+        values,
+        cssVarMap,
+      );
 
       const entry = {
-        category: fileName.replace(".ts", ""),
+        category: category,
         type: typeName,
         kind: rule?.kind ?? "unknown",
         value: values,
