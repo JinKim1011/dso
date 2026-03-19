@@ -30,10 +30,17 @@ function extractCssVars(cssContent) {
   const darkBlockMatch = cssContent.match(
     /\[data-theme="dark"\]\s*\{([\s\S]*?)\}/,
   );
+  const themeBlockMatch = cssContent.match(/@theme\s*\{([\s\S]*?)\}/);
+
+  const rootVars = readVars(rootBlockMatch ? rootBlockMatch[1] : "");
+  const darkVars = readVars(darkBlockMatch ? darkBlockMatch[1] : "");
+  const themeVars = readVars(themeBlockMatch ? themeBlockMatch[1] : "");
+  const allVars = readVars(cssContent);
 
   return {
-    light: readVars(rootBlockMatch ? rootBlockMatch[1] : ""),
-    dark: readVars(darkBlockMatch ? darkBlockMatch[1] : ""),
+    light: rootVars,
+    dark: darkVars,
+    base: new Map([...themeVars, ...allVars]),
   };
 }
 
