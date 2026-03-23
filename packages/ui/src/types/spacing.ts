@@ -18,4 +18,4 @@ export type MarginClass = `m-${SpacingStep}` | "m-0";
 export type MarginXClass = `mx-${SpacingStep}` | "mx-0";
 export type MarginYClass = `my-${SpacingStep}` | "my-0";
 
-export type GapClass = `gap-${SpacingStep}`;
+export type GapClass = `gap-${SpacingStep}` | "gap-0";

@@ -3,22 +3,29 @@ export type SurfaceVariant =
   | "secondary"
   | "tertiary"
   | "quaternary";
+
 export type ContentVariant =
   | "primary"
   | "secondary"
   | "tertiary"
   | "quaternary";
+
 export type StrokeVariant = "primary" | "secondary" | "tertiary";
 
+export type AccentVariant = "default" | "subtle" | "strong" | "muted";
+
 export type BgClass = `bg-surface-${SurfaceVariant}` | "bg-transparent";
+
 export type OverrideBGClass = BgClass;
 
 export type TextColorClass = `text-content-${ContentVariant}` | "text-primary";
+
 export type OverrideTextColorClass = TextColorClass;
 
 export type BorderClass =
   | `border-stroke-${StrokeVariant}`
   | "border-transparent";
+
 export type OverrideBorderClass = BorderClass;
 
 export type HoverBgClass =

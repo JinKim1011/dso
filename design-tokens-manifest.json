@@ -2,6 +2,7 @@
   {
     "category": "typography",
     "type": "FontSizeStep",
+    "kind": "primitive",
     "value": [
       "micro",
       "microPlus",
@@ -16,29 +17,144 @@
       "title1",
       "title2",
       "title3"
+    ],
+    "tokens": [
+      {
+        "name": "micro",
+        "cssVar": "--text-micro",
+        "value": "0.6875rem",
+        "status": "matched"
+      },
+      {
+        "name": "microPlus",
+        "cssVar": "--text-microPlus",
+        "value": "0.75rem",
+        "status": "matched"
+      },
+      {
+        "name": "mini",
+        "cssVar": "--text-mini",
+        "value": "0.75rem",
+        "status": "matched"
+      },
+      {
+        "name": "miniPlus",
+        "cssVar": "--text-miniPlus",
+        "value": "0.8125rem",
+        "status": "matched"
+      },
+      {
+        "name": "small",
+        "cssVar": "--text-small",
+        "value": "0.8125rem",
+        "status": "matched"
+      },
+      {
+        "name": "smallPlus",
+        "cssVar": "--text-smallPlus",
+        "value": "0.875rem",
+        "status": "matched"
+      },
+      {
+        "name": "regular",
+        "cssVar": "--text-regular",
+        "value": "0.9375rem",
+        "status": "matched"
+      },
+      {
+        "name": "regularPlus",
+        "cssVar": "--text-regularPlus",
+        "value": "1rem",
+        "status": "matched"
+      },
+      {
+        "name": "large",
+        "cssVar": "--text-large",
+        "value": "1.125rem",
+        "status": "matched"
+      },
+      {
+        "name": "largePlus",
+        "cssVar": "--text-largePlus",
+        "value": "1.25rem",
+        "status": "matched"
+      },
+      {
+        "name": "title1",
+        "cssVar": "--text-title1",
+        "value": "2.25rem",
+        "status": "matched"
+      },
+      {
+        "name": "title2",
+        "cssVar": "--text-title2",
+        "value": "1.5rem",
+        "status": "matched"
+      },
+      {
+        "name": "title3",
+        "cssVar": "--text-title3",
+        "value": "1.25rem",
+        "status": "matched"
+      }
     ]
   },
   {
     "category": "typography",
     "type": "FontWeightStep",
-    "value": [
-      "regular",
-      "semibold",
-      "bold"
+    "kind": "primitive",
+    "value": ["regular", "semibold", "bold"],
+    "tokens": [
+      {
+        "name": "regular",
+        "cssVar": "--font-regular",
+        "value": "400",
+        "status": "matched"
+      },
+      {
+        "name": "semibold",
+        "cssVar": "--font-semibold",
+        "value": "600",
+        "status": "matched"
+      },
+      {
+        "name": "bold",
+        "cssVar": "--font-bold",
+        "value": "700",
+        "status": "matched"
+      }
     ]
   },
   {
     "category": "typography",
     "type": "LineHeightStep",
-    "value": [
-      "tight",
-      "normal",
-      "relaxed"
+    "kind": "primitive",
+    "value": ["tight", "normal", "relaxed"],
+    "tokens": [
+      {
+        "name": "tight",
+        "cssVar": "--leading-tight",
+        "value": "1.3",
+        "status": "matched"
+      },
+      {
+        "name": "normal",
+        "cssVar": "--leading-normal",
+        "value": "1.5",
+        "status": "matched"
+      },
+      {
+        "name": "relaxed",
+        "cssVar": "--leading-relaxed",
+        "value": "1.7",
+        "status": "matched"
+      }
     ]
   },
   {
     "category": "typography",
     "type": "TypographyVariant",
+    "kind": "semantic",
     "value": [
       "heading-xl",
       "heading-lg",
@@ -55,11 +171,104 @@
       "control-sm",
       "input-label-sm",
       "input-helper-sm"
+    ],
+    "semanticMap": [
+      {
+        "name": "heading-xl",
+        "fontSize": "title1",
+        "fontWeight": "bold",
+        "lineHeight": "tight"
+      },
+      {
+        "name": "heading-lg",
+        "fontSize": "title2",
+        "fontWeight": "bold",
+        "lineHeight": "normal"
+      },
+      {
+        "name": "heading-md",
+        "fontSize": "title3",
+        "fontWeight": "semibold",
+        "lineHeight": "normal"
+      },
+      {
+        "name": "body-md",
+        "fontSize": "regular",
+        "fontWeight": "regular",
+        "lineHeight": "normal"
+      },
+      {
+        "name": "body-md-strong",
+        "fontSize": "regular",
+        "fontWeight": "semibold",
+        "lineHeight": "normal"
+      },
+      {
+        "name": "body-sm",
+        "fontSize": "small",
+        "fontWeight": "regular",
+        "lineHeight": "normal"
+      },
+      {
+        "name": "body-sm-strong",
+        "fontSize": "small",
+        "fontWeight": "semibold",
+        "lineHeight": "normal"
+      },
+      {
+        "name": "label-sm",
+        "fontSize": "small",
+        "fontWeight": "semibold",
+        "lineHeight": "tight"
+      },
+      {
+        "name": "label-xs",
+        "fontSize": "mini",
+        "fontWeight": "semibold",
+        "lineHeight": "tight"
+      },
+      {
+        "name": "meta-sm",
+        "fontSize": "small",
+        "fontWeight": "regular",
+        "lineHeight": "relaxed"
+      },
+      {
+        "name": "meta-xs",
+        "fontSize": "mini",
+        "fontWeight": "regular",
+        "lineHeight": "relaxed"
+      },
+      {
+        "name": "control-md",
+        "fontSize": "regular",
+        "fontWeight": "regular",
+        "lineHeight": "tight"
+      },
+      {
+        "name": "control-sm",
+        "fontSize": "small",
+        "fontWeight": "regular",
+        "lineHeight": "tight"
+      },
+      {
+        "name": "input-label-sm",
+        "fontSize": "small",
+        "fontWeight": "semibold",
+        "lineHeight": "tight"
+      },
+      {
+        "name": "input-helper-sm",
+        "fontSize": "mini",
+        "fontWeight": "regular",
+        "lineHeight": "normal"
+      }
     ]
   },
   {
     "category": "spacing",
     "type": "SpacingStep",
+    "kind": "primitive",
     "value": [
       "micro",
       "microPlus",
@@ -71,70 +280,321 @@
       "regularPlus",
       "large",
       "largePlus"
+    ],
+    "tokens": [
+      {
+        "name": "micro",
+        "cssVar": "--spacing-micro",
+        "value": "0.125rem",
+        "status": "matched"
+      },
+      {
+        "name": "microPlus",
+        "cssVar": "--spacing-microPlus",
+        "value": "0.25rem",
+        "status": "matched"
+      },
+      {
+        "name": "mini",
+        "cssVar": "--spacing-mini",
+        "value": "0.5rem",
+        "status": "matched"
+      },
+      {
+        "name": "miniPlus",
+        "cssVar": "--spacing-miniPlus",
+        "value": "0.75rem",
+        "status": "matched"
+      },
+      {
+        "name": "small",
+        "cssVar": "--spacing-small",
+        "value": "1rem",
+        "status": "matched"
+      },
+      {
+        "name": "smallPlus",
+        "cssVar": "--spacing-smallPlus",
+        "value": "1.25rem",
+        "status": "matched"
+      },
+      {
+        "name": "regular",
+        "cssVar": "--spacing-regular",
+        "value": "1.5rem",
+        "status": "matched"
+      },
+      {
+        "name": "regularPlus",
+        "cssVar": "--spacing-regularPlus",
+        "value": "2rem",
+        "status": "matched"
+      },
+      {
+        "name": "large",
+        "cssVar": "--spacing-large",
+        "value": "3rem",
+        "status": "matched"
+      },
+      {
+        "name": "largePlus",
+        "cssVar": "--spacing-largePlus",
+        "value": "4rem",
+        "status": "matched"
+      }
     ]
   },
   {
     "category": "spacing",
     "type": "PaddingClass",
-    "value": [
-      "`p-${SpacingStep}`",
-      "p-0"
-    ]
+    "kind": "class-union",
+    "value": ["p-${SpacingStep}", "p-0"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["p-0"],
+      "templates": [
+        {
+          "template": "p-${SpacingStep}",
+          "references": ["SpacingStep"],
+          "resolvedValues": [
+            "p-micro",
+            "p-microPlus",
+            "p-mini",
+            "p-miniPlus",
+            "p-small",
+            "p-smallPlus",
+            "p-regular",
+            "p-regularPlus",
+            "p-large",
+            "p-largePlus"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "spacing",
     "type": "PaddingXClass",
-    "value": [
-      "`px-${SpacingStep}`",
-      "px-0"
-    ]
+    "kind": "class-union",
+    "value": ["px-${SpacingStep}", "px-0"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["px-0"],
+      "templates": [
+        {
+          "template": "px-${SpacingStep}",
+          "references": ["SpacingStep"],
+          "resolvedValues": [
+            "px-micro",
+            "px-microPlus",
+            "px-mini",
+            "px-miniPlus",
+            "px-small",
+            "px-smallPlus",
+            "px-regular",
+            "px-regularPlus",
+            "px-large",
+            "px-largePlus"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "spacing",
     "type": "PaddingYClass",
-    "value": [
-      "`py-${SpacingStep}`",
-      "py-0"
-    ]
+    "kind": "class-union",
+    "value": ["py-${SpacingStep}", "py-0"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["py-0"],
+      "templates": [
+        {
+          "template": "py-${SpacingStep}",
+          "references": ["SpacingStep"],
+          "resolvedValues": [
+            "py-micro",
+            "py-microPlus",
+            "py-mini",
+            "py-miniPlus",
+            "py-small",
+            "py-smallPlus",
+            "py-regular",
+            "py-regularPlus",
+            "py-large",
+            "py-largePlus"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "spacing",
     "type": "MarginClass",
-    "value": [
-      "`m-${SpacingStep}`",
-      "m-0"
-    ]
+    "kind": "class-union",
+    "value": ["m-${SpacingStep}", "m-0"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["m-0"],
+      "templates": [
+        {
+          "template": "m-${SpacingStep}",
+          "references": ["SpacingStep"],
+          "resolvedValues": [
+            "m-micro",
+            "m-microPlus",
+            "m-mini",
+            "m-miniPlus",
+            "m-small",
+            "m-smallPlus",
+            "m-regular",
+            "m-regularPlus",
+            "m-large",
+            "m-largePlus"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "spacing",
     "type": "MarginXClass",
-    "value": [
-      "`mx-${SpacingStep}`",
-      "mx-0"
-    ]
+    "kind": "class-union",
+    "value": ["mx-${SpacingStep}", "mx-0"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["mx-0"],
+      "templates": [
+        {
+          "template": "mx-${SpacingStep}",
+          "references": ["SpacingStep"],
+          "resolvedValues": [
+            "mx-micro",
+            "mx-microPlus",
+            "mx-mini",
+            "mx-miniPlus",
+            "mx-small",
+            "mx-smallPlus",
+            "mx-regular",
+            "mx-regularPlus",
+            "mx-large",
+            "mx-largePlus"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "spacing",
     "type": "MarginYClass",
-    "value": [
-      "`my-${SpacingStep}`",
-      "my-0"
-    ]
+    "kind": "class-union",
+    "value": ["my-${SpacingStep}", "my-0"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["my-0"],
+      "templates": [
+        {
+          "template": "my-${SpacingStep}",
+          "references": ["SpacingStep"],
+          "resolvedValues": [
+            "my-micro",
+            "my-microPlus",
+            "my-mini",
+            "my-miniPlus",
+            "my-small",
+            "my-smallPlus",
+            "my-regular",
+            "my-regularPlus",
+            "my-large",
+            "my-largePlus"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
+  },
+  {
+    "category": "spacing",
+    "type": "GapClass",
+    "kind": "class-union",
+    "value": ["gap-${SpacingStep}", "gap-0"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["gap-0"],
+      "templates": [
+        {
+          "template": "gap-${SpacingStep}",
+          "references": ["SpacingStep"],
+          "resolvedValues": [
+            "gap-micro",
+            "gap-microPlus",
+            "gap-mini",
+            "gap-miniPlus",
+            "gap-small",
+            "gap-smallPlus",
+            "gap-regular",
+            "gap-regularPlus",
+            "gap-large",
+            "gap-largePlus"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "motion",
     "type": "DurationVariant",
+    "kind": "primitive",
     "value": [
       "highlightFadeIn",
       "highlightFadeOut",
       "quickTransition",
       "regularTransition",
       "slowTransition"
+    ],
+    "tokens": [
+      {
+        "name": "highlightFadeIn",
+        "cssVar": "--duration-highlightFadeIn",
+        "value": "0s",
+        "status": "matched"
+      },
+      {
+        "name": "highlightFadeOut",
+        "cssVar": "--duration-highlightFadeOut",
+        "value": "0.15s",
+        "status": "matched"
+      },
+      {
+        "name": "quickTransition",
+        "cssVar": "--duration-quickTransition",
+        "value": "0.1s",
+        "status": "matched"
+      },
+      {
+        "name": "regularTransition",
+        "cssVar": "--duration-regularTransition",
+        "value": "0.25s",
+        "status": "matched"
+      },
+      {
+        "name": "slowTransition",
+        "cssVar": "--duration-slowTransition",
+        "value": "0.35s",
+        "status": "matched"
+      }
     ]
   },
   {
     "category": "motion",
     "type": "EaseVariant",
+    "kind": "primitive",
     "value": [
       "inQuad",
       "inCubic",
@@ -154,107 +614,538 @@
       "inOutQuint",
       "inOutExpo",
       "inOutCirc"
+    ],
+    "tokens": [
+      {
+        "name": "inQuad",
+        "cssVar": "--ease-inQuad",
+        "value": "cubic-bezier(0.55, 0.085, 0.68, 0.53)",
+        "status": "matched"
+      },
+      {
+        "name": "inCubic",
+        "cssVar": "--ease-inCubic",
+        "value": "cubic-bezier(0.55, 0.055, 0.675, 0.19)",
+        "status": "matched"
+      },
+      {
+        "name": "inQuart",
+        "cssVar": "--ease-inQuart",
+        "value": "cubic-bezier(0.895, 0.03, 0.685, 0.22)",
+        "status": "matched"
+      },
+      {
+        "name": "inQuint",
+        "cssVar": "--ease-inQuint",
+        "value": "cubic-bezier(0.755, 0.05, 0.855, 0.06)",
+        "status": "matched"
+      },
+      {
+        "name": "inExpo",
+        "cssVar": "--ease-inExpo",
+        "value": "cubic-bezier(0.95, 0.05, 0.795, 0.035)",
+        "status": "matched"
+      },
+      {
+        "name": "inCirc",
+        "cssVar": "--ease-inCirc",
+        "value": "cubic-bezier(0.6, 0.04, 0.98, 0.335)",
+        "status": "matched"
+      },
+      {
+        "name": "outQuad",
+        "cssVar": "--ease-outQuad",
+        "value": "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+        "status": "matched"
+      },
+      {
+        "name": "outCubic",
+        "cssVar": "--ease-outCubic",
+        "value": "cubic-bezier(0.215, 0.61, 0.355, 1)",
+        "status": "matched"
+      },
+      {
+        "name": "outQuart",
+        "cssVar": "--ease-outQuart",
+        "value": "cubic-bezier(0.165, 0.84, 0.44, 1)",
+        "status": "matched"
+      },
+      {
+        "name": "outQuint",
+        "cssVar": "--ease-outQuint",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "status": "matched"
+      },
+      {
+        "name": "outExpo",
+        "cssVar": "--ease-outExpo",
+        "value": "cubic-bezier(0.19, 1, 0.22, 1)",
+        "status": "matched"
+      },
+      {
+        "name": "outCirc",
+        "cssVar": "--ease-outCirc",
+        "value": "cubic-bezier(0.075, 0.82, 0.165, 1)",
+        "status": "matched"
+      },
+      {
+        "name": "inOutQuad",
+        "cssVar": "--ease-inOutQuad",
+        "value": "cubic-bezier(0.455, 0.03, 0.515, 0.955)",
+        "status": "matched"
+      },
+      {
+        "name": "inOutCubic",
+        "cssVar": "--ease-inOutCubic",
+        "value": "cubic-bezier(0.645, 0.045, 0.355, 1)",
+        "status": "matched"
+      },
+      {
+        "name": "inOutQuart",
+        "cssVar": "--ease-inOutQuart",
+        "value": "cubic-bezier(0.77, 0, 0.175, 1)",
+        "status": "matched"
+      },
+      {
+        "name": "inOutQuint",
+        "cssVar": "--ease-inOutQuint",
+        "value": "cubic-bezier(0.86, 0, 0.07, 1)",
+        "status": "matched"
+      },
+      {
+        "name": "inOutExpo",
+        "cssVar": "--ease-inOutExpo",
+        "value": "cubic-bezier(1, 0, 0, 1)",
+        "status": "matched"
+      },
+      {
+        "name": "inOutCirc",
+        "cssVar": "--ease-inOutCirc",
+        "value": "cubic-bezier(0.785, 0.135, 0.15, 0.86)",
+        "status": "matched"
+      }
     ]
   },
   {
     "category": "color",
     "type": "SurfaceVariant",
-    "value": [
-      "primary",
-      "secondary",
-      "tertiary",
-      "quaternary"
+    "kind": "primitive",
+    "value": ["primary", "secondary", "tertiary", "quaternary"],
+    "tokens": [
+      {
+        "name": "primary",
+        "cssVar": "--bg-primary",
+        "values": {
+          "light": "oklch(99% 0 282.863)",
+          "dark": "oklch(15% 0 282.863)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "secondary",
+        "cssVar": "--bg-secondary",
+        "values": {
+          "light": "oklch(97.542% 0 282.863)",
+          "dark": "oklch(19% 0 282.863)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "tertiary",
+        "cssVar": "--bg-tertiary",
+        "values": {
+          "light": "oklch(93.75% 0 282.863)",
+          "dark": "oklch(24% 0 282.863)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "quaternary",
+        "cssVar": "--bg-quaternary",
+        "values": {
+          "light": "oklch(91.417% 0 282.863)",
+          "dark": "oklch(28% 0 282.863)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      }
     ]
   },
   {
     "category": "color",
     "type": "ContentVariant",
-    "value": [
-      "primary",
-      "secondary",
-      "tertiary",
-      "quaternary"
+    "kind": "primitive",
+    "value": ["primary", "secondary", "tertiary", "quaternary"],
+    "tokens": [
+      {
+        "name": "primary",
+        "cssVar": "--text-primary",
+        "values": {
+          "light": "oklch(0.222 0 89.9)",
+          "dark": "oklch(0.95 0 89.9)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "secondary",
+        "cssVar": "--text-secondary",
+        "values": {
+          "light": "oklch(0.39 0 89.9)",
+          "dark": "oklch(0.85 0 89.9)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "tertiary",
+        "cssVar": "--text-tertiary",
+        "values": {
+          "light": "oklch(0.58 0 89.9)",
+          "dark": "oklch(0.7 0 89.9)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "quaternary",
+        "cssVar": "--text-quaternary",
+        "values": {
+          "light": "oklch(0.78 0 89.9)",
+          "dark": "oklch(0.55 0 89.9)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      }
     ]
   },
   {
     "category": "color",
     "type": "StrokeVariant",
-    "value": [
-      "primary",
-      "secondary",
-      "tertiary"
+    "kind": "primitive",
+    "value": ["primary", "secondary", "tertiary"],
+    "tokens": [
+      {
+        "name": "primary",
+        "cssVar": "--stroke-primary",
+        "values": {
+          "light": "oklch(0.89 0 0)",
+          "dark": "oklch(0.35 0 0)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "secondary",
+        "cssVar": "--stroke-secondary",
+        "values": {
+          "light": "oklch(0.93 0 89.9)",
+          "dark": "oklch(0.3 0 89.9)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "tertiary",
+        "cssVar": "--stroke-tertiary",
+        "values": {
+          "light": "oklch(0.97 0 89.9)",
+          "dark": "oklch(0.25 0 89.9)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      }
+    ]
+  },
+  {
+    "category": "color",
+    "type": "AccentVariant",
+    "kind": "primitive",
+    "value": ["default", "subtle", "strong", "muted"],
+    "tokens": [
+      {
+        "name": "default",
+        "cssVar": "--accent-default",
+        "values": {
+          "light": "oklch(0.692 0.152 283.4)",
+          "dark": "oklch(0.692 0.152 283.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "subtle",
+        "cssVar": "--accent-subtle",
+        "values": {
+          "light": "oklch(0.78 0.108 283.4)",
+          "dark": "oklch(0.78 0.108 283.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "strong",
+        "cssVar": "--accent-strong",
+        "values": {
+          "light": "oklch(0.58 0.207 283.4)",
+          "dark": "oklch(0.58 0.207 283.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "muted",
+        "cssVar": "--accent-muted",
+        "values": {
+          "light": "oklch(0.93 0.034 283.4)",
+          "dark": "oklch(0.93 0.034 283.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      }
     ]
   },
   {
     "category": "color",
     "type": "BgClass",
-    "value": [
-      "`bg-surface-${SurfaceVariant}`",
-      "bg-transparent"
-    ]
+    "kind": "class-union",
+    "value": ["bg-surface-${SurfaceVariant}", "bg-transparent"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["bg-transparent"],
+      "templates": [
+        {
+          "template": "bg-surface-${SurfaceVariant}",
+          "references": ["SurfaceVariant"],
+          "resolvedValues": [
+            "bg-surface-primary",
+            "bg-surface-secondary",
+            "bg-surface-tertiary",
+            "bg-surface-quaternary"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "color",
     "type": "TextColorClass",
-    "value": [
-      "`text-content-${ContentVariant}`",
-      "text-primary"
-    ]
+    "kind": "class-union",
+    "value": ["text-content-${ContentVariant}", "text-primary"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["text-primary"],
+      "templates": [
+        {
+          "template": "text-content-${ContentVariant}",
+          "references": ["ContentVariant"],
+          "resolvedValues": [
+            "text-content-primary",
+            "text-content-secondary",
+            "text-content-tertiary",
+            "text-content-quaternary"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "color",
     "type": "BorderClass",
-    "value": [
-      "`border-stroke-${StrokeVariant}`",
-      "border-transparent"
-    ]
+    "kind": "class-union",
+    "value": ["border-stroke-${StrokeVariant}", "border-transparent"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["border-transparent"],
+      "templates": [
+        {
+          "template": "border-stroke-${StrokeVariant}",
+          "references": ["StrokeVariant"],
+          "resolvedValues": [
+            "border-stroke-primary",
+            "border-stroke-secondary",
+            "border-stroke-tertiary"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "color",
     "type": "HoverBgClass",
-    "value": [
-      "`hover:bg-surface-${SurfaceVariant}`",
-      "hover:bg-transparent"
-    ]
+    "kind": "class-union",
+    "value": ["hover:bg-surface-${SurfaceVariant}", "hover:bg-transparent"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["hover:bg-transparent"],
+      "templates": [
+        {
+          "template": "hover:bg-surface-${SurfaceVariant}",
+          "references": ["SurfaceVariant"],
+          "resolvedValues": [
+            "hover:bg-surface-primary",
+            "hover:bg-surface-secondary",
+            "hover:bg-surface-tertiary",
+            "hover:bg-surface-quaternary"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "color",
     "type": "HoverTextColorClass",
-    "value": [
-      "`hover:text-content-${ContentVariant}`",
-      "hover:text-primary"
-    ]
+    "kind": "class-union",
+    "value": ["hover:text-content-${ContentVariant}", "hover:text-primary"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["hover:text-primary"],
+      "templates": [
+        {
+          "template": "hover:text-content-${ContentVariant}",
+          "references": ["ContentVariant"],
+          "resolvedValues": [
+            "hover:text-content-primary",
+            "hover:text-content-secondary",
+            "hover:text-content-tertiary",
+            "hover:text-content-quaternary"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "color",
     "type": "HoverBorderClass",
+    "kind": "class-union",
     "value": [
-      "`hover:border-stroke-${StrokeVariant}`",
+      "hover:border-stroke-${StrokeVariant}",
       "hover:border-transparent"
-    ]
+    ],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["hover:border-transparent"],
+      "templates": [
+        {
+          "template": "hover:border-stroke-${StrokeVariant}",
+          "references": ["StrokeVariant"],
+          "resolvedValues": [
+            "hover:border-stroke-primary",
+            "hover:border-stroke-secondary",
+            "hover:border-stroke-tertiary"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "color",
     "type": "ActiveBgClass",
-    "value": [
-      "`active:bg-surface-${SurfaceVariant}`",
-      "active:bg-transparent"
-    ]
+    "kind": "class-union",
+    "value": ["active:bg-surface-${SurfaceVariant}", "active:bg-transparent"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["active:bg-transparent"],
+      "templates": [
+        {
+          "template": "active:bg-surface-${SurfaceVariant}",
+          "references": ["SurfaceVariant"],
+          "resolvedValues": [
+            "active:bg-surface-primary",
+            "active:bg-surface-secondary",
+            "active:bg-surface-tertiary",
+            "active:bg-surface-quaternary"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "color",
     "type": "ActiveTextColorClass",
-    "value": [
-      "`active:text-content-${ContentVariant}`",
-      "active:text-primary"
-    ]
+    "kind": "class-union",
+    "value": ["active:text-content-${ContentVariant}", "active:text-primary"],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["active:text-primary"],
+      "templates": [
+        {
+          "template": "active:text-content-${ContentVariant}",
+          "references": ["ContentVariant"],
+          "resolvedValues": [
+            "active:text-content-primary",
+            "active:text-content-secondary",
+            "active:text-content-tertiary",
+            "active:text-content-quaternary"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   },
   {
     "category": "color",
     "type": "ActiveBorderClass",
+    "kind": "class-union",
     "value": [
-      "`active:border-stroke-${StrokeVariant}`",
+      "active:border-stroke-${StrokeVariant}",
       "active:border-transparent"
-    ]
+    ],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": ["active:border-transparent"],
+      "templates": [
+        {
+          "template": "active:border-stroke-${StrokeVariant}",
+          "references": ["StrokeVariant"],
+          "resolvedValues": [
+            "active:border-stroke-primary",
+            "active:border-stroke-secondary",
+            "active:border-stroke-tertiary"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
   }
 ]
