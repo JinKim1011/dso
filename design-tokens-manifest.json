@@ -103,7 +103,11 @@
     "category": "typography",
     "type": "FontWeightStep",
     "kind": "primitive",
-    "value": ["regular", "semibold", "bold"],
+    "value": [
+      "regular",
+      "semibold",
+      "bold"
+    ],
     "tokens": [
       {
         "name": "regular",
@@ -129,7 +133,11 @@
     "category": "typography",
     "type": "LineHeightStep",
     "kind": "primitive",
-    "value": ["tight", "normal", "relaxed"],
+    "value": [
+      "tight",
+      "normal",
+      "relaxed"
+    ],
     "tokens": [
       {
         "name": "tight",
@@ -348,14 +356,21 @@
     "category": "spacing",
     "type": "PaddingClass",
     "kind": "class-union",
-    "value": ["p-${SpacingStep}", "p-0"],
+    "value": [
+      "p-${SpacingStep}",
+      "p-0"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["p-0"],
+      "literals": [
+        "p-0"
+      ],
       "templates": [
         {
           "template": "p-${SpacingStep}",
-          "references": ["SpacingStep"],
+          "references": [
+            "SpacingStep"
+          ],
           "resolvedValues": [
             "p-micro",
             "p-microPlus",
@@ -377,14 +392,21 @@
     "category": "spacing",
     "type": "PaddingXClass",
     "kind": "class-union",
-    "value": ["px-${SpacingStep}", "px-0"],
+    "value": [
+      "px-${SpacingStep}",
+      "px-0"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["px-0"],
+      "literals": [
+        "px-0"
+      ],
       "templates": [
         {
           "template": "px-${SpacingStep}",
-          "references": ["SpacingStep"],
+          "references": [
+            "SpacingStep"
+          ],
           "resolvedValues": [
             "px-micro",
             "px-microPlus",
@@ -406,14 +428,21 @@
     "category": "spacing",
     "type": "PaddingYClass",
     "kind": "class-union",
-    "value": ["py-${SpacingStep}", "py-0"],
+    "value": [
+      "py-${SpacingStep}",
+      "py-0"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["py-0"],
+      "literals": [
+        "py-0"
+      ],
       "templates": [
         {
           "template": "py-${SpacingStep}",
-          "references": ["SpacingStep"],
+          "references": [
+            "SpacingStep"
+          ],
           "resolvedValues": [
             "py-micro",
             "py-microPlus",
@@ -435,14 +464,21 @@
     "category": "spacing",
     "type": "MarginClass",
     "kind": "class-union",
-    "value": ["m-${SpacingStep}", "m-0"],
+    "value": [
+      "m-${SpacingStep}",
+      "m-0"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["m-0"],
+      "literals": [
+        "m-0"
+      ],
       "templates": [
         {
           "template": "m-${SpacingStep}",
-          "references": ["SpacingStep"],
+          "references": [
+            "SpacingStep"
+          ],
           "resolvedValues": [
             "m-micro",
             "m-microPlus",
@@ -464,14 +500,21 @@
     "category": "spacing",
     "type": "MarginXClass",
     "kind": "class-union",
-    "value": ["mx-${SpacingStep}", "mx-0"],
+    "value": [
+      "mx-${SpacingStep}",
+      "mx-0"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["mx-0"],
+      "literals": [
+        "mx-0"
+      ],
       "templates": [
         {
           "template": "mx-${SpacingStep}",
-          "references": ["SpacingStep"],
+          "references": [
+            "SpacingStep"
+          ],
           "resolvedValues": [
             "mx-micro",
             "mx-microPlus",
@@ -493,14 +536,21 @@
     "category": "spacing",
     "type": "MarginYClass",
     "kind": "class-union",
-    "value": ["my-${SpacingStep}", "my-0"],
+    "value": [
+      "my-${SpacingStep}",
+      "my-0"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["my-0"],
+      "literals": [
+        "my-0"
+      ],
       "templates": [
         {
           "template": "my-${SpacingStep}",
-          "references": ["SpacingStep"],
+          "references": [
+            "SpacingStep"
+          ],
           "resolvedValues": [
             "my-micro",
             "my-microPlus",
@@ -522,14 +572,21 @@
     "category": "spacing",
     "type": "GapClass",
     "kind": "class-union",
-    "value": ["gap-${SpacingStep}", "gap-0"],
+    "value": [
+      "gap-${SpacingStep}",
+      "gap-0"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["gap-0"],
+      "literals": [
+        "gap-0"
+      ],
       "templates": [
         {
           "template": "gap-${SpacingStep}",
-          "references": ["SpacingStep"],
+          "references": [
+            "SpacingStep"
+          ],
           "resolvedValues": [
             "gap-micro",
             "gap-microPlus",
@@ -730,14 +787,19 @@
     "category": "color",
     "type": "SurfaceVariant",
     "kind": "primitive",
-    "value": ["primary", "secondary", "tertiary", "quaternary"],
+    "value": [
+      "primary",
+      "secondary",
+      "tertiary",
+      "quaternary"
+    ],
     "tokens": [
       {
         "name": "primary",
         "cssVar": "--bg-primary",
         "values": {
-          "light": "oklch(99% 0 282.863)",
-          "dark": "oklch(15% 0 282.863)"
+          "light": "oklch(1 0 89.9)",
+          "dark": "oklch(0.132 0.036 276.6)"
         },
         "status": {
           "light": "matched",
@@ -748,8 +810,8 @@
         "name": "secondary",
         "cssVar": "--bg-secondary",
         "values": {
-          "light": "oklch(97.542% 0 282.863)",
-          "dark": "oklch(19% 0 282.863)"
+          "light": "oklch(0.985 0.002 247.8)",
+          "dark": "oklch(0.172 0.038 274.6)"
         },
         "status": {
           "light": "matched",
@@ -760,8 +822,8 @@
         "name": "tertiary",
         "cssVar": "--bg-tertiary",
         "values": {
-          "light": "oklch(93.75% 0 282.863)",
-          "dark": "oklch(24% 0 282.863)"
+          "light": "oklch(0.957 0.007 260.7)",
+          "dark": "oklch(0.222 0.043 274.5)"
         },
         "status": {
           "light": "matched",
@@ -772,8 +834,8 @@
         "name": "quaternary",
         "cssVar": "--bg-quaternary",
         "values": {
-          "light": "oklch(91.417% 0 282.863)",
-          "dark": "oklch(28% 0 282.863)"
+          "light": "oklch(0.928 0.013 266.7)",
+          "dark": "oklch(0.275 0.049 271.4)"
         },
         "status": {
           "light": "matched",
@@ -786,7 +848,12 @@
     "category": "color",
     "type": "ContentVariant",
     "kind": "primitive",
-    "value": ["primary", "secondary", "tertiary", "quaternary"],
+    "value": [
+      "primary",
+      "secondary",
+      "tertiary",
+      "quaternary"
+    ],
     "tokens": [
       {
         "name": "primary",
@@ -842,7 +909,11 @@
     "category": "color",
     "type": "StrokeVariant",
     "kind": "primitive",
-    "value": ["primary", "secondary", "tertiary"],
+    "value": [
+      "primary",
+      "secondary",
+      "tertiary"
+    ],
     "tokens": [
       {
         "name": "primary",
@@ -886,7 +957,12 @@
     "category": "color",
     "type": "AccentVariant",
     "kind": "primitive",
-    "value": ["default", "subtle", "strong", "muted"],
+    "value": [
+      "default",
+      "subtle",
+      "strong",
+      "muted"
+    ],
     "tokens": [
       {
         "name": "default",
@@ -942,14 +1018,21 @@
     "category": "color",
     "type": "BgClass",
     "kind": "class-union",
-    "value": ["bg-surface-${SurfaceVariant}", "bg-transparent"],
+    "value": [
+      "bg-surface-${SurfaceVariant}",
+      "bg-transparent"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["bg-transparent"],
+      "literals": [
+        "bg-transparent"
+      ],
       "templates": [
         {
           "template": "bg-surface-${SurfaceVariant}",
-          "references": ["SurfaceVariant"],
+          "references": [
+            "SurfaceVariant"
+          ],
           "resolvedValues": [
             "bg-surface-primary",
             "bg-surface-secondary",
@@ -965,14 +1048,21 @@
     "category": "color",
     "type": "TextColorClass",
     "kind": "class-union",
-    "value": ["text-content-${ContentVariant}", "text-primary"],
+    "value": [
+      "text-content-${ContentVariant}",
+      "text-primary"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["text-primary"],
+      "literals": [
+        "text-primary"
+      ],
       "templates": [
         {
           "template": "text-content-${ContentVariant}",
-          "references": ["ContentVariant"],
+          "references": [
+            "ContentVariant"
+          ],
           "resolvedValues": [
             "text-content-primary",
             "text-content-secondary",
@@ -988,14 +1078,21 @@
     "category": "color",
     "type": "BorderClass",
     "kind": "class-union",
-    "value": ["border-stroke-${StrokeVariant}", "border-transparent"],
+    "value": [
+      "border-stroke-${StrokeVariant}",
+      "border-transparent"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["border-transparent"],
+      "literals": [
+        "border-transparent"
+      ],
       "templates": [
         {
           "template": "border-stroke-${StrokeVariant}",
-          "references": ["StrokeVariant"],
+          "references": [
+            "StrokeVariant"
+          ],
           "resolvedValues": [
             "border-stroke-primary",
             "border-stroke-secondary",
@@ -1010,14 +1107,21 @@
     "category": "color",
     "type": "HoverBgClass",
     "kind": "class-union",
-    "value": ["hover:bg-surface-${SurfaceVariant}", "hover:bg-transparent"],
+    "value": [
+      "hover:bg-surface-${SurfaceVariant}",
+      "hover:bg-transparent"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["hover:bg-transparent"],
+      "literals": [
+        "hover:bg-transparent"
+      ],
       "templates": [
         {
           "template": "hover:bg-surface-${SurfaceVariant}",
-          "references": ["SurfaceVariant"],
+          "references": [
+            "SurfaceVariant"
+          ],
           "resolvedValues": [
             "hover:bg-surface-primary",
             "hover:bg-surface-secondary",
@@ -1033,14 +1137,21 @@
     "category": "color",
     "type": "HoverTextColorClass",
     "kind": "class-union",
-    "value": ["hover:text-content-${ContentVariant}", "hover:text-primary"],
+    "value": [
+      "hover:text-content-${ContentVariant}",
+      "hover:text-primary"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["hover:text-primary"],
+      "literals": [
+        "hover:text-primary"
+      ],
       "templates": [
         {
           "template": "hover:text-content-${ContentVariant}",
-          "references": ["ContentVariant"],
+          "references": [
+            "ContentVariant"
+          ],
           "resolvedValues": [
             "hover:text-content-primary",
             "hover:text-content-secondary",
@@ -1062,11 +1173,15 @@
     ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["hover:border-transparent"],
+      "literals": [
+        "hover:border-transparent"
+      ],
       "templates": [
         {
           "template": "hover:border-stroke-${StrokeVariant}",
-          "references": ["StrokeVariant"],
+          "references": [
+            "StrokeVariant"
+          ],
           "resolvedValues": [
             "hover:border-stroke-primary",
             "hover:border-stroke-secondary",
@@ -1081,14 +1196,21 @@
     "category": "color",
     "type": "ActiveBgClass",
     "kind": "class-union",
-    "value": ["active:bg-surface-${SurfaceVariant}", "active:bg-transparent"],
+    "value": [
+      "active:bg-surface-${SurfaceVariant}",
+      "active:bg-transparent"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["active:bg-transparent"],
+      "literals": [
+        "active:bg-transparent"
+      ],
       "templates": [
         {
           "template": "active:bg-surface-${SurfaceVariant}",
-          "references": ["SurfaceVariant"],
+          "references": [
+            "SurfaceVariant"
+          ],
           "resolvedValues": [
             "active:bg-surface-primary",
             "active:bg-surface-secondary",
@@ -1104,14 +1226,21 @@
     "category": "color",
     "type": "ActiveTextColorClass",
     "kind": "class-union",
-    "value": ["active:text-content-${ContentVariant}", "active:text-primary"],
+    "value": [
+      "active:text-content-${ContentVariant}",
+      "active:text-primary"
+    ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["active:text-primary"],
+      "literals": [
+        "active:text-primary"
+      ],
       "templates": [
         {
           "template": "active:text-content-${ContentVariant}",
-          "references": ["ContentVariant"],
+          "references": [
+            "ContentVariant"
+          ],
           "resolvedValues": [
             "active:text-content-primary",
             "active:text-content-secondary",
@@ -1133,11 +1262,15 @@
     ],
     "templateMeta": {
       "mode": "template-first",
-      "literals": ["active:border-transparent"],
+      "literals": [
+        "active:border-transparent"
+      ],
       "templates": [
         {
           "template": "active:border-stroke-${StrokeVariant}",
-          "references": ["StrokeVariant"],
+          "references": [
+            "StrokeVariant"
+          ],
           "resolvedValues": [
             "active:border-stroke-primary",
             "active:border-stroke-secondary",
