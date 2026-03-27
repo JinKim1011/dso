@@ -130,10 +130,20 @@ export function buildTypographyClass(recipe: TypographyRecipe): string {
   ].join(" ");
 }
 
-export const typographyStyles: Record<TypographyVariant, string> =
-  Object.fromEntries(
-    Object.entries(typographyRecipes).map(([variant, recipe]) => [
-      variant,
-      buildTypographyClass(recipe),
-    ]),
-  ) as Record<TypographyVariant, string>;
+export const typographyStyles: Record<TypographyVariant, string> = {
+  "heading-xl": "text-title1 font-bold leading-tight",
+  "heading-lg": "text-title2 font-bold leading-normal",
+  "heading-md": "text-title3 font-semibold leading-normal",
+  "body-md": "text-regular font-regular leading-normal",
+  "body-md-strong": "text-regular font-semibold leading-normal",
+  "body-sm": "text-small font-regular leading-normal",
+  "body-sm-strong": "text-small font-semibold leading-normal",
+  "label-sm": "text-small font-semibold leading-tight",
+  "label-xs": "text-mini font-semibold leading-tight",
+  "meta-sm": "text-small font-regular leading-relaxed",
+  "meta-xs": "text-mini font-regular leading-relaxed",
+  "control-md": "text-regular font-regular leading-tight",
+  "control-sm": "text-small font-regular leading-tight",
+  "input-label-sm": "text-small font-semibold leading-tight",
+  "input-helper-sm": "text-mini font-regular leading-normal",
+};
