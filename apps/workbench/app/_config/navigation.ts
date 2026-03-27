@@ -5,7 +5,7 @@ export type WorkbenchNavigationItem = {
   id: "tokens" | "preview" | "staged";
   href: string;
   iconOnly: boolean;
-  icon?: IconComponent;
+  icon: IconComponent;
 };
 
 export const workbenchNavigation: WorkbenchNavigationItem[] = [
