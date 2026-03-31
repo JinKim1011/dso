@@ -32,7 +32,7 @@ export function Navigation({ children, stagedCount }: NavigationProps) {
               href={menu.href}
               aria-label={menu.id}
               aria-current={isActive ? "page" : undefined}
-              className="justy-center gap-microPlus p-mini text-content-quaternary duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary inline-flex w-fit shrink-0 items-center bg-transparent transition-colors"
+              className="gap-microPlus p-mini text-content-quaternary duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary inline-flex w-fit shrink-0 items-center justify-center bg-transparent transition-colors"
             >
               {Icon ? <Icon aria-hidden className="size-5 shrink-0" /> : null}
               {!menu.iconOnly ? displayLabel : null}
