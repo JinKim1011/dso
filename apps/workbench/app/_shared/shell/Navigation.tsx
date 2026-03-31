@@ -24,7 +24,9 @@ export function Navigation({ children, stagedCount }: NavigationProps) {
           const isActive = path === menu.href;
           const Icon = menu.icon;
           const displayLabel =
-            menu.id === "staged" && stagedCount !== 0 ? String(stagedCount) : null;
+            menu.id === "staged" && stagedCount != null && stagedCount > 0
+              ? String(stagedCount)
+              : null;
 
           return (
             <Link
