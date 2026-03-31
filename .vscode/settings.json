@@ -3,5 +3,9 @@
   "scss.lint.unknownAtRules": "ignore",
   "less.lint.unknownAtRules": "ignore",
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  }
 }

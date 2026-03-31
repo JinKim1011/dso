@@ -39,7 +39,7 @@ const variantClasses: Record<
   }
 > = {
   fill: {
-    base: "bg-surface-primary text-content-primary border-transparent",
+    base: "bg-surface-primary text-content-tertiary border-transparent",
     hover:
       "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
     active:
@@ -51,7 +51,7 @@ const variantClasses: Record<
       "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
   },
   outlined: {
-    base: "bg-transparent text-content-primary border-stroke-primary",
+    base: "bg-transparent text-content-tertiary border-stroke-primary",
     hover:
       "hover:bg-surface-secondary hover:text-content-primary hover:border-stroke-primary",
     active:
@@ -64,7 +64,7 @@ const variantClasses: Record<
       "active:bg-surface-quaternary active:text-content-primary active:border-stroke-primary",
   },
   void: {
-    base: "bg-transparent text-content-primary border-transparent",
+    base: "bg-transparent text-content-tertiary border-transparent",
     hover:
       "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
     active:
