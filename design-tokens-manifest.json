@@ -605,6 +605,172 @@
     }
   },
   {
+    "category": "shadow",
+    "type": "ShadowVariant",
+    "kind": "primitive",
+    "value": [
+      "level-2",
+      "surface-lifted",
+      "surface-pressed",
+      "overlay-floating",
+      "overlay-menu"
+    ],
+    "tokens": [
+      {
+        "name": "level-2",
+        "cssVar": "--shadow-level-2",
+        "value": "var(--depth-level-2)",
+        "status": "matched"
+      },
+      {
+        "name": "surface-lifted",
+        "cssVar": "--shadow-surface-lifted",
+        "value": "var(--depth-surface-lifted)",
+        "status": "matched"
+      },
+      {
+        "name": "surface-pressed",
+        "cssVar": "--shadow-surface-pressed",
+        "value": "var(--depth-surface-pressed)",
+        "status": "matched"
+      },
+      {
+        "name": "overlay-floating",
+        "cssVar": "--shadow-overlay-floating",
+        "value": "var(--depth-overlay-floating)",
+        "status": "matched"
+      },
+      {
+        "name": "overlay-menu",
+        "cssVar": "--shadow-overlay-menu",
+        "value": "var(--depth-overlay-menu)",
+        "status": "matched"
+      }
+    ]
+  },
+  {
+    "category": "shadow",
+    "type": "ShadowClass",
+    "kind": "class-union",
+    "value": [
+      "shadow-${ShadowVariant}",
+      "shadow-none"
+    ],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": [
+        "shadow-none"
+      ],
+      "templates": [
+        {
+          "template": "shadow-${ShadowVariant}",
+          "references": [
+            "ShadowVariant"
+          ],
+          "resolvedValues": [
+            "shadow-level-2",
+            "shadow-surface-lifted",
+            "shadow-surface-pressed",
+            "shadow-overlay-floating",
+            "shadow-overlay-menu"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
+  },
+  {
+    "category": "radius",
+    "type": "RadiusStep",
+    "kind": "primitive",
+    "value": [
+      "micro",
+      "mini",
+      "small",
+      "regular",
+      "large",
+      "largePlus",
+      "round"
+    ],
+    "tokens": [
+      {
+        "name": "micro",
+        "cssVar": "--radius-micro",
+        "value": "0.125rem",
+        "status": "matched"
+      },
+      {
+        "name": "mini",
+        "cssVar": "--radius-mini",
+        "value": "0.25rem",
+        "status": "matched"
+      },
+      {
+        "name": "small",
+        "cssVar": "--radius-small",
+        "value": "0.375rem",
+        "status": "matched"
+      },
+      {
+        "name": "regular",
+        "cssVar": "--radius-regular",
+        "value": "0.5rem",
+        "status": "matched"
+      },
+      {
+        "name": "large",
+        "cssVar": "--radius-large",
+        "value": "0.75rem",
+        "status": "matched"
+      },
+      {
+        "name": "largePlus",
+        "cssVar": "--radius-largePlus",
+        "value": "1rem",
+        "status": "matched"
+      },
+      {
+        "name": "round",
+        "cssVar": "--radius-round",
+        "value": "99999rem",
+        "status": "matched"
+      }
+    ]
+  },
+  {
+    "category": "radius",
+    "type": "RadiusClass",
+    "kind": "class-union",
+    "value": [
+      "rounded-${RadiusStep}",
+      "rounded-none"
+    ],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": [
+        "rounded-none"
+      ],
+      "templates": [
+        {
+          "template": "rounded-${RadiusStep}",
+          "references": [
+            "RadiusStep"
+          ],
+          "resolvedValues": [
+            "rounded-micro",
+            "rounded-mini",
+            "rounded-small",
+            "rounded-regular",
+            "rounded-large",
+            "rounded-largePlus",
+            "rounded-round"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
+  },
+  {
     "category": "motion",
     "type": "DurationVariant",
     "kind": "primitive",
