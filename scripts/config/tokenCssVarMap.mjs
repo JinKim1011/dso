@@ -30,6 +30,12 @@ export const TOKEN_CSS_VAR_RULES = [
     kind: "primitive",
   },
   {
+    category: "shadow",
+    type: "ShadowVariant",
+    cssVarPrefix: "--shadow-",
+    kind: "primitive",
+  },
+  {
     category: "motion",
     type: "DurationVariant",
     cssVarPrefix: "--duration-",
@@ -77,6 +83,7 @@ export const TOKEN_CSS_VAR_RULES = [
   { category: "spacing", type: "GapClass", kind: "class-union" },
 
   { category: "radius", type: "RadiusClass", kind: "class-union" },
+  { category: "shadow", type: "ShadowClass", kind: "class-union" },
 
   { category: "color", type: "BgClass", kind: "class-union" },
   { category: "color", type: "TextColorClass", kind: "class-union" },
