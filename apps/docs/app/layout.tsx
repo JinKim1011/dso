@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "@repo/ui/index.css";
 
 export const metadata: Metadata = {
   title: "DSO - Documentation",
