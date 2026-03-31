@@ -1,5 +1,9 @@
 import { Component1Icon, LoopIcon, TokensIcon } from "@radix-ui/react-icons";
-import { IconComponent } from "../../../../packages/ui/src/components/Button";
+
+type IconComponent = React.ElementType<{
+  className?: string;
+  "aria-hidden"?: boolean;
+}>;
 
 export type WorkbenchNavigationItem = {
   id: "tokens" | "preview" | "staged";
