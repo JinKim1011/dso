@@ -24,6 +24,12 @@ export const TOKEN_CSS_VAR_RULES = [
     kind: "primitive",
   },
   {
+    category: "radius",
+    type: "RadiusStep",
+    cssVarPrefix: "--radius-",
+    kind: "primitive",
+  },
+  {
     category: "motion",
     type: "DurationVariant",
     cssVarPrefix: "--duration-",
@@ -69,6 +75,8 @@ export const TOKEN_CSS_VAR_RULES = [
   { category: "spacing", type: "MarginYClass", kind: "class-union" },
 
   { category: "spacing", type: "GapClass", kind: "class-union" },
+
+  { category: "radius", type: "RadiusClass", kind: "class-union" },
 
   { category: "color", type: "BgClass", kind: "class-union" },
   { category: "color", type: "TextColorClass", kind: "class-union" },
