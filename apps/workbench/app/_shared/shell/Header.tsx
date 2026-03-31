@@ -32,7 +32,7 @@ export function Header({ currentBranch, userName }: HeaderProps) {
           DS0
         </Text>
         <Button variant="void" size="sm">
-          Github
+          GitHub
         </Button>
         <Button variant="void" size="sm">
           Docs
