@@ -1,4 +1,5 @@
 import React from "react";
+import { typographyStyles } from "../../types/typography";
 
 export type IconComponent = React.ElementType<{
   className?: string;
@@ -20,17 +21,19 @@ export const InputBase = ({
   const wrapperClassName = [
     "inline-flex items-center w-full",
     "p-mini gap-mini",
-    "border-2 rounded-mini",
+    "rounded-mini",
+    "shadow-surface-lifted",
     "transition-colors duration-highlightFadeOut ease-outExpo",
 
     disabled
-      ? "bg-surface-secondary text-content-quaternary border-none cursor-not-allowed"
-      : "bg-surface-primary text-content-primary focus-within:bg-surface-quaternary focus-within:border-accent-subtle",
+      ? "bg-surface-secondary text-content-quaternary cursor-not-allowed"
+      : "bg-surface-tertiary text-content-primary focus-within:bg-surface-quaternary focus-within:shadow-focus-subtle",
   ]
     .filter(Boolean)
     .join(" ");
 
   const inputClassName = [
+    typographyStyles["control-sm"],
     "w-full p-0 bg-transparent outline-none",
 
     disabled
