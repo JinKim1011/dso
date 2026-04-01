@@ -36,9 +36,11 @@
     0 0 0 1px rgba(255 255 255 / 0.9), inset 0 0 0 1px rgba(0 0 0 / 0.02),
     0 18px 45px 0 rgba(0 0 0 / 0.25);
   --overlay-floating:
-    inset 0 1px 0 0 rgba(0 0 0 / 0.05), inset 0 0 0 1px rgba(15 23 42 / 0.06);
+    inset 0 0 0 1px rgba(255 255 255 / 0.9), inset 0 0 0 1px rgba(0 0 0 / 0.1),
+    0 18px 45px 0 rgba(0 0 0 / 0.25);
   --overlay-menu:
-    0 4px 6px -2px rgba(0 0 0 / 0.05), inset 0 0 0 1px rgba(15 23 42 / 0.08);
+    inset 0 0 0 1px rgba(0 0 0 / 0.08), 0 0 0 1px rgba(255 255 255 / 0.9),
+    0 6px 12px 0 rgba(0 0 0 / 0.1);
 }
 
 [data-theme="dark"] {
