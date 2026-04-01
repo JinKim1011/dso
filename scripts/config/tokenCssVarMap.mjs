@@ -31,8 +31,20 @@ export const TOKEN_CSS_VAR_RULES = [
   },
   {
     category: "shadow",
-    type: "ShadowVariant",
-    cssVarPrefix: "--shadow-",
+    type: "ShadowSurfaceVariant",
+    cssVarPrefix: "--surface-",
+    kind: "primitive",
+  },
+  {
+    category: "shadow",
+    type: "LevelVariant",
+    cssVarPrefix: "--level-",
+    kind: "primitive",
+  },
+  {
+    category: "shadow",
+    type: "OverlayVariant",
+    cssVarPrefix: "--overlay-",
     kind: "primitive",
   },
   {
