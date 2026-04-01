@@ -605,6 +605,251 @@
     }
   },
   {
+    "category": "shadow",
+    "type": "LevelVariant",
+    "kind": "primitive",
+    "value": [
+      "1",
+      "2"
+    ],
+    "tokens": [
+      {
+        "name": "1",
+        "cssVar": "--level-1",
+        "values": {
+          "light": "0 4px 8px -2px rgba(0 0 0 / 0.05), 0 2px 4px -2px rgba(0 0 0 / 0.05)",
+          "dark": "0 4px 8px -2px rgba(15 23 42 / 0.25), 0 2px 4px -2px rgba(15 23 42 / 0.15)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "2",
+        "cssVar": "--level-2",
+        "values": {
+          "light": "0 10px 15px -3px rgba(0 0 0 / 0.1), 0 4px 6px -4px rgba(0 0 0 / 0.1)",
+          "dark": "0 10px 15px -3px rgba(15 23 42 / 0.55), 0 4px 6px -4px rgba(15 23 42 / 0.45)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      }
+    ]
+  },
+  {
+    "category": "shadow",
+    "type": "ShadowSurfaceVariant",
+    "kind": "primitive",
+    "value": [
+      "lifted",
+      "pressed"
+    ],
+    "tokens": [
+      {
+        "name": "lifted",
+        "cssVar": "--surface-lifted",
+        "values": {
+          "light": "inset 0 -3px 0 0 rgba(0 0 0 / 0.06), inset 0 0 0 1px rgba(15 23 42 / 0.08)",
+          "dark": "inset 0 -3px 0 0 rgba(0 0 0 / 0.3), inset 0 0 0 1px rgba(255 255 255 / 0.08)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "pressed",
+        "cssVar": "--surface-pressed",
+        "values": {
+          "light": "0 0 0 1px rgba(255 255 255 / 0.9), inset 0 0 0 1px rgba(0 0 0 / 0.02),\n    0 18px 45px 0 rgba(0 0 0 / 0.25)",
+          "dark": "inset 0 2px 0 0 rgba(0 0 0 / 0.4), inset 0 0 0 1px rgba(255 255 255 / 0.04),\n    inset 0 -1px 0 0 rgba(255 255 255 / 0.05)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      }
+    ]
+  },
+  {
+    "category": "shadow",
+    "type": "OverlayVariant",
+    "kind": "primitive",
+    "value": [
+      "floating",
+      "menu"
+    ],
+    "tokens": [
+      {
+        "name": "floating",
+        "cssVar": "--overlay-floating",
+        "values": {
+          "light": "inset 0 0 0 1px rgba(255 255 255 / 0.9), inset 0 0 0 1px rgba(0 0 0 / 0.1),\n    0 18px 45px 0 rgba(0 0 0 / 0.25)",
+          "dark": "0 18px 45px 0 rgba(0 0 0 / 0.75), inset 0 0 0 1px rgba(255 255 255 / 0.15),\n    0 0 0 1px rgba(0 0 0 / 0.7)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "menu",
+        "cssVar": "--overlay-menu",
+        "values": {
+          "light": "inset 0 0 0 1px rgba(0 0 0 / 0.08), 0 0 0 1px rgba(255 255 255 / 0.9),\n    0 6px 12px 0 rgba(0 0 0 / 0.1)",
+          "dark": "inset 0 0 0 1px rgba(255 255 255 / 0.15), 0 0 0 1px rgba(0 0 0 / 0.7),\n    0 6px 12px 0 rgba(0 0 0 / 0.75)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      }
+    ]
+  },
+  {
+    "category": "shadow",
+    "type": "ShadowClass",
+    "kind": "class-union",
+    "value": [
+      "shadow-level-${LevelVariant}",
+      "shadow-surface-${ShadowSurfaceVariant}",
+      "shadow-overlay-${OverlayVariant}"
+    ],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": [],
+      "templates": [
+        {
+          "template": "shadow-level-${LevelVariant}",
+          "references": [
+            "LevelVariant"
+          ],
+          "resolvedValues": [
+            "shadow-level-1",
+            "shadow-level-2"
+          ],
+          "status": "resolved"
+        },
+        {
+          "template": "shadow-surface-${ShadowSurfaceVariant}",
+          "references": [
+            "ShadowSurfaceVariant"
+          ],
+          "resolvedValues": [
+            "shadow-surface-lifted",
+            "shadow-surface-pressed"
+          ],
+          "status": "resolved"
+        },
+        {
+          "template": "shadow-overlay-${OverlayVariant}",
+          "references": [
+            "OverlayVariant"
+          ],
+          "resolvedValues": [
+            "shadow-overlay-floating",
+            "shadow-overlay-menu"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
+  },
+  {
+    "category": "radius",
+    "type": "RadiusStep",
+    "kind": "primitive",
+    "value": [
+      "micro",
+      "mini",
+      "small",
+      "regular",
+      "large",
+      "largePlus",
+      "round"
+    ],
+    "tokens": [
+      {
+        "name": "micro",
+        "cssVar": "--radius-micro",
+        "value": "0.125rem",
+        "status": "matched"
+      },
+      {
+        "name": "mini",
+        "cssVar": "--radius-mini",
+        "value": "0.25rem",
+        "status": "matched"
+      },
+      {
+        "name": "small",
+        "cssVar": "--radius-small",
+        "value": "0.375rem",
+        "status": "matched"
+      },
+      {
+        "name": "regular",
+        "cssVar": "--radius-regular",
+        "value": "0.5rem",
+        "status": "matched"
+      },
+      {
+        "name": "large",
+        "cssVar": "--radius-large",
+        "value": "0.75rem",
+        "status": "matched"
+      },
+      {
+        "name": "largePlus",
+        "cssVar": "--radius-largePlus",
+        "value": "1rem",
+        "status": "matched"
+      },
+      {
+        "name": "round",
+        "cssVar": "--radius-round",
+        "value": "99999rem",
+        "status": "matched"
+      }
+    ]
+  },
+  {
+    "category": "radius",
+    "type": "RadiusClass",
+    "kind": "class-union",
+    "value": [
+      "rounded-${RadiusStep}",
+      "rounded-none"
+    ],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": [
+        "rounded-none"
+      ],
+      "templates": [
+        {
+          "template": "rounded-${RadiusStep}",
+          "references": [
+            "RadiusStep"
+          ],
+          "resolvedValues": [
+            "rounded-micro",
+            "rounded-mini",
+            "rounded-small",
+            "rounded-regular",
+            "rounded-large",
+            "rounded-largePlus",
+            "rounded-round"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
+  },
+  {
     "category": "motion",
     "type": "DurationVariant",
     "kind": "primitive",

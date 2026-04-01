@@ -16,10 +16,10 @@ export function Navigation({ children, stagedCount }: NavigationProps) {
   return (
     <nav
       aria-label="navigation"
-      className="p-mini bg-surface-primary fixed bottom-10 left-1/2 z-10 -translate-x-1/2"
+      className="p-microPlus bg-surface-primary shadow-overlay-floating fixed bottom-10 left-1/2 z-10 -translate-x-1/2 rounded-[1.375rem]"
     >
       {children}
-      <div className="gap-mini inline-flex w-fit p-0">
+      <div className="gap-microPlus inline-flex w-fit p-0">
         {workbenchNavigation.map((menu) => {
           const isActive = path === menu.href;
           const Icon = menu.icon;
@@ -34,7 +34,7 @@ export function Navigation({ children, stagedCount }: NavigationProps) {
               href={menu.href}
               aria-label={menu.id}
               aria-current={isActive ? "page" : undefined}
-              className="gap-microPlus p-mini text-content-quaternary duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary inline-flex w-fit shrink-0 items-center justify-center bg-transparent transition-colors"
+              className="rounded-round gap-microPlus p-mini text-content-quaternary duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary inline-flex h-9 w-fit shrink-0 items-center justify-center bg-transparent transition-colors"
             >
               {Icon ? <Icon aria-hidden className="size-5 shrink-0" /> : null}
               {!menu.iconOnly ? displayLabel : null}

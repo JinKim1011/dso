@@ -27,6 +27,20 @@
   --accent-subtle: oklch(0.78 0.108 283.4);
   --accent-strong: oklch(0.58 0.207 283.4);
   --accent-muted: oklch(0.93 0.034 283.4);
+
+  --level-1: 0 4px 8px -2px rgba(0 0 0 / 0.05), 0 2px 4px -2px rgba(0 0 0 / 0.05);
+  --level-2: 0 10px 15px -3px rgba(0 0 0 / 0.1), 0 4px 6px -4px rgba(0 0 0 / 0.1);
+  --surface-lifted:
+    inset 0 -3px 0 0 rgba(0 0 0 / 0.06), inset 0 0 0 1px rgba(15 23 42 / 0.08);
+  --surface-pressed:
+    0 0 0 1px rgba(255 255 255 / 0.9), inset 0 0 0 1px rgba(0 0 0 / 0.02),
+    0 18px 45px 0 rgba(0 0 0 / 0.25);
+  --overlay-floating:
+    inset 0 0 0 1px rgba(255 255 255 / 0.9), inset 0 0 0 1px rgba(0 0 0 / 0.1),
+    0 18px 45px 0 rgba(0 0 0 / 0.25);
+  --overlay-menu:
+    inset 0 0 0 1px rgba(0 0 0 / 0.08), 0 0 0 1px rgba(255 255 255 / 0.9),
+    0 6px 12px 0 rgba(0 0 0 / 0.1);
 }
 
 [data-theme="dark"] {
@@ -48,6 +62,20 @@
   --accent-subtle: oklch(0.78 0.108 283.4);
   --accent-strong: oklch(0.58 0.207 283.4);
   --accent-muted: oklch(0.93 0.034 283.4);
+
+  --level-1: 0 4px 8px -2px rgba(15 23 42 / 0.25), 0 2px 4px -2px rgba(15 23 42 / 0.15);
+  --level-2: 0 10px 15px -3px rgba(15 23 42 / 0.55), 0 4px 6px -4px rgba(15 23 42 / 0.45);
+  --surface-lifted:
+    inset 0 -3px 0 0 rgba(0 0 0 / 0.3), inset 0 0 0 1px rgba(255 255 255 / 0.08);
+  --surface-pressed:
+    inset 0 2px 0 0 rgba(0 0 0 / 0.4), inset 0 0 0 1px rgba(255 255 255 / 0.04),
+    inset 0 -1px 0 0 rgba(255 255 255 / 0.05);
+  --overlay-floating:
+    0 18px 45px 0 rgba(0 0 0 / 0.75), inset 0 0 0 1px rgba(255 255 255 / 0.15),
+    0 0 0 1px rgba(0 0 0 / 0.7);
+  --overlay-menu:
+    inset 0 0 0 1px rgba(255 255 255 / 0.15), 0 0 0 1px rgba(0 0 0 / 0.7),
+    0 6px 12px 0 rgba(0 0 0 / 0.75);
 }
 
 @theme {
@@ -70,6 +98,13 @@
   --color-accent-strong: var(--accent-strong);
   --color-accent-muted: var(--accent-muted);
 
+  --shadow-level-1: var(--level-1);
+  --shadow-level-2: var(--level-2);
+  --shadow-surface-lifted: var(--surface-lifted);
+  --shadow-surface-pressed: var(--surface-pressed);
+  --shadow-overlay-floating: var(--overlay-floating);
+  --shadow-overlay-menu: var(--overlay-menu);
+
   --spacing-micro: 0.125rem;
   --spacing-microPlus: 0.25rem;
   --spacing-mini: 0.5rem;
@@ -80,6 +115,14 @@
   --spacing-regularPlus: 2rem;
   --spacing-large: 3rem;
   --spacing-largePlus: 4rem;
+
+  --radius-micro: 0.125rem;
+  --radius-mini: 0.25rem;
+  --radius-small: 0.375rem;
+  --radius-regular: 0.5rem;
+  --radius-large: 0.75rem;
+  --radius-largePlus: 1rem;
+  --radius-round: 99999rem;
 
   --font-mono: "IBM Plex Mono", monospace;
   --font-sans: "IBM Plex Mono", monospace;
