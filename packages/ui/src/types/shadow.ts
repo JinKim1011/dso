@@ -1,8 +1,5 @@
-export type ShadowVariant =
-  | "level-2"
-  | "surface-lifted"
-  | "surface-pressed"
-  | "overlay-floating"
-  | "overlay-menu";
+export type LevelVariant = "1" | "2";
 
-export type ShadowClass = `shadow-${ShadowVariant}` | "shadow-none";
+export type ShadowSurfaceVariant = "lifted" | "pressed";
+
+export type OverlayVariant = "floating" | "menu";
