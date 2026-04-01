@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { typographyStyles } from "../../types/typography";
 
 export type IconComponent = React.ElementType<{
