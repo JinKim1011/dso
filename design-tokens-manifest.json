@@ -710,6 +710,55 @@
     ]
   },
   {
+    "category": "shadow",
+    "type": "ShadowClass",
+    "kind": "class-union",
+    "value": [
+      "shadow-level-${LevelVariant}",
+      "shadow-surface-${ShadowSurfaceVariant}",
+      "shadow-overlay-${OverlayVariant}"
+    ],
+    "templateMeta": {
+      "mode": "template-first",
+      "literals": [],
+      "templates": [
+        {
+          "template": "shadow-level-${LevelVariant}",
+          "references": [
+            "LevelVariant"
+          ],
+          "resolvedValues": [
+            "shadow-level-1",
+            "shadow-level-2"
+          ],
+          "status": "resolved"
+        },
+        {
+          "template": "shadow-surface-${ShadowSurfaceVariant}",
+          "references": [
+            "ShadowSurfaceVariant"
+          ],
+          "resolvedValues": [
+            "shadow-surface-lifted",
+            "shadow-surface-pressed"
+          ],
+          "status": "resolved"
+        },
+        {
+          "template": "shadow-overlay-${OverlayVariant}",
+          "references": [
+            "OverlayVariant"
+          ],
+          "resolvedValues": [
+            "shadow-overlay-floating",
+            "shadow-overlay-menu"
+          ],
+          "status": "resolved"
+        }
+      ]
+    }
+  },
+  {
     "category": "radius",
     "type": "RadiusStep",
     "kind": "primitive",
