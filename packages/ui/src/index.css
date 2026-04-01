@@ -104,6 +104,9 @@
   --shadow-surface-pressed: var(--surface-pressed);
   --shadow-overlay-floating: var(--overlay-floating);
   --shadow-overlay-menu: var(--overlay-menu);
+  --shadow-focus-default: 0 0 0 2px var(--accent-default);
+  --shadow-focus-subtle: 0 0 0 2px var(--accent-subtle);
+  --shadow-focus-strong: 0 0 0 2px var(--accent-strong);
 
   --spacing-micro: 0.125rem;
   --spacing-microPlus: 0.25rem;
