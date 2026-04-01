@@ -606,78 +606,108 @@
   },
   {
     "category": "shadow",
-    "type": "ShadowVariant",
+    "type": "LevelVariant",
     "kind": "primitive",
     "value": [
-      "level-2",
-      "surface-lifted",
-      "surface-pressed",
-      "overlay-floating",
-      "overlay-menu"
+      "1",
+      "2"
     ],
     "tokens": [
       {
-        "name": "level-2",
-        "cssVar": "--shadow-level-2",
-        "value": "var(--depth-level-2)",
-        "status": "matched"
+        "name": "1",
+        "cssVar": "--level-1",
+        "values": {
+          "light": "0 4px 8px -2px rgba(0 0 0 / 0.05), 0 2px 4px -2px rgba(0 0 0 / 0.05)",
+          "dark": "0 4px 8px -2px rgba(15 23 42 / 0.25), 0 2px 4px -2px rgba(15 23 42 / 0.15)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
       },
       {
-        "name": "surface-lifted",
-        "cssVar": "--shadow-surface-lifted",
-        "value": "var(--depth-surface-lifted)",
-        "status": "matched"
-      },
-      {
-        "name": "surface-pressed",
-        "cssVar": "--shadow-surface-pressed",
-        "value": "var(--depth-surface-pressed)",
-        "status": "matched"
-      },
-      {
-        "name": "overlay-floating",
-        "cssVar": "--shadow-overlay-floating",
-        "value": "var(--depth-overlay-floating)",
-        "status": "matched"
-      },
-      {
-        "name": "overlay-menu",
-        "cssVar": "--shadow-overlay-menu",
-        "value": "var(--depth-overlay-menu)",
-        "status": "matched"
+        "name": "2",
+        "cssVar": "--level-2",
+        "values": {
+          "light": "0 10px 15px -3px rgba(0 0 0 / 0.1), 0 4px 6px -4px rgba(0 0 0 / 0.1)",
+          "dark": "0 10px 15px -3px rgba(15 23 42 / 0.55), 0 4px 6px -4px rgba(15 23 42 / 0.45)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
       }
     ]
   },
   {
     "category": "shadow",
-    "type": "ShadowClass",
-    "kind": "class-union",
+    "type": "ShadowSurfaceVariant",
+    "kind": "primitive",
     "value": [
-      "shadow-${ShadowVariant}",
-      "shadow-none"
+      "lifted",
+      "pressed"
     ],
-    "templateMeta": {
-      "mode": "template-first",
-      "literals": [
-        "shadow-none"
-      ],
-      "templates": [
-        {
-          "template": "shadow-${ShadowVariant}",
-          "references": [
-            "ShadowVariant"
-          ],
-          "resolvedValues": [
-            "shadow-level-2",
-            "shadow-surface-lifted",
-            "shadow-surface-pressed",
-            "shadow-overlay-floating",
-            "shadow-overlay-menu"
-          ],
-          "status": "resolved"
+    "tokens": [
+      {
+        "name": "lifted",
+        "cssVar": "--surface-lifted",
+        "values": {
+          "light": "inset 0 -3px 0 0 rgba(0 0 0 / 0.06), inset 0 0 0 1px rgba(15 23 42 / 0.08)",
+          "dark": "inset 0 -3px 0 0 rgba(0 0 0 / 0.3), inset 0 0 0 1px rgba(255 255 255 / 0.08)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
         }
-      ]
-    }
+      },
+      {
+        "name": "pressed",
+        "cssVar": "--surface-pressed",
+        "values": {
+          "light": "0 0 0 1px rgba(255 255 255 / 0.9), inset 0 0 0 1px rgba(0 0 0 / 0.02),\n    0 18px 45px 0 rgba(0 0 0 / 0.25)",
+          "dark": "inset 0 2px 0 0 rgba(0 0 0 / 0.4), inset 0 0 0 1px rgba(255 255 255 / 0.04),\n    inset 0 -1px 0 0 rgba(255 255 255 / 0.05)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      }
+    ]
+  },
+  {
+    "category": "shadow",
+    "type": "OverlayVariant",
+    "kind": "primitive",
+    "value": [
+      "floating",
+      "menu"
+    ],
+    "tokens": [
+      {
+        "name": "floating",
+        "cssVar": "--overlay-floating",
+        "values": {
+          "light": "inset 0 0 0 1px rgba(255 255 255 / 0.9), inset 0 0 0 1px rgba(0 0 0 / 0.1),\n    0 18px 45px 0 rgba(0 0 0 / 0.25)",
+          "dark": "0 18px 45px 0 rgba(0 0 0 / 0.75), inset 0 0 0 1px rgba(255 255 255 / 0.15),\n    0 0 0 1px rgba(0 0 0 / 0.7)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "menu",
+        "cssVar": "--overlay-menu",
+        "values": {
+          "light": "inset 0 0 0 1px rgba(0 0 0 / 0.08), 0 0 0 1px rgba(255 255 255 / 0.9),\n    0 6px 12px 0 rgba(0 0 0 / 0.1)",
+          "dark": "inset 0 0 0 1px rgba(255 255 255 / 0.15), 0 0 0 1px rgba(0 0 0 / 0.7),\n    0 6px 12px 0 rgba(0 0 0 / 0.75)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      }
+    ]
   },
   {
     "category": "radius",
