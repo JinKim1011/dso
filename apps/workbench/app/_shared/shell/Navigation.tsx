@@ -16,10 +16,10 @@ export function Navigation({ children, stagedCount }: NavigationProps) {
   return (
     <nav
       aria-label="navigation"
-      className="p-mini bg-surface-primary fixed bottom-10 left-1/2 z-10 -translate-x-1/2 rounded-[1.625rem]"
+      className="p-microPlus bg-surface-primary shadow-overlay-floating fixed bottom-10 left-1/2 z-10 -translate-x-1/2 rounded-[1.375rem]"
     >
       {children}
-      <div className="gap-mini inline-flex w-fit p-0">
+      <div className="gap-microPlus inline-flex w-fit p-0">
         {workbenchNavigation.map((menu) => {
           const isActive = path === menu.href;
           const Icon = menu.icon;
