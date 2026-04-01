@@ -1,8 +1,8 @@
 import fs from "fs";
-import path from "path";
 import { globSync } from "glob";
-import { TOKEN_CSS_VAR_RULES } from "./config/tokenCssVarMap.mjs";
+import path from "path";
 import ts from "typescript";
+import { TOKEN_CSS_VAR_RULES } from "./config/tokenCssVarMap.mjs";
 import { extractTypographyRecipes } from "./lib/typeParser.mjs";
 
 const TOKENS_PATH = path.resolve("./packages/ui/src/types");
@@ -27,9 +27,7 @@ function extractCssVars(cssContent) {
   };
 
   const rootBlockMatch = cssContent.match(/:root\s*\{([\s\S]*?)\}/);
-  const darkBlockMatch = cssContent.match(
-    /\[data-theme="dark"\]\s*\{([\s\S]*?)\}/,
-  );
+  const darkBlockMatch = cssContent.match(/\[data-theme="dark"\]\s*\{([\s\S]*?)\}/);
   const themeBlockMatch = cssContent.match(/@theme\s*\{([\s\S]*?)\}/);
 
   const rootVars = readVars(rootBlockMatch ? rootBlockMatch[1] : "");
@@ -57,9 +55,7 @@ function normalizeUnionMember(typeNode, sourceFile) {
   return text.replace(/^["']|["']$/g, "");
 }
 
-const RULE_BY_TYPE = new Map(
-  TOKEN_CSS_VAR_RULES.map((rule) => [rule.type, rule]),
-);
+const RULE_BY_TYPE = new Map(TOKEN_CSS_VAR_RULES.map((rule) => [rule.type, rule]));
 
 function enrichTokensWithCssValues(category, typeName, values, cssVarMap) {
   const rule = RULE_BY_TYPE.get(typeName);
@@ -138,9 +134,7 @@ function attachClassUnionTemplateMetadata(entries) {
     const templates = [];
 
     for (const item of entry.value) {
-      const references = [...item.matchAll(/\$\{([A-Za-z0-9_]+)}/g)].map(
-        (m) => m[1],
-      );
+      const references = [...item.matchAll(/\$\{([A-Za-z0-9_]+)}/g)].map((m) => m[1]);
 
       if (!references.length) {
         literals.push(item);
@@ -206,12 +200,7 @@ function parseTokenFiles(filePath) {
 
       const rule = RULE_BY_TYPE.get(typeName);
       const category = rule?.category;
-      const tokens = enrichTokensWithCssValues(
-        category,
-        typeName,
-        values,
-        cssVarMap,
-      );
+      const tokens = enrichTokensWithCssValues(category, typeName, values, cssVarMap);
 
       const entry = {
         category: category,
@@ -239,9 +228,7 @@ function parseTokenFiles(filePath) {
 const cssContent = fs.readFileSync(CSS_PATH, "utf-8");
 const cssVarMap = extractCssVars(cssContent);
 
-const manifest = tokenFiles
-  .flatMap((file) => parseTokenFiles(file))
-  .filter(Boolean);
+const manifest = tokenFiles.flatMap((file) => parseTokenFiles(file)).filter(Boolean);
 
 attachClassUnionTemplateMetadata(manifest);
 
