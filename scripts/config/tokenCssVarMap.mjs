@@ -95,7 +95,6 @@ export const TOKEN_CSS_VAR_RULES = [
   { category: "spacing", type: "GapClass", kind: "class-union" },
 
   { category: "radius", type: "RadiusClass", kind: "class-union" },
-  { category: "shadow", type: "ShadowClass", kind: "class-union" },
 
   { category: "color", type: "BgClass", kind: "class-union" },
   { category: "color", type: "TextColorClass", kind: "class-union" },
