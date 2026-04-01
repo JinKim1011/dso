@@ -17,13 +17,6 @@ type SegmentedControlProps = {
   iconOnly?: boolean;
 };
 
-const baseStyles = [
-  "inline-flex w-fit",
-  "p-microPlus gap-microPlus",
-  "bg-surface-primary",
-  "border border-stroke-secondary",
-].join(" ");
-
 export function SegmentedControl({
   options,
   value,
@@ -32,7 +25,7 @@ export function SegmentedControl({
   iconOnly = false,
 }: SegmentedControlProps) {
   return (
-    <div className={baseStyles}>
+    <div className="p-microPlus gap-microPlus bg-surface-primary border-stroke-secondary inline-flex w-fit border">
       {options.map((option) => {
         const isActive = option.value === value;
 
