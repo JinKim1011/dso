@@ -65,7 +65,7 @@ function enrichTokensWithCssValues(category, typeName, values, cssVarMap) {
   return values.map((name) => {
     const cssVar = `${rule.cssVarPrefix}${name}`;
 
-    if ((category === "color") | (category === "shadow")) {
+    if (category === "color" || category === "shadow") {
       const light = cssVarMap.light.get(cssVar) ?? null;
       const dark = cssVarMap.dark.get(cssVar) ?? null;
 
