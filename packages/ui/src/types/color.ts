@@ -1,24 +1,29 @@
-export type SurfaceVariant = "primary" | "secondary" | "tertiary" | "quaternary";
-
-export type ContentVariant = "primary" | "secondary" | "tertiary" | "quaternary";
-
-export type StrokeVariant = "primary" | "secondary" | "tertiary";
-
-export type AccentVariant = "default" | "subtle" | "strong" | "muted";
+export type SurfaceVariant =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "quaternary"
+  | "accent";
+export type ContentVariant =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "quaternary"
+  | "accent"
+  | "accentStrong";
+export type StrokeVariant =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "accent"
+  | "accentStrong";
 
 export type BgClass = `bg-surface-${SurfaceVariant}` | "bg-transparent";
+export type TextColorClass = `text-content-${ContentVariant}` | "text-primary";
+export type BorderClass = `border-stroke-${StrokeVariant}` | "border-transparent";
 
 export type OverrideBGClass = BgClass;
-
-export type TextColorClass = `text-content-${ContentVariant}` | "text-primary";
-
 export type OverrideTextColorClass = TextColorClass;
-
-export type BorderClass =
-  | `border-stroke-${StrokeVariant}`
-  | `border-stroke-${AccentVariant}`
-  | "border-transparent";
-
 export type OverrideBorderClass = BorderClass;
 
 export type HoverBgClass = `hover:bg-surface-${SurfaceVariant}` | "hover:bg-transparent";
@@ -27,7 +32,6 @@ export type HoverTextColorClass =
   | "hover:text-primary";
 export type HoverBorderClass =
   | `hover:border-stroke-${StrokeVariant}`
-  | `hover:border-stroke-${AccentVariant}`
   | "hover:border-transparent";
 
 export type ActiveBgClass =
@@ -38,5 +42,4 @@ export type ActiveTextColorClass =
   | "active:text-primary";
 export type ActiveBorderClass =
   | `active:border-stroke-${StrokeVariant}`
-  | `active:border-stroke-${AccentVariant}`
   | "active:border-transparent";
