@@ -2,6 +2,18 @@
   "css.lint.unknownAtRules": "ignore",
   "scss.lint.unknownAtRules": "ignore",
   "less.lint.unknownAtRules": "ignore",
+  "tailwindCSS.experimental.configFile": {
+    "packages/ui/src/index.css": "packages/ui/src/**",
+    "apps/docs/app/globals.css": "apps/docs/**",
+    "apps/workbench/app/globals.css": "apps/workbench/**"
+  },
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnPaste": true,

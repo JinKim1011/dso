@@ -16,7 +16,7 @@ export function Navigation({ children, stagedCount }: NavigationProps) {
   return (
     <nav
       aria-label="navigation"
-      className="p-microPlus bg-surface-primary shadow-overlay-floating fixed bottom-10 left-1/2 z-10 -translate-x-1/2 rounded-[1.375rem]"
+      className="p-mini bg-surface-primary shadow-overlay-floating fixed bottom-10 left-1/2 z-10 -translate-x-1/2 rounded-[1.625rem]"
     >
       {children}
       <div className="gap-microPlus inline-flex w-fit p-0">

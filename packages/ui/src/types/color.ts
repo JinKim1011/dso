@@ -2,35 +2,31 @@ export type SurfaceVariant =
   | "primary"
   | "secondary"
   | "tertiary"
-  | "quaternary";
-
+  | "quaternary"
+  | "accent";
 export type ContentVariant =
   | "primary"
   | "secondary"
   | "tertiary"
-  | "quaternary";
-
-export type StrokeVariant = "primary" | "secondary" | "tertiary";
-
-export type AccentVariant = "default" | "subtle" | "strong" | "muted";
+  | "quaternary"
+  | "accent"
+  | "accentStrong";
+export type StrokeVariant =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "accent"
+  | "accentStrong";
 
 export type BgClass = `bg-surface-${SurfaceVariant}` | "bg-transparent";
+export type TextColorClass = `text-content-${ContentVariant}` | "text-primary";
+export type BorderClass = `border-stroke-${StrokeVariant}` | "border-transparent";
 
 export type OverrideBGClass = BgClass;
-
-export type TextColorClass = `text-content-${ContentVariant}` | "text-primary";
-
 export type OverrideTextColorClass = TextColorClass;
-
-export type BorderClass =
-  | `border-stroke-${StrokeVariant}`
-  | "border-transparent";
-
 export type OverrideBorderClass = BorderClass;
 
-export type HoverBgClass =
-  | `hover:bg-surface-${SurfaceVariant}`
-  | "hover:bg-transparent";
+export type HoverBgClass = `hover:bg-surface-${SurfaceVariant}` | "hover:bg-transparent";
 export type HoverTextColorClass =
   | `hover:text-content-${ContentVariant}`
   | "hover:text-primary";

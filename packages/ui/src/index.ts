@@ -1,7 +1,8 @@
 // Components
 export { Button } from "./components/Button";
-export { Text } from "./components/Text";
+export { Input } from "./components/input/Input";
 export { SegmentedControl } from "./components/SegmentedControl";
+export { Text } from "./components/Text";
 
 // Hooks
 export { useTheme } from "./hooks/useTheme";
