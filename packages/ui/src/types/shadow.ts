@@ -4,7 +4,7 @@ export type ShadowSurfaceVariant = "lifted" | "pressed";
 
 export type OverlayVariant = "floating" | "menu";
 
-export type FocusVariant = "default" | "subtle" | "strong";
+export type FocusVariant = "accent" | "accentStrong";
 
 export type ShadowClass =
   | `shadow-level-${LevelVariant}`
