@@ -27,7 +27,7 @@ export const InputBase = ({
 
     disabled
       ? "bg-surface-secondary text-content-quaternary cursor-not-allowed"
-      : "bg-surface-tertiary text-content-primary focus-within:bg-surface-quaternary focus-within:shadow-focus-subtle",
+      : "bg-surface-tertiary text-content-primary focus-within:bg-surface-quaternary focus-within:shadow-focus-accent",
   ]
     .filter(Boolean)
     .join(" ");
