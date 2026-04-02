@@ -48,6 +48,12 @@ export const TOKEN_CSS_VAR_RULES = [
     kind: "primitive",
   },
   {
+    category: "shadow",
+    type: "FocusVariant",
+    cssVarPrefix: "--focus-",
+    kind: "primitive",
+  },
+  {
     category: "motion",
     type: "DurationVariant",
     cssVarPrefix: "--duration-",
@@ -75,12 +81,6 @@ export const TOKEN_CSS_VAR_RULES = [
     category: "color",
     type: "StrokeVariant",
     cssVarPrefix: "--stroke-",
-    kind: "primitive",
-  },
-  {
-    category: "color",
-    type: "AccentVariant",
-    cssVarPrefix: "--accent-",
     kind: "primitive",
   },
 
