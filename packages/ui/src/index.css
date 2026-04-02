@@ -87,11 +87,14 @@
   --color-surface-secondary: var(--bg-secondary);
   --color-surface-tertiary: var(--bg-tertiary);
   --color-surface-quaternary: var(--bg-quaternary);
+  --color-surface-accent: var(--bg-accent);
 
   --color-content-primary: var(--text-primary);
   --color-content-secondary: var(--text-secondary);
   --color-content-tertiary: var(--text-tertiary);
   --color-content-quaternary: var(--text-quaternary);
+  --color-content-accent: var(--text-accent);
+  --color-content-accentStrong: var(--text-accentStrong);
 
   --color-stroke-primary: var(--stroke-primary);
   --color-stroke-secondary: var(--stroke-secondary);
