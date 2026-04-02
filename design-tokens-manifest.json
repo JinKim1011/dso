@@ -711,12 +711,48 @@
   },
   {
     "category": "shadow",
+    "type": "FocusVariant",
+    "kind": "primitive",
+    "value": [
+      "accent",
+      "accentStrong"
+    ],
+    "tokens": [
+      {
+        "name": "accent",
+        "cssVar": "--focus-accent",
+        "values": {
+          "light": "0 0 0 2px oklch(0.692 0.152 283.4)",
+          "dark": "0 0 0 2px oklch(0.78 0.108 283.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "accentStrong",
+        "cssVar": "--focus-accentStrong",
+        "values": {
+          "light": "0 0 0 2px oklch(0.58 0.207 283.4)",
+          "dark": "0 0 0 2px oklch(0.58 0.207 283.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      }
+    ]
+  },
+  {
+    "category": "shadow",
     "type": "ShadowClass",
     "kind": "class-union",
     "value": [
       "shadow-level-${LevelVariant}",
       "shadow-surface-${ShadowSurfaceVariant}",
-      "shadow-overlay-${OverlayVariant}"
+      "shadow-overlay-${OverlayVariant}",
+      "shadow-focus-${FocusVariant}"
     ],
     "templateMeta": {
       "mode": "template-first",
@@ -752,6 +788,17 @@
           "resolvedValues": [
             "shadow-overlay-floating",
             "shadow-overlay-menu"
+          ],
+          "status": "resolved"
+        },
+        {
+          "template": "shadow-focus-${FocusVariant}",
+          "references": [
+            "FocusVariant"
+          ],
+          "resolvedValues": [
+            "shadow-focus-accent",
+            "shadow-focus-accentStrong"
           ],
           "status": "resolved"
         }
@@ -1036,7 +1083,8 @@
       "primary",
       "secondary",
       "tertiary",
-      "quaternary"
+      "quaternary",
+      "accent"
     ],
     "tokens": [
       {
@@ -1086,6 +1134,18 @@
           "light": "matched",
           "dark": "matched"
         }
+      },
+      {
+        "name": "accent",
+        "cssVar": "--bg-accent",
+        "values": {
+          "light": "oklch(0.93 0.034 283.4)",
+          "dark": "oklch(0.93 0.034 283.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
       }
     ]
   },
@@ -1097,7 +1157,9 @@
       "primary",
       "secondary",
       "tertiary",
-      "quaternary"
+      "quaternary",
+      "accent",
+      "accentStrong"
     ],
     "tokens": [
       {
@@ -1147,6 +1209,30 @@
           "light": "matched",
           "dark": "matched"
         }
+      },
+      {
+        "name": "accent",
+        "cssVar": "--text-accent",
+        "values": {
+          "light": "oklch(0.692 0.152 283.4)",
+          "dark": "oklch(0.78 0.108 283.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "accentStrong",
+        "cssVar": "--text-accentStrong",
+        "values": {
+          "light": "oklch(0.58 0.207 283.4)",
+          "dark": "oklch(0.58 0.207 283.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
       }
     ]
   },
@@ -1157,7 +1243,9 @@
     "value": [
       "primary",
       "secondary",
-      "tertiary"
+      "tertiary",
+      "accent",
+      "accentStrong"
     ],
     "tokens": [
       {
@@ -1195,37 +1283,12 @@
           "light": "matched",
           "dark": "matched"
         }
-      }
-    ]
-  },
-  {
-    "category": "color",
-    "type": "AccentVariant",
-    "kind": "primitive",
-    "value": [
-      "default",
-      "subtle",
-      "strong",
-      "muted"
-    ],
-    "tokens": [
-      {
-        "name": "default",
-        "cssVar": "--accent-default",
-        "values": {
-          "light": "oklch(0.692 0.152 283.4)",
-          "dark": "oklch(0.692 0.152 283.4)"
-        },
-        "status": {
-          "light": "matched",
-          "dark": "matched"
-        }
       },
       {
-        "name": "subtle",
-        "cssVar": "--accent-subtle",
+        "name": "accent",
+        "cssVar": "--stroke-accent",
         "values": {
-          "light": "oklch(0.78 0.108 283.4)",
+          "light": "oklch(0.692 0.152 283.4)",
           "dark": "oklch(0.78 0.108 283.4)"
         },
         "status": {
@@ -1234,23 +1297,11 @@
         }
       },
       {
-        "name": "strong",
-        "cssVar": "--accent-strong",
+        "name": "accentStrong",
+        "cssVar": "--stroke-accentStrong",
         "values": {
           "light": "oklch(0.58 0.207 283.4)",
           "dark": "oklch(0.58 0.207 283.4)"
-        },
-        "status": {
-          "light": "matched",
-          "dark": "matched"
-        }
-      },
-      {
-        "name": "muted",
-        "cssVar": "--accent-muted",
-        "values": {
-          "light": "oklch(0.93 0.034 283.4)",
-          "dark": "oklch(0.93 0.034 283.4)"
         },
         "status": {
           "light": "matched",
@@ -1282,7 +1333,8 @@
             "bg-surface-primary",
             "bg-surface-secondary",
             "bg-surface-tertiary",
-            "bg-surface-quaternary"
+            "bg-surface-quaternary",
+            "bg-surface-accent"
           ],
           "status": "resolved"
         }
@@ -1312,7 +1364,9 @@
             "text-content-primary",
             "text-content-secondary",
             "text-content-tertiary",
-            "text-content-quaternary"
+            "text-content-quaternary",
+            "text-content-accent",
+            "text-content-accentStrong"
           ],
           "status": "resolved"
         }
@@ -1341,7 +1395,9 @@
           "resolvedValues": [
             "border-stroke-primary",
             "border-stroke-secondary",
-            "border-stroke-tertiary"
+            "border-stroke-tertiary",
+            "border-stroke-accent",
+            "border-stroke-accentStrong"
           ],
           "status": "resolved"
         }
@@ -1371,7 +1427,8 @@
             "hover:bg-surface-primary",
             "hover:bg-surface-secondary",
             "hover:bg-surface-tertiary",
-            "hover:bg-surface-quaternary"
+            "hover:bg-surface-quaternary",
+            "hover:bg-surface-accent"
           ],
           "status": "resolved"
         }
@@ -1401,7 +1458,9 @@
             "hover:text-content-primary",
             "hover:text-content-secondary",
             "hover:text-content-tertiary",
-            "hover:text-content-quaternary"
+            "hover:text-content-quaternary",
+            "hover:text-content-accent",
+            "hover:text-content-accentStrong"
           ],
           "status": "resolved"
         }
@@ -1430,7 +1489,9 @@
           "resolvedValues": [
             "hover:border-stroke-primary",
             "hover:border-stroke-secondary",
-            "hover:border-stroke-tertiary"
+            "hover:border-stroke-tertiary",
+            "hover:border-stroke-accent",
+            "hover:border-stroke-accentStrong"
           ],
           "status": "resolved"
         }
@@ -1460,7 +1521,8 @@
             "active:bg-surface-primary",
             "active:bg-surface-secondary",
             "active:bg-surface-tertiary",
-            "active:bg-surface-quaternary"
+            "active:bg-surface-quaternary",
+            "active:bg-surface-accent"
           ],
           "status": "resolved"
         }
@@ -1490,7 +1552,9 @@
             "active:text-content-primary",
             "active:text-content-secondary",
             "active:text-content-tertiary",
-            "active:text-content-quaternary"
+            "active:text-content-quaternary",
+            "active:text-content-accent",
+            "active:text-content-accentStrong"
           ],
           "status": "resolved"
         }
@@ -1519,7 +1583,9 @@
           "resolvedValues": [
             "active:border-stroke-primary",
             "active:border-stroke-secondary",
-            "active:border-stroke-tertiary"
+            "active:border-stroke-tertiary",
+            "active:border-stroke-accent",
+            "active:border-stroke-accentStrong"
           ],
           "status": "resolved"
         }
