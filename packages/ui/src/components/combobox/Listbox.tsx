@@ -1,6 +1,6 @@
 import { type IconComponent, ListboxOption } from "./ListboxOption";
 
-type ListboxItem = {
+export type ListboxItem = {
   value: string;
   label: string;
   helperText?: string;
