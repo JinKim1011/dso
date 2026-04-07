@@ -1,5 +1,5 @@
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { KeyboardEventHandler, useState } from "react";
+import { type FocusEventHandler, type KeyboardEventHandler, useState } from "react";
 import { InputBase } from "../input/InputBase";
 import { Listbox } from "./Listbox";
 
@@ -41,6 +41,14 @@ export function Combobox({
     }
   };
 
+  const handleBlur: FocusEventHandler<HTMLDivElement> = (event) => {
+    const nextFocusedElement = event.relatedTarget as Node | null;
+
+    if (!event.currentTarget.contains(nextFocusedElement)) {
+      setIsOpen(false);
+    }
+  };
+
   const handleSelect = (nextValue: string) => {
     onChange(nextValue);
     setIsOpen(false);
@@ -48,12 +56,9 @@ export function Combobox({
   const handleClick = () => {
     if (!disabled) setIsOpen((prev) => !prev);
   };
-  const handleBlur = () => {
-    setIsOpen(false);
-  };
 
   return (
-    <div className="relative w-full" onBlur={handleBlur} tabIndex={-1}>
+    <div className="relative w-full" onBlur={handleBlur}>
       <InputBase
         readOnly
         value={inputValue}
