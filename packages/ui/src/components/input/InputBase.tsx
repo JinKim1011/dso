@@ -59,7 +59,12 @@ export const InputBase = ({
       data-disabled={disabled || undefined}
       aria-disabled={disabled || undefined}
     >
-      <input {...props} disabled={disabled} className={inputClassName}></input>
+      <input
+        {...props}
+        disabled={disabled}
+        readOnly={readOnly}
+        className={inputClassName}
+      ></input>
       {RightIcon && <RightIcon aria-hidden className={iconClassName} />}
     </div>
   );
