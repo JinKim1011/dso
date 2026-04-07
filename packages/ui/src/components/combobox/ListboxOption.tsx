@@ -74,7 +74,6 @@ export function ListboxOption({
         </Text>
         <Text
           variant="input-helper-sm"
-          as="caption"
           className={
             disabled
               ? "text-content-quaternary"
