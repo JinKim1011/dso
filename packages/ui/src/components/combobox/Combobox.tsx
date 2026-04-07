@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { type FocusEventHandler, type KeyboardEventHandler, useState } from "react";
 import { InputBase } from "../input/InputBase";
 import { Listbox, type ListboxItem } from "./Listbox";
@@ -57,7 +57,7 @@ export function Combobox({
         value={inputValue}
         placeholder={placeholder}
         disabled={disabled}
-        rightIcon={ChevronDownIcon}
+        rightIcon={isOpen ? ChevronUpIcon : ChevronDownIcon}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         aria-haspopup="listbox"
