@@ -27,7 +27,7 @@ export function Combobox({
 }: ComboboxProps) {
   const [isOpen, setIsOpen] = useState(false);
   const selectedOption = options.find((option) => option.value === value);
-  const inputValue = selectedOption ? selectedOption.label : placeholder;
+  const inputValue = selectedOption ? selectedOption.label : "";
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (disabled) return;
