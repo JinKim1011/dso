@@ -32,7 +32,7 @@ export function ListboxOption({
   const baseClasses = [
     "flex items-start w-full",
     "py-microPlus px-mini gap-microPlus",
-    "bg-surface-secondary text-content-primary",
+    "bg-surface-secondary text-content-primary cursor-pointer",
     "transition-colors duration-highlightFadeOut ease-outExpo",
     disabled
       ? variantClasses.disabled
@@ -58,7 +58,7 @@ export function ListboxOption({
       aria-selected={selected}
       aria-disabled={disabled}
     >
-      <div className="cursor flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col items-start">
         <Text
           variant="label-xs"
           as="label"
