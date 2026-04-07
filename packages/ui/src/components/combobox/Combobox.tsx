@@ -1,17 +1,10 @@
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { type FocusEventHandler, type KeyboardEventHandler, useState } from "react";
 import { InputBase } from "../input/InputBase";
-import { Listbox } from "./Listbox";
-
-type ComboboxItem = {
-  value: string;
-  label: string;
-  helperText?: string;
-  disabled?: boolean;
-};
+import { Listbox, type ListboxItem } from "./Listbox";
 
 type ComboboxProps = {
-  options: ComboboxItem[];
+  options: ListboxItem[];
   value?: string;
   placeholder?: string;
   disabled?: boolean;
