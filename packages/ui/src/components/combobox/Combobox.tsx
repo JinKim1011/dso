@@ -1,3 +1,5 @@
+"use client";
+
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import { type FocusEventHandler, type KeyboardEventHandler, useState } from "react";
