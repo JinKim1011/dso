@@ -37,7 +37,7 @@ export const InputBase = ({
     typographyStyles["control-sm"],
     "w-full p-0 bg-transparent outline-none",
 
-    readOnly ? "cursor-pointer" : "cursor-text",
+    readOnly ? "cursor-pointer select-none caret-transparent" : "cursor-text select-text",
 
     disabled
       ? "text-content-quaternary placeholder:text-content-quaternary cursor-not-allowed"
