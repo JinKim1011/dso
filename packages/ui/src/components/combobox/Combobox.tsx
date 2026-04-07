@@ -41,9 +41,12 @@ export function Combobox({
   const handleClick = () => {
     if (!disabled) setIsOpen((prev) => !prev);
   };
+  const handleBlur = () => {
+    setIsOpen(false);
+  };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" onBlur={handleBlur} tabIndex={-1}>
       <InputBase
         readOnly
         value={inputValue}
