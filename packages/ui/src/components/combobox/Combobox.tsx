@@ -1,4 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
+import { AnimatePresence, motion } from "framer-motion";
 import { type FocusEventHandler, type KeyboardEventHandler, useState } from "react";
 import { InputBase } from "../input/InputBase";
 import { Listbox, type ListboxItem } from "./Listbox";
@@ -54,6 +55,26 @@ export function Combobox({
     if (!disabled) setIsOpen((prev) => !prev);
   };
 
+  const dropdownTransition = {
+    duration: 0.25,
+    ease: [0.19, 1, 0.22, 1] as const,
+  };
+
+  const dropdownVariants = {
+    closed: {
+      opacity: 0,
+      y: -4,
+      scale: 0.98,
+      transition: dropdownTransition,
+    },
+    open: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: dropdownTransition,
+    },
+  };
+
   return (
     <div className="relative w-full" onBlur={handleBlur}>
       <InputBase
@@ -68,15 +89,24 @@ export function Combobox({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       />
-      {isOpen ? (
-        <div>
-          <Listbox
-            options={options}
-            selectedValue={value ?? ""}
-            onSelect={handleSelect}
-          ></Listbox>
-        </div>
-      ) : null}
+      <AnimatePresence>
+        {isOpen ? (
+          <motion.div
+            key="dropdown"
+            initial="closed"
+            animate="open"
+            exit="closed"
+            className="absolute w-full"
+            variants={dropdownVariants}
+          >
+            <Listbox
+              options={options}
+              selectedValue={value ?? ""}
+              onSelect={handleSelect}
+            ></Listbox>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
