@@ -42,6 +42,10 @@ export function Combobox({
     }
   };
 
+  const handleMouseDown: React.MouseEventHandler<HTMLInputElement> = (event) => {
+    event.preventDefault();
+  };
+
   const handleSelect = (nextValue: string) => {
     onChange(nextValue);
     setIsOpen(false);
@@ -57,6 +61,7 @@ export function Combobox({
         value={inputValue}
         placeholder={placeholder}
         disabled={disabled}
+        onMouseDown={handleMouseDown}
         rightIcon={isOpen ? ChevronUpIcon : ChevronDownIcon}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
