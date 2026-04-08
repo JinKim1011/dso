@@ -2,7 +2,12 @@
 
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
-import { type FocusEventHandler, type KeyboardEventHandler, useState } from "react";
+import {
+  type FocusEventHandler,
+  type KeyboardEventHandler,
+  type MouseEventHandler,
+  useState,
+} from "react";
 import { InputBase } from "../input/InputBase";
 import { Listbox, type ListboxItem } from "./Listbox";
 
@@ -45,7 +50,7 @@ export function Combobox({
     }
   };
 
-  const handleMouseDown: React.MouseEventHandler<HTMLInputElement> = (event) => {
+  const handleMouseDown: MouseEventHandler<HTMLInputElement> = (event) => {
     event.preventDefault();
   };
 
