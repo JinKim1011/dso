@@ -62,7 +62,7 @@ export function ListboxOption({
       <div className="flex flex-1 flex-col items-start">
         <Text
           variant="label-xs"
-          as="label"
+          as="span"
           className={
             disabled
               ? "text-content-quaternary"
