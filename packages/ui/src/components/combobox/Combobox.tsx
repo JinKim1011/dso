@@ -7,6 +7,7 @@ import { InputBase } from "../input/InputBase";
 import { Listbox, type ListboxItem } from "./Listbox";
 
 type ComboboxProps = {
+  id?: string;
   options: ListboxItem[];
   value?: string;
   placeholder?: string;
@@ -15,6 +16,7 @@ type ComboboxProps = {
 };
 
 export function Combobox({
+  id,
   options,
   value,
   placeholder,
@@ -73,6 +75,8 @@ export function Combobox({
     },
   };
 
+  const listboxId = `${id}-listbox`;
+
   return (
     <div className="relative w-full" onBlur={handleBlur}>
       <InputBase
@@ -85,6 +89,7 @@ export function Combobox({
         onKeyDown={handleKeyDown}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
+        aria-control={isOpen ? listboxId : undefined}
       />
       <AnimatePresence>
         {isOpen ? (
@@ -97,6 +102,7 @@ export function Combobox({
             variants={dropdownVariants}
           >
             <Listbox
+              id={id}
               options={options}
               selectedValue={value ?? ""}
               onSelect={handleSelect}
