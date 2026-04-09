@@ -16,6 +16,7 @@ export interface InputBaseProps extends Omit<
 export const InputBase = ({
   rightIcon: RightIcon,
   disabled = false,
+  readOnly = false,
   ...props
 }: InputBaseProps) => {
   const wrapperClassName = [
@@ -35,6 +36,8 @@ export const InputBase = ({
   const inputClassName = [
     typographyStyles["control-sm"],
     "w-full p-0 bg-transparent outline-none",
+
+    readOnly ? "cursor-pointer select-none caret-transparent" : "cursor-text select-text",
 
     disabled
       ? "text-content-quaternary placeholder:text-content-quaternary cursor-not-allowed"
@@ -56,7 +59,12 @@ export const InputBase = ({
       data-disabled={disabled || undefined}
       aria-disabled={disabled || undefined}
     >
-      <input {...props} disabled={disabled} className={inputClassName}></input>
+      <input
+        {...props}
+        disabled={disabled}
+        readOnly={readOnly}
+        className={inputClassName}
+      ></input>
       {RightIcon && <RightIcon aria-hidden className={iconClassName} />}
     </div>
   );
