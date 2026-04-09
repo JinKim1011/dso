@@ -16,7 +16,10 @@ type ListboxProps = {
 
 export function Listbox({ options, selectedValue, onSelect }: ListboxProps) {
   return (
-    <div className="py-microPlus px-micro rounded-mini shadow-overlay-menu absolute flex w-full translate-y-[0.25rem] flex-col">
+    <div
+      role="listbox"
+      className="py-microPlus px-micro rounded-mini shadow-overlay-menu absolute flex w-full translate-y-[0.25rem] flex-col"
+    >
       {options.map((option) => {
         const isDisabled = Boolean(option.disabled);
         const isSelected = option.value === selectedValue;
