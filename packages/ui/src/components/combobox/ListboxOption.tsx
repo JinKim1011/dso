@@ -52,6 +52,7 @@ export function ListboxOption({
 
   return (
     <button
+      type="button"
       className={baseClasses}
       onClick={onSelect}
       disabled={disabled}
