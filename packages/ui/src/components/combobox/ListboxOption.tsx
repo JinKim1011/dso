@@ -1,7 +1,7 @@
-// internal
+import { type ElementType } from "react";
 import { Text } from "../Text";
 
-export type IconComponent = React.ElementType<{
+export type IconComponent = ElementType<{
   className?: string;
   "aria-hidden"?: boolean;
 }>;
