@@ -9,14 +9,16 @@ export type ListboxItem = {
 };
 
 type ListboxProps = {
+  id?: string;
   options: ListboxItem[];
   selectedValue: string;
   onSelect: (value: string) => void;
 };
 
-export function Listbox({ options, selectedValue, onSelect }: ListboxProps) {
+export function Listbox({ id, options, selectedValue, onSelect }: ListboxProps) {
   return (
     <div
+      id={id}
       role="listbox"
       className="py-microPlus px-micro rounded-mini shadow-overlay-menu absolute flex w-full translate-y-[0.25rem] flex-col"
     >
