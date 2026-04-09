@@ -102,7 +102,7 @@ export function Combobox({
             variants={dropdownVariants}
           >
             <Listbox
-              id={id}
+              id={listboxId}
               options={options}
               selectedValue={value ?? ""}
               onSelect={handleSelect}
