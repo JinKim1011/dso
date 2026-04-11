@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, type HTMLMotionProps } from "framer-motion";
+import { createMotionTransition } from "../../types/motion";
 import { Text } from "../Text";
 
 type Level = 0 | 1 | 2 | 3 | 4;
