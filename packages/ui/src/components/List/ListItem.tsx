@@ -23,6 +23,18 @@ export const ListItem = ({
   onSelect,
   ...props
 }: ListItemProps) => {
+  const normalizedLevel = Math.min(4, Math.max(0, Math.floor(level ?? 0)));
+  const isInteractive = Boolean(onSelect);
+  const indexTextClass = selected
+    ? "text-content-accent"
+    : "text-content-quaternary group-hover:text-content-primary";
+  const titleTextClass = selected
+    ? "text-content-primary"
+    : "text-content-tertiary group-hover:text-content-primary";
+  const subTextClass = selected
+    ? "text-content-primary"
+    : "text-content-tertiary group-hover:text-content-primary";
+
   const wrapperClasses = [
     "group flex w-full justify-start items-start cursor-pointer",
     "py-miniPlus px-small gap-regularPlus rounded-micro",
@@ -82,23 +94,17 @@ export const ListItem = ({
       }
       {...props}
     >
-      <Text
-        variant="label-xs"
-        className="text-content-quaternary group-hover:text-content-primary"
-      >
+      <Text variant="label-xs" className={indexTextClass}>
         {index}
       </Text>
       <div className="gap-miniPlus flex min-w-0 flex-1 flex-col">
-        <Text
-          variant="label-xs"
-          className="text-content-tertiary group-hover:text-content-primary"
-        >
+        <Text variant="label-xs" className={titleTextClass}>
           {text}
         </Text>
         <div className="gap-mini flex w-full min-w-0">
           <Text
             variant="meta-xs"
-            className="text-content-tertiary group-hover:text-content-primary min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap"
+            className={`${subTextClass} min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap`}
           >
             {subText}
           </Text>
@@ -108,7 +114,7 @@ export const ListItem = ({
               const colorClass = isStepActive ? activeIndicator : inactiveIndicator;
               const indicatorClasses = `${baseIndicator} ${colorClass}`;
 
-              return <div key={stepIndex} className={indicatorClasses}></div>;
+              return <span key={stepIndex} className={indicatorClasses} />;
             })}
           </div>
         </div>
