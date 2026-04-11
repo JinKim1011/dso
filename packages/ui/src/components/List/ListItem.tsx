@@ -1,5 +1,5 @@
 import { ComponentPropsWithoutRef } from "react";
-import { Text } from "./Text";
+import { Text } from "../Text";
 
 type Level = 0 | 1 | 2 | 3 | 4;
 
