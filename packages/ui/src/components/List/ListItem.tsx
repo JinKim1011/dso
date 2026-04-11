@@ -36,13 +36,16 @@ export const ListItem = ({
     : "text-content-tertiary group-hover:text-content-primary";
 
   const wrapperClasses = [
-    "group flex w-full justify-start items-start cursor-pointer",
+    "group flex w-full items-start justify-start",
     "py-miniPlus px-small gap-regularPlus rounded-micro",
-    "transition-[transform,box-shadow,background-color] duration-regularTransition ease-outCubic",
+    "transition-[box-shadow,background-color,color] duration-slowTransition ease-outExpo",
+    isInteractive
+      ? "cursor-pointer focus-visible:outline-none focus-visible:shadow-focus-accent"
+      : "cursor-default",
 
     selected
-      ? "bg-surface-quaternary shadow-surface-pressed translate-y-[2px] scale-[0.98]"
-      : "bg-surface-tertiary shadow-surface-lifted hover:shadow-surface-pressed hover:translate-y-[2px] hover:scale-[0.98] hover:bg-surface-quaternary",
+      ? "bg-surface-quaternary shadow-surface-pressed text-content-accent"
+      : "bg-surface-tertiary shadow-surface-lifted hover:bg-surface-quaternary hover:shadow-surface-pressed hover:text-content-accent",
   ]
     .filter(Boolean)
     .join(" ");
