@@ -7,7 +7,7 @@ export interface ListItemProps extends Omit<ComponentPropsWithoutRef<"li">, "cla
   index?: string;
   text?: string;
   subText?: string;
-  level?: Level;
+  level?: Level | number;
   selected?: boolean;
   onSelect?: () => void;
 }
