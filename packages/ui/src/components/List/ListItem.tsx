@@ -46,9 +46,24 @@ export const ListItem = ({
   const normalizedLevel = Math.min(4, Math.max(0, Math.floor(level ?? 0)));
   const isInteractive = Boolean(onSelect);
 
+  const itemVariants = {
+    hidden: {
+      opacity: 0,
+      y: 20,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.25,
+      },
+    },
+  };
+
   return (
     <motion.li
       className={wrapperClasses}
+      variants={itemVariants}
       aria-selected={selected}
       role={isInteractive ? "option" : undefined}
       tabIndex={isInteractive ? 0 : undefined}
