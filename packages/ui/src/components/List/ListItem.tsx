@@ -3,7 +3,7 @@ import { Text } from "../Text";
 
 type Level = 0 | 1 | 2 | 3 | 4;
 
-export interface ListItemProps extends Omit<ComponentPropsWithoutRef<"li">, "className"> {
+export interface ListItemProps extends Omit<HTMLMotionProps<"li">, "className"> {
   index?: string;
   text?: string;
   subText?: string;
@@ -47,7 +47,7 @@ export const ListItem = ({
   const isInteractive = Boolean(onSelect);
 
   return (
-    <li
+    <motion.li
       className={wrapperClasses}
       aria-selected={selected}
       role={isInteractive ? "option" : undefined}
@@ -96,6 +96,6 @@ export const ListItem = ({
           </div>
         </div>
       </div>
-    </li>
+    </motion.li>
   );
 };
