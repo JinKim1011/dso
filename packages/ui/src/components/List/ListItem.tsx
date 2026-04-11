@@ -6,6 +6,20 @@ import { Text } from "../Text";
 
 type Level = 0 | 1 | 2 | 3 | 4;
 
+const listItemVariants = {
+  hidden: {
+    opacity: 0,
+    y: 20,
+    scale: 0.98,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: createMotionTransition("quick", "outExpo"),
+  },
+};
+
 export interface ListItemProps extends Omit<HTMLMotionProps<"li">, "className"> {
   index?: string;
   text?: string;
@@ -61,31 +75,16 @@ export const ListItem = ({
     .filter(Boolean)
     .join(" ");
 
-  const normalizedLevel = Math.min(4, Math.max(0, Math.floor(level ?? 0)));
-  const isInteractive = Boolean(onSelect);
-
-  const itemVariants = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.25,
-      },
-    },
-  };
-
   return (
     <motion.li
       className={wrapperClasses}
-      variants={itemVariants}
+      variants={listItemVariants}
+      whileHover={{ y: 2, scale: 0.98 }}
       aria-selected={selected}
       role={isInteractive ? "option" : undefined}
       tabIndex={isInteractive ? 0 : undefined}
       onClick={isInteractive ? onSelect : undefined}
+      layout
       onKeyDown={
         isInteractive
           ? (event) => {
