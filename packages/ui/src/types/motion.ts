@@ -54,3 +54,14 @@ export const MotionSettings = {
     inOutCirc: [0.785, 0.135, 0.15, 0.86],
   },
 } as const;
+
+export type MotionSpeedKey = keyof typeof MotionSettings.speed;
+export type MotionEaseKey = keyof typeof MotionSettings.easing;
+
+export const createMotionTransition = (
+  speed: MotionSpeedKey = "regular",
+  easing: MotionEaseKey = "outExpo",
+) => ({
+  duration: MotionSettings.speed[speed],
+  ease: MotionSettings.easing[easing],
+});
