@@ -67,25 +67,25 @@ export const ListItem = ({
     >
       <Text
         variant="label-xs"
-        className="text-content-quaternary group-hover:text-content-secondary"
+        className="text-content-quaternary group-hover:text-content-primary"
       >
         {index}
       </Text>
-      <div className="gap-miniPlus flex w-full flex-col">
+      <div className="gap-miniPlus flex min-w-0 flex-1 flex-col">
         <Text
           variant="label-xs"
-          className="text-content-tertiary group-hover:text-content-accent"
+          className="text-content-tertiary group-hover:text-content-primary"
         >
           {text}
         </Text>
-        <div className="flex w-full">
+        <div className="gap-mini flex w-full min-w-0">
           <Text
             variant="meta-xs"
-            className="text-content-tertiary group-hover:text-content-accent flex-1"
+            className="text-content-tertiary group-hover:text-content-primary min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap"
           >
             {subText}
           </Text>
-          <div className="gap-microPlus flex items-center">
+          <div className="gap-microPlus flex shrink-0 items-center">
             {Array.from({ length: 5 }).map((_, stepIndex) => {
               const isStepActive = stepIndex <= normalizedLevel;
               const colorClass = isStepActive ? activeIndicator : inactiveIndicator;
