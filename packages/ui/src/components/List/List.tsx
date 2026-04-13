@@ -24,6 +24,7 @@ export const List = ({ listItems, ...props }: ListProps) => {
       {...props}
       variants={listVariants}
       initial="hidden"
+      role="listbox"
       animate="visible"
       className="px-miniPlus gap-microPlus flex flex-col"
     >
