@@ -82,20 +82,34 @@ export const ListItem = ({
       className={wrapperClasses}
       variants={listItemVariants}
       whileHover={{ y: 2, scale: 0.98 }}
-      aria-selected={selected}
-      role={isInteractive ? "option" : undefined}
-      tabIndex={isInteractive ? 0 : undefined}
-      onClick={isInteractive ? onSelect : undefined}
-      layout
+      role={isInteractive ? "option" : props.role}
+      tabIndex={isInteractive ? 0 : props.tabIndex}
+      onClick={
+        isInteractive
+          ? (event) => {
+              props.onClick?.(event);
+
+              if (!event.defaultPrevented) {
+                onSelect?.();
+              }
+            }
+          : props.onClick
+      }
       onKeyDown={
         isInteractive
           ? (event) => {
+              props.onKeyDown?.(event);
+
+              if (event.defaultPrevented) {
+                return;
+              }
+
               if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
                 onSelect?.();
               }
             }
-          : undefined
+          : props.onKeyDown
       }
       layout
       aria-selected={isInteractive ? selected : undefined}
