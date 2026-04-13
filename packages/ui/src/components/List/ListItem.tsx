@@ -38,7 +38,8 @@ export const ListItem = ({
   onSelect,
   ...props
 }: ListItemProps) => {
-  const normalizedLevel = Math.min(4, Math.max(0, Math.floor(level ?? 0)));
+  const finiteLevel = Number.isFinite(level) ? level : 0;
+  const normalizedLevel = Math.min(4, Math.max(0, Math.floor(finiteLevel)));
   const isInteractive = Boolean(onSelect);
   const indexTextClass = selected
     ? "text-content-accent"
