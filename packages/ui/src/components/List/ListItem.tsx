@@ -21,6 +21,7 @@ const listItemVariants = {
 };
 
 export interface ListItemProps extends Omit<HTMLMotionProps<"li">, "className"> {
+  id: string;
   index?: string;
   text?: string;
   subText?: string;
