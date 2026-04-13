@@ -664,8 +664,8 @@
         "name": "pressed",
         "cssVar": "--surface-pressed",
         "values": {
-          "light": "0 0 0 1px rgba(255 255 255 / 0.9), inset 0 0 0 1px rgba(0 0 0 / 0.02),\n    0 18px 45px 0 rgba(0 0 0 / 0.25)",
-          "dark": "inset 0 2px 0 0 rgba(0 0 0 / 0.4), inset 0 0 0 1px rgba(255 255 255 / 0.04),\n    inset 0 -1px 0 0 rgba(255 255 255 / 0.05)"
+          "light": "inset 0 0 0 1px rgba(15 23 42 / 0.04)",
+          "dark": "inset 0 0 0 1px rgba(255 255 255 / 0.04)"
         },
         "status": {
           "light": "matched",
@@ -1084,7 +1084,8 @@
       "secondary",
       "tertiary",
       "quaternary",
-      "accent"
+      "accent",
+      "accentStrong"
     ],
     "tokens": [
       {
@@ -1141,6 +1142,18 @@
         "values": {
           "light": "oklch(0.93 0.034 283.4)",
           "dark": "oklch(0.93 0.034 283.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "accentStrong",
+        "cssVar": "--bg-accentStrong",
+        "values": {
+          "light": "oklch(0.692 0.152 283.4)",
+          "dark": "oklch(0.78 0.108 283.4)"
         },
         "status": {
           "light": "matched",
@@ -1334,7 +1347,8 @@
             "bg-surface-secondary",
             "bg-surface-tertiary",
             "bg-surface-quaternary",
-            "bg-surface-accent"
+            "bg-surface-accent",
+            "bg-surface-accentStrong"
           ],
           "status": "resolved"
         }
@@ -1428,7 +1442,8 @@
             "hover:bg-surface-secondary",
             "hover:bg-surface-tertiary",
             "hover:bg-surface-quaternary",
-            "hover:bg-surface-accent"
+            "hover:bg-surface-accent",
+            "hover:bg-surface-accentStrong"
           ],
           "status": "resolved"
         }
@@ -1522,7 +1537,8 @@
             "active:bg-surface-secondary",
             "active:bg-surface-tertiary",
             "active:bg-surface-quaternary",
-            "active:bg-surface-accent"
+            "active:bg-surface-accent",
+            "active:bg-surface-accentStrong"
           ],
           "status": "resolved"
         }
