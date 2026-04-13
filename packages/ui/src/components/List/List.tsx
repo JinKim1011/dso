@@ -28,8 +28,8 @@ export const List = ({ listItems, ...props }: ListProps) => {
       animate="visible"
       className="px-miniPlus gap-microPlus flex flex-col"
     >
-      {listItems.map((item, itemIndex) => (
-        <ListItem key={item.index ?? item.text ?? itemIndex} {...item} />
+      {listItems.map((item) => (
+        <ListItem key={item.id} {...item} />
       ))}
     </motion.ul>
   );
