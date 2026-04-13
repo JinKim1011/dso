@@ -78,6 +78,7 @@ export const ListItem = ({
 
   return (
     <motion.li
+      {...props}
       className={wrapperClasses}
       variants={listItemVariants}
       whileHover={{ y: 2, scale: 0.98 }}
@@ -96,7 +97,8 @@ export const ListItem = ({
             }
           : undefined
       }
-      {...props}
+      layout
+      aria-selected={isInteractive ? selected : undefined}
     >
       <Text variant="label-xs" className={indexTextClass}>
         {index}
