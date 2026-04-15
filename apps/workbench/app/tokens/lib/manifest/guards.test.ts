@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { asString, asStringArray, isSupportedKind } from "./guards";
+import { asString, asStringArray, isSupportedKind, toId } from "./guards";
 
 describe("guards", () => {
   it("asString returns trimmed string for valid input", () => {
@@ -25,5 +25,13 @@ describe("guards", () => {
     expect(isSupportedKind("primitive")).toBe(true);
     expect(isSupportedKind("semantic")).toBe(true);
     expect(isSupportedKind("class-union")).toBe(false);
+  });
+
+  it("toId returned a same strings with identical input", () => {
+    const input1 = toId("color", "primary *^--background");
+    const input2 = toId("color", "primary *^--background");
+
+    expect(input1).toEqual(input2);
+    expect(input1).toEqual("color:primary-background");
   });
 });
