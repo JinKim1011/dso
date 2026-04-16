@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import happyManifest from "./fixtures/happy-manifest.json";
+import semanticTypographyManifest from "./fixtures/semantic-typography-manifest.json";
 import { normalizeEntry } from "./normalize";
 
 describe("normalize.normalizeEntry", () => {
@@ -48,7 +49,30 @@ describe("normalize.normalizeEntry", () => {
     if (!normalizedToken0) throw new Error("Expected first normalized token");
     if (!rawToken0) throw new Error("Expected first raw token");
 
-    expect(normalizedToken0.name).toBe(rawToken0.name);
-    expect(normalizedToken0.cssVar).toBe(rawToken0.cssVar);
+    expect(normalized_0.name).toBe(raw_0.name);
+    expect(normalized_0.cssVar).toBe(raw_0.cssVar);
+  });
+
+  it("keeps semanticMap when valid raw provided", () => {
+    const raw = semanticTypographyManifest[0];
+    const result = normalizeEntry(raw);
+
+    if (!raw) throw new Error("Expected semanticTypography manifest row");
+    if (!result) throw new Error("Expected normalized result");
+    if (!result.semanticMap) throw new Error("Expected SemanticMap");
+
+    const semanticMap = result.semanticMap;
+    expect(semanticMap.length).toBe(raw.semanticMap.length);
+
+    const normalized_0 = semanticMap[0];
+    const raw_0 = raw.semanticMap[0];
+
+    if (!normalized_0) throw new Error("Expected first normalized semanticMap");
+    if (!raw_0) throw new Error("Expected first raw semanticMap");
+
+    expect(normalized_0.name).toBe(raw_0.name);
+    expect(normalized_0.fontSize).toBe(raw_0.fontSize);
+    expect(normalized_0.fontWeight).toBe(raw_0.fontWeight);
+    expect(normalized_0.lineHeight).toBe(raw_0.lineHeight);
   });
 });
