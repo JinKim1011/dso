@@ -34,20 +34,20 @@ describe("normalize.normalizeEntry", () => {
 
   it("keeps the tokens when valid raw provided", () => {
     const raw = happyManifest[0];
-    if (!raw) throw new Error("Expected happy manifest row");
-
     const result = normalizeEntry(raw);
+
+    if (!raw) throw new Error("Expected happy manifest row");
     if (!result) throw new Error("Expected normalized result");
     if (!result.tokens) throw new Error("Expected tokens");
 
     const tokens = result.tokens;
     expect(tokens.length).toBe(raw.tokens.length);
 
-    const normalizedToken0 = tokens[0];
-    const rawToken0 = raw.tokens[0];
+    const normalized_0 = tokens[0];
+    const raw_0 = raw.tokens[0];
 
-    if (!normalizedToken0) throw new Error("Expected first normalized token");
-    if (!rawToken0) throw new Error("Expected first raw token");
+    if (!normalized_0) throw new Error("Expected first normalized token");
+    if (!raw_0) throw new Error("Expected first raw token");
 
     expect(normalized_0.name).toBe(raw_0.name);
     expect(normalized_0.cssVar).toBe(raw_0.cssVar);
