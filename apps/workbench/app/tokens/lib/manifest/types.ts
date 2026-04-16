@@ -11,7 +11,6 @@ export const SUPPORTED_KINDS = ["primitive", "semantic"] as const;
 // limit v1 to primitive and semantic, excluding class-union kind
 export type SupportedKind = (typeof SUPPORTED_KINDS)[number];
 
-// input type group
 export type ManifestTokenRecord = {
   name: string;
   cssVar?: string;
@@ -39,7 +38,6 @@ export type NormalizedManifestEntry = {
   semanticMap?: ManifestSemanticRecord[];
 };
 
-// output type group
 export type TokenTypeValueItem = {
   id: string;
   name: string;
@@ -72,25 +70,11 @@ export type TokenGraphModel = {
   tokenTypes: TokenTypeModel[];
 };
 
-// Diagonstics type group
-export type ManifestAdapterWarning = {
-  code:
-    | "invalid-entry"
-    | "missing-required"
-    | "invalid-value"
-    | "unsupported-kind"
-    | "invalid-container";
-  message: string;
-  index?: number;
-};
-
 export type ManifestAdapterResult = {
   model: TokenGraphModel;
-  warnings: ManifestAdapterWarning[];
   skippedCount: number;
 };
 
-// Extensibility type group
 export type ManifestMapper = {
   mapCategory?: (category: string) => string;
   mapKind?: (kind: string) => string;
