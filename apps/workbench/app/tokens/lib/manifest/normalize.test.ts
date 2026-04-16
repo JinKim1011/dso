@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import happyManifest from "./fixtures/happy-manifest.json";
 import semanticTypographyManifest from "./fixtures/semantic-typography-manifest.json";
-import { normalizeEntry } from "./normalize";
+import { extractRows, normalizeEntry } from "./normalize";
 
 describe("normalize.normalizeEntry", () => {
   it("returns null when required fields are missing", () => {
@@ -74,5 +74,16 @@ describe("normalize.normalizeEntry", () => {
     expect(normalized_0.fontSize).toBe(raw_0.fontSize);
     expect(normalized_0.fontWeight).toBe(raw_0.fontWeight);
     expect(normalized_0.lineHeight).toBe(raw_0.lineHeight);
+  });
+});
+
+describe("normalize.extractRows", () => {
+  it("extractRows supports array container", () => {
+    const rows = extractRows(happyManifest);
+
+    expect(Array.isArray(rows)).toBe(true);
+    expect(rows.length).toBe(happyManifest.length);
+    expect(rows[0]).toEqual(happyManifest[0]);
+    expect(rows[1]).toEqual(happyManifest[1]);
   });
 });
