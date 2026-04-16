@@ -45,3 +45,20 @@ function createValueItems(
     name: valueName,
   }));
 }
+
+function sortCategoriesByOrder(
+  categoryNames: string[],
+  categoryOrder: readonly string[],
+): string[] {
+  const rank = new Map(categoryOrder.map((name, index) => [name, index]));
+
+  return [...categoryNames].sort((a, b) => {
+    const rankA = rank.get(a);
+    const rankB = rank.get(b);
+
+    if (rankA !== undefined && rankB !== undefined) return rankA - rankB;
+    if (rankA !== undefined) return -1;
+    if (rankB !== undefined) return 1;
+    return a.localeCompare(b);
+  });
+}
