@@ -75,6 +75,42 @@ describe("normalize.normalizeEntry", () => {
     expect(normalized_0.fontWeight).toBe(raw_0.fontWeight);
     expect(normalized_0.lineHeight).toBe(raw_0.lineHeight);
   });
+
+  it("preserves single value and status", () => {
+    const result = normalizeEntry(happyManifest[1]);
+
+    if (!result) throw new Error("Exptected normalized result");
+    if (!result.tokens) throw new Error("Expected tokens");
+
+    const tokens = result.tokens;
+    const normalized_0 = tokens[0];
+
+    if (!normalized_0) throw new Error("Expected first normalized token");
+
+    expect(normalized_0.value).toBe("0.125rem");
+    expect(normalized_0.status).toBe("matched");
+  });
+
+  it("preserves object values and status", () => {
+    const result = normalizeEntry(happyManifest[0]);
+
+    if (!result) throw new Error("Exptected normalized result");
+    if (!result.tokens) throw new Error("Expected tokens");
+
+    const tokens = result.tokens;
+    const normalized_0 = tokens[0];
+
+    if (!normalized_0) throw new Error("Expected first normalized token");
+
+    expect(normalized_0.values).toStrictEqual({
+      light: "oklch(1 0 89.9)",
+      dark: "oklch(0.132 0.036 276.6)",
+    });
+    expect(normalized_0.status).toStrictEqual({
+      light: "matched",
+      dark: "matched",
+    });
+  });
 });
 
 describe("normalize.extractRows", () => {
