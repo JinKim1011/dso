@@ -1,5 +1,15 @@
-import { toId } from "./guards";
-import { type NormalizedManifestEntry, type TokenTypeValueItem } from "./types";
+import { isSupportedKind, toId } from "./guards";
+import { extractRows, normalizeEntry } from "./normalize";
+import {
+  type CategoryModel,
+  DEFAULT_CATEGORY_ORDER,
+  type ManifestAdapterOptions,
+  type ManifestAdapterResult,
+  type NormalizedManifestEntry,
+  type SupportedKind,
+  type TokenTypeModel,
+  type TokenTypeValueItem,
+} from "./types";
 
 const DEFAULT_SCHEMA_VERSION = 1;
 
@@ -61,4 +71,135 @@ function sortCategoriesByOrder(
     if (rankB !== undefined) return 1;
     return a.localeCompare(b);
   });
+}
+
+type SupportedEntry = Omit<NormalizedManifestEntry, "kind"> & { kind: SupportedKind };
+
+function hasSupportedKind(entry: NormalizedManifestEntry): entry is SupportedEntry {
+  return isSupportedKind(entry.kind);
+}
+
+function mapEntry(
+  normalized: NormalizedManifestEntry,
+  mapper?: ManifestAdapterOptions["mapper"],
+): NormalizedManifestEntry {
+  return {
+    ...normalized,
+    category: mapper?.mapCategory?.(normalized.category) ?? normalized.category,
+    kind: mapper?.mapKind?.(normalized.kind) ?? normalized.kind,
+  };
+}
+
+function shouldSkipEntry(
+  entry: NormalizedManifestEntry,
+  mapper?: ManifestAdapterOptions["mapper"],
+): boolean {
+  if (mapper?.includeEntry && !mapper.includeEntry(entry)) return true;
+  if (!isSupportedKind(entry.kind)) return true;
+  return false;
+}
+
+function createTokenType(entry: SupportedEntry): TokenTypeModel {
+  const tokenTypeId = toId("token-type", `${entry.category}-${entry.type}-${entry.kind}`);
+
+  return {
+    id: tokenTypeId,
+    category: entry.category,
+    type: entry.type,
+    kind: entry.kind,
+    values: createValueItems(entry, tokenTypeId),
+  };
+}
+
+function addCategoryLink(
+  categoriesByName: Map<string, CategoryModel>,
+  categoryName: string,
+  tokenTypeId: string,
+): void {
+  if (!categoriesByName.has(categoryName)) {
+    categoriesByName.set(categoryName, {
+      id: toId("category", categoryName),
+      category: categoryName,
+      tokenTypeIds: [],
+    });
+  }
+
+  categoriesByName.get(categoryName)?.tokenTypeIds.push(tokenTypeId);
+}
+
+export function buildTokenGraphModel(
+  manifestInput: unknown,
+  options: ManifestAdapterOptions = {},
+): ManifestAdapterResult {
+  const mapper = options.mapper;
+  const categoryOrder = options.categoryOrder ?? DEFAULT_CATEGORY_ORDER;
+  const schemaVersion = options.schemaVersion ?? DEFAULT_SCHEMA_VERSION;
+
+  const rows = extractRows(manifestInput);
+  const tokenTypes: TokenTypeModel[] = [];
+  const categoriesByName = new Map<string, CategoryModel>();
+  let skippedCount = 0;
+
+  for (const row of rows) {
+    const normalized = normalizeEntry(row);
+
+    if (!normalized) {
+      skippedCount += 1;
+      continue;
+    }
+
+    const entry = mapEntry(normalized, mapper);
+
+    if (shouldSkipEntry(entry, mapper)) {
+      skippedCount += 1;
+      continue;
+    }
+
+    if (!isSupportedKind(entry.kind)) {
+      skippedCount += 1;
+      continue;
+    }
+
+    if (!hasSupportedKind(entry)) {
+      skippedCount += 1;
+      continue;
+    }
+
+    const tokenType = createTokenType(entry);
+
+    tokenTypes.push(tokenType);
+    addCategoryLink(categoriesByName, entry.category, tokenType.id);
+  }
+
+  tokenTypes.sort((a, b) => {
+    if (a.category !== b.category) return a.category.localeCompare(b.category);
+    if (a.type !== b.type) return a.type.localeCompare(b.type);
+    return a.kind.localeCompare(b.kind);
+  });
+
+  const orderedCategories = sortCategoriesByOrder(
+    [...categoriesByName.keys()],
+    categoryOrder,
+  );
+
+  const categories = orderedCategories
+    .map((categoryName) => categoriesByName.get(categoryName))
+    .filter((category): category is CategoryModel => Boolean(category))
+    .map((category) => ({
+      ...category,
+      tokenTypeIds: [...category.tokenTypeIds].sort(),
+    }));
+
+  return {
+    model: {
+      schemaVersion,
+      root: {
+        id: "root",
+        label: "Design Tokens",
+      },
+      categories,
+      tokenTypes,
+    },
+    skippedCount,
+  };
 }
