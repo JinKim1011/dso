@@ -75,10 +75,6 @@ function sortCategoriesByOrder(
 
 type SupportedEntry = Omit<NormalizedManifestEntry, "kind"> & { kind: SupportedKind };
 
-function hasSupportedKind(entry: NormalizedManifestEntry): entry is SupportedEntry {
-  return isSupportedKind(entry.kind);
-}
-
 function mapEntry(
   normalized: NormalizedManifestEntry,
   mapper?: ManifestAdapterOptions["mapper"],
@@ -90,13 +86,12 @@ function mapEntry(
   };
 }
 
-function shouldSkipEntry(
+function isSupportedEntry(
   entry: NormalizedManifestEntry,
   mapper?: ManifestAdapterOptions["mapper"],
-): boolean {
-  if (mapper?.includeEntry && !mapper.includeEntry(entry)) return true;
-  if (!isSupportedKind(entry.kind)) return true;
-  return false;
+): entry is SupportedEntry {
+  if (mapper?.includeEntry && !mapper.includeEntry(entry)) return false;
+  return isSupportedKind(entry.kind);
 }
 
 function createTokenType(entry: SupportedEntry): TokenTypeModel {
@@ -150,17 +145,7 @@ export function buildTokenGraphModel(
 
     const entry = mapEntry(normalized, mapper);
 
-    if (shouldSkipEntry(entry, mapper)) {
-      skippedCount += 1;
-      continue;
-    }
-
-    if (!isSupportedKind(entry.kind)) {
-      skippedCount += 1;
-      continue;
-    }
-
-    if (!hasSupportedKind(entry)) {
+    if (!isSupportedEntry(entry, mapper)) {
       skippedCount += 1;
       continue;
     }
