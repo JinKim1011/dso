@@ -1,0 +1,23 @@
+[
+  {
+    "type": "background",
+    "kind": "primitive",
+    "value": ["primary"]
+  },
+  {
+    "category": "color",
+    "type": "bg-class",
+    "kind": "class-union",
+    "value": ["bg-primary"]
+  },
+  {
+    "category": "spacing",
+    "type": "step",
+    "kind": "primitive",
+    "value": ["microPlus", "miniPlus"],
+    "tokens": [
+      { "name": "sm", "cssVar": "--spacing-microPlus", "value": ".25rem" },
+      { "name": "md", "cssVar": "--spacing-md", "value": ".75rem" }
+    ]
+  }
+]

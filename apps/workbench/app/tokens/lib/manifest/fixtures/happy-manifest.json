@@ -1,0 +1,90 @@
+[
+  {
+    "category": "color",
+    "type": "background",
+    "kind": "primitive",
+    "value": ["primary", "secondary", "tertiary", "quaternary"],
+    "tokens": [
+      {
+        "name": "primary",
+        "cssVar": "--bg-primary",
+        "values": {
+          "light": "oklch(1 0 89.9)",
+          "dark": "oklch(0.132 0.036 276.6)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "secondary",
+        "cssVar": "--bg-secondary",
+        "values": {
+          "light": "oklch(0.985 0.002 247.8)",
+          "dark": "oklch(0.172 0.038 274.6)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "tertiary",
+        "cssVar": "--bg-tertiary",
+        "values": {
+          "light": "oklch(0.957 0.007 260.7)",
+          "dark": "oklch(0.222 0.043 274.5)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "quaternary",
+        "cssVar": "--bg-quaternary",
+        "values": {
+          "light": "oklch(0.928 0.013 266.7)",
+          "dark": "oklch(0.275 0.049 271.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      }
+    ]
+  },
+  {
+    "category": "spacing",
+    "type": "step",
+    "kind": "primitive",
+    "value": ["micro", "mini", "small", "regular"],
+    "tokens": [
+      {
+        "name": "micro",
+        "cssVar": "--spacing-micro",
+        "value": "0.125rem",
+        "status": "matched"
+      },
+      {
+        "name": "mini",
+        "cssVar": "--spacing-mini",
+        "value": "0.25rem",
+        "status": "matched"
+      },
+      {
+        "name": "small",
+        "cssVar": "--spacing-small",
+        "value": "0.5rem",
+        "status": "matched"
+      },
+      {
+        "name": "regular",
+        "cssVar": "--spacing-regular",
+        "value": "0.75rem",
+        "status": "matched"
+      }
+    ]
+  }
+]

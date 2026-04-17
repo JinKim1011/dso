@@ -1,0 +1,22 @@
+[
+  {
+    "category": "typography",
+    "type": "TypographyVariant",
+    "kind": "semantic",
+    "value": ["body-md", "heading-lg"],
+    "semanticMap": [
+      {
+        "name": "body-md",
+        "fontSize": "regular",
+        "fontWeight": "regular",
+        "lineHeight": "normal"
+      },
+      {
+        "name": "heading-lg",
+        "fontSize": "title2",
+        "fontWeight": "bold",
+        "lineHeight": "normal"
+      }
+    ]
+  }
+]
