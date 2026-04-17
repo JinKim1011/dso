@@ -79,7 +79,7 @@ describe("normalize.normalizeEntry", () => {
   it("preserves single value and status", () => {
     const result = normalizeEntry(happyManifest[1]);
 
-    if (!result) throw new Error("Exptected normalized result");
+    if (!result) throw new Error("Expected normalized result");
     if (!result.tokens) throw new Error("Expected tokens");
 
     const tokens = result.tokens;
@@ -94,7 +94,7 @@ describe("normalize.normalizeEntry", () => {
   it("preserves object values and status", () => {
     const result = normalizeEntry(happyManifest[0]);
 
-    if (!result) throw new Error("Exptected normalized result");
+    if (!result) throw new Error("Expected normalized result");
     if (!result.tokens) throw new Error("Expected tokens");
 
     const tokens = result.tokens;
