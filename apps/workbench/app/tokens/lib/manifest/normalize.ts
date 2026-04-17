@@ -29,10 +29,15 @@ export function normalizeTokenRecord(raw: unknown): ManifestTokenRecord | null {
   if (typeof statusRaw === "string") {
     status = statusRaw;
   } else if (isObjectLike(statusRaw)) {
-    status = {
-      light: asString(statusRaw.light),
-      dark: asString(statusRaw.dark),
-    };
+    const light = asString(statusRaw.light);
+    const dark = asString(statusRaw.dark);
+
+    if (light || dark) {
+      status = {
+        light,
+        dark,
+      };
+    }
   }
 
   const valuesRaw = raw.values;
