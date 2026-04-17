@@ -19,7 +19,7 @@ export function asStringArray(value: unknown): string[] | undefined {
     .map((item) => asString(item))
     .filter((item): item is string => Boolean(item));
 
-  return normalized;
+  return normalized.length ? normalized : undefined;
 }
 
 export function isSupportedKind(kind: string): kind is SupportedKind {
