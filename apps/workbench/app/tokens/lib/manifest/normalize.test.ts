@@ -115,7 +115,7 @@ describe("normalize.normalizeEntry", () => {
 
 describe("normalize.extractRows", () => {
   it("extractRows supports array container", () => {
-    const rows = extractRows(happyManifest);
+    const rows = extractRows({ entries: happyManifest });
 
     expect(Array.isArray(rows)).toBe(true);
     expect(rows.length).toBe(happyManifest.length);
