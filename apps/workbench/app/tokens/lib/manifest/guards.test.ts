@@ -27,7 +27,7 @@ describe("guards", () => {
     expect(isSupportedKind("class-union")).toBe(false);
   });
 
-  it("toId returned a same strings with identical input", () => {
+  it("toId returns the same string with identical input", () => {
     const input1 = toId("color", "primary *^--background");
     const input2 = toId("color", "primary *^--background");
 
