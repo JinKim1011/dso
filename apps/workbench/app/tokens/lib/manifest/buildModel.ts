@@ -19,12 +19,14 @@ function createValueItems(
 ): TokenTypeValueItem[] {
   if (entry.tokens?.length) {
     return entry.tokens.map((token, index) => {
-      const status =
-        typeof token.status === "string"
-          ? token.status
-          : token.status
-            ? [token.status.light, token.status.dark].filter(Boolean).join("/")
-            : undefined;
+      let status: string | undefined;
+
+      if (typeof token.status === "string") {
+        status = token.status;
+      } else if (token.status) {
+        status =
+          [token.status.light, token.status.dark].filter(Boolean).join("/") || undefined;
+      }
 
       const meta = token.value
         ? token.value
