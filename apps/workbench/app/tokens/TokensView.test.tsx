@@ -20,12 +20,34 @@ describe("TokensView smoke render test", () => {
     expect(h1?.textContent).toBe("hello");
   });
 
-  it("selects token row when clicked", async () => {
+  it("selects Token A when clicked", async () => {
     render(createElement(TokensView));
     const tokenA = screen.getByRole("button", { name: "Token A" });
 
     expect(tokenA).toHaveAttribute("aria-pressed", "false");
+
     await userEvent.click(tokenA);
+
     expect(tokenA).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText("selected: Token A")).toBeInTheDocument();
+  });
+
+  it("switches selection from Token A to Token B", async () => {
+    render(createElement(TokensView));
+
+    const tokenA = screen.getByRole("button", { name: "Token A" });
+    const tokenB = screen.getByRole("button", { name: "Token B" });
+
+    await userEvent.click(tokenA);
+
+    expect(tokenA).toHaveAttribute("aria-pressed", "true");
+    expect(tokenB).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByText("selected: Token A")).toBeInTheDocument();
+
+    await userEvent.click(tokenB);
+
+    expect(tokenA).toHaveAttribute("aria-pressed", "false");
+    expect(tokenB).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText("selected: Token B")).toBeInTheDocument();
   });
 });
