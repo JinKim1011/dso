@@ -1,3 +1,7 @@
+"use client";
+
+import { createElement } from "react";
+
 export function TokensView() {
-  return <section />;
+  return createElement("section", null, createElement("h1", null, "hello"));
 }
