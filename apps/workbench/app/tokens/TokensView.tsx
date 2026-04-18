@@ -18,7 +18,7 @@ export function TokensView() {
           setSelectedToken("TokenA");
         },
       },
-      "Token A",
+      `${selectedToken === "TokenA" ? "selected: TokenA" : "TokenA"}`,
     ),
 
     createElement(
@@ -31,7 +31,7 @@ export function TokensView() {
           setSelectedToken("TokenB");
         },
       },
-      "Token B",
+      `${selectedToken === "TokenB" ? "selected: TokenB" : "TokenB"}`,
     ),
   );
 }
