@@ -3,7 +3,7 @@
 import { createElement, useState } from "react";
 
 export function TokensView() {
-  const [pressed, setPressed] = useState(false);
+  const [selectedToken, setSelectedToken] = useState<string | null>(null);
 
   return createElement(
     "section",
@@ -11,14 +11,25 @@ export function TokensView() {
     createElement("h1", null, "hello"),
     createElement(
       "button",
-
       {
-        "aria-pressed": pressed,
+        "aria-pressed": selectedToken === "Token A",
         onClick: () => {
-          setPressed((current) => !current);
+          setSelectedToken("Token A");
         },
       },
       "Token A",
+    ),
+
+    createElement(
+      "button",
+
+      {
+        "aria-pressed": selectedToken === "Token B",
+        onClick: () => {
+          setSelectedToken("Token B");
+        },
+      },
+      "Token B",
     ),
   );
 }
