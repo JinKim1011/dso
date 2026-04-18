@@ -4,7 +4,7 @@ import { createElement } from "react";
 import { describe, expect, it } from "vitest";
 import { TokensView } from "./TokensView";
 
-describe("TokensView smoke render test", () => {
+describe("TokensView smoke render tests", () => {
   it("renders a section element", () => {
     const { container } = render(createElement(TokensView));
     const section = container.querySelector("section");
