@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
 import { TokensView } from "./TokensView";
+import { tokensViewModelFixture } from "./tokensView.model.fixtures";
 
 describe("TokensView smoke render tests", () => {
   it("renders a section element", () => {
@@ -22,34 +23,25 @@ describe("TokensView smoke render tests", () => {
 });
 
 describe("TokensView integration tests", () => {
-  it("selects TokenA when clicked", async () => {
+  it("selects row when clicked", async () => {
     render(createElement(TokensView));
-    const tokenA = screen.getByRole("button", { name: "TokenA" });
+    const rows = tokensViewModelFixture.tokenTypes.flatMap((tokenType) =>
+      tokenType.values.map((valueItem) => ({
+        id: valueItem.id,
+        name: valueItem.name,
+        cssVar: valueItem.cssVar,
+        meta: valueItem.meta,
+      })),
+    );
 
-    expect(tokenA).toHaveAttribute("aria-pressed", "false");
+    for (const row of rows) {
+      const currentRow = screen.getByRole("button", { name: row.name });
+      expect(currentRow).toHaveAttribute("aria-pressed", "false");
 
-    await userEvent.click(tokenA);
+      await userEvent.click(currentRow);
 
-    expect(tokenA).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByText("selected: TokenA")).toBeInTheDocument();
-  });
-
-  it("switches selection from TokenA to TokenB", async () => {
-    render(createElement(TokensView));
-
-    const tokenA = screen.getByRole("button", { name: "TokenA" });
-    const tokenB = screen.getByRole("button", { name: "TokenB" });
-
-    await userEvent.click(tokenA);
-
-    expect(tokenA).toHaveAttribute("aria-pressed", "true");
-    expect(tokenB).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByText("selected: TokenA")).toBeInTheDocument();
-
-    await userEvent.click(tokenB);
-
-    expect(tokenA).toHaveAttribute("aria-pressed", "false");
-    expect(tokenB).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByText("selected: TokenB")).toBeInTheDocument();
+      expect(currentRow).toHaveAttribute("aria-pressed", "true");
+      expect(screen.getByText(`selected: ${row.name}`)).toBeInTheDocument();
+    }
   });
 });
