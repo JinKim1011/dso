@@ -19,8 +19,10 @@ describe("TokensView smoke render test", () => {
     expect(h1).not.toBeNull();
     expect(h1?.textContent).toBe("hello");
   });
+});
 
-  it("selects Token A when clicked", async () => {
+describe("TokensView integration tests", () => {
+  it("selects TokenA when clicked", async () => {
     render(createElement(TokensView));
     const tokenA = screen.getByRole("button", { name: "Token A" });
 
