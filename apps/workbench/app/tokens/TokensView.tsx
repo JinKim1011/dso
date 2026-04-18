@@ -12,9 +12,10 @@ export function TokensView() {
     createElement(
       "button",
       {
-        "aria-pressed": selectedToken === "Token A",
+        "aria-pressed": selectedToken === "TokenA",
+        className: "tokenA",
         onClick: () => {
-          setSelectedToken("Token A");
+          setSelectedToken("TokenA");
         },
       },
       "Token A",
@@ -24,9 +25,10 @@ export function TokensView() {
       "button",
 
       {
-        "aria-pressed": selectedToken === "Token B",
+        "aria-pressed": selectedToken === "TokenB",
+        className: "tokenB",
         onClick: () => {
-          setSelectedToken("Token B");
+          setSelectedToken("TokenB");
         },
       },
       "Token B",
