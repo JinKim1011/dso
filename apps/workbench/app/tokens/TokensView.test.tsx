@@ -1,4 +1,5 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
 import { TokensView } from "./TokensView";
@@ -17,5 +18,14 @@ describe("TokensView smoke render test", () => {
 
     expect(h1).not.toBeNull();
     expect(h1?.textContent).toBe("hello");
+  });
+
+  it("selects token row when clicked", async () => {
+    render(createElement(TokensView));
+    const tokenA = screen.getByRole("button", { name: "Token A" });
+
+    expect(tokenA).toHaveAttribute("aria-pressed", "false");
+    await userEvent.click(tokenA);
+    expect(tokenA).toHaveAttribute("aria-pressed", "true");
   });
 });
