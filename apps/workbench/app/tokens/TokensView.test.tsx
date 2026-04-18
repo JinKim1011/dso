@@ -24,32 +24,32 @@ describe("TokensView smoke render test", () => {
 describe("TokensView integration tests", () => {
   it("selects TokenA when clicked", async () => {
     render(createElement(TokensView));
-    const tokenA = screen.getByRole("button", { name: "Token A" });
+    const tokenA = screen.getByRole("button", { name: "TokenA" });
 
     expect(tokenA).toHaveAttribute("aria-pressed", "false");
 
     await userEvent.click(tokenA);
 
     expect(tokenA).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByText("selected: Token A")).toBeInTheDocument();
+    expect(screen.getByText("selected: TokenA")).toBeInTheDocument();
   });
 
-  it("switches selection from Token A to Token B", async () => {
+  it("switches selection from TokenA to TokenB", async () => {
     render(createElement(TokensView));
 
-    const tokenA = screen.getByRole("button", { name: "Token A" });
-    const tokenB = screen.getByRole("button", { name: "Token B" });
+    const tokenA = screen.getByRole("button", { name: "TokenA" });
+    const tokenB = screen.getByRole("button", { name: "TokenB" });
 
     await userEvent.click(tokenA);
 
     expect(tokenA).toHaveAttribute("aria-pressed", "true");
     expect(tokenB).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByText("selected: Token A")).toBeInTheDocument();
+    expect(screen.getByText("selected: TokenA")).toBeInTheDocument();
 
     await userEvent.click(tokenB);
 
     expect(tokenA).toHaveAttribute("aria-pressed", "false");
     expect(tokenB).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByText("selected: Token B")).toBeInTheDocument();
+    expect(screen.getByText("selected: TokenB")).toBeInTheDocument();
   });
 });
