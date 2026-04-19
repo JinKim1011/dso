@@ -59,7 +59,7 @@ describe("TokensView integration tests", () => {
     }
   });
 
-  it("renders token type groups with their own value buttons", () => {
+  it("renders token type groups", () => {
     render(createElement(TokensView));
     const groups = tokensViewModelFixture.tokenTypes.map((tokenType) => ({
       id: tokenType.id,
