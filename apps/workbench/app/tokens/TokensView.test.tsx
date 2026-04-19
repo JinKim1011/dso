@@ -88,4 +88,18 @@ describe("TokensView integration tests", () => {
       expect(currentCategory).not.toBeNull();
     }
   });
+
+  it("renders token type groups under correct category", () => {
+    render(createElement(TokensView));
+    const categories = tokensViewModelFixture.categories;
+
+    for (const category of categories) {
+      const categorySection = screen.getByTestId(category.id);
+
+      for (const groupId of category.tokenTypeIds) {
+        const currentGroup = within(categorySection).getByTestId(groupId);
+        expect(currentGroup).toBeInTheDocument();
+      }
+    }
+  });
 });
