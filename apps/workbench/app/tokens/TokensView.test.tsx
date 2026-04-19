@@ -147,4 +147,19 @@ describe("TokensView integration tests", () => {
       }
     }
   });
+
+  it("does not duplicate token value items across all token type groups", () => {
+    render(createElement(TokensView));
+    const allGroups = tokensViewModelFixture.tokenTypes;
+
+    for (const group of allGroups) {
+      const groupSection = screen.getByTestId(group.id);
+      const list = within(groupSection).getByRole("list");
+
+      for (const value of group.values) {
+        const valueItem = within(list).getAllByRole("button", { name: value.name });
+        expect(valueItem).toHaveLength(1);
+      }
+    }
+  });
 });
