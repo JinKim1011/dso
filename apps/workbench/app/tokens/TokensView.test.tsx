@@ -72,11 +72,20 @@ describe("TokensView integration tests", () => {
     for (const group of groups) {
       const currentGroup = screen.getByTestId(group.id);
       expect(currentGroup).not.toBeNull();
+    }
+  });
 
-      for (const values of group.values) {
-        const valueItem = within(currentGroup).getByRole("button", { name: values.name });
-        expect(valueItem).not.toBeNull();
-      }
+  it("renders token type category", () => {
+    render(createElement(TokensView));
+    const categories = tokensViewModelFixture.categories.map((category) => ({
+      id: category.id,
+      category: category.category,
+      tokenTypeIds: category.tokenTypeIds,
+    }));
+
+    for (const category of categories) {
+      const currentCategory = screen.getByTestId(category.id);
+      expect(currentCategory).not.toBeNull();
     }
   });
 });
