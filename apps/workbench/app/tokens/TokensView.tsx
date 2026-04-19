@@ -51,28 +51,35 @@ export function TokensView() {
 
       return createElement(
         "section",
-        { "data-testid": group.id },
-        createElement("h2", null, `${group.type}(${group.kind})`),
-        createElement(
-          "ul",
-          null,
-          ...group.values.map((valueItem) =>
+        { key: category.id, "data-testid": category.id },
+        createElement("h2", null, category.category),
+        ...categoryGroups.map((group) =>
+          createElement(
+            "section",
+            { key: group.id, "data-testid": group.id },
+            createElement("h3", null, `${group.type}(${group.kind})`),
             createElement(
-              "li",
-              { key: valueItem.id },
-              createElement(
-                "button",
-                {
-                  "aria-pressed": selectedRowId === valueItem.id,
-                  onClick: () => setSelectedRowId(valueItem.id),
-                },
-                valueItem.name,
+              "ul",
+              null,
+              ...group.values.map((valueItem) =>
+                createElement(
+                  "li",
+                  { key: valueItem.id },
+                  createElement(
+                    "button",
+                    {
+                      "aria-pressed": selectedRowId === valueItem.id,
+                      onClick: () => setSelectedRowId(valueItem.id),
+                    },
+                    valueItem.name,
+                  ),
+                ),
               ),
             ),
           ),
         ),
-      ),
-    ),
+      );
+    }),
     selected
       ? createElement(
           "div",
