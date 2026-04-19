@@ -32,15 +32,29 @@ export function TokensView() {
   return createElement(
     "section",
     null,
-    ...rows.map((row) =>
+    ...groups.map((group) =>
       createElement(
-        "button",
-        {
-          key: row.id,
-          "aria-pressed": selectedRowId === row.id,
-          onClick: () => setSelectedRowId(row.id),
-        },
-        row.name,
+        "section",
+        { "data-testid": group.id },
+        createElement("h2", null, `${group.type}(${group.kind})`),
+        createElement(
+          "ul",
+          null,
+          ...group.values.map((valueItem) =>
+            createElement(
+              "li",
+              { key: valueItem.id },
+              createElement(
+                "button",
+                {
+                  "aria-pressed": selectedRowId === valueItem.id,
+                  onClick: () => setSelectedRowId(valueItem.id),
+                },
+                valueItem.name,
+              ),
+            ),
+          ),
+        ),
       ),
     ),
     selected
