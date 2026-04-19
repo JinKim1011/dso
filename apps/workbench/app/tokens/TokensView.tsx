@@ -22,7 +22,6 @@ export function TokensView() {
   return createElement(
     "section",
     null,
-    createElement("h1", null, "hello"),
     ...rows.map((row) =>
       createElement(
         "button",
