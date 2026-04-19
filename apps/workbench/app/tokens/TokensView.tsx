@@ -17,6 +17,16 @@ export function TokensView() {
     );
   }, []);
 
+  const groups = useMemo(() => {
+    return tokensViewModelFixture.tokenTypes.map((tokenType) => ({
+      id: tokenType.id,
+      category: tokenType.category,
+      type: tokenType.type,
+      kind: tokenType.kind,
+      values: tokenType.values,
+    }));
+  }, []);
+
   const selected = rows.find((row) => row.id === selectedRowId) ?? null;
 
   return createElement(
