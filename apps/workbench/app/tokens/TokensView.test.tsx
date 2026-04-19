@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
@@ -14,16 +14,17 @@ describe("TokensView smoke render tests", () => {
 });
 
 describe("TokensView integration tests", () => {
+  const rows = tokensViewModelFixture.tokenTypes.flatMap((tokenType) =>
+    tokenType.values.map((value) => ({
+      id: value.id,
+      name: value.name,
+      cssVar: value.cssVar,
+      meta: value.meta,
+    })),
+  );
+
   it("selects row when clicked", async () => {
     render(createElement(TokensView));
-    const rows = tokensViewModelFixture.tokenTypes.flatMap((tokenType) =>
-      tokenType.values.map((value) => ({
-        id: value.id,
-        name: value.name,
-        cssVar: value.cssVar,
-        meta: value.meta,
-      })),
-    );
 
     for (const row of rows) {
       const currentRow = screen.getByRole("button", { name: row.name });
@@ -36,16 +37,8 @@ describe("TokensView integration tests", () => {
     }
   });
 
-  it("expend detail panel when row clicked", async () => {
+  it("expands detail panel when row clicked", async () => {
     render(createElement(TokensView));
-    const rows = tokensViewModelFixture.tokenTypes.flatMap((tokenType) =>
-      tokenType.values.map((value) => ({
-        id: value.id,
-        name: value.name,
-        cssVar: value.cssVar,
-        meta: value.meta,
-      })),
-    );
 
     for (const row of rows) {
       const currentRow = screen.getByRole("button", { name: row.name });
@@ -55,6 +48,27 @@ describe("TokensView integration tests", () => {
       expect(screen.getByText(`selected: ${row.name}`)).toBeInTheDocument();
       expect(screen.getByText(`cssVar: ${row.cssVar}`)).toBeInTheDocument();
       expect(screen.getByText(`meta: ${row.meta}`)).toBeInTheDocument();
+    }
+  });
+
+  it("renders token type groups with their own value buttons", () => {
+    render(createElement(TokensView));
+    const groups = tokensViewModelFixture.tokenTypes.map((tokenType) => ({
+      id: tokenType.id,
+      category: tokenType.category,
+      type: tokenType.type,
+      kind: tokenType.kind,
+      values: tokenType.values,
+    }));
+
+    for (const group of groups) {
+      const currentGroup = screen.getByTestId(group.id);
+      expect(currentGroup).not.toBeNull();
+
+      for (const values of group.values) {
+        const vauleItem = within(currentGroup).getByRole("button", { name: values.name });
+        expect(vauleItem).not.toBeNull();
+      }
     }
   });
 });
