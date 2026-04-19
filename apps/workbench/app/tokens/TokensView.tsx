@@ -44,8 +44,12 @@ export function TokensView() {
   return createElement(
     "section",
     null,
-    ...groups.map((group) =>
-      createElement(
+    ...categories.map((category) => {
+      const categoryGroups = category.tokenTypeIds
+        .map((id) => groupById.get(id))
+        .filter((group): group is NonNullable<typeof group> => Boolean(group));
+
+      return createElement(
         "section",
         { "data-testid": group.id },
         createElement("h2", null, `${group.type}(${group.kind})`),
