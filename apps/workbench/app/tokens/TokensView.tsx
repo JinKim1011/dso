@@ -35,6 +35,10 @@ export function TokensView() {
     }));
   }, []);
 
+  const root = useMemo(() => {
+    return tokensViewModelFixture.root;
+  }, []);
+
   const selected = rows.find((row) => row.id === selectedRowId) ?? null;
 
   const groupById = useMemo(() => {
@@ -44,6 +48,7 @@ export function TokensView() {
   return createElement(
     "section",
     null,
+    createElement("h1", null, root.label),
     ...categories.map((category) => {
       const categoryGroups = category.tokenTypeIds
         .map((id) => groupById.get(id))
