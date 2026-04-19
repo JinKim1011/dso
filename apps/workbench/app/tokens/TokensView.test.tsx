@@ -66,8 +66,8 @@ describe("TokensView integration tests", () => {
       expect(currentGroup).not.toBeNull();
 
       for (const values of group.values) {
-        const vauleItem = within(currentGroup).getByRole("button", { name: values.name });
-        expect(vauleItem).not.toBeNull();
+        const valueItem = within(currentGroup).getByRole("button", { name: values.name });
+        expect(valueItem).not.toBeNull();
       }
     }
   });
