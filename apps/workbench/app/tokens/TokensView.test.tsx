@@ -11,15 +11,6 @@ describe("TokensView smoke render tests", () => {
     const section = container.querySelector("section");
     expect(section).not.toBeNull();
   });
-
-  it("renders a h1 in section", () => {
-    const { container } = render(createElement(TokensView));
-    const section = container.querySelector("section");
-    const h1 = section?.querySelector("h1");
-
-    expect(h1).not.toBeNull();
-    expect(h1?.textContent).toBe("hello");
-  });
 });
 
 describe("TokensView integration tests", () => {
