@@ -23,6 +23,14 @@ describe("TokensView integration tests", () => {
     })),
   );
 
+  it("renders a root element", () => {
+    render(createElement(TokensView));
+    const root = tokensViewModelFixture.root;
+    const h1 = screen.getByRole("heading", { name: root.label });
+
+    expect(h1).not.toBeNull();
+  });
+
   it("selects row when clicked", async () => {
     render(createElement(TokensView));
 
