@@ -27,6 +27,14 @@ export function TokensView() {
     }));
   }, []);
 
+  const categories = useMemo(() => {
+    return tokensViewModelFixture.categories.map((category) => ({
+      id: category.id,
+      category: category.category,
+      tokenTypeIds: category.tokenTypeIds,
+    }));
+  }, []);
+
   const selected = rows.find((row) => row.id === selectedRowId) ?? null;
 
   return createElement(
