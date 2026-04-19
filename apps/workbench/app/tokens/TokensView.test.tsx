@@ -102,4 +102,49 @@ describe("TokensView integration tests", () => {
       }
     }
   });
+
+  it("renders token valueItem under correct token type group", () => {
+    render(createElement(TokensView));
+    const groups = tokensViewModelFixture.tokenTypes;
+
+    for (const group of groups) {
+      const groupSection = screen.getByTestId(group.id);
+      const list = within(groupSection).getByRole("list");
+
+      for (const valueItem of group.values) {
+        const currentValueItem = within(list).getByRole("button", {
+          name: valueItem.name,
+        });
+
+        expect(currentValueItem).toBeInTheDocument();
+        expect(currentValueItem.closest("li")).not.toBeNull();
+      }
+    }
+  });
+
+  it("does not duplicate token type groups across categories", () => {
+    render(createElement(TokensView));
+    const categories = tokensViewModelFixture.categories;
+    const allGroups = tokensViewModelFixture.tokenTypes;
+
+    for (const group of allGroups) {
+      const matches = screen.getAllByTestId(group.id);
+
+      expect(matches).toHaveLength(1);
+    }
+
+    for (const category of categories) {
+      const categorySection = screen.getByTestId(category.id);
+
+      for (const group of allGroups) {
+        const shouldBeInside = category.tokenTypeIds.includes(group.id);
+
+        if (shouldBeInside) {
+          expect(within(categorySection).getByTestId(group.id)).toBeInTheDocument();
+        } else {
+          expect(within(categorySection).queryByTestId(group.id)).toBeNull();
+        }
+      }
+    }
+  });
 });
