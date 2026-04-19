@@ -37,6 +37,10 @@ export function TokensView() {
 
   const selected = rows.find((row) => row.id === selectedRowId) ?? null;
 
+  const groupById = useMemo(() => {
+    return new Map(groups.map((group) => [group.id, group]));
+  }, [groups]);
+
   return createElement(
     "section",
     null,
