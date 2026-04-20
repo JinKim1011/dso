@@ -1,13 +1,13 @@
 "use client";
 
 import { createElement, useMemo, useState } from "react";
-import { tokensViewModelFixture } from "./tokensView.model.fixtures";
+import { TokenGraphModel } from "./lib/manifestAdapter";
 
-export function TokensView() {
+export function TokensView({ model }: { model: TokenGraphModel }) {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const rows = useMemo(() => {
-    return tokensViewModelFixture.tokenTypes.flatMap((tokenType) =>
+    return model.tokenTypes.flatMap((tokenType) =>
       tokenType.values.map((valueItem) => ({
         id: valueItem.id,
         name: valueItem.name,
@@ -15,29 +15,29 @@ export function TokensView() {
         meta: valueItem.meta,
       })),
     );
-  }, []);
+  }, [model]);
 
   const groups = useMemo(() => {
-    return tokensViewModelFixture.tokenTypes.map((tokenType) => ({
+    return model.tokenTypes.map((tokenType) => ({
       id: tokenType.id,
       category: tokenType.category,
       type: tokenType.type,
       kind: tokenType.kind,
       values: tokenType.values,
     }));
-  }, []);
+  }, [model]);
 
   const categories = useMemo(() => {
-    return tokensViewModelFixture.categories.map((category) => ({
+    return model.categories.map((category) => ({
       id: category.id,
       category: category.category,
       tokenTypeIds: category.tokenTypeIds,
     }));
-  }, []);
+  }, [model]);
 
   const root = useMemo(() => {
-    return tokensViewModelFixture.root;
-  }, []);
+    return model.root;
+  }, [model]);
 
   const selected = rows.find((row) => row.id === selectedRowId) ?? null;
 
