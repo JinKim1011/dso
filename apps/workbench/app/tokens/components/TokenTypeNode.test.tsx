@@ -4,7 +4,7 @@ import { createElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 import happyManifest from "../lib/manifest/fixtures/happy-manifest.json";
 import { buildTokenGraphModel } from "../lib/manifestAdapter";
-import { TokenTypsNode } from "./TokenTypeNode";
+import { TokenTypeNode } from "./TokenTypeNode";
 
 const result = buildTokenGraphModel(happyManifest);
 
@@ -14,7 +14,7 @@ describe("Node-level behavior, TokenTypeNode", () => {
 
   it("renders heading and value buttons", () => {
     render(
-      createElement(TokenTypsNode, { group, selectedRowId: null, onSelectRow: () => {} }),
+      createElement(TokenTypeNode, { group, selectedRowId: null, onSelectRow: () => {} }),
     );
 
     expect(
@@ -31,7 +31,7 @@ describe("Node-level behavior, TokenTypeNode", () => {
     if (!selectedId) throw new Error("Expected at least one value in token type group");
 
     render(
-      createElement(TokenTypsNode, {
+      createElement(TokenTypeNode, {
         group,
         selectedRowId: selectedId,
         onSelectRow: () => {},
@@ -55,7 +55,7 @@ describe("Node-level behavior, TokenTypeNode", () => {
     const onSelectRow = vi.fn();
 
     render(
-      createElement(TokenTypsNode, {
+      createElement(TokenTypeNode, {
         group,
         selectedRowId: null,
         onSelectRow,
