@@ -3,7 +3,11 @@
 import { createElement, useMemo, useState } from "react";
 import { TokenGraphModel } from "./lib/manifestAdapter";
 
-export function TokensView({ model }: { model: TokenGraphModel }) {
+type TokensViewProps = {
+  model: TokenGraphModel;
+};
+
+export function TokensView({ model }: TokensViewProps) {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const rows = useMemo(() => {
