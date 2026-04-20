@@ -8,15 +8,7 @@ import { TokensView } from "./TokensView";
 
 const result = buildTokenGraphModel(happyManifest);
 
-describe("Container-level behavior, TokensView smoke render tests", () => {
-  it("renders a section element", () => {
-    const { container } = render(createElement(TokensView, { model: result.model }));
-    const section = container.querySelector("section");
-    expect(section).not.toBeNull();
-  });
-});
-
-describe("ontainer-level behavior, TokensView", () => {
+describe("Container-level behavior, TokensView", () => {
   const rows = result.model.tokenTypes.flatMap((tokenType) =>
     tokenType.values.map((value) => ({
       id: value.id,
@@ -26,7 +18,7 @@ describe("ontainer-level behavior, TokensView", () => {
     })),
   );
 
-  it("renders a root element", () => {
+  it("renders root heading/container", () => {
     render(createElement(TokensView, { model: result.model }));
     const root = result.model.root;
     const h1 = screen.getByRole("heading", { name: root.label });
@@ -34,37 +26,7 @@ describe("ontainer-level behavior, TokensView", () => {
     expect(h1).not.toBeNull();
   });
 
-  it("expands detail panel when row clicked", async () => {
-    render(createElement(TokensView, { model: result.model }));
-
-    for (const row of rows) {
-      const currentRow = screen.getByRole("button", { name: row.name });
-
-      await userEvent.click(currentRow);
-
-      expect(screen.getByText(`selected: ${row.name}`)).toBeInTheDocument();
-      expect(screen.getByText(`cssVar: ${row.cssVar}`)).toBeInTheDocument();
-      expect(screen.getByText(`meta: ${row.meta}`)).toBeInTheDocument();
-    }
-  });
-
-  it("renders token type groups", () => {
-    render(createElement(TokensView, { model: result.model }));
-    const groups = result.model.tokenTypes.map((tokenType) => ({
-      id: tokenType.id,
-      category: tokenType.category,
-      type: tokenType.type,
-      kind: tokenType.kind,
-      values: tokenType.values,
-    }));
-
-    for (const group of groups) {
-      const currentGroup = screen.getByTestId(group.id);
-      expect(currentGroup).not.toBeNull();
-    }
-  });
-
-  it("renders token type category", () => {
+  it("renders categories", () => {
     render(createElement(TokensView, { model: result.model }));
     const categories = result.model.categories.map((category) => ({
       id: category.id,
@@ -75,20 +37,6 @@ describe("ontainer-level behavior, TokensView", () => {
     for (const category of categories) {
       const currentCategory = screen.getByTestId(category.id);
       expect(currentCategory).not.toBeNull();
-    }
-  });
-
-  it("renders token type groups under correct category", () => {
-    render(createElement(TokensView, { model: result.model }));
-    const categories = result.model.categories;
-
-    for (const category of categories) {
-      const categorySection = screen.getByTestId(category.id);
-
-      for (const groupId of category.tokenTypeIds) {
-        const currentGroup = within(categorySection).getByTestId(groupId);
-        expect(currentGroup).toBeInTheDocument();
-      }
     }
   });
 
@@ -115,6 +63,20 @@ describe("ontainer-level behavior, TokensView", () => {
           expect(within(categorySection).queryByTestId(group.id)).toBeNull();
         }
       }
+    }
+  });
+
+  it("clicking one row updates detail panel", async () => {
+    render(createElement(TokensView, { model: result.model }));
+
+    for (const row of rows) {
+      const currentRow = screen.getByRole("button", { name: row.name });
+
+      await userEvent.click(currentRow);
+
+      expect(screen.getByText(`selected: ${row.name}`)).toBeInTheDocument();
+      expect(screen.getByText(`cssVar: ${row.cssVar}`)).toBeInTheDocument();
+      expect(screen.getByText(`meta: ${row.meta}`)).toBeInTheDocument();
     }
   });
 });
