@@ -16,6 +16,11 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
   const nodes: Node<FlowNodeData>[] = [];
   const edges: Edge[] = [];
 
+  const categoryXGap = 302;
+  const categoryY = 160;
+  const tokenYStart = 320;
+  const tokenYGap = 32;
+
   nodes.push({
     id: model.root.id,
     type: "default",
@@ -24,10 +29,12 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
   });
 
   for (const [categoryIndex, category] of model.categories.entries()) {
+    const x = categoryIndex * categoryXGap;
+
     nodes.push({
       id: category.id,
       type: "default",
-      position: { x: 0, y: 0 },
+      position: { x: x, y: categoryY },
       data: { label: category.category },
     });
 
@@ -37,14 +44,14 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
       target: category.id,
     });
 
-    category.tokenTypeIds.forEach((tokenTypeId, tokenTypeIndex) => {
+    category.tokenTypeIds.forEach((tokenTypeId, tokenIndex) => {
       const tokenType = model.tokenTypes.find((item) => item.id === tokenTypeId);
       if (!tokenType) return;
 
       nodes.push({
         id: tokenType.id,
         type: "default",
-        position: { x: 0, y: 0 },
+        position: { x: x, y: tokenYStart + tokenIndex * tokenYGap },
         data: {
           label: tokenType.type,
           kind: tokenType.kind,
