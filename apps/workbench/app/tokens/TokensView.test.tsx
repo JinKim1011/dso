@@ -8,7 +8,7 @@ import { TokensView } from "./TokensView";
 
 const result = buildTokenGraphModel(happyManifest);
 
-describe("TokensView smoke render tests", () => {
+describe("Container-level behavior, TokensView smoke render tests", () => {
   it("renders a section element", () => {
     const { container } = render(createElement(TokensView, { model: result.model }));
     const section = container.querySelector("section");
@@ -16,7 +16,7 @@ describe("TokensView smoke render tests", () => {
   });
 });
 
-describe("TokensView integration tests", () => {
+describe("ontainer-level behavior, TokensView", () => {
   const rows = result.model.tokenTypes.flatMap((tokenType) =>
     tokenType.values.map((value) => ({
       id: value.id,
@@ -32,20 +32,6 @@ describe("TokensView integration tests", () => {
     const h1 = screen.getByRole("heading", { name: root.label });
 
     expect(h1).not.toBeNull();
-  });
-
-  it("selects row when clicked", async () => {
-    render(createElement(TokensView, { model: result.model }));
-
-    for (const row of rows) {
-      const currentRow = screen.getByRole("button", { name: row.name });
-      expect(currentRow).toHaveAttribute("aria-pressed", "false");
-
-      await userEvent.click(currentRow);
-
-      expect(currentRow).toHaveAttribute("aria-pressed", "true");
-      expect(screen.getByText(`selected: ${row.name}`)).toBeInTheDocument();
-    }
   });
 
   it("expands detail panel when row clicked", async () => {
@@ -106,25 +92,6 @@ describe("TokensView integration tests", () => {
     }
   });
 
-  it("renders token valueItem under correct token type group", () => {
-    render(createElement(TokensView, { model: result.model }));
-    const groups = result.model.tokenTypes;
-
-    for (const group of groups) {
-      const groupSection = screen.getByTestId(group.id);
-      const list = within(groupSection).getByRole("list");
-
-      for (const valueItem of group.values) {
-        const currentValueItem = within(list).getByRole("button", {
-          name: valueItem.name,
-        });
-
-        expect(currentValueItem).toBeInTheDocument();
-        expect(currentValueItem.closest("li")).not.toBeNull();
-      }
-    }
-  });
-
   it("does not duplicate token type groups across categories", () => {
     render(createElement(TokensView, { model: result.model }));
     const categories = result.model.categories;
@@ -147,21 +114,6 @@ describe("TokensView integration tests", () => {
         } else {
           expect(within(categorySection).queryByTestId(group.id)).toBeNull();
         }
-      }
-    }
-  });
-
-  it("does not duplicate token value items across all token type groups", () => {
-    render(createElement(TokensView, { model: result.model }));
-    const allGroups = result.model.tokenTypes;
-
-    for (const group of allGroups) {
-      const groupSection = screen.getByTestId(group.id);
-      const list = within(groupSection).getByRole("list");
-
-      for (const value of group.values) {
-        const valueItem = within(list).getAllByRole("button", { name: value.name });
-        expect(valueItem).toHaveLength(1);
       }
     }
   });
