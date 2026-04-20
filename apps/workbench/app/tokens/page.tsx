@@ -1,8 +1,8 @@
-import happyManifest from "./lib/manifest/fixtures/happy-manifest.json";
+import designTokensManifest from "../../../../design-tokens-manifest.json";
 import { buildTokenGraphModel } from "./lib/manifestAdapter";
 import { TokensView } from "./TokensView";
 
-const result = buildTokenGraphModel(happyManifest);
+const result = buildTokenGraphModel(designTokensManifest);
 
 export default function TokensPage() {
   return <TokensView model={result.model} />;
