@@ -56,12 +56,12 @@ export function TokensView({ model }: { model: TokenGraphModel }) {
 
       return createElement(
         "section",
-        { "data-testid": category.id },
+        { "data-testid": category.id, key: category.id },
         createElement("h2", null, category.category),
         ...categoryGroups.map((group) =>
           createElement(
             "section",
-            { "data-testid": group.id },
+            { "data-testid": group.id, key: group.id },
             createElement("h3", null, `${group.type}(${group.kind})`),
             createElement(
               "ul",
