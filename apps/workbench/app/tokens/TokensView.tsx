@@ -3,17 +3,12 @@
 import { createElement, useMemo, useState } from "react";
 import { TokenTypeNode } from "./components/TokenTypeNode";
 import { TokenGraphModel } from "./lib/manifestAdapter";
-import { mapTokenGraphToFlow } from "./lib/mapToFlow";
 
 type TokensViewProps = {
   model: TokenGraphModel;
 };
 
 export function TokensView({ model }: TokensViewProps) {
-  const { nodes, edges } = useMemo(() => {
-    return mapTokenGraphToFlow(model);
-  }, [model]);
-
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const rows = useMemo(() => {
