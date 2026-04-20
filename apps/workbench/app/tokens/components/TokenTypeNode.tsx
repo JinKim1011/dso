@@ -16,7 +16,7 @@ type TokenTypeNodeProps = {
   onSelectRow: (rowId: string) => void;
 };
 
-export function TokenTypsNode({ group, selectedRowId, onSelectRow }: TokenTypeNodeProps) {
+export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNodeProps) {
   return createElement(
     "section",
     { "data-testid": group.id, key: group.id },
