@@ -19,7 +19,7 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
   const categoryXGap = 302;
   const categoryY = 160;
   const tokenYStart = 320;
-  const tokenYGap = 32;
+  const tokenYGap = 120;
 
   nodes.push({
     id: model.root.id,
