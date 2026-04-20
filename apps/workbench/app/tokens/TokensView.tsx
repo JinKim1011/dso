@@ -1,6 +1,7 @@
 "use client";
 
 import { createElement, useMemo, useState } from "react";
+import { TokenTypsNode } from "./components/TokenTypeNode";
 import { TokenGraphModel } from "./lib/manifestAdapter";
 import { mapTokenGraphToFlow } from "./lib/mapToFlow";
 
@@ -68,29 +69,12 @@ export function TokensView({ model }: TokensViewProps) {
         { "data-testid": category.id, key: category.id },
         createElement("h2", null, category.category),
         ...categoryGroups.map((group) =>
-          createElement(
-            "section",
-            { "data-testid": group.id, key: group.id },
-            createElement("h3", null, `${group.type}(${group.kind})`),
-            createElement(
-              "ul",
-              null,
-              ...group.values.map((valueItem) =>
-                createElement(
-                  "li",
-                  { key: valueItem.id },
-                  createElement(
-                    "button",
-                    {
-                      "aria-pressed": selectedRowId === valueItem.id,
-                      onClick: () => setSelectedRowId(valueItem.id),
-                    },
-                    valueItem.name,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          createElement(TokenTypsNode, {
+            key: group.id,
+            group,
+            selectedRowId,
+            onSelectRow: setSelectedRowId,
+          }),
         ),
       );
     }),
