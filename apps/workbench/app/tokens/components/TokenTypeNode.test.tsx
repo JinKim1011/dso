@@ -53,6 +53,7 @@ describe("Node-level behavior, TokenTypeNode", () => {
 
   it("calls onSelectRow with clicked id", async () => {
     const onSelectRow = vi.fn();
+    const user = userEvent.setup();
 
     render(
       createElement(TokenTypeNode, {
@@ -64,10 +65,12 @@ describe("Node-level behavior, TokenTypeNode", () => {
 
     const section = screen.getByTestId(group.id);
 
-    for (const value of group.values) {
+    for (const [index, value] of group.values.entries()) {
       const button = within(section).getByRole("button", { name: value.name });
-      await userEvent.click(button);
-      expect(onSelectRow).toHaveBeenCalledWith(value.id);
+      await user.click(button);
+
+      expect(onSelectRow).toHaveBeenNthCalledWith(index + 1, value.id);
     }
+    expect(onSelectRow).toHaveBeenCalledTimes(group.values.length);
   });
 });
