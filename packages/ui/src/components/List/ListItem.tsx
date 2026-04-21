@@ -99,7 +99,7 @@ export const ListItem = ({
         <Text variant="label-xs" className={indexTextClass}>
           {index}
         </Text>
-        <div className="gap-miniPlus flex min-w-0 flex-1 flex-col">
+        <div className="gap-miniPlus flex min-w-0 flex-1 flex-col text-left">
           <Text variant="label-xs" className={titleTextClass}>
             {text}
           </Text>
