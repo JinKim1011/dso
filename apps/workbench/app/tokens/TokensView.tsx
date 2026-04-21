@@ -1,9 +1,11 @@
 "use client";
 
-import { createElement, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { CategoryNode } from "./components/CategoryNode";
-import { TokenTypeNode } from "./components/TokenTypeNode";
-import { TokenGraphModel } from "./lib/manifestAdapter";
+import { RootNode } from "./components/RootNode";
+import { TokenTypeNode, type TokenTypeGroup } from "./components/TokenTypeNode";
+import { TokenValueDetail } from "./components/TokenValueDetail";
+import type { TokenGraphModel } from "./lib/manifestAdapter";
 
 type TokensViewProps = {
   model: TokenGraphModel;
@@ -24,13 +26,16 @@ export function TokensView({ model }: TokensViewProps) {
   }, [model]);
 
   const groups = useMemo(() => {
-    return model.tokenTypes.map((tokenType) => ({
-      id: tokenType.id,
-      category: tokenType.category,
-      type: tokenType.type,
-      kind: tokenType.kind,
-      values: tokenType.values,
-    }));
+    return model.tokenTypes.map(
+      (tokenType) =>
+        ({
+          id: tokenType.id,
+          category: tokenType.category,
+          type: tokenType.type,
+          kind: tokenType.kind,
+          values: tokenType.values,
+        }) as TokenTypeGroup,
+    );
   }, [model]);
 
   const categories = useMemo(() => {
@@ -51,36 +56,36 @@ export function TokensView({ model }: TokensViewProps) {
     return new Map(groups.map((group) => [group.id, group]));
   }, [groups]);
 
-  return createElement(
-    "section",
-    null,
-    createElement("h1", null, root.label),
-    ...categories.map((category) => {
-      const categoryGroups = category.tokenTypeIds
-        .map((id) => groupById.get(id))
-        .filter((group): group is NonNullable<typeof group> => Boolean(group));
+  return (
+    <>
+      <RootNode label={root.label}>
+        {categories.map((category) => {
+          const categoryGroups = category.tokenTypeIds
+            .map((id) => groupById.get(id))
+            .filter((group): group is TokenTypeGroup => !!group);
 
-      return (
-        <CategoryNode category={category}>
-          {categoryGroups.map((group) => (
-            <TokenTypeNode
-              key={group.id}
-              group={group}
-              selectedRowId={selectedRowId}
-              onSelectRow={setSelectedRowId}
-            ></TokenTypeNode>
-          ))}
-        </CategoryNode>
-      );
-    }),
-    selected
-      ? createElement(
-          "div",
-          null,
-          createElement("p", null, `selected: ${selected.name}`),
-          createElement("p", null, `cssVar: ${selected.cssVar}`),
-          createElement("p", null, `meta: ${selected.meta}`),
-        )
-      : null,
+          return (
+            <CategoryNode key={category.id} category={category}>
+              {categoryGroups.map((group) => (
+                <TokenTypeNode
+                  key={group.id}
+                  group={group}
+                  selectedRowId={selectedRowId}
+                  onSelectRow={setSelectedRowId}
+                />
+              ))}
+            </CategoryNode>
+          );
+        })}
+      </RootNode>
+
+      {selected && (
+        <TokenValueDetail
+          name={selected.name}
+          cssVar={selected.cssVar}
+          meta={selected.meta}
+        />
+      )}
+    </>
   );
 }
