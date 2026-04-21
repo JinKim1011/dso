@@ -43,14 +43,14 @@ export const ListItem = ({
   const normalizedLevel = Math.min(4, Math.max(0, Math.floor(finiteLevel)));
   const isInteractive = Boolean(onSelect);
   const indexTextClass = selected
-    ? "text-content-primary"
-    : "text-content-quaternary group-hover:text-content-primary";
+    ? "text-content-tertiary"
+    : "text-content-quaternary group-hover:text-content-tertiary";
   const titleTextClass = selected
     ? "text-content-primary"
-    : "text-content-tertiary group-hover:text-content-primary";
+    : "text-content-secondary group-hover:text-content-primary";
   const subTextClass = selected
-    ? "text-content-primary"
-    : "text-content-tertiary group-hover:text-content-primary";
+    ? "text-content-tertiary"
+    : "text-content-quaternary group-hover:text-content-tertiary";
 
   const wrapperClasses = [
     "group flex w-full items-start justify-start",
