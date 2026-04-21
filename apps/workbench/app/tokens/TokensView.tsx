@@ -11,6 +11,11 @@ type TokensViewProps = {
   model: TokenGraphModel;
 };
 
+type TokenRow = Pick<
+  TokenGraphModel["tokenTypes"][number]["values"][number],
+  "id" | "name" | "cssVar" | "meta"
+>;
+
 function useTokensViewData(model: TokenGraphModel) {
   const root = useMemo(() => {
     return model.root;
