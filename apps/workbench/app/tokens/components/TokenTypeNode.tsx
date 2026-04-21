@@ -1,5 +1,6 @@
 "use client";
 
+import { List } from "@repo/ui";
 import type { TokenGraphModel } from "../lib/manifestAdapter";
 
 export type TokenTypeGroup = {
@@ -31,18 +32,7 @@ export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNo
       <h3>
         {group.type}({group.kind})
       </h3>
-      <ul>
-        {group.values.map((valueItem) => (
-          <li key={valueItem.id}>
-            <button
-              aria-pressed={selectedRowId === valueItem.id}
-              onClick={() => onSelectRow(valueItem.id)}
-            >
-              {valueItem.name}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <List listItems={listItems} />
     </section>
   );
 }
