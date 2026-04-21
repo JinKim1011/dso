@@ -20,7 +20,7 @@ export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNo
   const listItems = group.values.map((valueItem, index) => ({
     id: valueItem.id,
     text: valueItem.name,
-    subText: valueItem.cssVar,
+    subText: valueItem.meta,
     level: 2, // hard-coded for now, will be integarte with component used freqeucny level
     selected: selectedRowId === valueItem.id,
     onSelect: () => onSelectRow(valueItem.id),
