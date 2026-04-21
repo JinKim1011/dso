@@ -103,10 +103,10 @@ export const ListItem = ({
           <Text variant="label-xs" className={titleTextClass}>
             {text}
           </Text>
-          <div className="gap-mini flex w-full min-w-0">
+          <div className="gap-mini flex w-full min-w-0 justify-between">
             <Text
               variant="meta-xs"
-              className={`${subTextClass} min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap`}
+              className={`${subTextClass} max-w-40 min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap`}
             >
               {subText}
             </Text>
