@@ -1,6 +1,5 @@
 "use client";
 
-import { createElement } from "react";
 import type { TokenGraphModel } from "../lib/manifestAdapter";
 
 export type TokenTypeGroup = {
@@ -17,27 +16,23 @@ type TokenTypeNodeProps = {
 };
 
 export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNodeProps) {
-  return createElement(
-    "section",
-    { "data-testid": group.id, key: group.id },
-    createElement("h3", null, `${group.type}(${group.kind})`),
-    createElement(
-      "ul",
-      null,
-      ...group.values.map((valueItem) =>
-        createElement(
-          "li",
-          { key: valueItem.id },
-          createElement(
-            "button",
-            {
-              "aria-pressed": selectedRowId === valueItem.id,
-              onClick: () => onSelectRow(valueItem.id),
-            },
-            valueItem.name,
-          ),
-        ),
-      ),
-    ),
+  return (
+    <section data-testid={group.id} key={group.id}>
+      <h3>
+        {group.type}({group.kind})
+      </h3>
+      <ul>
+        {group.values.map((valueItem) => (
+          <li key={valueItem.id}>
+            <button
+              aria-pressed={selectedRowId === valueItem.id}
+              onClick={() => onSelectRow(valueItem.id)}
+            >
+              {valueItem.name}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
