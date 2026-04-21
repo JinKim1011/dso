@@ -10,8 +10,8 @@ export function TokenValueDetail({ name, cssVar, meta }: TokenValueDetailProps) 
   return (
     <div>
       <p>selected: {name}</p>
-      <p>cssVar: {cssVar}</p>
-      <p>meta: {meta}</p>
+      {cssVar && <p>cssVar: {cssVar}</p>}
+      {meta && <p>meta: {meta}</p>}
     </div>
   );
 }
