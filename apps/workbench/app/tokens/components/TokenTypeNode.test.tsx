@@ -17,9 +17,7 @@ describe("Node-level behavior, TokenTypeNode", () => {
       createElement(TokenTypeNode, { group, selectedRowId: null, onSelectRow: () => {} }),
     );
 
-    expect(
-      screen.getByRole("heading", { name: `${group.type}(${group.kind})` }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: `${group.type}` })).toBeInTheDocument();
 
     const section = screen.getByTestId(group.id);
     const buttons = within(section).getAllByRole("button");
