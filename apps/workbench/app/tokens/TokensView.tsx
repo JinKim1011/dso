@@ -55,11 +55,16 @@ function useTokensViewData(model: TokenGraphModel) {
   return { rows, groups, categories, groupById, root };
 }
 
-export function TokensView({ model }: TokensViewProps) {
-  const { categories, groupById, root } = useTokensViewData(model);
-
+function useTokenSelection(rows: TokenRow[]) {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const selected = rows.find((row) => row.id === selectedRowId) ?? null;
+
+  return { selectedRowId, setSelectedRowId, selected };
+}
+
+export function TokensView({ model }: TokensViewProps) {
+  const { categories, groupById, root, rows } = useTokensViewData(model);
+  const { selectedRowId, setSelectedRowId, selected } = useTokenSelection(rows);
 
   return (
     <>
