@@ -11,18 +11,17 @@ type TokensViewProps = {
   model: TokenGraphModel;
 };
 
-export function TokensView({ model }: TokensViewProps) {
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+function useTokensViewData(model: TokenGraphModel) {
+  const root = useMemo(() => {
+    return model.root;
+  }, [model]);
 
-  const rows = useMemo(() => {
-    return model.tokenTypes.flatMap((tokenType) =>
-      tokenType.values.map((valueItem) => ({
-        id: valueItem.id,
-        name: valueItem.name,
-        cssVar: valueItem.cssVar,
-        meta: valueItem.meta,
-      })),
-    );
+  const categories = useMemo(() => {
+    return model.categories.map((category) => ({
+      id: category.id,
+      category: category.category,
+      tokenTypeIds: category.tokenTypeIds,
+    }));
   }, [model]);
 
   const groups = useMemo(() => {
@@ -38,23 +37,29 @@ export function TokensView({ model }: TokensViewProps) {
     );
   }, [model]);
 
-  const categories = useMemo(() => {
-    return model.categories.map((category) => ({
-      id: category.id,
-      category: category.category,
-      tokenTypeIds: category.tokenTypeIds,
-    }));
-  }, [model]);
-
-  const root = useMemo(() => {
-    return model.root;
-  }, [model]);
-
-  const selected = rows.find((row) => row.id === selectedRowId) ?? null;
-
   const groupById = useMemo(() => {
     return new Map(groups.map((group) => [group.id, group]));
   }, [groups]);
+
+  const rows = useMemo(() => {
+    return model.tokenTypes.flatMap((tokenType) =>
+      tokenType.values.map((valueItem) => ({
+        id: valueItem.id,
+        name: valueItem.name,
+        cssVar: valueItem.cssVar,
+        meta: valueItem.meta,
+      })),
+    );
+  }, [model]);
+
+  return { rows, groups, categories, groupById, root };
+}
+
+export function TokensView({ model }: TokensViewProps) {
+  const { categories, groupById, root } = useTokensViewData(model);
+
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const selected = rows.find((row) => row.id === selectedRowId) ?? null;
 
   return (
     <>
