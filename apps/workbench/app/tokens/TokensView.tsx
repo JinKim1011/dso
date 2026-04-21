@@ -3,8 +3,9 @@
 import { useMemo, useState } from "react";
 import { CategoryNode } from "./components/CategoryNode";
 import { RootNode } from "./components/RootNode";
-import { TokenTypeNode, type TokenTypeGroup } from "./components/TokenTypeNode";
+import { TokenTypeNode } from "./components/TokenTypeNode";
 import { TokenValueDetail } from "./components/TokenValueDetail";
+import { TokenTypeModel } from "./lib/manifest/types";
 import type { TokenGraphModel } from "./lib/manifestAdapter";
 
 type TokensViewProps = {
@@ -29,17 +30,14 @@ function useTokensViewData(model: TokenGraphModel) {
     }));
   }, [model]);
 
-  const groups = useMemo(() => {
-    return model.tokenTypes.map(
-      (tokenType) =>
-        ({
-          id: tokenType.id,
-          category: tokenType.category,
-          type: tokenType.type,
-          kind: tokenType.kind,
-          values: tokenType.values,
-        }) as TokenTypeGroup,
-    );
+  const groups = useMemo<TokenTypeModel[]>(() => {
+    return model.tokenTypes.map((tokenType) => ({
+      id: tokenType.id,
+      category: tokenType.category,
+      type: tokenType.type,
+      kind: tokenType.kind,
+      values: tokenType.values,
+    }));
   }, [model]);
 
   const groupById = useMemo(() => {
@@ -77,7 +75,7 @@ export function TokensView({ model }: TokensViewProps) {
         {categories.map((category) => {
           const categoryGroups = category.tokenTypeIds
             .map((id) => groupById.get(id))
-            .filter((group): group is TokenTypeGroup => !!group);
+            .filter((group): group is TokenTypeModel => !!group);
 
           return (
             <CategoryNode key={category.id} category={category}>
