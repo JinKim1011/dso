@@ -1,6 +1,7 @@
 "use client";
 
 import { createElement, useMemo, useState } from "react";
+import { CategoryNode } from "./components/CategoryNode";
 import { TokenTypeNode } from "./components/TokenTypeNode";
 import { TokenGraphModel } from "./lib/manifestAdapter";
 
@@ -59,18 +60,17 @@ export function TokensView({ model }: TokensViewProps) {
         .map((id) => groupById.get(id))
         .filter((group): group is NonNullable<typeof group> => Boolean(group));
 
-      return createElement(
-        "section",
-        { "data-testid": category.id, key: category.id },
-        createElement("h2", null, category.category),
-        ...categoryGroups.map((group) =>
-          createElement(TokenTypeNode, {
-            key: group.id,
-            group,
-            selectedRowId,
-            onSelectRow: setSelectedRowId,
-          }),
-        ),
+      return (
+        <CategoryNode category={category}>
+          {categoryGroups.map((group) => (
+            <TokenTypeNode
+              key={group.id}
+              group={group}
+              selectedRowId={selectedRowId}
+              onSelectRow={setSelectedRowId}
+            ></TokenTypeNode>
+          ))}
+        </CategoryNode>
       );
     }),
     selected
