@@ -16,6 +16,16 @@ type TokenTypeNodeProps = {
 };
 
 export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNodeProps) {
+  const listItems = group.values.map((valueItem, index) => ({
+    id: valueItem.id,
+    text: valueItem.name,
+    subText: valueItem.cssVar,
+    level: 2, // hard-coded for now, will be integarte with component used freqeucny level
+    selected: selectedRowId === valueItem.id,
+    onSelect: () => onSelectRow(valueItem.id),
+    index: String(index),
+  }));
+
   return (
     <section data-testid={group.id} key={group.id}>
       <h3>
