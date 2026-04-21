@@ -1,3 +1,5 @@
+"use client";
+
 type TokenValueDetailProps = {
   name: string;
   cssVar?: string;
