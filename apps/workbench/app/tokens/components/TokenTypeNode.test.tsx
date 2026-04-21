@@ -39,12 +39,14 @@ describe("Node-level behavior, TokenTypeNode", () => {
     );
 
     const section = screen.getByTestId(group.id);
-    const buttons = within(section).getAllByRole("button");
+    const valueButtons = group.values.map((value) =>
+      within(section).getByRole("button", { name: value.name }),
+    );
 
-    buttons.forEach((button, index) => {
+    valueButtons.forEach((valueButton, index) => {
       const value = group.values[index];
       if (!value) throw new Error("Expected at least one value in token type group");
-      expect(button).toHaveAttribute(
+      expect(valueButton).toHaveAttribute(
         "aria-pressed",
         value.id === selectedId ? "true" : "false",
       );
