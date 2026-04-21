@@ -20,8 +20,8 @@
   --text-secondary: oklch(0.222 0 89.9 / 0.72);
   --text-tertiary: oklch(0.222 0 89.9 / 0.52);
   --text-quaternary: oklch(0.222 0 89.9 / 0.36);
-  --text-accent: oklch(0.692 0.152 283.4 / 0.74);
-  --text-accentStrong: oklch(0.692 0.152 283.4 / 1);
+  --text-accent: oklch(0.42 0.12 283.4);
+  --text-accentStrong: oklch(0.3 0.14 283.4);
 
   --stroke-primary: oklch(0.89 0 0);
   --stroke-secondary: oklch(0.93 0 89.9);
@@ -56,8 +56,8 @@
   --text-secondary: oklch(0.95 0 89.9 / 0.84);
   --text-tertiary: oklch(0.95 0 89.9 / 0.62);
   --text-quaternary: oklch(0.95 0 89.9 / 0.46);
-  --text-accent: oklch(0.78 0.108 283.4 / 0.82);
-  --text-accentStrong: oklch(0.78 0.108 283.4 / 1);
+  --text-accent: oklch(0.92 0.06 283.4);
+  --text-accentStrong: oklch(0.98 0.03 283.4);
 
   --stroke-primary: oklch(0.35 0 0);
   --stroke-secondary: oklch(0.3 0 89.9);
