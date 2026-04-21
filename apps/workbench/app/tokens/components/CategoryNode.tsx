@@ -1,5 +1,6 @@
 "use client";
 
+import { Text } from "@repo/ui";
 import { ReactNode } from "react";
 
 type CategoryGroup = {
@@ -15,7 +16,11 @@ type CategoryNodeProps = {
 export function CategoryNode({ category, children }: CategoryNodeProps) {
   return (
     <section data-testid={category.id}>
-      <h2>{category.category}</h2>
+      <div className="bg-surface-accentStrong py-microPlus px-mini w-fit">
+        <Text as="h2" variant="control-md" className="text-content-accent">
+          {category.category}
+        </Text>
+      </div>
       {children}
     </section>
   );
