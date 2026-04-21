@@ -81,6 +81,7 @@ export const ListItem = ({
     <li role="option" aria-selected={isInteractive ? selected : undefined}>
       <motion.button
         type="button"
+        aria-pressed={isInteractive ? selected : undefined}
         className={wrapperClasses}
         variants={listItemVariants}
         whileHover={{ y: 2, scale: 0.98 }}
