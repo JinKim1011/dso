@@ -78,68 +78,48 @@ export const ListItem = ({
     .join(" ");
 
   return (
-    <motion.li
-      {...props}
-      className={wrapperClasses}
-      variants={listItemVariants}
-      whileHover={{ y: 2, scale: 0.98 }}
-      role={isInteractive ? "option" : props.role}
-      tabIndex={isInteractive ? 0 : props.tabIndex}
-      onClick={
-        isInteractive
-          ? (event) => {
-              props.onClick?.(event);
-
-              if (!event.defaultPrevented) {
-                onSelect?.();
-              }
-            }
-          : props.onClick
-      }
-      onKeyDown={
-        isInteractive
-          ? (event) => {
-              props.onKeyDown?.(event);
-
-              if (event.defaultPrevented) {
-                return;
-              }
-
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                onSelect?.();
-              }
-            }
-          : props.onKeyDown
-      }
-      layout
-      aria-selected={isInteractive ? selected : undefined}
-    >
-      <Text variant="label-xs" className={indexTextClass}>
-        {index}
-      </Text>
-      <div className="gap-miniPlus flex min-w-0 flex-1 flex-col">
-        <Text variant="label-xs" className={titleTextClass}>
-          {text}
+    <li role="option" aria-selected={isInteractive ? selected : undefined}>
+      <motion.button
+        type="button"
+        className={wrapperClasses}
+        variants={listItemVariants}
+        whileHover={{ y: 2, scale: 0.98 }}
+        tabIndex={isInteractive ? 0 : props.tabIndex}
+        onClick={onSelect}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onSelect?.();
+          }
+        }}
+        layout
+      >
+        <Text variant="label-xs" className={indexTextClass}>
+          {index}
         </Text>
-        <div className="gap-mini flex w-full min-w-0">
-          <Text
-            variant="meta-xs"
-            className={`${subTextClass} min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap`}
-          >
-            {subText}
+        <div className="gap-miniPlus flex min-w-0 flex-1 flex-col">
+          <Text variant="label-xs" className={titleTextClass}>
+            {text}
           </Text>
-          <div className="gap-microPlus flex shrink-0 items-center">
-            {Array.from({ length: 5 }).map((_, stepIndex) => {
-              const isStepActive = stepIndex <= normalizedLevel;
-              const colorClass = isStepActive ? activeIndicator : inactiveIndicator;
-              const indicatorClasses = `${baseIndicator} ${colorClass}`;
+          <div className="gap-mini flex w-full min-w-0">
+            <Text
+              variant="meta-xs"
+              className={`${subTextClass} min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap`}
+            >
+              {subText}
+            </Text>
+            <div className="gap-microPlus flex shrink-0 items-center">
+              {Array.from({ length: 5 }).map((_, stepIndex) => {
+                const isStepActive = stepIndex <= normalizedLevel;
+                const colorClass = isStepActive ? activeIndicator : inactiveIndicator;
+                const indicatorClasses = `${baseIndicator} ${colorClass}`;
 
-              return <span key={stepIndex} className={indicatorClasses} />;
-            })}
+                return <span key={stepIndex} className={indicatorClasses} />;
+              })}
+            </div>
           </div>
         </div>
-      </div>
-    </motion.li>
+      </motion.button>
+    </li>
   );
 };
