@@ -20,8 +20,10 @@ describe("Node-level behavior, TokenTypeNode", () => {
     expect(screen.getByRole("heading", { name: `${group.type}` })).toBeInTheDocument();
 
     const section = screen.getByTestId(group.id);
-    const buttons = within(section).getAllByRole("button");
-    expect(buttons).toHaveLength(group.values.length);
+    const valueButtons = group.values.map((value) =>
+      within(section).getByRole("button", { name: value.name }),
+    );
+    expect(valueButtons).toHaveLength(group.values.length);
   });
 
   it("marks selected row with aria-pressed=true", () => {
