@@ -3,7 +3,7 @@
 import { createElement } from "react";
 import type { TokenGraphModel } from "../lib/manifestAdapter";
 
-type TokenTypeGroup = {
+export type TokenTypeGroup = {
   id: string;
   type: string;
   kind: TokenGraphModel["tokenTypes"][number]["kind"];
