@@ -43,7 +43,7 @@ export const ListItem = ({
   const normalizedLevel = Math.min(4, Math.max(0, Math.floor(finiteLevel)));
   const isInteractive = Boolean(onSelect);
   const indexTextClass = selected
-    ? "text-content-accent"
+    ? "text-content-primary"
     : "text-content-quaternary group-hover:text-content-primary";
   const titleTextClass = selected
     ? "text-content-primary"
