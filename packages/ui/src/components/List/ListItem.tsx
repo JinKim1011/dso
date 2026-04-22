@@ -47,6 +47,10 @@ export const ListItem = ({
 
   const handleKeyDown: HTMLMotionProps<"button">["onKeyDown"] = (event) => {
     onKeyDown?.(event);
+
+    if (!isInteractive) {
+      return;
+    }
   };
 
   const indexTextClass = selected
