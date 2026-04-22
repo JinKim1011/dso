@@ -20,7 +20,7 @@ const listItemVariants = {
   },
 };
 
-export interface ListItemProps extends Omit<HTMLMotionProps<"li">, "className"> {
+export interface ListItemProps extends Omit<HTMLMotionProps<"button">, "className"> {
   id: string;
   index?: string;
   text?: string;
@@ -90,10 +90,9 @@ export const ListItem = ({
         whileHover={{ y: 2, scale: 0.98 }}
         tabIndex={isInteractive ? 0 : -1}
         onClick={onSelect}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            onSelect?.();
+        onKeyDown={() => {
+          if (!isInteractive) {
+            return;
           }
         }}
         layout
