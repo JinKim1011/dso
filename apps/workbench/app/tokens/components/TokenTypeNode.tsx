@@ -25,7 +25,7 @@ export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNo
     level: 2, // hard-coded for now, will be integrate with component used frequency level
     selected: selectedRowId === valueItem.id,
     onSelect: () => onSelectRow(valueItem.id),
-    index: String(index),
+    index: (index + 1).toString().padStart(2, "0"),
   }));
 
   return (
