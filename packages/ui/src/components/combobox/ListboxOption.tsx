@@ -33,7 +33,7 @@ export function ListboxOption({
     "flex items-start w-full",
     "py-microPlus px-mini gap-microPlus",
     "bg-surface-secondary text-content-primary cursor-pointer",
-    "transition-colors duration-highlightFadeOut ease-outExpo",
+    "transition-colors duration-highlightFadeOut ease-outQuad",
     disabled
       ? variantClasses.disabled
       : selected
