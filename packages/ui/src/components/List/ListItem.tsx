@@ -83,10 +83,12 @@ export const ListItem = ({
         type="button"
         aria-label={text}
         aria-pressed={isInteractive ? selected : undefined}
+        aria-disabled={!isInteractive ? true : false}
+        disabled={!isInteractive}
         className={wrapperClasses}
         variants={listItemVariants}
         whileHover={{ y: 2, scale: 0.98 }}
-        tabIndex={isInteractive ? 0 : props.tabIndex}
+        tabIndex={isInteractive ? 0 : -1}
         onClick={onSelect}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
