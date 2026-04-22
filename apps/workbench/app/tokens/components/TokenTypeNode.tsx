@@ -22,7 +22,7 @@ export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNo
     id: valueItem.id,
     text: valueItem.name,
     subText: valueItem.meta,
-    level: 2, // hard-coded for now, will be integarte with component used freqeucny level
+    level: 2, // hard-coded for now, will be integrate with component used freqeucny level
     selected: selectedRowId === valueItem.id,
     onSelect: () => onSelectRow(valueItem.id),
     index: String(index),
