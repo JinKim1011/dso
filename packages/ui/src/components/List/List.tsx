@@ -8,14 +8,14 @@ export interface ListProps extends Omit<HTMLMotionProps<"ul">, "className"> {
   listItems: ListItemProps[];
 }
 
-const listTransition = createMotionTransition("regular", "inOutQuad");
+const listTransition = createMotionTransition("regular", "inOutCirc");
 
 const listVariants = {
   hidden: { opacity: 0, scale: 0.98 },
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { ...listTransition, staggerChildren: 0.03 },
+    transition: { ...listTransition, staggerChildren: 0.02 },
   },
 };
 
