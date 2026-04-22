@@ -1,24 +1,9 @@
 "use client";
 
 import { motion, type HTMLMotionProps } from "framer-motion";
-import { createMotionTransition } from "../../types/motion";
 import { Text } from "../Text";
 
 type Level = 0 | 1 | 2 | 3 | 4;
-
-const listItemVariants = {
-  hidden: {
-    opacity: 0,
-    y: 20,
-    scale: 0.98,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: createMotionTransition("quick", "outExpo"),
-  },
-};
 
 export interface ListItemProps extends Omit<HTMLMotionProps<"button">, "className"> {
   id: string;
@@ -77,6 +62,8 @@ export const ListItem = ({
     .filter(Boolean)
     .join(" ");
 
+  const hoverTransform = { y: 2, scale: 0.98 };
+
   return (
     <li role="option" aria-selected={isInteractive ? selected : undefined}>
       <motion.button
@@ -86,8 +73,8 @@ export const ListItem = ({
         aria-disabled={!isInteractive ? true : false}
         disabled={!isInteractive}
         className={wrapperClasses}
-        variants={listItemVariants}
-        whileHover={{ y: 2, scale: 0.98 }}
+        whileHover={hoverTransform}
+        animate={selected ? hoverTransform : { y: 0, scale: 1 }}
         tabIndex={isInteractive ? 0 : -1}
         onClick={onSelect}
         onKeyDown={() => {
