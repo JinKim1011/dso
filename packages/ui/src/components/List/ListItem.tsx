@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, type HTMLMotionProps } from "framer-motion";
+import { createMotionTransition } from "../../types/motion";
 import { Text } from "../Text";
 
 type Level = 0 | 1 | 2 | 3 | 4;
@@ -88,8 +89,21 @@ export const ListItem = ({
 
   const hoverTransform = { y: 2, scale: 0.98 };
 
+  const listItemTransition = createMotionTransition("quick", "inOutCirc");
+  const listItemVariants = {
+    hidden: { opacity: 0, y: 2, scale: 0.98 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        ...listItemTransition,
+      },
+    },
+  };
+
   return (
-    <li>
+    <motion.li variants={listItemVariants}>
       <motion.button
         {...props}
         type="button"
@@ -131,6 +145,6 @@ export const ListItem = ({
           </div>
         </div>
       </motion.button>
-    </li>
+    </motion.li>
   );
 };
