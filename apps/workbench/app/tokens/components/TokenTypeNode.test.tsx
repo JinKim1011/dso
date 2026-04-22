@@ -17,13 +17,13 @@ describe("Node-level behavior, TokenTypeNode", () => {
       createElement(TokenTypeNode, { group, selectedRowId: null, onSelectRow: () => {} }),
     );
 
-    expect(
-      screen.getByRole("heading", { name: `${group.type}(${group.kind})` }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: `${group.type}` })).toBeInTheDocument();
 
     const section = screen.getByTestId(group.id);
-    const buttons = within(section).getAllByRole("button");
-    expect(buttons).toHaveLength(group.values.length);
+    const valueButtons = group.values.map((value) =>
+      within(section).getByRole("button", { name: value.name }),
+    );
+    expect(valueButtons).toHaveLength(group.values.length);
   });
 
   it("marks selected row with aria-pressed=true", () => {
@@ -39,12 +39,14 @@ describe("Node-level behavior, TokenTypeNode", () => {
     );
 
     const section = screen.getByTestId(group.id);
-    const buttons = within(section).getAllByRole("button");
+    const valueButtons = group.values.map((value) =>
+      within(section).getByRole("button", { name: value.name }),
+    );
 
-    buttons.forEach((button, index) => {
+    valueButtons.forEach((valueButton, index) => {
       const value = group.values[index];
       if (!value) throw new Error("Expected at least one value in token type group");
-      expect(button).toHaveAttribute(
+      expect(valueButton).toHaveAttribute(
         "aria-pressed",
         value.id === selectedId ? "true" : "false",
       );

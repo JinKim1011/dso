@@ -24,7 +24,7 @@ export const InputBase = ({
     "p-mini gap-mini",
     "rounded-mini",
     "shadow-surface-lifted",
-    "transition-colors duration-highlightFadeOut ease-outExpo",
+    "transition-colors duration-highlightFadeOut ease-outQuad",
 
     disabled
       ? "bg-surface-secondary text-content-quaternary cursor-not-allowed"

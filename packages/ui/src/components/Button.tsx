@@ -2,20 +2,20 @@
 
 import type React from "react";
 import {
+  ActiveBgClass,
+  ActiveBorderClass,
+  ActiveTextColorClass,
   BgClass,
   BorderClass,
-  TextColorClass,
   HoverBgClass,
+  HoverBorderClass,
+  HoverTextColorClass,
+  MarginXClass,
+  MarginYClass,
   OverrideBGClass,
   OverrideBorderClass,
   OverrideTextColorClass,
-  HoverTextColorClass,
-  HoverBorderClass,
-  ActiveBgClass,
-  ActiveTextColorClass,
-  ActiveBorderClass,
-  MarginXClass,
-  MarginYClass,
+  TextColorClass,
   typographyStyles,
 } from "../types/tokens";
 
@@ -56,8 +56,7 @@ const variantClasses: Record<
       "hover:bg-surface-secondary hover:text-content-primary hover:border-stroke-primary",
     active:
       "active:bg-surface-quaternary active:text-content-primary active:border-stroke-primary",
-    selected:
-      "bg-surface-quaternary text-content-primary border-stroke-primary",
+    selected: "bg-surface-quaternary text-content-primary border-stroke-primary",
     selectedHover:
       "hover:bg-surface-quaternary hover:text-content-primary hover:border-stroke-primary",
     selectedActive:
@@ -144,17 +143,11 @@ export const Button = ({
   children,
   ...props
 }: ButtonProps) => {
-  const paddingClass = iconOnly
-    ? sizeClasses[size].iconOnly
-    : sizeClasses[size].base;
+  const paddingClass = iconOnly ? sizeClasses[size].iconOnly : sizeClasses[size].base;
 
   const className = [
-    selected
-      ? variantClasses[variant].selectedHover
-      : variantClasses[variant].hover,
-    selected
-      ? variantClasses[variant].selectedActive
-      : variantClasses[variant].active,
+    selected ? variantClasses[variant].selectedHover : variantClasses[variant].hover,
+    selected ? variantClasses[variant].selectedActive : variantClasses[variant].active,
     selected ? variantClasses[variant].selected : variantClasses[variant].base,
     paddingClass,
     inline ? sizeClasses[size].hover : "",
@@ -167,7 +160,7 @@ export const Button = ({
     "inline-flex items-center justify-center",
     "transition-colors transition-transform",
     "duration-highlightFadeOut",
-    "ease-outExpo",
+    "ease-outQuad",
     "active:translate-y-0.5 active:scale-[0.98]",
     "cursor-pointer",
   ]
@@ -178,9 +171,7 @@ export const Button = ({
     <button type={type} {...props} className={className}>
       {LeftIcon && <LeftIcon aria-hidden className={sizeClasses[size].icon} />}
       {!iconOnly && children}
-      {RightIcon && (
-        <RightIcon aria-hidden className={sizeClasses[size].icon} />
-      )}
+      {RightIcon && <RightIcon aria-hidden className={sizeClasses[size].icon} />}
     </button>
   );
 };
