@@ -91,7 +91,7 @@ export const ListItem = ({
   const hoverTransform = { y: 2, scale: 0.98 };
 
   return (
-    <li role="option" aria-selected={isInteractive ? selected : undefined}>
+    <li>
       <motion.button
         {...props}
         type="button"
