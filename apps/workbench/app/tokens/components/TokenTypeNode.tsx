@@ -22,7 +22,7 @@ export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNo
     id: valueItem.id,
     text: valueItem.name,
     subText: valueItem.meta,
-    level: 2, // hard-coded for now, will be integrate with component used frequency level
+    level: 2, // hard-coded for now, will be integrated with the component-used frequency level
     selected: selectedRowId === valueItem.id,
     onSelect: () => onSelectRow(valueItem.id),
     index: (index + 1).toString().padStart(2, "0"),
@@ -50,6 +50,7 @@ export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNo
             aria-label="more"
             iconOnly={true}
             leftIcon={DotsVerticalIcon}
+            disabled={true}
           ></Button>
         </div>
       </div>
@@ -62,6 +63,7 @@ export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNo
           aria-label="add"
           iconOnly={true}
           leftIcon={PlusCircledIcon}
+          disabled={true}
         ></Button>
       </div>
     </section>
