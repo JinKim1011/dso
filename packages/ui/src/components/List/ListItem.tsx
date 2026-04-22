@@ -31,8 +31,6 @@ export const ListItem = ({
   onKeyDown,
   ...props
 }: ListItemProps) => {
-  const finiteLevel = Number.isFinite(level) ? level : 0;
-  const normalizedLevel = Math.min(4, Math.max(0, Math.floor(finiteLevel)));
   const isInteractive = Boolean(onSelect);
 
   const handleClick: HTMLMotionProps<"button">["onClick"] = (event) => {
@@ -62,7 +60,6 @@ export const ListItem = ({
   const subTextClass = selected
     ? "text-content-tertiary"
     : "text-content-quaternary group-hover:text-content-tertiary";
-
   const wrapperClasses = [
     "group flex w-full items-start justify-start",
     "py-miniPlus px-small gap-regularPlus rounded-micro",
@@ -70,7 +67,6 @@ export const ListItem = ({
     isInteractive
       ? "cursor-pointer focus-visible:outline-none focus-visible:shadow-focus-accent"
       : "cursor-default",
-
     selected
       ? "bg-surface-quaternary shadow-surface-pressed text-content-accent"
       : "bg-surface-tertiary shadow-surface-lifted hover:bg-surface-quaternary hover:shadow-surface-pressed hover:text-content-accent",
@@ -78,6 +74,8 @@ export const ListItem = ({
     .filter(Boolean)
     .join(" ");
 
+  const finiteLevel = Number.isFinite(level) ? level : 0;
+  const normalizedLevel = Math.min(4, Math.max(0, Math.floor(finiteLevel)));
   const baseIndicator = "h-2.5 w-0.5";
   const activeIndicator = "bg-surface-accentStrong";
   const inactiveIndicator = [
@@ -97,7 +95,7 @@ export const ListItem = ({
         type="button"
         aria-label={text}
         aria-pressed={isInteractive ? selected : undefined}
-        aria-disabled={!isInteractive ? true : false}
+        aria-disabled={!isInteractive ? true : undefined}
         disabled={!isInteractive}
         className={wrapperClasses}
         whileHover={hoverTransform}
