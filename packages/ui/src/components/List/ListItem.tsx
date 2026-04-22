@@ -5,13 +5,18 @@ import { Text } from "../Text";
 
 type Level = 0 | 1 | 2 | 3 | 4;
 
-export interface ListItemProps extends Omit<HTMLMotionProps<"button">, "className"> {
+export interface ListItemProps extends Omit<
+  HTMLMotionProps<"button">,
+  "className" | "onClick" | "onKeyDown"
+> {
   id: string;
   index?: string;
   text?: string;
   subText?: string;
   level?: Level | number;
   selected?: boolean;
+  onClick?: HTMLMotionProps<"button">["onClick"];
+  onKeyDown?: HTMLMotionProps<"button">["onKeyDown"];
   onSelect?: () => void;
 }
 
@@ -22,11 +27,28 @@ export const ListItem = ({
   level = 0,
   selected = false,
   onSelect,
+  onClick,
+  onKeyDown,
   ...props
 }: ListItemProps) => {
   const finiteLevel = Number.isFinite(level) ? level : 0;
   const normalizedLevel = Math.min(4, Math.max(0, Math.floor(finiteLevel)));
   const isInteractive = Boolean(onSelect);
+
+  const handleClick: HTMLMotionProps<"button">["onClick"] = (event) => {
+    onClick?.(event);
+
+    if (event.defaultPrevented || !isInteractive) {
+      return;
+    }
+
+    onSelect?.();
+  };
+
+  const handleKeyDown: HTMLMotionProps<"button">["onKeyDown"] = (event) => {
+    onKeyDown?.(event);
+  };
+
   const indexTextClass = selected
     ? "text-content-tertiary"
     : "text-content-quaternary group-hover:text-content-tertiary";
@@ -67,6 +89,7 @@ export const ListItem = ({
   return (
     <li role="option" aria-selected={isInteractive ? selected : undefined}>
       <motion.button
+        {...props}
         type="button"
         aria-label={text}
         aria-pressed={isInteractive ? selected : undefined}
@@ -76,12 +99,8 @@ export const ListItem = ({
         whileHover={hoverTransform}
         animate={selected ? hoverTransform : { y: 0, scale: 1 }}
         tabIndex={isInteractive ? 0 : -1}
-        onClick={onSelect}
-        onKeyDown={() => {
-          if (!isInteractive) {
-            return;
-          }
-        }}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
         layout
       >
         <Text variant="label-xs" className={indexTextClass}>
