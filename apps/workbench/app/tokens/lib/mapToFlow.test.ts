@@ -97,7 +97,27 @@ describe("mapTokenGraphToFlow contract", () => {
     expect([...actual]).toEqual(expect.arrayContaining([...expected]));
   });
 
-  it("is deteterministic for ids and positions with identical input", () => {});
+  it("is deteterministic for ids and positions with identical input", () => {
+    const model = makeModel();
+
+    const first = mapTokenGraphToFlow(model);
+    const second = mapTokenGraphToFlow(model);
+
+    expect(first).toStrictEqual(second);
+
+    const firstNodeIds = first.nodes.map((node) => node.id);
+    const secondNodeIds = second.nodes.map((node) => node.id);
+    expect(firstNodeIds).toEqual(secondNodeIds);
+
+    const firstEdgeIds = first.edges.map((edge) => edge.id);
+    const secondEdgeIds = second.edges.map((edge) => edge.id);
+    expect(firstEdgeIds).toEqual(secondEdgeIds);
+
+    for (const node of first.nodes) {
+      expect(Number.isFinite(node.position.x)).toBe(true);
+      expect(Number.isFinite(node.position.y)).toBe(true);
+    }
+  });
 
   it("skips missing tokenType references instead of emmitting broken nodes and edges", () => {});
 });
