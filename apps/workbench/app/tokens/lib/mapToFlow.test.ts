@@ -63,12 +63,12 @@ describe("mapTokenGraphToFlow contract", () => {
     const flow = mapTokenGraphToFlow(model);
 
     const expectedNodeCount = 1 + model.categories.length + model.tokenTypes.length;
-    const expectedEdgeCout =
+    const expectedEdgeCount =
       model.categories.length +
       model.categories.reduce((sum, category) => sum + category.tokenTypeIds.length, 0);
 
     expect(flow.nodes).toHaveLength(expectedNodeCount);
-    expect(flow.edges).toHaveLength(expectedEdgeCout);
+    expect(flow.edges).toHaveLength(expectedEdgeCount);
   });
 
   it("creates root to category edges for every category", () => {
@@ -97,7 +97,7 @@ describe("mapTokenGraphToFlow contract", () => {
     }
   });
 
-  it("is deteterministic for ids and positions with identical input", () => {
+  it("is deterministic for ids and positions with identical input", () => {
     const model = makeModel();
 
     const first = mapTokenGraphToFlow(model);
