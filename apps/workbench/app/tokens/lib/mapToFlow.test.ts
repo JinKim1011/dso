@@ -83,6 +83,20 @@ describe("mapTokenGraphToFlow contract", () => {
     expect([...actual]).toEqual(expect.arrayContaining([...expected]));
   });
 
+  it("creates category to token type edges for every category tokenTypeIds", () => {
+    const model = makeModel();
+    const flow = mapTokenGraphToFlow(model);
+
+    const actual = new Set(flow.edges.map((edge) => edgeKey(edge.source, edge.target)));
+    const expected = new Set(
+      model.categories.map((category) => {
+        category.tokenTypeIds.map((tokenTypeId) => edgeKey(category.id, tokenTypeId));
+      }),
+    );
+
+    expect([...actual]).toEqual(expect.arrayContaining([...expected]));
+  });
+
   it("is deteterministic for ids and positions with identical input", () => {});
 
   it("skips missing tokenType references instead of emmitting broken nodes and edges", () => {});
