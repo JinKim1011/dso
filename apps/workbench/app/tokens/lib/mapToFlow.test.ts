@@ -1,5 +1,6 @@
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { TokenGraphModel } from "./manifestAdapter";
+import { mapTokenGraphToFlow } from "./mapToFlow";
 
 function makeModel(): TokenGraphModel {
   return {
@@ -53,7 +54,18 @@ function makeModel(): TokenGraphModel {
 }
 
 describe("mapTokenGraphToFlow contract", () => {
-  it("maps expected node and edge counts", () => {});
+  it("maps expected node and edge counts", () => {
+    const model = makeModel();
+    const flow = mapTokenGraphToFlow(model);
+
+    const expectedNodeCount = 1 + model.categories.length + model.tokenTypes.length;
+    const expectedEdgeCout =
+      model.categories.length +
+      model.categories.reduce((sum, category) => sum + category.tokenTypeIds.length, 0);
+
+    expect(flow.nodes).toHaveLength(expectedNodeCount);
+    expect(flow.edges).toHaveLength(expectedEdgeCout);
+  });
 
   it("creates root to category edges for every category", () => {});
 
