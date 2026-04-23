@@ -119,5 +119,20 @@ describe("mapTokenGraphToFlow contract", () => {
     }
   });
 
-  it("skips missing tokenType references instead of emmitting broken nodes and edges", () => {});
+  it("skips missing tokenType references instead of creating invalid nodes and edges", () => {
+    const model = makeModel();
+    model.categories[0]?.tokenTypeIds.push("token-type:does-not-exist");
+
+    const flow = mapTokenGraphToFlow(model);
+
+    const missingNode = flow.nodes.find(
+      (node) => node.id === "token-type:does-not-exist",
+    );
+    const missingEdge = flow.edges.find(
+      (edge) => edge.target === "token-type:does-not-exist",
+    );
+
+    expect(missingEdge).toBeUndefined();
+    expect(missingNode).toBeUndefined();
+  });
 });
