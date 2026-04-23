@@ -53,6 +53,10 @@ function makeModel(): TokenGraphModel {
   };
 }
 
+function edgeKey(source: string, target: string): string {
+  return source + "->" + target;
+}
+
 describe("mapTokenGraphToFlow contract", () => {
   it("maps expected node and edge counts", () => {
     const model = makeModel();
@@ -67,7 +71,17 @@ describe("mapTokenGraphToFlow contract", () => {
     expect(flow.edges).toHaveLength(expectedEdgeCout);
   });
 
-  it("creates root to category edges for every category", () => {});
+  it("creates root to category edges for every category", () => {
+    const model = makeModel();
+    const flow = mapTokenGraphToFlow(model);
+
+    const actual = new Set(flow.edges.map((edge) => edgeKey(edge.source, edge.target)));
+    const expected = new Set(
+      model.categories.map((category) => edgeKey(model.root.id, category.id)),
+    );
+
+    expect([...actual]).toEqual(expect.arrayContaining([...expected]));
+  });
 
   it("is deteterministic for ids and positions with identical input", () => {});
 
