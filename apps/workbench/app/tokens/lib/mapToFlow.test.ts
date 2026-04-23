@@ -88,13 +88,13 @@ describe("mapTokenGraphToFlow contract", () => {
     const flow = mapTokenGraphToFlow(model);
 
     const actual = new Set(flow.edges.map((edge) => edgeKey(edge.source, edge.target)));
-    const expected = new Set(
-      model.categories.map((category) => {
-        category.tokenTypeIds.map((tokenTypeId) => edgeKey(category.id, tokenTypeId));
-      }),
+    const expectedPairs = model.categories.flatMap((category) =>
+      category.tokenTypeIds.map((tokenTypeId) => edgeKey(category.id, tokenTypeId)),
     );
 
-    expect([...actual]).toEqual(expect.arrayContaining([...expected]));
+    for (const pair of expectedPairs) {
+      expect(actual.has(pair)).toBe(true);
+    }
   });
 
   it("is deteterministic for ids and positions with identical input", () => {
