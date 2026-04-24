@@ -12,6 +12,8 @@ export type FlowGraph = {
   edges: Edge[];
 };
 
+export type FlowNodeKind = "root" | "category" | "tokenType";
+
 export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
   const nodes: Node<FlowNodeData>[] = [];
   const edges: Edge[] = [];
@@ -23,7 +25,7 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
 
   nodes.push({
     id: model.root.id,
-    type: "default",
+    type: "root",
     position: { x: 0, y: 0 },
     data: { label: model.root.label },
   });
@@ -33,7 +35,7 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
 
     nodes.push({
       id: category.id,
-      type: "default",
+      type: "category",
       position: { x: x, y: categoryY },
       data: { label: category.category },
     });
@@ -50,7 +52,7 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
 
       nodes.push({
         id: tokenType.id,
-        type: "default",
+        type: "tokenIndex",
         position: { x: x, y: tokenYStart + tokenIndex * tokenYGap },
         data: {
           label: tokenType.type,
