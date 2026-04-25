@@ -19,11 +19,7 @@ export type TokenTypeNodeData = {
   values: TokenGraphModel["tokenTypes"][number]["values"];
 };
 
-export type FlowNodeData = {
-  label: string;
-  kind?: string;
-  valueCount?: number;
-};
+export type FlowNodeData = RootNodeData | CategoryNodeData | TokenTypeNodeData;
 
 export type FlowGraph = {
   nodes: Node<FlowNodeData>[];
