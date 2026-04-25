@@ -1,20 +1,41 @@
 import type { Edge, Node } from "@xyflow/react";
 import type { TokenGraphModel } from "./manifestAdapter";
 
-export type FlowNodeData = {
+export type FlowNodeKind = "root" | "category" | "tokenType";
+
+export type RootNodeData = {
   label: string;
-  kind?: string;
-  valueCount?: number;
 };
 
+export type CategoryNodeData = {
+  label: string;
+};
+
+export type TokenTypeNodeData = {
+  label: string;
+  kind: TokenGraphModel["tokenTypes"][number]["kind"];
+  values: TokenGraphModel["tokenTypes"][number]["values"];
+};
+
+export type FlowNodeData = RootNodeData | CategoryNodeData | TokenTypeNodeData;
+
+export type FlowNode =
+  | Node<RootNodeData, "root">
+  | Node<CategoryNodeData, "category">
+  | Node<TokenTypeNodeData, "tokenType">;
+
 export type FlowGraph = {
-  nodes: Node<FlowNodeData>[];
+  nodes: FlowNode[];
   edges: Edge[];
 };
 
 export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
-  const nodes: Node<FlowNodeData>[] = [];
+  const nodes: FlowNode[] = [];
   const edges: Edge[] = [];
+
+  const tokenTypeById = new Map(
+    model.tokenTypes.map((tokenType) => [tokenType.id, tokenType]),
+  );
 
   const categoryXGap = 302;
   const categoryY = 160;
@@ -23,7 +44,7 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
 
   nodes.push({
     id: model.root.id,
-    type: "default",
+    type: "root",
     position: { x: 0, y: 0 },
     data: { label: model.root.label },
   });
@@ -33,7 +54,7 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
 
     nodes.push({
       id: category.id,
-      type: "default",
+      type: "category",
       position: { x: x, y: categoryY },
       data: { label: category.category },
     });
@@ -45,17 +66,17 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
     });
 
     category.tokenTypeIds.forEach((tokenTypeId, tokenIndex) => {
-      const tokenType = model.tokenTypes.find((item) => item.id === tokenTypeId);
+      const tokenType = tokenTypeById.get(tokenTypeId);
       if (!tokenType) return;
 
       nodes.push({
         id: tokenType.id,
-        type: "default",
+        type: "tokenType",
         position: { x: x, y: tokenYStart + tokenIndex * tokenYGap },
         data: {
           label: tokenType.type,
           kind: tokenType.kind,
-          valueCount: tokenType.values.length,
+          values: tokenType.values,
         },
       });
 

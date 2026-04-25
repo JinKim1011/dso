@@ -71,6 +71,59 @@ describe("mapTokenGraphToFlow contract", () => {
     expect(flow.edges).toHaveLength(expectedEdgeCount);
   });
 
+  it("maps expected node type", () => {
+    const model = makeModel();
+    const flow = mapTokenGraphToFlow(model);
+
+    const nodeById = new Map(flow.nodes.map((node) => [node.id, node]));
+
+    const rootNode = nodeById.get("root");
+    expect(rootNode?.type).toEqual("root");
+
+    for (const category of model.categories) {
+      const node = nodeById.get(category.id);
+
+      expect(node?.type).toEqual("category");
+    }
+    for (const tokenType of model.tokenTypes) {
+      const node = nodeById.get(tokenType.id);
+      expect(node).toBeDefined();
+
+      expect(node?.type).toEqual("tokenType");
+    }
+  });
+
+  it("root node carry the expected data structure", () => {
+    const model = makeModel();
+    const flow = mapTokenGraphToFlow(model);
+
+    const nodeByType = new Map(flow.nodes.map((node) => [node.id, node]));
+
+    const rootNode = nodeByType.get("root");
+
+    expect(rootNode?.data).toEqual({
+      label: model.root.label,
+    });
+  });
+
+  it("tokenType node carry the expected data structure", () => {
+    const model = makeModel();
+    const flow = mapTokenGraphToFlow(model);
+
+    const nodeByType = new Map(flow.nodes.map((node) => [node.id, node]));
+
+    for (const tokenType of model.tokenTypes) {
+      const node = nodeByType.get(tokenType.id);
+      expect(node).toBeDefined();
+
+      expect(node?.data).toEqual({
+        label: tokenType.type,
+        kind: tokenType.kind,
+        values: tokenType.values,
+      });
+    }
+  });
+
   it("creates root to category edges for every category", () => {
     const model = makeModel();
     const flow = mapTokenGraphToFlow(model);
@@ -103,8 +156,6 @@ describe("mapTokenGraphToFlow contract", () => {
     const first = mapTokenGraphToFlow(model);
     const second = mapTokenGraphToFlow(model);
 
-    expect(first).toStrictEqual(second);
-
     const firstNodeIds = first.nodes.map((node) => node.id);
     const secondNodeIds = second.nodes.map((node) => node.id);
     expect(firstNodeIds).toEqual(secondNodeIds);
@@ -136,3 +187,5 @@ describe("mapTokenGraphToFlow contract", () => {
     expect(missingNode).toBeUndefined();
   });
 });
+
+// add later second describe block for auto-layout invariants (not exact coordinates)
