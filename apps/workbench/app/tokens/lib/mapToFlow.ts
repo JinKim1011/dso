@@ -25,7 +25,7 @@ export type FlowNode =
   | Node<TokenTypeNodeData, "tokenType">;
 
 export type FlowGraph = {
-  nodes: Node<FlowNodeData>[];
+  nodes: FlowNode[];
   edges: Edge[];
 };
 
