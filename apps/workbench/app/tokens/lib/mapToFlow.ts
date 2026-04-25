@@ -14,7 +14,6 @@ export type CategoryNodeData = {
 
 export type TokenTypeNodeData = {
   label: string;
-  type: string;
   kind: TokenGraphModel["tokenTypes"][number]["kind"];
   values: TokenGraphModel["tokenTypes"][number]["values"];
 };
@@ -69,7 +68,7 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
         data: {
           label: tokenType.type,
           kind: tokenType.kind,
-          valueCount: tokenType.values.length,
+          values: tokenType.values,
         },
       });
 
