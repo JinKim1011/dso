@@ -9,7 +9,6 @@ export type RootNodeData = {
 
 export type CategoryNodeData = {
   label: string;
-  category: string;
 };
 
 export type TokenTypeNodeData = {
