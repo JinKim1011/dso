@@ -19,13 +19,18 @@ export type TokenTypeNodeData = {
 
 export type FlowNodeData = RootNodeData | CategoryNodeData | TokenTypeNodeData;
 
+export type FlowNode =
+  | Node<RootNodeData, "root">
+  | Node<CategoryNodeData, "category">
+  | Node<TokenTypeNodeData, "tokenType">;
+
 export type FlowGraph = {
   nodes: Node<FlowNodeData>[];
   edges: Edge[];
 };
 
 export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
-  const nodes: Node<FlowNodeData>[] = [];
+  const nodes: FlowNode[] = [];
   const edges: Edge[] = [];
 
   const tokenTypeById = new Map(
