@@ -71,6 +71,29 @@ describe("mapTokenGraphToFlow contract", () => {
     expect(flow.edges).toHaveLength(expectedEdgeCount);
   });
 
+  it("maps expected node type", () => {
+    const model = makeModel();
+    const flow = mapTokenGraphToFlow(model);
+
+    const nodeByType = new Map(flow.nodes.map((node) => [node.id, node]));
+
+    const rootNode = nodeByType.get("root");
+    expect(rootNode?.id).toEqual(model.root.id);
+
+    for (const category of model.categories) {
+      const node = nodeByType.get(category.id);
+
+      expect(node?.type).toEqual("category");
+    }
+    for (const tokenType of model.tokenTypes) {
+      const node = nodeByType.get(tokenType.id);
+
+      expect(node?.type).toEqual("tokenType");
+    }
+  });
+
+  it("tokenType node carry the data structure", () => {});
+
   it("creates root to category edges for every category", () => {
     const model = makeModel();
     const flow = mapTokenGraphToFlow(model);
