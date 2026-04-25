@@ -87,8 +87,15 @@ describe("mapTokenGraphToFlow contract", () => {
     }
     for (const tokenType of model.tokenTypes) {
       const node = nodeByType.get(tokenType.id);
+      if (!node) return;
 
-      expect(node?.type).toEqual("tokenType");
+      expect(node.type).toEqual("tokenType");
+
+      expect(node.data).toEqual({
+        label: tokenType.type,
+        kind: tokenType.kind,
+        values: tokenType.values,
+      });
     }
   });
 
