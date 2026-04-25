@@ -90,6 +90,17 @@ describe("mapTokenGraphToFlow contract", () => {
       expect(node).toBeDefined();
 
       expect(node?.type).toEqual("tokenType");
+    }
+  });
+
+  it("tokenType node carry the expected data structure", () => {
+    const model = makeModel();
+    const flow = mapTokenGraphToFlow(model);
+
+    const nodeByType = new Map(flow.nodes.map((node) => [node.id, node]));
+    for (const tokenType of model.tokenTypes) {
+      const node = nodeByType.get(tokenType.id);
+      expect(node).toBeDefined();
 
       expect(node?.data).toEqual({
         label: tokenType.type,
@@ -98,8 +109,6 @@ describe("mapTokenGraphToFlow contract", () => {
       });
     }
   });
-
-  it("tokenType node carry the data structure", () => {});
 
   it("creates root to category edges for every category", () => {
     const model = makeModel();
