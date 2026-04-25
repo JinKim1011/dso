@@ -75,18 +75,18 @@ describe("mapTokenGraphToFlow contract", () => {
     const model = makeModel();
     const flow = mapTokenGraphToFlow(model);
 
-    const nodeByType = new Map(flow.nodes.map((node) => [node.id, node]));
+    const nodeById = new Map(flow.nodes.map((node) => [node.id, node]));
 
-    const rootNode = nodeByType.get("root");
+    const rootNode = nodeById.get("root");
     expect(rootNode?.type).toEqual("root");
 
     for (const category of model.categories) {
-      const node = nodeByType.get(category.id);
+      const node = nodeById.get(category.id);
 
       expect(node?.type).toEqual("category");
     }
     for (const tokenType of model.tokenTypes) {
-      const node = nodeByType.get(tokenType.id);
+      const node = nodeById.get(tokenType.id);
       expect(node).toBeDefined();
 
       expect(node?.type).toEqual("tokenType");
