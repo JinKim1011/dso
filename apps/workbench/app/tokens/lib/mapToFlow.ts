@@ -29,6 +29,10 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
   const nodes: Node<FlowNodeData>[] = [];
   const edges: Edge[] = [];
 
+  const tokenTypeById = new Map(
+    model.tokenTypes.map((tokenType) => [tokenType.id, tokenType]),
+  );
+
   const categoryXGap = 302;
   const categoryY = 160;
   const tokenYStart = 320;
@@ -58,7 +62,7 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
     });
 
     category.tokenTypeIds.forEach((tokenTypeId, tokenIndex) => {
-      const tokenType = model.tokenTypes.find((item) => item.id === tokenTypeId);
+      const tokenType = tokenTypeById.get(tokenTypeId);
       if (!tokenType) return;
 
       nodes.push({
