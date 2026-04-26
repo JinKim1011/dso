@@ -1,6 +1,6 @@
 "use client";
 
-import { Handle, Node, Position } from "@xyflow/react";
+import { Handle, Node, Position, type NodeProps } from "@xyflow/react";
 import { TokenTypeNode } from "./TokenTypeNode";
 
 type TokenTypeFlowData = {
@@ -18,7 +18,7 @@ type TokenTypeFlowData = {
 
 type TokenTypeFlowNodeProps = Node<TokenTypeFlowData>;
 
-export function TokenTypeFlowNode({ data }: TokenTypeFlowNodeProps) {
+export function TokenTypeFlowNode({ data }: NodeProps<TokenTypeFlowNodeProps>) {
   return (
     <div>
       <Handle type="target" position={Position.Top}></Handle>
