@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 
 type RootNodeProps = {
   label: string;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export function RootNode({ label, children }: RootNodeProps) {

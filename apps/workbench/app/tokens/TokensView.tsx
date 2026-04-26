@@ -78,7 +78,11 @@ export function TokensView({ model }: TokensViewProps) {
             .filter((group): group is TokenTypeModel => !!group);
 
           return (
-            <CategoryNode key={category.id} category={category}>
+            <CategoryNode
+              key={category.id}
+              label={category.category}
+              testId={category.id}
+            >
               {categoryGroups.map((group) => (
                 <TokenTypeNode
                   key={group.id}
