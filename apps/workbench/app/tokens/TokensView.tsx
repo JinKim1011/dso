@@ -1,8 +1,12 @@
 "use client";
 
+import { type NodeTypes } from "@xyflow/react";
 import { useMemo, useState } from "react";
+import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { CategoryNode } from "./components/CategoryNode";
+import { RootFlowNode } from "./components/RootFlowNode";
 import { RootNode } from "./components/RootNode";
+import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
 import { TokenTypeNode } from "./components/TokenTypeNode";
 import { TokenValueDetail } from "./components/TokenValueDetail";
 import { TokenTypeModel } from "./lib/manifest/types";
@@ -70,6 +74,14 @@ export function TokensView({ model }: TokensViewProps) {
   const flow = useMemo(() => {
     return mapTokenGraphToFlow(model);
   }, [model]);
+
+  const nodeTypes = useMemo<NodeTypes>(() => {
+    return {
+      root: RootFlowNode,
+      category: CategoryFlowNode,
+      tokenType: TokenTypeFlowNode,
+    };
+  }, []);
 
   const { categories, groupById, root, rows } = useTokensViewData(model);
   const { selectedRowId, setSelectedRowId, selected } = useTokenSelection(rows);
