@@ -22,32 +22,10 @@ type TokenRow = Pick<
   "id" | "name" | "cssVar" | "meta"
 >;
 
-function useTokensViewData(model: TokenGraphModel) {
-  const root = useMemo(() => {
-    return model.root;
+export function TokensView({ model }: TokensViewProps) {
+  const flowBase = useMemo(() => {
+    return mapTokenGraphToFlow(model);
   }, [model]);
-
-  const categories = useMemo(() => {
-    return model.categories.map((category) => ({
-      id: category.id,
-      category: category.category,
-      tokenTypeIds: category.tokenTypeIds,
-    }));
-  }, [model]);
-
-  const groups = useMemo<TokenTypeModel[]>(() => {
-    return model.tokenTypes.map((tokenType) => ({
-      id: tokenType.id,
-      category: tokenType.category,
-      type: tokenType.type,
-      kind: tokenType.kind,
-      values: tokenType.values,
-    }));
-  }, [model]);
-
-  const groupById = useMemo(() => {
-    return new Map(groups.map((group) => [group.id, group]));
-  }, [groups]);
 
   const rows = useMemo(() => {
     return model.tokenTypes.flatMap((tokenType) =>
