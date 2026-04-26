@@ -7,6 +7,7 @@ import { TokenTypeNode } from "./components/TokenTypeNode";
 import { TokenValueDetail } from "./components/TokenValueDetail";
 import { TokenTypeModel } from "./lib/manifest/types";
 import type { TokenGraphModel } from "./lib/manifestAdapter";
+import { mapTokenGraphToFlow } from "./lib/mapToFlow";
 
 type TokensViewProps = {
   model: TokenGraphModel;
@@ -66,6 +67,10 @@ function useTokenSelection(rows: TokenRow[]) {
 }
 
 export function TokensView({ model }: TokensViewProps) {
+  const flow = useMemo(() => {
+    return mapTokenGraphToFlow(model);
+  }, [model]);
+
   const { categories, groupById, root, rows } = useTokensViewData(model);
   const { selectedRowId, setSelectedRowId, selected } = useTokenSelection(rows);
 
