@@ -1,6 +1,6 @@
 "use client";
 
-import { type NodeTypes } from "@xyflow/react";
+import { Background, Controls, ReactFlow, type NodeTypes } from "@xyflow/react";
 import { useMemo, useState } from "react";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { CategoryNode } from "./components/CategoryNode";
@@ -87,7 +87,20 @@ export function TokensView({ model }: TokensViewProps) {
   const { selectedRowId, setSelectedRowId, selected } = useTokenSelection(rows);
 
   return (
-    <>
+    <div className="flex">
+      <ReactFlow
+        nodes={flow.nodes}
+        edges={flow.edges}
+        fitView
+        nodeTypes={nodeTypes}
+        nodesDraggable={false}
+        nodesConnectable={false}
+        elementsSelectable={false}
+      >
+        <Background />
+        <Controls />
+      </ReactFlow>
+
       <RootNode label={root.label}>
         {categories.map((category) => {
           const categoryGroups = category.tokenTypeIds
@@ -120,6 +133,6 @@ export function TokensView({ model }: TokensViewProps) {
           meta={selected.meta}
         />
       )}
-    </>
+    </div>
   );
 }
