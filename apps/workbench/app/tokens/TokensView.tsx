@@ -101,31 +101,6 @@ export function TokensView({ model }: TokensViewProps) {
         <Controls />
       </ReactFlow>
 
-      <RootNode label={root.label}>
-        {categories.map((category) => {
-          const categoryGroups = category.tokenTypeIds
-            .map((id) => groupById.get(id))
-            .filter((group): group is TokenTypeModel => !!group);
-
-          return (
-            <CategoryNode
-              key={category.id}
-              label={category.category}
-              testId={category.id}
-            >
-              {categoryGroups.map((group) => (
-                <TokenTypeNode
-                  key={group.id}
-                  group={group}
-                  selectedRowId={selectedRowId}
-                  onSelectRow={setSelectedRowId}
-                />
-              ))}
-            </CategoryNode>
-          );
-        })}
-      </RootNode>
-
       {selected && (
         <TokenValueDetail
           name={selected.name}
