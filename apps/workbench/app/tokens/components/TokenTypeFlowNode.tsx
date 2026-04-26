@@ -20,13 +20,13 @@ type TokenTypeFlowNodeProps = Node<TokenTypeFlowData>;
 
 export function TokenTypeFlowNode({ id, data }: NodeProps<TokenTypeFlowNodeProps>) {
   return (
-    <div>
-      <Handle type="target" position={Position.Top}></Handle>
+    <div className="overflow-visible">
+      <Handle type="target" position={Position.Top} />
       <TokenTypeNode
         group={{ id, type: data.label, kind: data.kind, values: data.values }}
         selectedRowId={data.selectedRowId}
         onSelectRow={data.onSelectRow}
-      ></TokenTypeNode>
+      />
     </div>
   );
 }
