@@ -38,20 +38,7 @@ export function TokensView({ model }: TokensViewProps) {
     );
   }, [model]);
 
-  return { rows, groups, categories, groupById, root };
-}
-
-function useTokenSelection(rows: TokenRow[]) {
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-  const selected = rows.find((row) => row.id === selectedRowId) ?? null;
-
-  return { selectedRowId, setSelectedRowId, selected };
-}
-
-export function TokensView({ model }: TokensViewProps) {
-  const flow = useMemo(() => {
-    return mapTokenGraphToFlow(model);
-  }, [model]);
+  const { selectedRowId, setSelectedRowId, selected } = useTokenSelection(rows);
 
   const nodeTypes = useMemo<NodeTypes>(() => {
     return {
