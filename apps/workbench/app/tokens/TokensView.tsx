@@ -53,7 +53,7 @@ export function TokensView({ model }: TokensViewProps) {
   const { selectedRowId, setSelectedRowId, selected } = useTokenSelection(rows);
 
   return (
-    <div className="flex">
+    <div className="relative h-dvh w-full overflow-hidden">
       <ReactFlow
         nodes={flow.nodes}
         edges={flow.edges}
