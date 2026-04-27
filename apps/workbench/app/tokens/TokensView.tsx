@@ -8,7 +8,7 @@ import {
   type NodeTypes,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { RootFlowNode } from "./components/RootFlowNode";
 import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
