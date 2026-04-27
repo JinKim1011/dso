@@ -7,7 +7,6 @@ import {
   type Node as FlowNode,
   type NodeTypes,
 } from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
 import { useCallback, useMemo, useState } from "react";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { RootFlowNode } from "./components/RootFlowNode";
