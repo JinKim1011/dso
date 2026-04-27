@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  MiniMap,
   ReactFlow,
   ReactFlowInstance,
   type Node as FlowNode,
@@ -122,10 +121,7 @@ export function TokensView({ model }: TokensViewProps) {
         nodesConnectable={false}
         elementsSelectable={true}
         onInit={handleInit}
-      >
-        <MiniMap pannable zoomable />
-      </ReactFlow>
-
+      />
       {selected && (
         <TokenValueDetail
           name={selected.name}
