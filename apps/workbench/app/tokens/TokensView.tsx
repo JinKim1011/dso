@@ -65,9 +65,12 @@ export function TokensView({ model }: TokensViewProps) {
     [],
   );
 
-  const handleSelectRow = (rowId: string) => {
-    setSelectedRowId((current) => (current === rowId ? null : rowId));
-  };
+  const handleSelectRow = useCallback(
+    (rowId: string) => {
+      setSelectedRowId((current) => (current === rowId ? null : rowId));
+    },
+    [setSelectedRowId],
+  );
 
   const nodes = useMemo<FlowNode[]>(() => {
     return flowBase.nodes.map((node) => {
@@ -82,7 +85,7 @@ export function TokensView({ model }: TokensViewProps) {
         } satisfies InteractiveTokenTypeData,
       };
     });
-  }, [flowBase.nodes, selectedRowId]);
+  }, [flowBase.nodes, selectedRowId, handleSelectRow]);
 
   const rootNodeId = useMemo(
     () => flowBase.nodes.find((node) => node.type === "root")?.id ?? null,
