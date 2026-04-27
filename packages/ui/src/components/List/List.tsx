@@ -1,36 +1,18 @@
 "use client";
 
-import { motion, type HTMLMotionProps } from "framer-motion";
-import { createMotionTransition } from "../../types/motion";
+import type { ComponentPropsWithoutRef } from "react";
 import { ListItem, type ListItemProps } from "./ListItem";
 
-export interface ListProps extends Omit<HTMLMotionProps<"ul">, "className"> {
+export interface ListProps extends Omit<ComponentPropsWithoutRef<"ul">, "className"> {
   listItems: ListItemProps[];
 }
 
-const listTransition = createMotionTransition("regular", "inOutCirc");
-
-const listVariants = {
-  hidden: { opacity: 0, scale: 0.98 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { ...listTransition, staggerChildren: 0.02 },
-  },
-};
-
 export const List = ({ listItems, ...props }: ListProps) => {
   return (
-    <motion.ul
-      {...props}
-      variants={listVariants}
-      initial="hidden"
-      animate="visible"
-      className="px-miniPlus gap-microPlus flex flex-col"
-    >
+    <ul {...props} className="px-miniPlus gap-microPlus flex flex-col">
       {listItems.map((item) => (
         <ListItem key={item.id} {...item} />
       ))}
-    </motion.ul>
+    </ul>
   );
 };

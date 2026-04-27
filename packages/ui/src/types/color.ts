@@ -3,6 +3,7 @@ export type SurfaceVariant =
   | "secondary"
   | "tertiary"
   | "quaternary"
+  | "quinary"
   | "accent"
   | "accentStrong";
 export type ContentVariant =

@@ -13,3 +13,17 @@
 body {
   background-color: var(--color-surface-secondary);
 }
+.react-flow__node {
+  overflow: visible;
+}
+
+.react-flow.react-flow,
+.react-flow.react-flow.dark {
+  --xy-edge-stroke: var(--stroke-accent);
+  --xy-edge-stroke-selected: var(--stroke-accent);
+  --xy-edge-stroke-width: 1;
+}
+
+.react-flow.react-flow .react-flow__edge-path {
+  stroke-dasharray: 2 2;
+}

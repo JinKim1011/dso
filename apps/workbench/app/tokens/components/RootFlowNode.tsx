@@ -11,8 +11,14 @@ type RootFlowNodeType = Node<RootFlowData>;
 
 export function RootFlowNode({ data }: NodeProps<RootFlowNodeType>) {
   return (
-    <div>
-      <Handle type="source" position={Position.Bottom}></Handle>
+    <div className="overflow-visible">
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        style={{
+          opacity: 0,
+        }}
+      ></Handle>
       <RootNode label={data.label}></RootNode>
     </div>
   );

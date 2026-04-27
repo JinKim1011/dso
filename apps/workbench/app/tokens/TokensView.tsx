@@ -1,12 +1,19 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { CategoryNode } from "./components/CategoryNode";
-import { RootNode } from "./components/RootNode";
-import { TokenTypeNode } from "./components/TokenTypeNode";
+import {
+  ReactFlow,
+  ReactFlowInstance,
+  type BuiltInEdge,
+  type Node as FlowNode,
+  type NodeTypes,
+} from "@xyflow/react";
+import { useCallback, useMemo, useState } from "react";
+import { CategoryFlowNode } from "./components/CategoryFlowNode";
+import { RootFlowNode } from "./components/RootFlowNode";
+import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
 import { TokenValueDetail } from "./components/TokenValueDetail";
-import { TokenTypeModel } from "./lib/manifest/types";
 import type { TokenGraphModel } from "./lib/manifestAdapter";
+import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
 
 type TokensViewProps = {
   model: TokenGraphModel;
@@ -17,32 +24,24 @@ type TokenRow = Pick<
   "id" | "name" | "cssVar" | "meta"
 >;
 
-function useTokensViewData(model: TokenGraphModel) {
-  const root = useMemo(() => {
-    return model.root;
-  }, [model]);
+type InteractiveTokenTypeData = TokenTypeNodeData & {
+  selectedRowId: string | null;
+  onSelectRow: (rowId: string) => void;
+};
 
-  const categories = useMemo(() => {
-    return model.categories.map((category) => ({
-      id: category.id,
-      category: category.category,
-      tokenTypeIds: category.tokenTypeIds,
-    }));
-  }, [model]);
+function useTokenSelection(rows: TokenRow[]) {
+  const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
 
-  const groups = useMemo<TokenTypeModel[]>(() => {
-    return model.tokenTypes.map((tokenType) => ({
-      id: tokenType.id,
-      category: tokenType.category,
-      type: tokenType.type,
-      kind: tokenType.kind,
-      values: tokenType.values,
-    }));
-  }, [model]);
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const selected = selectedRowId === null ? null : (rowById.get(selectedRowId) ?? null);
 
-  const groupById = useMemo(() => {
-    return new Map(groups.map((group) => [group.id, group]));
-  }, [groups]);
+  return { selectedRowId, setSelectedRowId, selected };
+}
+
+export function TokensView({ model }: TokensViewProps) {
+  const flowBase = useMemo(() => {
+    return mapTokenGraphToFlow(model);
+  }, [model]);
 
   const rows = useMemo(() => {
     return model.tokenTypes.flatMap((tokenType) =>
@@ -55,47 +54,77 @@ function useTokensViewData(model: TokenGraphModel) {
     );
   }, [model]);
 
-  return { rows, groups, categories, groupById, root };
-}
-
-function useTokenSelection(rows: TokenRow[]) {
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-  const selected = rows.find((row) => row.id === selectedRowId) ?? null;
-
-  return { selectedRowId, setSelectedRowId, selected };
-}
-
-export function TokensView({ model }: TokensViewProps) {
-  const { categories, groupById, root, rows } = useTokensViewData(model);
   const { selectedRowId, setSelectedRowId, selected } = useTokenSelection(rows);
 
+  const nodeTypes = useMemo<NodeTypes>(
+    () => ({
+      root: RootFlowNode,
+      category: CategoryFlowNode,
+      tokenType: TokenTypeFlowNode,
+    }),
+    [],
+  );
+
+  const handleSelectRow = useCallback(
+    (rowId: string) => {
+      setSelectedRowId((current) => (current === rowId ? null : rowId));
+    },
+    [setSelectedRowId],
+  );
+
+  const nodes = useMemo<FlowNode[]>(() => {
+    return flowBase.nodes.map((node) => {
+      if (node.type !== "tokenType") return node;
+
+      return {
+        ...node,
+        data: {
+          ...(node.data as TokenTypeNodeData),
+          selectedRowId,
+          onSelectRow: handleSelectRow,
+        } satisfies InteractiveTokenTypeData,
+      };
+    });
+  }, [flowBase.nodes, selectedRowId, handleSelectRow]);
+
+  const rootNodeId = useMemo(
+    () => flowBase.nodes.find((node) => node.type === "root")?.id ?? null,
+    [flowBase.nodes],
+  );
+
+  const handleInit = useCallback(
+    (reactflow: ReactFlowInstance<FlowNode, BuiltInEdge>) => {
+      if (!rootNodeId) return;
+
+      reactflow.fitView({
+        nodes: [{ id: rootNodeId }],
+        padding: 0.5,
+        minZoom: 1,
+        maxZoom: 1,
+      });
+    },
+    [flowBase.nodes, rootNodeId],
+  );
+
   return (
-    <>
-      <RootNode label={root.label}>
-        {categories.map((category) => {
-          const categoryGroups = category.tokenTypeIds
-            .map((id) => groupById.get(id))
-            .filter((group): group is TokenTypeModel => !!group);
-
-          return (
-            <CategoryNode
-              key={category.id}
-              label={category.category}
-              testId={category.id}
-            >
-              {categoryGroups.map((group) => (
-                <TokenTypeNode
-                  key={group.id}
-                  group={group}
-                  selectedRowId={selectedRowId}
-                  onSelectRow={setSelectedRowId}
-                />
-              ))}
-            </CategoryNode>
-          );
-        })}
-      </RootNode>
-
+    <div className="relative h-dvh w-full overflow-hidden">
+      <ReactFlow
+        onInit={handleInit}
+        className="h-full w-full"
+        nodes={nodes}
+        edges={flowBase.edges}
+        nodeTypes={nodeTypes}
+        minZoom={0.2}
+        maxZoom={2}
+        zoomOnScroll={false}
+        zoomOnPinch={true}
+        zoomOnDoubleClick={false}
+        panOnDrag={false}
+        panOnScroll={true}
+        nodesDraggable={false}
+        nodesConnectable={false}
+        elementsSelectable={true}
+      />
       {selected && (
         <TokenValueDetail
           name={selected.name}
@@ -103,6 +132,6 @@ export function TokensView({ model }: TokensViewProps) {
           meta={selected.meta}
         />
       )}
-    </>
+    </div>
   );
 }

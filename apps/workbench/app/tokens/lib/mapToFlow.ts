@@ -1,4 +1,4 @@
-import type { Edge, Node } from "@xyflow/react";
+import type { BuiltInEdge, Node } from "@xyflow/react";
 import type { TokenGraphModel } from "./manifestAdapter";
 
 export type FlowNodeKind = "root" | "category" | "tokenType";
@@ -26,12 +26,12 @@ export type FlowNode =
 
 export type FlowGraph = {
   nodes: FlowNode[];
-  edges: Edge[];
+  edges: BuiltInEdge[];
 };
 
 export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
   const nodes: FlowNode[] = [];
-  const edges: Edge[] = [];
+  const edges: BuiltInEdge[] = [];
 
   const tokenTypeById = new Map(
     model.tokenTypes.map((tokenType) => [tokenType.id, tokenType]),
@@ -63,6 +63,12 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
       id: `edge:${model.root.id}->${category.id}`,
       source: model.root.id,
       target: category.id,
+      type: "smoothstep",
+      pathOptions: {
+        offset: 0,
+        borderRadius: 20,
+        stepPosition: 0.7,
+      },
     });
 
     category.tokenTypeIds.forEach((tokenTypeId, tokenIndex) => {
@@ -84,6 +90,12 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
         id: `edge:${category.id}->${tokenType.id}`,
         source: category.id,
         target: tokenType.id,
+        type: "smoothstep",
+        pathOptions: {
+          offset: 0,
+          borderRadius: 20,
+          stepPosition: 0.7,
+        },
       });
     });
   }
