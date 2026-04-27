@@ -79,9 +79,9 @@ export function TokensView({ model }: TokensViewProps) {
   return (
     <div className="relative h-dvh w-full overflow-hidden">
       <ReactFlow
-        nodes={flow.nodes}
-        edges={flow.edges}
-        fitView
+        className="h-full w-full"
+        nodes={nodes}
+        edges={flowBase.edges}
         nodeTypes={nodeTypes}
         fitView
         fitViewOptions={{ padding: 0.2 }}
