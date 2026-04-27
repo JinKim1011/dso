@@ -114,11 +114,11 @@ export function TokensView({ model }: TokensViewProps) {
         nodeTypes={nodeTypes}
         minZoom={0.2}
         maxZoom={2}
-        zoomOnScroll={true}
+        zoomOnScroll={false}
         zoomOnPinch={true}
-        zoomOnDoubleClick={true}
-        panOnDrag={true}
-        panOnScroll={false}
+        zoomOnDoubleClick={false}
+        panOnDrag={false}
+        panOnScroll={true}
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={true}
