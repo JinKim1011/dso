@@ -1,6 +1,12 @@
 "use client";
 
-import { ReactFlow, type Node as FlowNode, type NodeTypes } from "@xyflow/react";
+import {
+  MiniMap,
+  ReactFlow,
+  ReactFlowInstance,
+  type Node as FlowNode,
+  type NodeTypes,
+} from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useMemo, useState } from "react";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
