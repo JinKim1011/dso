@@ -115,7 +115,10 @@ export function TokensView({ model }: TokensViewProps) {
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={true}
-      />
+        onInit={handleInit}
+      >
+        <MiniMap pannable zoomable />
+      </ReactFlow>
 
       {selected && (
         <TokenValueDetail
