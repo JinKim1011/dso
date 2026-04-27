@@ -5,11 +5,12 @@ import { CategoryNode } from "./CategoryNode";
 
 type CategoryFlowData = {
   label: string;
+  id: string;
 };
 
 type CategoryFlowNodeProps = Node<CategoryFlowData>;
 
-export function CategoryFlowNode({ data }: NodeProps<CategoryFlowNodeProps>) {
+export function CategoryFlowNode({ id, data }: NodeProps<CategoryFlowNodeProps>) {
   return (
     <div className="overflow-visible">
       <Handle
@@ -26,7 +27,7 @@ export function CategoryFlowNode({ data }: NodeProps<CategoryFlowNodeProps>) {
           opacity: 0,
         }}
       ></Handle>
-      <CategoryNode label={data.label}></CategoryNode>
+      <CategoryNode testId={id} label={data.label}></CategoryNode>
     </div>
   );
 }
