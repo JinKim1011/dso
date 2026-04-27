@@ -86,8 +86,6 @@ export function TokensView({ model }: TokensViewProps) {
         nodes={nodes}
         edges={flowBase.edges}
         nodeTypes={nodeTypes}
-        fitView
-        fitViewOptions={{ padding: 0.2 }}
         minZoom={0.2}
         maxZoom={2}
         zoomOnScroll={true}
