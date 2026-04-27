@@ -9,15 +9,11 @@ import {
 import "@xyflow/react/dist/style.css";
 import { useMemo, useState } from "react";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
-import { CategoryNode } from "./components/CategoryNode";
 import { RootFlowNode } from "./components/RootFlowNode";
-import { RootNode } from "./components/RootNode";
 import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
-import { TokenTypeNode } from "./components/TokenTypeNode";
 import { TokenValueDetail } from "./components/TokenValueDetail";
-import { TokenTypeModel } from "./lib/manifest/types";
 import type { TokenGraphModel } from "./lib/manifestAdapter";
-import { mapTokenGraphToFlow } from "./lib/mapToFlow";
+import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
 
 type TokensViewProps = {
   model: TokenGraphModel;
