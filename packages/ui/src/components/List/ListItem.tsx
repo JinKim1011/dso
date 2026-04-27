@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, type HTMLMotionProps } from "framer-motion";
-import { createMotionTransition } from "../../types/motion";
 import { Text } from "../Text";
 
 type Level = 0 | 1 | 2 | 3 | 4;
@@ -69,7 +68,7 @@ export const ListItem = ({
       ? "cursor-pointer focus-visible:outline-none focus-visible:shadow-focus-accent"
       : "cursor-default",
     selected
-      ? "bg-surface-quaternary shadow-surface-pressed text-content-accent"
+      ? "bg-surface-quinary shadow-surface-pressed text-content-accent"
       : "bg-surface-tertiary shadow-surface-lifted hover:bg-surface-quaternary hover:shadow-surface-pressed hover:text-content-accent",
   ]
     .filter(Boolean)
@@ -89,21 +88,8 @@ export const ListItem = ({
 
   const hoverTransform = { y: 2, scale: 0.98 };
 
-  const listItemTransition = createMotionTransition("quick", "inOutCirc");
-  const listItemVariants = {
-    hidden: { opacity: 0, y: 2, scale: 0.98 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        ...listItemTransition,
-      },
-    },
-  };
-
   return (
-    <motion.li variants={listItemVariants}>
+    <li>
       <motion.button
         {...props}
         type="button"
@@ -145,6 +131,6 @@ export const ListItem = ({
           </div>
         </div>
       </motion.button>
-    </motion.li>
+    </li>
   );
 };
