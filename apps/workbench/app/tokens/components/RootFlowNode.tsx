@@ -16,11 +16,7 @@ export function RootFlowNode({ data }: NodeProps<RootFlowNodeType>) {
         type="source"
         position={Position.Bottom}
         style={{
-          width: 6,
-          height: 6,
-          border: "none",
-          background: "var(--stroke-accent)",
-          borderRadius: "0%",
+          opacity: 0,
         }}
       ></Handle>
       <RootNode label={data.label}></RootNode>
