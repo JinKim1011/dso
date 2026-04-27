@@ -64,7 +64,6 @@ export function TokensView({ model }: TokensViewProps) {
         elementsSelectable={false}
       >
         <Background />
-        <Controls />
       </ReactFlow>
 
       {selected && (
