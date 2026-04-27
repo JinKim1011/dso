@@ -65,6 +65,10 @@ export function TokensView({ model }: TokensViewProps) {
     [],
   );
 
+  const handleSelectRow = (rowId: string) => {
+    setSelectedRowId((current) => (current === rowId ? null : rowId));
+  };
+
   const nodes = useMemo<FlowNode[]>(() => {
     return flowBase.nodes.map((node) => {
       if (node.type !== "tokenType") return node;
@@ -74,7 +78,7 @@ export function TokensView({ model }: TokensViewProps) {
         data: {
           ...(node.data as TokenTypeNodeData),
           selectedRowId,
-          onSelectRow: setSelectedRowId,
+          onSelectRow: handleSelectRow,
         } satisfies InteractiveTokenTypeData,
       };
     });
