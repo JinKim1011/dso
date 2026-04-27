@@ -40,13 +40,14 @@ export function TokensView({ model }: TokensViewProps) {
 
   const { selectedRowId, setSelectedRowId, selected } = useTokenSelection(rows);
 
-  const nodeTypes = useMemo<NodeTypes>(() => {
-    return {
+  const nodeTypes = useMemo<NodeTypes>(
+    () => ({
       root: RootFlowNode,
       category: CategoryFlowNode,
       tokenType: TokenTypeFlowNode,
-    };
-  }, []);
+    }),
+    [],
+  );
 
   const { categories, groupById, root, rows } = useTokensViewData(model);
   const { selectedRowId, setSelectedRowId, selected } = useTokenSelection(rows);
