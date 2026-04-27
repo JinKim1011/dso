@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Background,
-  ReactFlow,
-  type Node as FlowNode,
-  type NodeTypes,
-} from "@xyflow/react";
+import { ReactFlow, type Node as FlowNode, type NodeTypes } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useMemo, useState } from "react";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
@@ -103,9 +98,7 @@ export function TokensView({ model }: TokensViewProps) {
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={true}
-      >
-        <Background />
-      </ReactFlow>
+      />
 
       {selected && (
         <TokenValueDetail
