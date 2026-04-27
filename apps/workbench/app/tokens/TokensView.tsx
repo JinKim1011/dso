@@ -3,6 +3,7 @@
 import {
   ReactFlow,
   ReactFlowInstance,
+  type BuiltInEdge,
   type Node as FlowNode,
   type NodeTypes,
 } from "@xyflow/react";
@@ -90,7 +91,7 @@ export function TokensView({ model }: TokensViewProps) {
   );
 
   const handleInit = useCallback(
-    (reactflow: ReactFlowInstance) => {
+    (reactflow: ReactFlowInstance<FlowNode, BuiltInEdge>) => {
       if (!rootNodeId) return;
 
       reactflow.fitView({
@@ -106,6 +107,7 @@ export function TokensView({ model }: TokensViewProps) {
   return (
     <div className="relative h-dvh w-full overflow-hidden">
       <ReactFlow
+        onInit={handleInit}
         className="h-full w-full"
         nodes={nodes}
         edges={flowBase.edges}
@@ -120,7 +122,6 @@ export function TokensView({ model }: TokensViewProps) {
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={true}
-        onInit={handleInit}
       />
       {selected && (
         <TokenValueDetail
