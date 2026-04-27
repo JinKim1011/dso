@@ -59,9 +59,18 @@ export function TokensView({ model }: TokensViewProps) {
         edges={flow.edges}
         fitView
         nodeTypes={nodeTypes}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        minZoom={0.2}
+        maxZoom={2}
+        zoomOnScroll={true}
+        zoomOnPinch={true}
+        zoomOnDoubleClick={true}
+        panOnDrag={true}
+        panOnScroll={false}
         nodesDraggable={false}
         nodesConnectable={false}
-        elementsSelectable={false}
+        elementsSelectable={true}
       >
         <Background />
       </ReactFlow>
