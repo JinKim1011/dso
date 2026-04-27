@@ -22,6 +22,18 @@ type TokenRow = Pick<
   "id" | "name" | "cssVar" | "meta"
 >;
 
+type InteractiveTokenTypeData = TokenTypeNodeData & {
+  selectedRowId: string | null;
+  onSelectRow: (rowId: string) => void;
+};
+
+function useTokenSelection(rows: TokenRow[]) {
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const selected = rows.find((row) => row.id === selectedRowId) ?? null;
+
+  return { selectedRowId, setSelectedRowId, selected };
+}
+
 export function TokensView({ model }: TokensViewProps) {
   const flowBase = useMemo(() => {
     return mapTokenGraphToFlow(model);
