@@ -79,6 +79,25 @@ export function TokensView({ model }: TokensViewProps) {
     });
   }, [flowBase.nodes, selectedRowId]);
 
+  const rootNodeId = useMemo(
+    () => flowBase.nodes.find((node) => node.type === "root")?.id ?? null,
+    [flowBase.nodes],
+  );
+
+  const handleInit = useCallback(
+    (reactflow: ReactFlowInstance) => {
+      if (!rootNodeId) return;
+
+      reactflow.fitView({
+        nodes: [{ id: rootNodeId }],
+        padding: 0.5,
+        minZoom: 1,
+        maxZoom: 1,
+      });
+    },
+    [flowBase.nodes, rootNodeId],
+  );
+
   return (
     <div className="relative h-dvh w-full overflow-hidden">
       <ReactFlow
