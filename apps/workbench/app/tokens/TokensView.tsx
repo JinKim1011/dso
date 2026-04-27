@@ -49,8 +49,20 @@ export function TokensView({ model }: TokensViewProps) {
     [],
   );
 
-  const { categories, groupById, root, rows } = useTokensViewData(model);
-  const { selectedRowId, setSelectedRowId, selected } = useTokenSelection(rows);
+  const nodes = useMemo<FlowNode[]>(() => {
+    return flowBase.nodes.map((node) => {
+      if (node.type !== "tokenType") return node;
+
+      return {
+        ...node,
+        data: {
+          ...(node.data as TokenTypeNodeData),
+          selectedRowId,
+          onSelectRow: setSelectedRowId,
+        } satisfies InteractiveTokenTypeData,
+      };
+    });
+  }, [flowBase.nodes, selectedRowId]);
 
   return (
     <div className="relative h-dvh w-full overflow-hidden">
