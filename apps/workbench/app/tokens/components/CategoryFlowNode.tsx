@@ -12,8 +12,20 @@ type CategoryFlowNodeProps = Node<CategoryFlowData>;
 export function CategoryFlowNode({ data }: NodeProps<CategoryFlowNodeProps>) {
   return (
     <div className="overflow-visible">
-      <Handle type="target" position={Position.Top}></Handle>
-      <Handle type="source" position={Position.Bottom}></Handle>
+      <Handle
+        type="target"
+        position={Position.Top}
+        style={{
+          opacity: 0,
+        }}
+      ></Handle>
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        style={{
+          opacity: 0,
+        }}
+      ></Handle>
       <CategoryNode label={data.label}></CategoryNode>
     </div>
   );
