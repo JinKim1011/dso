@@ -30,15 +30,6 @@ type InteractiveTokenTypeData = TokenTypeNodeData & {
   onSelectRow: (rowId: string) => void;
 };
 
-function useTokenSelection(rows: TokenRow[]) {
-  const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
-
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-  const selected = selectedRowId === null ? null : (rowById.get(selectedRowId) ?? null);
-
-  return { selectedRowId, setSelectedRowId, selected };
-}
-
 export function TokensView({ model }: TokensViewProps) {
   const shellActions = useContext(WorkbenchShellActionsContext);
 
