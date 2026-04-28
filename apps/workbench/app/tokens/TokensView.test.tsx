@@ -1,8 +1,7 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
-import { TokenTypeNode } from "./components/TokenTypeNode";
 import happyManifest from "./lib/manifest/fixtures/happy-manifest.json";
 import { buildTokenGraphModel } from "./lib/manifestAdapter";
 import { TokensView } from "./TokensView";
