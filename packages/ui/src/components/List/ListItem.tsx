@@ -21,6 +21,7 @@ export interface ListItemProps extends Omit<
 }
 
 export const ListItem = ({
+  id,
   index,
   text,
   subText,
@@ -92,6 +93,7 @@ export const ListItem = ({
     <li>
       <motion.button
         {...props}
+        data-testid={id}
         type="button"
         aria-label={text}
         aria-pressed={isInteractive ? selected : undefined}
