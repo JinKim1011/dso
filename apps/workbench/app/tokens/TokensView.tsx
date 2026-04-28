@@ -7,7 +7,8 @@ import {
   type Node as FlowNode,
   type NodeTypes,
 } from "@xyflow/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { WorkbenchShellActionsContext } from "../_shared/context/WorkbenchShellContext";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { RootFlowNode } from "./components/RootFlowNode";
 import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
@@ -29,21 +30,14 @@ type InteractiveTokenTypeData = TokenTypeNodeData & {
   onSelectRow: (rowId: string) => void;
 };
 
-function useTokenSelection(rows: TokenRow[]) {
-  const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
-
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-  const selected = selectedRowId === null ? null : (rowById.get(selectedRowId) ?? null);
-
-  return { selectedRowId, setSelectedRowId, selected };
-}
-
 export function TokensView({ model }: TokensViewProps) {
+  const shellActions = useContext(WorkbenchShellActionsContext);
+
   const flowBase = useMemo(() => {
     return mapTokenGraphToFlow(model);
   }, [model]);
 
-  const rows = useMemo(() => {
+  const rows = useMemo<TokenRow[]>(() => {
     return model.tokenTypes.flatMap((tokenType) =>
       tokenType.values.map((valueItem) => ({
         id: valueItem.id,
@@ -54,7 +48,13 @@ export function TokensView({ model }: TokensViewProps) {
     );
   }, [model]);
 
-  const { selectedRowId, setSelectedRowId, selected } = useTokenSelection(rows);
+  const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+
+  const selectedRow = useMemo(
+    () => (selectedRowId === null ? null : (rowById.get(selectedRowId) ?? null)),
+    [rowById, selectedRowId],
+  );
 
   const nodeTypes = useMemo<NodeTypes>(
     () => ({
@@ -65,12 +65,29 @@ export function TokensView({ model }: TokensViewProps) {
     [],
   );
 
-  const handleSelectRow = useCallback(
-    (rowId: string) => {
-      setSelectedRowId((current) => (current === rowId ? null : rowId));
-    },
-    [setSelectedRowId],
-  );
+  useEffect(() => {
+    if (!shellActions) return;
+
+    shellActions.setNavigationDetail(
+      selectedRow ? (
+        <TokenValueDetail
+          name={selectedRow.name}
+          cssVar={selectedRow.cssVar}
+          meta={selectedRow.meta}
+        />
+      ) : null,
+    );
+  }, [selectedRow, shellActions]);
+
+  useEffect(() => {
+    return () => {
+      shellActions?.clearNavigationDetail();
+    };
+  }, [shellActions]);
+
+  const handleSelectRow = useCallback((rowId: string) => {
+    setSelectedRowId((current) => (current === rowId ? null : rowId));
+  }, []);
 
   const nodes = useMemo<FlowNode[]>(() => {
     return flowBase.nodes.map((node) => {
@@ -125,13 +142,6 @@ export function TokensView({ model }: TokensViewProps) {
         nodesConnectable={false}
         elementsSelectable={true}
       />
-      {selected && (
-        <TokenValueDetail
-          name={selected.name}
-          cssVar={selected.cssVar}
-          meta={selected.meta}
-        />
-      )}
     </div>
   );
 }

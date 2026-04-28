@@ -2,23 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useContext } from "react";
 import { workbenchNavigation } from "../../_config/navigation";
+import { WorkbenchShellDetailContext } from "../context/WorkbenchShellContext";
 
 type NavigationProps = {
-  children?: ReactNode;
   stagedCount?: number;
 };
 
-export function Navigation({ children, stagedCount }: NavigationProps) {
+export function Navigation({ stagedCount }: NavigationProps) {
   const path = usePathname();
+  const navigationSlot = useContext(WorkbenchShellDetailContext);
 
   return (
     <nav
       aria-label="navigation"
-      className="p-mini bg-surface-primary shadow-overlay-floating fixed bottom-10 left-1/2 z-10 -translate-x-1/2 rounded-[1.625rem]"
+      className="p-mini bg-surface-primary shadow-overlay-floating fixed bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center rounded-[1.625rem]"
     >
-      {children}
+      {navigationSlot}
       <div className="gap-microPlus inline-flex w-fit p-0">
         {workbenchNavigation.map((menu) => {
           const isActive = path === menu.href;

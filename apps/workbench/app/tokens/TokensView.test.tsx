@@ -1,7 +1,10 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { createElement } from "react";
+import { createElement, useContext } from "react";
 import { describe, expect, it } from "vitest";
+import WorkbenchShellProvider, {
+  WorkbenchShellDetailContext,
+} from "../_shared/context/WorkbenchShellContext";
 import happyManifest from "./lib/manifest/fixtures/happy-manifest.json";
 import { buildTokenGraphModel } from "./lib/manifestAdapter";
 import { TokensView } from "./TokensView";
@@ -42,19 +45,31 @@ describe("Container-level behavior, TokensView", () => {
     const group = result.model.tokenTypes.at(0);
     if (!group) throw new Error("Expected background token type in happy fixture");
 
-    render(createElement(TokensView, { model: result.model }));
+    function ShellDetailSlot() {
+      const slot = useContext(WorkbenchShellDetailContext);
+      return <div data-testid="shell-detail">{slot}</div>;
+    }
+
+    render(
+      <WorkbenchShellProvider>
+        <ShellDetailSlot />
+        <TokensView model={result.model} />
+      </WorkbenchShellProvider>,
+    );
 
     for (const value of group.values) {
       const valueButton = screen.getByTestId(value.id);
       await userEvent.click(valueButton);
 
-      const selectedText = await screen.findByText(`selected: ${value.name}`);
+      const shell = await screen.findByTestId("shell-detail");
+
+      const selectedText = await within(shell).findByText(`selected: ${value.name}`);
       expect(selectedText).toBeInTheDocument();
 
-      const cssVarText = await screen.findByText(`cssVar: ${value.cssVar}`);
+      const cssVarText = await within(shell).findByText(`cssVar: ${value.cssVar}`);
       expect(cssVarText).toBeInTheDocument();
 
-      const valueText = await screen.findByText(`meta: ${value.meta}`);
+      const valueText = await within(shell).findByText(`meta: ${value.meta}`);
       expect(valueText).toBeInTheDocument();
     }
   });

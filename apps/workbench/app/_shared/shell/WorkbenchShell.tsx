@@ -1,6 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
+import WorkbenchShellProvider from "../context/WorkbenchShellContext";
 import { Header } from "./Header";
 import { Navigation } from "./Navigation";
 
@@ -9,15 +10,18 @@ type WorkbenchShellProps = {
 };
 
 export function WorkbenchShell({ children }: WorkbenchShellProps) {
-  const stagedCount = 12;
-  const currentBranch = "style/add-color-design-tokens";
-  const userName = "jin1011";
+  const stagedCount = Number(process.env.NEXT_PUBLIC_WORKBENCH_STAGED_COUNT ?? 12);
+  const currentBranch =
+    process.env.NEXT_PUBLIC_WORKBENCH_CURRENT_BRANCH ?? "style/add-color-design-tokens";
+  const userName = process.env.NEXT_PUBLIC_WORKBENCH_USER_NAME ?? "jin1011";
 
   return (
-    <div>
-      <Header currentBranch={currentBranch} userName={userName}></Header>
-      <Navigation stagedCount={stagedCount}></Navigation>
-      <main>{children}</main>
-    </div>
+    <WorkbenchShellProvider>
+      <div>
+        <Header currentBranch={currentBranch} userName={userName}></Header>
+        <Navigation stagedCount={stagedCount} />
+        <main>{children}</main>
+      </div>
+    </WorkbenchShellProvider>
   );
 }
