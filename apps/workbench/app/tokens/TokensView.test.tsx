@@ -61,7 +61,9 @@ describe("Container-level behavior, TokensView", () => {
       const valueButton = screen.getByTestId(value.id);
       await userEvent.click(valueButton);
 
-      const selectedText = await screen.findByText(`selected: ${value.name}`);
+      const shell = await screen.findByTestId("shell-detail");
+
+      const selectedText = await within(shell).findByText(`selected: ${value.name}`);
       expect(selectedText).toBeInTheDocument();
 
       const cssVarText = await screen.findByText(`cssVar: ${value.cssVar}`);
