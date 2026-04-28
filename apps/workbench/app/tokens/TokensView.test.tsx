@@ -10,9 +10,6 @@ import { TokensView } from "./TokensView";
 const result = buildTokenGraphModel(happyManifest);
 
 describe("Container-level behavior, TokensView", () => {
-  const group = result.model.tokenTypes.at(0);
-  if (!group) throw new Error("Expected background token type in happy fixture");
-
   it("renders root heading/container", async () => {
     render(createElement(TokensView, { model: result.model }));
     const root = result.model.root;
