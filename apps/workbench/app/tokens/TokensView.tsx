@@ -7,7 +7,8 @@ import {
   type Node as FlowNode,
   type NodeTypes,
 } from "@xyflow/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { WorkbenchShellActionsContext } from "../_shared/context/WorkbenchShellContext";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { RootFlowNode } from "./components/RootFlowNode";
 import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
@@ -39,6 +40,8 @@ function useTokenSelection(rows: TokenRow[]) {
 }
 
 export function TokensView({ model }: TokensViewProps) {
+  const shellActions = useContext(WorkbenchShellActionsContext);
+
   const flowBase = useMemo(() => {
     return mapTokenGraphToFlow(model);
   }, [model]);
@@ -65,11 +68,29 @@ export function TokensView({ model }: TokensViewProps) {
     [],
   );
 
+  useEffect(() => {
+    return () => {
+      shellActions?.clearNavigationDetail();
+    };
+  }, [shellActions]);
+
   const handleSelectRow = useCallback(
     (rowId: string) => {
-      setSelectedRowId((current) => (current === rowId ? null : rowId));
+      const nextRow = rows.find((row) => row.id === rowId) ?? null;
+
+      if (!nextRow) return;
+
+      shellActions?.setNavigationDetail(
+        nextRow ? (
+          <TokenValueDetail
+            name={nextRow.name}
+            cssVar={nextRow.cssVar}
+            meta={nextRow.meta}
+          />
+        ) : null,
+      );
     },
-    [setSelectedRowId],
+    [rows, shellActions],
   );
 
   const nodes = useMemo<FlowNode[]>(() => {
