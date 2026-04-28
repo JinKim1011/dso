@@ -55,9 +55,9 @@ describe("Container-level behavior, TokensView", () => {
 
       await userEvent.click(currentRow);
 
-      expect(screen.getByText(`selected: ${row.name}`)).toBeInTheDocument();
-      expect(screen.getByText(`cssVar: ${row.cssVar}`)).toBeInTheDocument();
-      expect(screen.getByText(`meta: ${row.meta}`)).toBeInTheDocument();
+      expect(screen.findByText(`selected: ${row.name}`)).toBeInTheDocument();
+      expect(screen.findByText(`cssVar: ${row.cssVar}`)).toBeInTheDocument();
+      expect(screen.findByText(`meta: ${row.meta}`)).toBeInTheDocument();
     }
   });
 });
