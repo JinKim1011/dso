@@ -146,13 +146,6 @@ export function TokensView({ model }: TokensViewProps) {
         nodesConnectable={false}
         elementsSelectable={true}
       />
-      {selected && (
-        <TokenValueDetail
-          name={selected.name}
-          cssVar={selected.cssVar}
-          meta={selected.meta}
-        />
-      )}
     </div>
   );
 }
