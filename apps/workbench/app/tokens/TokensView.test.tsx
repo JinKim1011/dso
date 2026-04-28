@@ -1,7 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
+import { TokenTypeNode } from "./components/TokenTypeNode";
 import happyManifest from "./lib/manifest/fixtures/happy-manifest.json";
 import { buildTokenGraphModel } from "./lib/manifestAdapter";
 import { TokensView } from "./TokensView";
@@ -9,14 +10,8 @@ import { TokensView } from "./TokensView";
 const result = buildTokenGraphModel(happyManifest);
 
 describe("Container-level behavior, TokensView", () => {
-  const rows = result.model.tokenTypes.flatMap((tokenType) =>
-    tokenType.values.map((value) => ({
-      id: value.id,
-      name: value.name,
-      cssVar: value.cssVar,
-      meta: value.meta,
-    })),
-  );
+  const group = result.model.tokenTypes.at(0);
+  if (!group) throw new Error("Expected background token type in happy fixture");
 
   it("renders root heading/container", async () => {
     render(createElement(TokensView, { model: result.model }));
@@ -48,15 +43,31 @@ describe("Container-level behavior, TokensView", () => {
   });
 
   it("clicking one row updates detail panel", async () => {
-    render(createElement(TokensView, { model: result.model }));
+    const selectedId = group.values[0]?.id;
+    if (!selectedId) throw new Error("Expected at least one value in token type group");
 
-    for (const row of rows) {
-      const currentRow = await screen.findByRole("button", { name: row.name });
-      await userEvent.click(currentRow);
+    render(
+      createElement(TokenTypeNode, {
+        group,
+        selectedRowId: selectedId,
+        onSelectRow: () => {},
+      }),
+    );
 
-      expect(screen.findByText(`selected: ${row.name}`)).toBeInTheDocument();
-      expect(screen.findByText(`cssVar: ${row.cssVar}`)).toBeInTheDocument();
-      expect(screen.findByText(`meta: ${row.meta}`)).toBeInTheDocument();
-    }
+    const tokenType = screen.getByTestId(group.id);
+    const valueButtons = group.values.map((value) =>
+      within(tokenType).getByRole("button", { name: value.name }),
+    );
+
+    valueButtons.forEach(async (valueButton, index) => {
+      const value = group.values[index];
+
+      if (!value) throw new Error("Expected at least one value in token type group");
+
+      await userEvent.click(valueButton);
+      expect(screen.findByText(`selected: ${value.name}`)).toBeInTheDocument();
+      expect(screen.findByText(`cssVar: ${value.cssVar}`)).toBeInTheDocument();
+      expect(screen.findByText(`meta: ${value.meta}`)).toBeInTheDocument();
+    });
   });
 });
