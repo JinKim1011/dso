@@ -43,8 +43,8 @@ describe("Container-level behavior, TokensView", () => {
   });
 
   it("clicking one row updates detail panel", async () => {
-    const selectedId = group.values[0]?.id;
-    if (!selectedId) throw new Error("Expected at least one value in token type group");
+    const group = result.model.tokenTypes.at(0);
+    if (!group) throw new Error("Expected background token type in happy fixture");
 
     render(
       createElement(TokenTypeNode, {
