@@ -49,6 +49,7 @@ export function TokensView({ model }: TokensViewProps) {
   }, [model]);
 
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const nodeTypes = useMemo<NodeTypes>(
     () => ({
