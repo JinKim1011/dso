@@ -18,12 +18,13 @@ describe("Container-level behavior, TokensView", () => {
     })),
   );
 
-  it("renders root heading/container", () => {
+  it("renders root heading/container", async () => {
     render(createElement(TokensView, { model: result.model }));
     const root = result.model.root;
-    const h1 = screen.getByRole("heading", { name: root.label });
 
-    expect(h1).not.toBeNull();
+    // query by text not by role, since root label is rendered inside a custom node
+    const rootLable = await screen.findByText(root.label);
+    expect(rootLable).toBeInTheDocument();
   });
 
   it("renders categories", () => {
