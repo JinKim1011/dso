@@ -46,7 +46,7 @@ export function TokensView({ model }: TokensViewProps) {
     return mapTokenGraphToFlow(model);
   }, [model]);
 
-  const rows = useMemo(() => {
+  const rows = useMemo<TokenRow[]>(() => {
     return model.tokenTypes.flatMap((tokenType) =>
       tokenType.values.map((valueItem) => ({
         id: valueItem.id,
