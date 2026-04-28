@@ -7,11 +7,13 @@ class ResizeObserver {
 }
 
 Object.defineProperty(globalThis, "ResizeObserver", {
+  configurable: true,
   value: ResizeObserver,
   writable: true,
 });
 
 Object.defineProperty(HTMLElement.prototype, "getBoundingClientRect", {
+  configurable: true,
   value: () => ({
     x: 0,
     y: 0,
