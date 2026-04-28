@@ -1,7 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { createElement } from "react";
+import { createElement, useContext } from "react";
 import { describe, expect, it } from "vitest";
+import WorkbenchShellProvider, {
+  WorkbenchShellDetailContext,
+} from "../_shared/context/WorkbenchShellContext";
 import happyManifest from "./lib/manifest/fixtures/happy-manifest.json";
 import { buildTokenGraphModel } from "./lib/manifestAdapter";
 import { TokensView } from "./TokensView";
@@ -46,6 +49,13 @@ describe("Container-level behavior, TokensView", () => {
       const slot = useContext(WorkbenchShellDetailContext);
       return <div data-testid="shell-detail">{slot}</div>;
     }
+
+    render(
+      <WorkbenchShellProvider>
+        <ShellDetailSlot />
+        <TokensView model={result.model} />
+      </WorkbenchShellProvider>,
+    );
 
     for (const value of group.values) {
       const valueButton = screen.getByTestId(value.id);
