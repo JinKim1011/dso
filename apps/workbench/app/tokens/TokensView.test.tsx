@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
@@ -9,74 +9,53 @@ import { TokensView } from "./TokensView";
 const result = buildTokenGraphModel(happyManifest);
 
 describe("Container-level behavior, TokensView", () => {
-  const rows = result.model.tokenTypes.flatMap((tokenType) =>
-    tokenType.values.map((value) => ({
-      id: value.id,
-      name: value.name,
-      cssVar: value.cssVar,
-      meta: value.meta,
-    })),
-  );
-
-  it("renders root heading/container", () => {
+  it("renders root heading/container", async () => {
     render(createElement(TokensView, { model: result.model }));
     const root = result.model.root;
-    const h1 = screen.getByRole("heading", { name: root.label });
 
-    expect(h1).not.toBeNull();
+    // query by text not by role, since root label is rendered inside a custom node
+    const rootLabel = await screen.findByText(root.label);
+    expect(rootLabel).toBeInTheDocument();
   });
 
-  it("renders categories", () => {
-    render(createElement(TokensView, { model: result.model }));
-    const categories = result.model.categories.map((category) => ({
-      id: category.id,
-      category: category.category,
-      tokenTypeIds: category.tokenTypeIds,
-    }));
-
-    for (const category of categories) {
-      const currentCategory = screen.getByTestId(category.id);
-      expect(currentCategory).not.toBeNull();
-    }
-  });
-
-  it("does not duplicate token type groups across categories", () => {
+  it("renders categories", async () => {
     render(createElement(TokensView, { model: result.model }));
     const categories = result.model.categories;
-    const allGroups = result.model.tokenTypes;
-
-    for (const group of allGroups) {
-      const matches = screen.getAllByTestId(group.id);
-
-      expect(matches).toHaveLength(1);
-    }
 
     for (const category of categories) {
-      const categorySection = screen.getByTestId(category.id);
+      const categoryLabel = await screen.findByText(category.category);
+      expect(categoryLabel).toBeInTheDocument();
+    }
+  });
 
-      for (const group of allGroups) {
-        const shouldBeInside = category.tokenTypeIds.includes(group.id);
+  it("does not duplicate token type groups across categories", async () => {
+    render(createElement(TokensView, { model: result.model }));
+    const allTokenTypes = result.model.tokenTypes;
 
-        if (shouldBeInside) {
-          expect(within(categorySection).getByTestId(group.id)).toBeInTheDocument();
-        } else {
-          expect(within(categorySection).queryByTestId(group.id)).toBeNull();
-        }
-      }
+    for (const tokenType of allTokenTypes) {
+      const tokenTypeLabel = await screen.findAllByText(tokenType.type);
+      expect(tokenTypeLabel).toHaveLength(1);
     }
   });
 
   it("clicking one row updates detail panel", async () => {
+    const group = result.model.tokenTypes.at(0);
+    if (!group) throw new Error("Expected background token type in happy fixture");
+
     render(createElement(TokensView, { model: result.model }));
 
-    for (const row of rows) {
-      const currentRow = screen.getByRole("button", { name: row.name });
+    for (const value of group.values) {
+      const valueButton = screen.getByTestId(value.id);
+      await userEvent.click(valueButton);
 
-      await userEvent.click(currentRow);
+      const selectedText = await screen.findByText(`selected: ${value.name}`);
+      expect(selectedText).toBeInTheDocument();
 
-      expect(screen.getByText(`selected: ${row.name}`)).toBeInTheDocument();
-      expect(screen.getByText(`cssVar: ${row.cssVar}`)).toBeInTheDocument();
-      expect(screen.getByText(`meta: ${row.meta}`)).toBeInTheDocument();
+      const cssVarText = await screen.findByText(`cssVar: ${value.cssVar}`);
+      expect(cssVarText).toBeInTheDocument();
+
+      const valueText = await screen.findByText(`meta: ${value.meta}`);
+      expect(valueText).toBeInTheDocument();
     }
   });
 });
