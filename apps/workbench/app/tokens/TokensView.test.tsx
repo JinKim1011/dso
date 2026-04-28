@@ -42,7 +42,10 @@ describe("Container-level behavior, TokensView", () => {
     const group = result.model.tokenTypes.at(0);
     if (!group) throw new Error("Expected background token type in happy fixture");
 
-    render(createElement(TokensView, { model: result.model }));
+    function ShellDetailSlot() {
+      const slot = useContext(WorkbenchShellDetailContext);
+      return <div data-testid="shell-detail">{slot}</div>;
+    }
 
     for (const value of group.values) {
       const valueButton = screen.getByTestId(value.id);
