@@ -48,7 +48,7 @@ export function TokensView({ model }: TokensViewProps) {
     );
   }, [model]);
 
-  const { selectedRowId, setSelectedRowId, selected } = useTokenSelection(rows);
+  const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
 
   const nodeTypes = useMemo<NodeTypes>(
     () => ({
