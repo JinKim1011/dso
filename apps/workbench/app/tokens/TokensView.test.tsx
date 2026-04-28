@@ -66,10 +66,10 @@ describe("Container-level behavior, TokensView", () => {
       const selectedText = await within(shell).findByText(`selected: ${value.name}`);
       expect(selectedText).toBeInTheDocument();
 
-      const cssVarText = await screen.findByText(`cssVar: ${value.cssVar}`);
+      const cssVarText = await within(shell).findByText(`cssVar: ${value.cssVar}`);
       expect(cssVarText).toBeInTheDocument();
 
-      const valueText = await screen.findByText(`meta: ${value.meta}`);
+      const valueText = await within(shell).findByText(`meta: ${value.meta}`);
       expect(valueText).toBeInTheDocument();
     }
   });
