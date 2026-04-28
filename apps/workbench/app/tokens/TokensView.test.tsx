@@ -27,17 +27,13 @@ describe("Container-level behavior, TokensView", () => {
     expect(rootLable).toBeInTheDocument();
   });
 
-  it("renders categories", () => {
+  it("renders categories", async () => {
     render(createElement(TokensView, { model: result.model }));
-    const categories = result.model.categories.map((category) => ({
-      id: category.id,
-      category: category.category,
-      tokenTypeIds: category.tokenTypeIds,
-    }));
+    const categories = result.model.categories;
 
     for (const category of categories) {
-      const currentCategory = screen.getByTestId(category.id);
-      expect(currentCategory).not.toBeNull();
+      const categoryLabel = await screen.findByText(category.category);
+      expect(categoryLabel).toBeInTheDocument();
     }
   });
 
