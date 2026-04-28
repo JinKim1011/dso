@@ -24,3 +24,13 @@ Object.defineProperty(HTMLElement.prototype, "getBoundingClientRect", {
     toJSON: () => {},
   }),
 });
+
+Object.defineProperty(HTMLElement.prototype, "offsetWidth", {
+  configurable: true,
+  get: () => 1024,
+});
+
+Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
+  configurable: true,
+  get: () => 768,
+});
