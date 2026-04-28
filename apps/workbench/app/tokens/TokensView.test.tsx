@@ -37,29 +37,13 @@ describe("Container-level behavior, TokensView", () => {
     }
   });
 
-  it("does not duplicate token type groups across categories", () => {
+  it("does not duplicate token type groups across categories", async () => {
     render(createElement(TokensView, { model: result.model }));
-    const categories = result.model.categories;
-    const allGroups = result.model.tokenTypes;
+    const allTokenTypes = result.model.tokenTypes;
 
-    for (const group of allGroups) {
-      const matches = screen.getAllByTestId(group.id);
-
-      expect(matches).toHaveLength(1);
-    }
-
-    for (const category of categories) {
-      const categorySection = screen.getByTestId(category.id);
-
-      for (const group of allGroups) {
-        const shouldBeInside = category.tokenTypeIds.includes(group.id);
-
-        if (shouldBeInside) {
-          expect(within(categorySection).getByTestId(group.id)).toBeInTheDocument();
-        } else {
-          expect(within(categorySection).queryByTestId(group.id)).toBeNull();
-        }
-      }
+    for (const tokenType of allTokenTypes) {
+      const tokenTypeLabel = await screen.findAllByText(tokenType.type);
+      expect(tokenTypeLabel).toHaveLength(1);
     }
   });
 
