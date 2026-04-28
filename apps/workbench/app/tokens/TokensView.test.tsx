@@ -51,8 +51,7 @@ describe("Container-level behavior, TokensView", () => {
     render(createElement(TokensView, { model: result.model }));
 
     for (const row of rows) {
-      const currentRow = screen.getByRole("button", { name: row.name });
-
+      const currentRow = await screen.findByRole("button", { name: row.name });
       await userEvent.click(currentRow);
 
       expect(screen.findByText(`selected: ${row.name}`)).toBeInTheDocument();
