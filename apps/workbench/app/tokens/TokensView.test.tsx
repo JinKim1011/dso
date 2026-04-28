@@ -18,8 +18,8 @@ describe("Container-level behavior, TokensView", () => {
     const root = result.model.root;
 
     // query by text not by role, since root label is rendered inside a custom node
-    const rootLable = await screen.findByText(root.label);
-    expect(rootLable).toBeInTheDocument();
+    const rootLabel = await screen.findByText(root.label);
+    expect(rootLabel).toBeInTheDocument();
   });
 
   it("renders categories", async () => {
