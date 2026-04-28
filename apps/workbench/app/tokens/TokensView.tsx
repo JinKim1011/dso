@@ -51,6 +51,11 @@ export function TokensView({ model }: TokensViewProps) {
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
+  const selectedRow = useMemo(
+    () => (selectedRowId === null ? null : (rowById.get(selectedRowId) ?? null)),
+    [rowById, selectedRowId],
+  );
+
   const nodeTypes = useMemo<NodeTypes>(
     () => ({
       root: RootFlowNode,
@@ -66,24 +71,9 @@ export function TokensView({ model }: TokensViewProps) {
     };
   }, [shellActions]);
 
-  const handleSelectRow = useCallback(
-    (rowId: string) => {
-      const nextRow = rows.find((row) => row.id === rowId) ?? null;
-
-      if (!nextRow) return;
-
-      shellActions?.setNavigationDetail(
-        nextRow ? (
-          <TokenValueDetail
-            name={nextRow.name}
-            cssVar={nextRow.cssVar}
-            meta={nextRow.meta}
-          />
-        ) : null,
-      );
-    },
-    [rows, shellActions],
-  );
+  const handleSelectRow = useCallback((rowId: string) => {
+    setSelectedRowId((current) => (current === rowId ? null : rowId));
+  }, []);
 
   const nodes = useMemo<FlowNode[]>(() => {
     return flowBase.nodes.map((node) => {
