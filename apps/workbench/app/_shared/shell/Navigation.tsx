@@ -12,14 +12,14 @@ type NavigationProps = {
 
 export function Navigation({ stagedCount }: NavigationProps) {
   const path = usePathname();
-  const navigationDetail = useContext(WorkbenchShellDetailContext);
+  const navigationSlot = useContext(WorkbenchShellDetailContext);
 
   return (
     <nav
       aria-label="navigation"
       className="p-mini bg-surface-primary shadow-overlay-floating fixed bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center rounded-[1.625rem]"
     >
-      {navigationDetail}
+      {navigationSlot}
       <div className="gap-microPlus inline-flex w-fit p-0">
         {workbenchNavigation.map((menu) => {
           const isActive = path === menu.href;
