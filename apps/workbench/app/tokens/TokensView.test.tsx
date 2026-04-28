@@ -46,24 +46,10 @@ describe("Container-level behavior, TokensView", () => {
     const group = result.model.tokenTypes.at(0);
     if (!group) throw new Error("Expected background token type in happy fixture");
 
-    render(
-      createElement(TokenTypeNode, {
-        group,
-        selectedRowId: selectedId,
-        onSelectRow: () => {},
-      }),
-    );
+    render(createElement(TokensView, { model: result.model }));
 
-    const tokenType = screen.getByTestId(group.id);
-    const valueButtons = group.values.map((value) =>
-      within(tokenType).getByRole("button", { name: value.name }),
-    );
-
-    valueButtons.forEach(async (valueButton, index) => {
-      const value = group.values[index];
-
-      if (!value) throw new Error("Expected at least one value in token type group");
-
+    for (const value of group.values) {
+      const valueButton = screen.getByTestId(value.id);
       await userEvent.click(valueButton);
       expect(screen.findByText(`selected: ${value.name}`)).toBeInTheDocument();
       expect(screen.findByText(`cssVar: ${value.cssVar}`)).toBeInTheDocument();
