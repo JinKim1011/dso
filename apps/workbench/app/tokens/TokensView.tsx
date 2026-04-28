@@ -66,6 +66,20 @@ export function TokensView({ model }: TokensViewProps) {
   );
 
   useEffect(() => {
+    if (!shellActions) return;
+
+    shellActions.setNavigationDetail(
+      selectedRow ? (
+        <TokenValueDetail
+          name={selectedRow.name}
+          cssVar={selectedRow.cssVar}
+          meta={selectedRow.meta}
+        />
+      ) : null,
+    );
+  }, [selectedRow, shellActions]);
+
+  useEffect(() => {
     return () => {
       shellActions?.clearNavigationDetail();
     };
