@@ -1,8 +1,8 @@
 import "@testing-library/jest-dom";
 
 class ResizeObserver {
-  observer() {}
-  unobserver() {}
+  observe() {}
+  unobserve() {}
   disconnect() {}
 }
 
