@@ -40,7 +40,7 @@ export type NormalizedManifestEntry = {
 
 type TokenValuePreviewData =
   | {
-      category: "typography";
+      kind: "typography";
       typography: {
         ontSize: string;
         fontWeight: string;
@@ -48,12 +48,12 @@ type TokenValuePreviewData =
       };
     }
   | {
-      category: "color";
+      kind: "color";
       light?: string;
       dark?: string;
     }
   | {
-      category: "spacing";
+      kind: "spacing";
       value: string;
     };
 
