@@ -42,7 +42,7 @@ type TokenValuePreviewData =
   | {
       kind: "typography";
       typography: {
-        ontSize: string;
+        fontSize: string;
         fontWeight: string;
         lineHeight: string;
       };
