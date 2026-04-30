@@ -132,6 +132,12 @@ export function TokenValueDetail({
   typographyOptions,
   onSave,
 }: TokenValueDetailProps) {
+  const initialDraft = useMemo(
+    () => toInitialDraft(name, category, kind, value),
+    [name, category, kind, value],
+  );
+
+  const [draft, setDraft] = useState<DraftState>(initialDraft);
   return (
     <div className="px-mini pt-mini pb-miniPlus">
       <TokenValuePreview category={category} kind={kind} value={value} />
