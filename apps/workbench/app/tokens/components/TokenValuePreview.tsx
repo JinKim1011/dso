@@ -20,10 +20,6 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
   ) {
     const { fontSize, fontWeight, lineHeight } = value.preview.typography;
 
-    const px = Number(fontSize) * 16;
-    const floored = Math.floor(px * 100) / 100;
-    const result = `${floored.toFixed(2)}px`;
-
     return (
       <div className={wrapperStyle}>
         <div className="gap-micro flex flex-col">
@@ -33,7 +29,7 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
             The quick brown fox
           </div>
           <Text variant="meta-xs" className="text-content-accentStrong">
-            {result}
+            {value.name}
           </Text>
         </div>
       </div>
