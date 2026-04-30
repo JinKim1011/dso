@@ -142,6 +142,9 @@ export function TokenValueDetail({
   );
 
   const [draft, setDraft] = useState<DraftState>(initialDraft);
+
+  const isDirty = JSON.stringify(draft) !== JSON.stringify(initialDraft);
+  
   const renderEditor = () => {
     if (category === "typography" && kind === "semantic") {
       return (
