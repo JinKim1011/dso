@@ -46,7 +46,7 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
         {swatches.map((swatch) => (
           <div className="flex flex-1 flex-col items-center" key={swatch?.label}>
             <div
-              className="rounded-round h-6 w-6"
+              className="rounded-round h-7 w-7"
               style={{ background: swatch?.value }}
             />
             <Text variant="meta-xs" className="text-content-accent">
