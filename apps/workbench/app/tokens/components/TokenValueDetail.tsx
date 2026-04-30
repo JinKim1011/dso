@@ -188,9 +188,10 @@ export function TokenValueDetail({
     );
   };
 
-  const parts = rowId.match(/token-type:(.*?):value/)?.[1]?.split("-") ?? "";
-  const categoryText = `${parts[0]?.charAt(0).toUpperCase()}${parts[0]?.slice(1).toLowerCase}`;
-  const tokenTypeText = `${parts[1]?.charAt(0).toUpperCase()}${parts[1]?.slice(1).toLowerCase}`;
+  const between = rowId.match(/token-type:(.*?):value/)?.[1] ?? "";
+  const parts = between.split("-");
+  const categoryText = `${parts[0]?.charAt(0).toUpperCase()}${parts[0]?.slice(1).toLowerCase()}`;
+  const tokenTypeText = `${parts[1]?.charAt(0).toUpperCase()}${parts[1]?.slice(1).toLowerCase()}`;
   const title = `${categoryText}, ${tokenTypeText}`;
 
   return (
