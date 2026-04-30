@@ -1,7 +1,8 @@
 "use client";
 
-import { Text } from "@repo/ui";
-import { useMemo, useState } from "react";
+import { Cross2Icon } from "@radix-ui/react-icons";
+import { Button, Text } from "@repo/ui";
+import { useEffect, useMemo, useState } from "react";
 import { TokenTypeValueItem } from "../lib/manifestAdapter";
 import { TokenColorDraft, TokenColorForm } from "./TokenColorForm";
 import { TokenSingleValueDraft, TokenSingleValueForm } from "./TokenSingleValueForm";
@@ -198,6 +199,16 @@ export function TokenValueDetail({
         <Text variant="label-sm" className="text-content-primary">
           {title}
         </Text>
+        {!isDirty && (
+          <Button
+            variant="void"
+            size="md"
+            aria-label="close"
+            iconOnly={true}
+            leftIcon={Cross2Icon}
+            disabled={false}
+          />
+        )}
       </div>
       <TokenValuePreview category={category} kind={kind} value={value} />
       {renderEditor()}
