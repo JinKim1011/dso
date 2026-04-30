@@ -145,6 +145,10 @@ export function TokenValueDetail({
 
   const [draft, setDraft] = useState<DraftState>(initialDraft);
 
+  useEffect(() => {
+    setDraft(initialDraft);
+  }, [initialDraft]);
+
   const isDirty = JSON.stringify(draft) !== JSON.stringify(initialDraft);
 
   const handleCancel = () => {
