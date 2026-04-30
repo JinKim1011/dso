@@ -14,8 +14,6 @@ type TokenValueDetailProps = {
 
 export function TokenValueDetail({
   name,
-  cssVar,
-  meta,
   category,
   kind,
   value,
