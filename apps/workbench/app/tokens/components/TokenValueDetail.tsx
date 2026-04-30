@@ -21,7 +21,7 @@ export function TokenValueDetail({
   value,
 }: TokenValueDetailProps) {
   return (
-    <div>
+    <div className="px-mini pt-mini pb-miniPlus">
       <TokenValuePreview category={category} kind={kind} value={value} />
 
       <p>selected: {name}</p>
