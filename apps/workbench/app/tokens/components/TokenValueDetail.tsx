@@ -27,7 +27,15 @@ type TokenValueDetailProps = {
 
 type DraftState = TokenSingleValueDraft | TokenColorDraft | TokenTypographyDraft;
 
-export function TokenValueDetail({ name, category, kind, value }: TokenValueDetailProps) {
+export function TokenValueDetail({
+  rowId,
+  name,
+  category,
+  kind,
+  value,
+  typographyOptions,
+  onSave,
+}: TokenValueDetailProps) {
   return (
     <div className="px-mini pt-mini pb-miniPlus">
       <TokenValuePreview category={category} kind={kind} value={value} />
