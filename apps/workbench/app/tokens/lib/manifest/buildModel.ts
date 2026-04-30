@@ -64,6 +64,14 @@ function createValueItems(
       id: `${tokenTypeId}:value:${toId("name", semantic.name)}:${index}`,
       name: semantic.name,
       meta: `${semantic.fontSize} / ${semantic.fontWeight} / ${semantic.lineHeight}`,
+      preview: {
+        kind: "typography",
+        typography: {
+          fontSize: semantic.fontSize,
+          fontWeight: semantic.fontWeight,
+          lineHeight: semantic.lineHeight,
+        },
+      },
     }));
   }
 
