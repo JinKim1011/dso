@@ -49,6 +49,28 @@ function isDualValue(
   return Boolean(value && typeof value === "object");
 }
 
+function toInitialDraft(
+  name: string,
+  category: string,
+  kind: string,
+  valueItem: TokenTypeValueItem,
+): DraftState {
+  if (category === "typography" && kind === "semantic") {
+    return getTypographyDraft(valueItem, name);
+  }
+  if (isDualValue(valueItem.value)) {
+    return {
+      name,
+      lightValue: valueItem.value.light ?? "",
+      darkValue: valueItem.value.dark ?? "",
+    };
+  }
+  return {
+    name,
+    value: typeof valueItem.value === "string" ? valueItem.value : "",
+  };
+}
+
 function buildUpdate(
   category: string,
   kind: string,
