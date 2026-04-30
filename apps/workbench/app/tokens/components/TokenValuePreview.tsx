@@ -26,7 +26,7 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
           <div
             className={`text-${fontSize} font-${fontWeight} leading-${lineHeight} text-content-primary`}
           >
-            The quick brown fox
+            Abc123
           </div>
           <Text variant="meta-xs" className="text-content-accentStrong">
             {value.name}
