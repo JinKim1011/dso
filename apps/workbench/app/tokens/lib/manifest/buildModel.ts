@@ -35,6 +35,20 @@ function createValueItems(
           ? `light:${token.values.light ?? "-"} dark:${token.values.dark ?? "-"}`
           : undefined;
 
+      let preview: TokenTypeValueItem["preview"] = undefined;
+      if (category === "color" && token.values) {
+        preview = {
+          kind: "color",
+          light: token.values.light,
+          dark: token.values.dark,
+        };
+      } else if (category === "spacing" && token.value) {
+        preview = {
+          kind: "spacing",
+          value: token.value,
+        };
+      }
+
       return {
         id: `${tokenTypeId}:value:${toId("name", token.name)}:${index}`,
         name: token.name,
