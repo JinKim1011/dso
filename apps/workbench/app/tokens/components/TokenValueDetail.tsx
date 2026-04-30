@@ -176,7 +176,12 @@ export function TokenValueDetail({
   const title = `${categoryText}, ${tokenTypeText}`;
 
   return (
-    <div className="px-mini pt-mini pb-miniPlus">
+    <div className="px-mini pt-mini pb-miniPlus gap-small flex flex-col">
+      <div className="flex items-center justify-between">
+        <Text variant="label-sm" className="text-content-primary">
+          {title}
+        </Text>
+      </div>
       <TokenValuePreview category={category} kind={kind} value={value} />
     </div>
   );
