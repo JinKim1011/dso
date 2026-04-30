@@ -16,12 +16,14 @@ export function TokenSingleValueForm({ draft, onChange }: TokenSingleValueFormPr
       <TokenFieldInput
         id="token-name"
         label="Name"
+        placeholder="Enter name"
         value={draft.name}
         onChange={(name) => onChange({ ...draft, name })}
       />
       <TokenFieldInput
         id="token-value"
         label="Value"
+        placeholder="Enter value"
         value={draft.value}
         onChange={(value) => onChange({ ...draft, value })}
       />
