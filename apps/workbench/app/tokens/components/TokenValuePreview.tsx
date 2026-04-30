@@ -10,7 +10,7 @@ type TokenValuePreviewProps = {
 export function TokenValuePreview({ category, kind, value }: TokenValuePreviewProps) {
   if (!value?.preview) return null;
 
-  const wrapperStyle = `py-regular px-small flex w-[21.25rem] items-center justify-center bg-dot-pattern overflow-hidden`;
+  const wrapperStyle = `py-regular px-small w-full flex items-center justify-center bg-dot-pattern overflow-hidden`;
 
   if (
     category === "typography" &&
