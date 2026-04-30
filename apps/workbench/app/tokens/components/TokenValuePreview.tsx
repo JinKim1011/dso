@@ -28,7 +28,7 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
           >
             Abc123
           </div>
-          <Text variant="meta-xs" className="text-content-accentStrong">
+          <Text variant="meta-xs" className="text-content-accent text-center">
             {value.name}
           </Text>
         </div>
