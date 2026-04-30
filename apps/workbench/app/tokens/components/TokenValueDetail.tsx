@@ -27,6 +27,33 @@ type TokenValueDetailProps = {
 
 type DraftState = TokenSingleValueDraft | TokenColorDraft | TokenTypographyDraft;
 
+function getTypographyDraft(
+  valueItem: TokenTypeValueItem,
+  name: string,
+): TokenTypographyDraft {
+  if (valueItem.preview?.kind !== "typography") {
+    return { name, fontSize: "", fontWeight: "", lineHeight: "" };
+  }
+
+  return {
+    name,
+    fontSize: valueItem.preview.typography.fontSize,
+    fontWeight: valueItem.preview.typography.fontWeight,
+    lineHeight: valueItem.preview.typography.lineHeight,
+  };
+}
+
+function toInitialDraft(
+  name: string,
+  category: string,
+  kind: string,
+  valueItem: TokenTypeValueItem,
+): DraftState {
+  if (category === "typography" && kind === "semantic") {
+    return getTypographyDraft(valueItem, name);
+  }
+}
+
 function buildUpdate(
   category: string,
   kind: string,
