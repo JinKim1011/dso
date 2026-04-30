@@ -12,6 +12,7 @@ export type TokenValueDetailUpdate = {
 };
 
 type TokenValueDetailProps = {
+  rowId: string;
   name: string;
   cssVar?: string;
   meta?: string;
