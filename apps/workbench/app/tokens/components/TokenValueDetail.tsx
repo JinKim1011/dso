@@ -3,6 +3,13 @@
 import { TokenTypeValueItem } from "../lib/manifestAdapter";
 import { TokenValuePreview } from "./TokenValuePreview";
 
+export type TokenValueDetailUpdate = {
+  name: string;
+  meta?: string;
+  value?: TokenTypeValueItem["value"];
+  preview?: TokenTypeValueItem["preview"];
+};
+
 type TokenValueDetailProps = {
   name: string;
   cssVar?: string;
