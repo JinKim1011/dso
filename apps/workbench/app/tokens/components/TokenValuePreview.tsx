@@ -23,7 +23,7 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
       <div className={wrapperStyle}>
         <div className="gap-micro flex flex-col">
           <div
-            className="text-content-primary"
+            className="text-content-primary text-center"
             style={{
               fontSize: `var(--text-${fontSize})`,
               fontWeight: `var(--font-${fontWeight})`,
