@@ -1,9 +1,13 @@
 "use client";
 
 import { TokenTypeValueItem } from "../lib/manifestAdapter";
-import { TokenColorDraft } from "./TokenColorForm";
-import { TokenSingleValueDraft } from "./TokenSingleValueForm";
-import { TokenTypographyDraft, TokenTypographyOptions } from "./TokenTypographyForm";
+import { TokenColorDraft, TokenColorForm } from "./TokenColorForm";
+import { TokenSingleValueDraft, TokenSingleValueForm } from "./TokenSingleValueForm";
+import {
+  TokenTypographyDraft,
+  TokenTypographyForm,
+  TokenTypographyOptions,
+} from "./TokenTypographyForm";
 import { TokenValuePreview } from "./TokenValuePreview";
 
 export type TokenValueDetailUpdate = {
@@ -138,6 +142,34 @@ export function TokenValueDetail({
   );
 
   const [draft, setDraft] = useState<DraftState>(initialDraft);
+  const renderEditor = () => {
+    if (category === "typography" && kind === "semantic") {
+      return (
+        <TokenTypographyForm
+          draft={draft as TokenTypographyDraft}
+          options={typographyOptions}
+          onChange={(next) => setDraft(next)}
+        />
+      );
+    }
+
+    if ("lightValue" in draft && "darkValue" in draft) {
+      return (
+        <TokenColorForm
+          draft={draft as TokenColorDraft}
+          onChange={(next) => setDraft(next)}
+        />
+      );
+    }
+
+    return (
+      <TokenSingleValueForm
+        draft={draft as TokenSingleValueDraft}
+        onChange={(next) => setDraft(next)}
+      />
+    );
+  };
+
   return (
     <div className="px-mini pt-mini pb-miniPlus">
       <TokenValuePreview category={category} kind={kind} value={value} />
