@@ -49,7 +49,7 @@ export function TokensView({ model }: TokensViewProps) {
   }, [editableModel]);
 
   const rows = useMemo<TokenRow[]>(() => {
-    return model.tokenTypes.flatMap((tokenType) =>
+    return editableModel.tokenTypes.flatMap((tokenType) =>
       tokenType.values.map((valueItem) => ({
         id: valueItem.id,
         name: valueItem.name,
