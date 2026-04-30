@@ -1,7 +1,9 @@
 "use client";
 
 import { TokenTypeValueItem } from "../lib/manifestAdapter";
-import { TokenTypographyOptions } from "./TokenTypographyForm";
+import { TokenColorDraft } from "./TokenColorForm";
+import { TokenSingleValueDraft } from "./TokenSingleValueForm";
+import { TokenTypographyDraft, TokenTypographyOptions } from "./TokenTypographyForm";
 import { TokenValuePreview } from "./TokenValuePreview";
 
 export type TokenValueDetailUpdate = {
@@ -22,6 +24,8 @@ type TokenValueDetailProps = {
   typographyOptions: TokenTypographyOptions;
   onSave: (rowId: string, next: TokenValueDetailUpdate) => void;
 };
+
+type DraftState = TokenSingleValueDraft | TokenColorDraft | TokenTypographyDraft;
 
 export function TokenValueDetail({ name, category, kind, value }: TokenValueDetailProps) {
   return (
