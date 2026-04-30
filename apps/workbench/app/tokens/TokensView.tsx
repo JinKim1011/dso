@@ -38,6 +38,11 @@ type InteractiveTokenTypeData = TokenTypeNodeData & {
 
 export function TokensView({ model }: TokensViewProps) {
   const shellActions = useContext(WorkbenchShellActionsContext);
+  const [editableModel, setEditableModel] = useState(model);
+
+  useEffect(() => {
+    setEditableModel(model);
+  }, [model]);
 
   const flowBase = useMemo(() => {
     return mapTokenGraphToFlow(model);
