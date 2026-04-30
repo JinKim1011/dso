@@ -14,7 +14,7 @@ import {
 const DEFAULT_SCHEMA_VERSION = 1;
 
 function createValueItems(
-  entry: NormalizedManifestEntry,
+  entry: SupportedEntry,
   tokenTypeId: string,
   category: string,
 ): TokenTypeValueItem[] {
