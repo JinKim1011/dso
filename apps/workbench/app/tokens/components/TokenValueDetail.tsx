@@ -1,6 +1,7 @@
 "use client";
 
 import { TokenTypeValueItem } from "../lib/manifestAdapter";
+import { TokenTypographyOptions } from "./TokenTypographyForm";
 import { TokenValuePreview } from "./TokenValuePreview";
 
 export type TokenValueDetailUpdate = {
@@ -17,6 +18,8 @@ type TokenValueDetailProps = {
   category: string;
   kind: string;
   value: TokenTypeValueItem;
+  typographyOptions: TokenTypographyOptions;
+  onSave: (rowId: string, next: TokenValueDetailUpdate) => void;
 };
 
 export function TokenValueDetail({ name, category, kind, value }: TokenValueDetailProps) {
