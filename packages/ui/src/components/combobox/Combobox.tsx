@@ -80,6 +80,7 @@ export function Combobox({
   return (
     <div className="relative w-full" onBlur={handleBlur}>
       <InputBase
+        id={id}
         readOnly
         value={inputValue}
         placeholder={placeholder}
