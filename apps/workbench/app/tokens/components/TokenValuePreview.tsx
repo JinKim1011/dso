@@ -68,7 +68,7 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
       <div className={wrapperStyle}>
         <div className="gap-micro flex flex-col">
           <div
-            className="bg-surface-accentStrong"
+            className="bg-surface-accentStrong m-auto"
             style={{ width: size, height: size }}
           />
         </div>
