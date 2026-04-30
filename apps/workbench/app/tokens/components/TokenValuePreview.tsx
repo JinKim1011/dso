@@ -49,7 +49,7 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
               className="rounded-round h-6 w-6"
               style={{ background: swatch?.value }}
             />
-            <Text variant="meta-xs" className="text-content-accentStrong">
+            <Text variant="meta-xs" className="text-content-accent">
               {swatch?.label}
             </Text>
           </div>
