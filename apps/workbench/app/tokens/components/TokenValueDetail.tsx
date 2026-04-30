@@ -1,5 +1,8 @@
 "use client";
 
+import { TokenTypeValueItem } from "../lib/manifestAdapter";
+import { TokenValuePreview } from "./TokenValuePreview";
+
 type TokenValueDetailProps = {
   name: string;
   cssVar?: string;
@@ -19,6 +22,8 @@ export function TokenValueDetail({
 }: TokenValueDetailProps) {
   return (
     <div>
+      <TokenValuePreview category={category} kind={kind} value={value} />
+
       <p>selected: {name}</p>
       {cssVar && <p>cssVar: {cssVar}</p>}
       {meta && <p>meta: {meta}</p>}
