@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 import { buildTokenGraphModel } from "./buildModel";
 import edgeInvalidManifest from "./fixtures/edge-invalid-manifest.json";
 import happyManifest from "./fixtures/happy-manifest.json";
+import semanticTypographyManifest from "./fixtures/semantic-typography-manifest.json";
 import { DEFAULT_CATEGORY_ORDER } from "./types";
 
 describe("buildModel.buildTokenGraphModel", () => {
   const happyResult = buildTokenGraphModel(happyManifest);
   const edgeResult = buildTokenGraphModel(edgeInvalidManifest);
+  const semanticResult = buildTokenGraphModel(semanticTypographyManifest);
 
   it("creates root with expected id and label", () => {
     expect(happyResult.model.root.id).toBe("root");
@@ -44,6 +46,48 @@ describe("buildModel.buildTokenGraphModel", () => {
       expect(tokenType.values).toBeInstanceOf(Array);
       expect(tokenType.values.length).toBeGreaterThan(0);
     }
+  });
+
+  it("creates valid token value preview data", () => {
+    const backgroudType = happyResult.model.tokenTypes.find(
+      (tokenType) => tokenType.category === "color" && tokenType.type === "background",
+    );
+    const primaryColor = backgroudType?.values.find((value) => value.name === "primary");
+
+    expect(backgroudType).toBeDefined();
+    expect(primaryColor).toBeDefined();
+    expect(primaryColor?.preview).toEqual({
+      kind: "color",
+      light: "oklch(1 0 89.9)",
+      dark: "oklch(0.132 0.036 276.6)",
+    });
+
+    const stepType = happyResult.model.tokenTypes.find(
+      (tokenType) => tokenType.category === "spacing" && tokenType.type === "step",
+    );
+    const microStep = stepType?.values.find((value) => value.name === "micro");
+
+    expect(stepType).toBeDefined();
+    expect(microStep).toBeDefined();
+    expect(microStep?.preview).toEqual({
+      kind: "spacing",
+      value: "0.125rem",
+    });
+
+    const semanticKind = semanticResult.model.tokenTypes.find(
+      (tokenType) => tokenType.kind === "semantic",
+    );
+    const bodyM = semanticKind?.values.find((value) => (value.name = "body-md"));
+    expect(semanticKind).toBeDefined();
+    expect(bodyM).toBeDefined();
+    expect(bodyM?.preview).toEqual({
+      kind: "typography",
+      typography: {
+        fontSize: "regular",
+        fontWeight: "regular",
+        lineHeight: "normal",
+      },
+    });
   });
 
   it("skips invalid rows and keeps the valid row", () => {
