@@ -45,8 +45,8 @@ export function TokensView({ model }: TokensViewProps) {
   }, [model]);
 
   const flowBase = useMemo(() => {
-    return mapTokenGraphToFlow(model);
-  }, [model]);
+    return mapTokenGraphToFlow(editableModel);
+  }, [editableModel]);
 
   const rows = useMemo<TokenRow[]>(() => {
     return model.tokenTypes.flatMap((tokenType) =>
