@@ -1,17 +1,17 @@
 import { TokenFieldInput } from "./TokenFieldInput";
 
-export type TokenDualValueDraft = {
+export type TokenColorDraft = {
   name: string;
   lightValue: string;
   darkValue: string;
 };
 
-type TokenDualValueFormProps = {
-  draft: TokenDualValueDraft;
-  onChange: (next: TokenDualValueDraft) => void;
+type TokenColorFormProps = {
+  draft: TokenColorDraft;
+  onChange: (next: TokenColorDraft) => void;
 };
 
-export function TokenDualValueForm({ draft, onChange }: TokenDualValueFormProps) {
+export function TokenColorForm({ draft, onChange }: TokenColorFormProps) {
   return (
     <div className="gap-mini flex flex-col">
       <TokenFieldInput
