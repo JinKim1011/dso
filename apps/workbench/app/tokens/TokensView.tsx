@@ -50,6 +50,10 @@ export function TokensView({ model }: TokensViewProps) {
         name: valueItem.name,
         cssVar: valueItem.cssVar,
         meta: valueItem.meta,
+        preview: valueItem.preview,
+        category: tokenType.category,
+        kind: tokenType.kind,
+        value: valueItem,
       })),
     );
   }, [model]);
