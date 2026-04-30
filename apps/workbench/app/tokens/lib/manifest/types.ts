@@ -64,6 +64,9 @@ export type TokenTypeValueItem = {
   status?: string;
   meta?: string;
   preview?: TokenValuePreviewData;
+  category?: string;
+  kind?: SupportedKind;
+  value?: string | { light?: string; dark?: string };
 };
 
 export type CategoryModel = {
