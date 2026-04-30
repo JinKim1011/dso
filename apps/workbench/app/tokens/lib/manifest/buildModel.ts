@@ -58,7 +58,7 @@ function createValueItems(
         preview,
         category,
         kind: entry.kind,
-        value: token.values,
+        value: token.values ?? token.value,
       };
     });
   }
