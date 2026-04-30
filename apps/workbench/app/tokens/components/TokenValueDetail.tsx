@@ -19,19 +19,10 @@ type TokenValueDetailProps = {
   value: TokenTypeValueItem;
 };
 
-export function TokenValueDetail({
-  name,
-  category,
-  kind,
-  value,
-}: TokenValueDetailProps) {
+export function TokenValueDetail({ name, category, kind, value }: TokenValueDetailProps) {
   return (
     <div className="px-mini pt-mini pb-miniPlus">
       <TokenValuePreview category={category} kind={kind} value={value} />
-
-      <p>selected: {name}</p>
-      {cssVar && <p>cssVar: {cssVar}</p>}
-      {meta && <p>meta: {meta}</p>}
     </div>
   );
 }
