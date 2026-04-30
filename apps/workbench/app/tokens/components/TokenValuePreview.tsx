@@ -71,10 +71,10 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
             className="bg-surface-accentStrong m-auto"
             style={{ width: size, height: size }}
           />
+          <Text variant="meta-xs" className="text-content-accentStrong text-center">
+            {value.name}
+          </Text>
         </div>
-        <Text variant="meta-xs" className="text-content-accentStrong">
-          {value.name}
-        </Text>
       </div>
     );
   }
