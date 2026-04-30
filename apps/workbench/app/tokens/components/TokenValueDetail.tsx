@@ -183,6 +183,7 @@ export function TokenValueDetail({
         </Text>
       </div>
       <TokenValuePreview category={category} kind={kind} value={value} />
+      {renderEditor()}
     </div>
   );
 }
