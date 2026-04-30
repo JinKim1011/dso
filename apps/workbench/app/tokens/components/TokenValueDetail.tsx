@@ -1,5 +1,7 @@
 "use client";
 
+import { Text } from "@repo/ui";
+import { useMemo, useState } from "react";
 import { TokenTypeValueItem } from "../lib/manifestAdapter";
 import { TokenColorDraft, TokenColorForm } from "./TokenColorForm";
 import { TokenSingleValueDraft, TokenSingleValueForm } from "./TokenSingleValueForm";
@@ -144,7 +146,15 @@ export function TokenValueDetail({
   const [draft, setDraft] = useState<DraftState>(initialDraft);
 
   const isDirty = JSON.stringify(draft) !== JSON.stringify(initialDraft);
-  
+
+  const handleCancel = () => {
+    setDraft(initialDraft);
+  };
+
+  const handleSave = () => {
+    onSave(rowId, buildUpdate(category, kind, draft));
+  };
+
   const renderEditor = () => {
     if (category === "typography" && kind === "semantic") {
       return (
