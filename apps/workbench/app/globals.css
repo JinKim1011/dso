@@ -27,3 +27,12 @@ body {
 .react-flow.react-flow .react-flow__edge-path {
   stroke-dasharray: 2 2;
 }
+
+.bg-dot-pattern {
+  background-image: radial-gradient(
+    circle,
+    var(--color-surface-quaternary) 1px,
+    transparent 1px
+  );
+  background-size: 4px 4px;
+}

@@ -20,10 +20,16 @@ type TokensViewProps = {
   model: TokenGraphModel;
 };
 
-type TokenRow = Pick<
-  TokenGraphModel["tokenTypes"][number]["values"][number],
-  "id" | "name" | "cssVar" | "meta"
->;
+type TokenRow = {
+  id: string;
+  name: string;
+  cssVar?: string;
+  meta?: string;
+  preview?: TokenGraphModel["tokenTypes"][number]["values"][number]["preview"];
+  category: string;
+  kind: string;
+  value: TokenGraphModel["tokenTypes"][number]["values"][number];
+};
 
 type InteractiveTokenTypeData = TokenTypeNodeData & {
   selectedRowId: string | null;
@@ -44,6 +50,10 @@ export function TokensView({ model }: TokensViewProps) {
         name: valueItem.name,
         cssVar: valueItem.cssVar,
         meta: valueItem.meta,
+        preview: valueItem.preview,
+        category: tokenType.category,
+        kind: tokenType.kind,
+        value: valueItem,
       })),
     );
   }, [model]);
@@ -74,6 +84,9 @@ export function TokensView({ model }: TokensViewProps) {
           name={selectedRow.name}
           cssVar={selectedRow.cssVar}
           meta={selectedRow.meta}
+          category={selectedRow.category}
+          kind={selectedRow.kind}
+          value={selectedRow.value}
         />
       ) : null,
     );

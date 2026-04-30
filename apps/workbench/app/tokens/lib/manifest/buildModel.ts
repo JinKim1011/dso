@@ -14,8 +14,9 @@ import {
 const DEFAULT_SCHEMA_VERSION = 1;
 
 function createValueItems(
-  entry: NormalizedManifestEntry,
+  entry: SupportedEntry,
   tokenTypeId: string,
+  category: string,
 ): TokenTypeValueItem[] {
   if (entry.tokens?.length) {
     return entry.tokens.map((token, index) => {
@@ -34,12 +35,30 @@ function createValueItems(
           ? `light:${token.values.light ?? "-"} dark:${token.values.dark ?? "-"}`
           : undefined;
 
+      let preview: TokenTypeValueItem["preview"] = undefined;
+      if (category === "color" && token.values) {
+        preview = {
+          kind: "color",
+          light: token.values.light,
+          dark: token.values.dark,
+        };
+      } else if (category === "spacing" && token.value) {
+        preview = {
+          kind: "spacing",
+          value: token.value,
+        };
+      }
+
       return {
         id: `${tokenTypeId}:value:${toId("name", token.name)}:${index}`,
         name: token.name,
         cssVar: token.cssVar,
         status,
         meta,
+        preview,
+        category,
+        kind: entry.kind,
+        value: token.values ?? token.value,
       };
     });
   }
@@ -49,6 +68,14 @@ function createValueItems(
       id: `${tokenTypeId}:value:${toId("name", semantic.name)}:${index}`,
       name: semantic.name,
       meta: `${semantic.fontSize} / ${semantic.fontWeight} / ${semantic.lineHeight}`,
+      preview: {
+        kind: "typography",
+        typography: {
+          fontSize: semantic.fontSize,
+          fontWeight: semantic.fontWeight,
+          lineHeight: semantic.lineHeight,
+        },
+      },
     }));
   }
 
@@ -104,7 +131,7 @@ function createTokenType(entry: SupportedEntry): TokenTypeModel {
     category: entry.category,
     type: entry.type,
     kind: entry.kind,
-    values: createValueItems(entry, tokenTypeId),
+    values: createValueItems(entry, tokenTypeId, entry.category),
   };
 }
 

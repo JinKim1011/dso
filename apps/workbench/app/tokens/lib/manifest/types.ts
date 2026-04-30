@@ -38,12 +38,35 @@ export type NormalizedManifestEntry = {
   semanticMap?: ManifestSemanticRecord[];
 };
 
+type TokenValuePreviewData =
+  | {
+      kind: "typography";
+      typography: {
+        fontSize: string;
+        fontWeight: string;
+        lineHeight: string;
+      };
+    }
+  | {
+      kind: "color";
+      light?: string;
+      dark?: string;
+    }
+  | {
+      kind: "spacing";
+      value: string;
+    };
+
 export type TokenTypeValueItem = {
   id: string;
   name: string;
   cssVar?: string;
   status?: string;
   meta?: string;
+  preview?: TokenValuePreviewData;
+  category?: string;
+  kind?: SupportedKind;
+  value?: string | { light?: string; dark?: string };
 };
 
 export type CategoryModel = {
