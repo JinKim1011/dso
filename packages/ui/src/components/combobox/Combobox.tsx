@@ -90,7 +90,7 @@ export function Combobox({
         onKeyDown={handleKeyDown}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        aria-control={isOpen ? listboxId : undefined}
+        aria-controls={isOpen ? listboxId : undefined}
       />
       <AnimatePresence>
         {isOpen ? (
