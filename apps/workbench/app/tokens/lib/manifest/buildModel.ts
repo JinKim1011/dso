@@ -16,6 +16,7 @@ const DEFAULT_SCHEMA_VERSION = 1;
 function createValueItems(
   entry: NormalizedManifestEntry,
   tokenTypeId: string,
+  category: string,
 ): TokenTypeValueItem[] {
   if (entry.tokens?.length) {
     return entry.tokens.map((token, index) => {
@@ -104,7 +105,7 @@ function createTokenType(entry: SupportedEntry): TokenTypeModel {
     category: entry.category,
     type: entry.type,
     kind: entry.kind,
-    values: createValueItems(entry, tokenTypeId),
+    values: createValueItems(entry, tokenTypeId, entry.category),
   };
 }
 
