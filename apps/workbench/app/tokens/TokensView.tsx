@@ -84,6 +84,9 @@ export function TokensView({ model }: TokensViewProps) {
           name={selectedRow.name}
           cssVar={selectedRow.cssVar}
           meta={selectedRow.meta}
+          category={selectedRow.category}
+          kind={selectedRow.kind}
+          value={selectedRow.value}
         />
       ) : null,
     );
