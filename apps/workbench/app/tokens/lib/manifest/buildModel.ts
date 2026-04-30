@@ -55,6 +55,10 @@ function createValueItems(
         cssVar: token.cssVar,
         status,
         meta,
+        preview,
+        category,
+        kind: entry.kind,
+        value: token.values,
       };
     });
   }
