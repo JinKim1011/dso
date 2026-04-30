@@ -83,4 +83,6 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
       </div>
     );
   }
+
+  return null;
 }
