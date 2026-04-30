@@ -43,15 +43,10 @@ function getTypographyDraft(
   };
 }
 
-function toInitialDraft(
-  name: string,
-  category: string,
-  kind: string,
-  valueItem: TokenTypeValueItem,
-): DraftState {
-  if (category === "typography" && kind === "semantic") {
-    return getTypographyDraft(valueItem, name);
-  }
+function isDualValue(
+  value: TokenTypeValueItem["value"],
+): value is { light?: string; dark?: string } {
+  return Boolean(value && typeof value === "object");
 }
 
 function buildUpdate(
