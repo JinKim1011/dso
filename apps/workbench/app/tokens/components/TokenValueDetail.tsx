@@ -1,6 +1,6 @@
 "use client";
 
-import { Cross2Icon } from "@radix-ui/react-icons";
+import { CheckIcon, Cross2Icon, ResetIcon } from "@radix-ui/react-icons";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
 import { TokenTypeValueItem } from "../lib/manifestAdapter";
@@ -208,6 +208,30 @@ export function TokenValueDetail({
             leftIcon={Cross2Icon}
             disabled={false}
           />
+        )}
+        {isDirty && (
+          <div className="flex">
+            <Button
+              variant="void"
+              size="md"
+              aria-label="undo"
+              iconOnly={true}
+              leftIcon={ResetIcon}
+              disabled={!isDirty}
+              onClick={handleCancel}
+            />
+
+            <Button
+              variant="void"
+              size="md"
+              aria-label="undo"
+              iconOnly={true}
+              leftIcon={CheckIcon}
+              disabled={!isDirty}
+              onClick={handleSave}
+              overrideTextColorClass="text-content-accent"
+            />
+          </div>
         )}
       </div>
       <TokenValuePreview category={category} kind={kind} value={value} />
