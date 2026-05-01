@@ -61,7 +61,46 @@ export function TokensView({ model }: TokensViewProps) {
         value: valueItem,
       })),
     );
-  }, [model]);
+  }, [editableModel]);
+
+  const typographyOptions = useMemo<TokenTypographyOptions>(() => {
+    const fontSize = new Set<string>();
+    const fontWeight = new Set<string>();
+    const lineHeight = new Set<string>();
+
+    editableModel.tokenTypes
+      .filter(
+        (tokenType) =>
+          tokenType.category === "typography" && tokenType.kind === "primitive",
+      )
+      .forEach((tokenType) => {
+        const typeName = tokenType.type.toLowerCase();
+
+        for (const valueItem of tokenType.values) {
+          if (!valueItem.name) continue;
+
+          if (typeName.includes("fontsize")) {
+            fontSize.add(valueItem.name);
+            continue;
+          }
+
+          if (typeName.includes("fontweight")) {
+            fontWeight.add(valueItem.name);
+            continue;
+          }
+
+          if (typeName.includes("lineheight")) {
+            lineHeight.add(valueItem.name);
+          }
+        }
+      });
+
+    return {
+      fontSize: [...fontSize].sort(),
+      fontWeight: [...fontWeight].sort(),
+      lineHeight: [...lineHeight].sort(),
+    };
+  }, [editableModel]);
 
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
