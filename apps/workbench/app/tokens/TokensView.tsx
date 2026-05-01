@@ -149,6 +149,8 @@ export function TokensView({ model }: TokensViewProps) {
           category={selectedRow.category}
           kind={selectedRow.kind}
           value={selectedRow.value}
+          typographyOptions={typographyOptions}
+          onSave={handleSaveRow}
         />
       ) : null,
     );
