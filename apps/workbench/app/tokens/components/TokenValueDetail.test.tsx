@@ -1,5 +1,5 @@
-import { render } from "@testing-library/react";
-import { vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import type { TokenTypeValueItem } from "../lib/manifestAdapter";
 import { TokenValueDetail } from "./TokenValueDetail";
 
@@ -32,3 +32,21 @@ function renderDetail(props: {
 
   return { onSave };
 }
+
+describe("TokenValueDetail", () => {
+  it("renders single value editor fields", async () => {
+    renderDetail({
+      category: "spacing",
+      kind: "primitive",
+      value: {
+        id: "spacing-1",
+        name: "mini",
+        value: "0.25rem",
+        preview: { kind: "spacing", value: "0.25rem" },
+      },
+    });
+
+    expect(await screen.findByLabelText("Name")).toBeInTheDocument();
+    expect(await screen.findByLabelText("Value")).toBeInTheDocument();
+  });
+});
