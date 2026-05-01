@@ -12,7 +12,11 @@ import { WorkbenchShellActionsContext } from "../_shared/context/WorkbenchShellC
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { RootFlowNode } from "./components/RootFlowNode";
 import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
-import { TokenValueDetail } from "./components/TokenValueDetail";
+import type { TokenTypographyOptions } from "./components/TokenTypographyForm";
+import {
+  TokenValueDetail,
+  type TokenValueDetailUpdate,
+} from "./components/TokenValueDetail";
 import type { TokenGraphModel } from "./lib/manifestAdapter";
 import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
 
