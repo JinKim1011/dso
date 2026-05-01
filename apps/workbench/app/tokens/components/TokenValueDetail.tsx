@@ -28,6 +28,7 @@ type TokenValueDetailProps = {
   category: string;
   kind: string;
   value: TokenTypeValueItem;
+  onClose?: () => void;
   typographyOptions: TokenTypographyOptions;
   onSave: (rowId: string, next: TokenValueDetailUpdate) => void;
 };
@@ -137,6 +138,7 @@ export function TokenValueDetail({
   kind,
   value,
   typographyOptions,
+  onClose,
   onSave,
 }: TokenValueDetailProps) {
   const initialDraft = useMemo(
@@ -208,6 +210,7 @@ export function TokenValueDetail({
             iconOnly={true}
             leftIcon={Cross2Icon}
             disabled={false}
+            onClick={() => onClose?.()}
           />
         )}
         {isDirty && (
