@@ -66,4 +66,28 @@ describe("TokenValueDetail", () => {
     expect(await screen.findByLabelText("Light")).toBeInTheDocument();
     expect(await screen.findByLabelText("Dark")).toBeInTheDocument();
   });
+
+  it("renders typography semantic editor fields", async () => {
+    renderDetail({
+      category: "typography",
+      kind: "semantic",
+      value: {
+        id: "typography-1",
+        name: "body-md",
+        preview: {
+          kind: "typography",
+          typography: {
+            fontSize: "regular",
+            fontWeight: "regular",
+            lineHeight: "normal",
+          },
+        },
+      },
+    });
+
+    expect(await screen.findByLabelText("Name")).toBeInTheDocument();
+    expect(await screen.findByLabelText("Size")).toBeInTheDocument();
+    expect(await screen.findByLabelText("Weight")).toBeInTheDocument();
+    expect(await screen.findByLabelText("Line height")).toBeInTheDocument();
+  });
 });
