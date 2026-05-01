@@ -39,11 +39,11 @@ function getTypographyDraft(
   name: string,
 ): TokenTypographyDraft {
   if (valueItem.preview?.kind !== "typography") {
-    return { name, fontSize: "", fontWeight: "", lineHeight: "" };
+    return { name: "", fontSize: "", fontWeight: "", lineHeight: "" };
   }
 
   return {
-    name,
+    name: name ?? "",
     fontSize: valueItem.preview.typography.fontSize,
     fontWeight: valueItem.preview.typography.fontWeight,
     lineHeight: valueItem.preview.typography.lineHeight,
@@ -188,10 +188,15 @@ export function TokenValueDetail({
     );
   };
 
-  const between = rowId.match(/token-type:(.*?):value/)?.[1] ?? "";
-  const parts = between.split("-");
-  const categoryText = `${parts[0]?.charAt(0).toUpperCase()}${parts[0]?.slice(1).toLowerCase()}`;
-  const tokenTypeText = `${parts[1]?.charAt(0).toUpperCase()}${parts[1]?.slice(1).toLowerCase()}`;
+  // const between = rowId.match(/token-type:(.*?):value/)?.[1] ?? "";
+  // const parts = between.split("-");
+  // const categoryText = `${parts[0]?.charAt(0).toUpperCase()}${parts[0]?.slice(1).toLowerCase()}`;
+  // const tokenTypeText = `${parts[1]?.charAt(0).toUpperCase()}${parts[1]?.slice(1).toLowerCase()}`;
+
+  const toTitleCase = (text: string) =>
+    text ? `${text.charAt(0).toUpperCase()}${text.slice(1).toLowerCase()}` : "";
+  const categoryText = toTitleCase(category);
+  const tokenTypeText = toTitleCase(kind);
   const title = `${categoryText}, ${tokenTypeText}`;
 
   return (
