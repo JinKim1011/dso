@@ -221,16 +221,14 @@ export function TokenValueDetail({
               disabled={!isDirty}
               onClick={handleCancel}
             />
-
             <Button
               variant="void"
               size="md"
-              aria-label="undo"
+              aria-label="save"
               iconOnly={true}
               leftIcon={CheckIcon}
               disabled={!isDirty}
               onClick={handleSave}
-              overrideTextColorClass="text-content-accent"
             />
           </div>
         )}
