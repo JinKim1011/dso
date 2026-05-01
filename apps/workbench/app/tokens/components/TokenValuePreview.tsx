@@ -10,7 +10,7 @@ type TokenValuePreviewProps = {
 export function TokenValuePreview({ category, kind, value }: TokenValuePreviewProps) {
   if (!value?.preview) return null;
 
-  const wrapperStyle = `py-regular px-small flex w-[21.25rem] items-center justify-center bg-dot-pattern overflow-hidden`;
+  const wrapperStyle = `py-regular px-small w-full flex items-center justify-center bg-dot-pattern overflow-hidden`;
 
   if (
     category === "typography" &&
@@ -23,7 +23,7 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
       <div className={wrapperStyle}>
         <div className="gap-micro flex flex-col">
           <div
-            className="text-content-primary"
+            className="text-content-primary text-center"
             style={{
               fontSize: `var(--text-${fontSize})`,
               fontWeight: `var(--font-${fontWeight})`,

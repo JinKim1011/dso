@@ -80,6 +80,7 @@ export function Combobox({
   return (
     <div className="relative w-full" onBlur={handleBlur}>
       <InputBase
+        id={id}
         readOnly
         value={inputValue}
         placeholder={placeholder}
@@ -89,7 +90,7 @@ export function Combobox({
         onKeyDown={handleKeyDown}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        aria-control={isOpen ? listboxId : undefined}
+        aria-controls={isOpen ? listboxId : undefined}
       />
       <AnimatePresence>
         {isOpen ? (

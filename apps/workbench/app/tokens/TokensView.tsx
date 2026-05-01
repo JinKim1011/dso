@@ -12,7 +12,11 @@ import { WorkbenchShellActionsContext } from "../_shared/context/WorkbenchShellC
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { RootFlowNode } from "./components/RootFlowNode";
 import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
-import { TokenValueDetail } from "./components/TokenValueDetail";
+import type { TokenTypographyOptions } from "./components/TokenTypographyForm";
+import {
+  TokenValueDetail,
+  type TokenValueDetailUpdate,
+} from "./components/TokenValueDetail";
 import type { TokenGraphModel } from "./lib/manifestAdapter";
 import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
 
@@ -38,13 +42,18 @@ type InteractiveTokenTypeData = TokenTypeNodeData & {
 
 export function TokensView({ model }: TokensViewProps) {
   const shellActions = useContext(WorkbenchShellActionsContext);
+  const [editableModel, setEditableModel] = useState(model);
 
-  const flowBase = useMemo(() => {
-    return mapTokenGraphToFlow(model);
+  useEffect(() => {
+    setEditableModel(model);
   }, [model]);
 
+  const flowBase = useMemo(() => {
+    return mapTokenGraphToFlow(editableModel);
+  }, [editableModel]);
+
   const rows = useMemo<TokenRow[]>(() => {
-    return model.tokenTypes.flatMap((tokenType) =>
+    return editableModel.tokenTypes.flatMap((tokenType) =>
       tokenType.values.map((valueItem) => ({
         id: valueItem.id,
         name: valueItem.name,
@@ -56,10 +65,66 @@ export function TokensView({ model }: TokensViewProps) {
         value: valueItem,
       })),
     );
-  }, [model]);
+  }, [editableModel]);
+
+  const typographyOptions = useMemo<TokenTypographyOptions>(() => {
+    const fontSize = new Set<string>();
+    const fontWeight = new Set<string>();
+    const lineHeight = new Set<string>();
+
+    editableModel.tokenTypes
+      .filter(
+        (tokenType) =>
+          tokenType.category === "typography" && tokenType.kind === "primitive",
+      )
+      .forEach((tokenType) => {
+        const typeName = tokenType.type.toLowerCase();
+
+        for (const valueItem of tokenType.values) {
+          if (!valueItem.name) continue;
+
+          if (typeName.includes("fontsize")) {
+            fontSize.add(valueItem.name);
+            continue;
+          }
+
+          if (typeName.includes("fontweight")) {
+            fontWeight.add(valueItem.name);
+            continue;
+          }
+
+          if (typeName.includes("lineheight")) {
+            lineHeight.add(valueItem.name);
+          }
+        }
+      });
+
+    return {
+      fontSize: [...fontSize].sort(),
+      fontWeight: [...fontWeight].sort(),
+      lineHeight: [...lineHeight].sort(),
+    };
+  }, [editableModel]);
 
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+
+  const handleSaveRow = useCallback((rowId: string, update: TokenValueDetailUpdate) => {
+    setEditableModel((current) => ({
+      ...current,
+      tokenTypes: current.tokenTypes.map((tokenType) => ({
+        ...tokenType,
+        values: tokenType.values.map((valueItem) =>
+          valueItem.id === rowId
+            ? {
+                ...valueItem,
+                ...update,
+              }
+            : valueItem,
+        ),
+      })),
+    }));
+  }, []);
 
   const selectedRow = useMemo(
     () => (selectedRowId === null ? null : (rowById.get(selectedRowId) ?? null)),
@@ -81,16 +146,20 @@ export function TokensView({ model }: TokensViewProps) {
     shellActions.setNavigationDetail(
       selectedRow ? (
         <TokenValueDetail
-          name={selectedRow.name}
+          rowId={selectedRow.id}
+          name={selectedRow.name ?? ""}
           cssVar={selectedRow.cssVar}
           meta={selectedRow.meta}
           category={selectedRow.category}
           kind={selectedRow.kind}
           value={selectedRow.value}
+          typographyOptions={typographyOptions}
+          onSave={handleSaveRow}
+          onClose={() => shellActions?.clearNavigationDetail()}
         />
       ) : null,
     );
-  }, [selectedRow, shellActions]);
+  }, [handleSaveRow, selectedRow, shellActions, typographyOptions]);
 
   useEffect(() => {
     return () => {
