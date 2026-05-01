@@ -155,6 +155,7 @@ export function TokensView({ model }: TokensViewProps) {
           value={selectedRow.value}
           typographyOptions={typographyOptions}
           onSave={handleSaveRow}
+          onClose={() => shellActions?.clearNavigationDetail()}
         />
       ) : null,
     );
