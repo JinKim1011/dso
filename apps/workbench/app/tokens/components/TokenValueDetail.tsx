@@ -67,13 +67,13 @@ function toInitialDraft(
   }
   if (isDualValue(valueItem.value)) {
     return {
-      name,
+      name: name ?? "",
       lightValue: valueItem.value.light ?? "",
       darkValue: valueItem.value.dark ?? "",
     };
   }
   return {
-    name,
+    name: name ?? "",
     value: typeof valueItem.value === "string" ? valueItem.value : "",
   };
 }
