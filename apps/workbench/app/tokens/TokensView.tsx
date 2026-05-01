@@ -142,6 +142,7 @@ export function TokensView({ model }: TokensViewProps) {
     shellActions.setNavigationDetail(
       selectedRow ? (
         <TokenValueDetail
+          rowId={selectedRow.id}
           name={selectedRow.name}
           cssVar={selectedRow.cssVar}
           meta={selectedRow.meta}
