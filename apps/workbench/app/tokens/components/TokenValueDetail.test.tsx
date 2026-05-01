@@ -117,36 +117,37 @@ describe("TokenValueDetail", () => {
     );
   });
 
-  (it("saves updated dual value payload"),
-    async () => {
-      const { onSave } = renderDetail({
-        category: "color",
-        kind: "primitive",
-        value: {
-          id: "color-1",
-          name: "primary",
-          value: { light: "#ffffff", dark: "#000000" },
-          preview: { kind: "color", light: "#ffffff", dark: "#000000" },
-        },
-      });
-
-      const lightInput = await screen.findByLabelText("Light");
-      await userEvent.clear(lightInput);
-      await userEvent.type(lightInput, "oklch(1 0 89.9)");
-
-      const darkInput = await screen.findByLabelText("Dark");
-      await userEvent.clear(darkInput);
-      await userEvent.type(darkInput, "oklch(0.132 0.036 276.6)");
-
-      const saveButton = await screen.findByRole("button", { name: "save" });
-      await userEvent.click(saveButton);
-
-      expect(onSave).toHaveBeenCalledWith(
-        "row-1",
-        expect.objectContaining({
-          name: "token-name",
-          value: { light: "oklch(1 0 89.9)", dark: "oklch(0.132 0.036 276.6)" },
-        }),
-      );
+  it("saves updated dual value payload", async () => {
+    const { onSave } = renderDetail({
+      category: "color",
+      kind: "primitive",
+      value: {
+        id: "color-1",
+        name: "primary",
+        value: { light: "#ffffff", dark: "#000000" },
+        preview: { kind: "color", light: "#ffffff", dark: "#000000" },
+      },
     });
+
+    const lightInput = await screen.findByLabelText("Light");
+    await userEvent.clear(lightInput);
+    await userEvent.type(lightInput, "oklch(1 0 89.9)");
+
+    const darkInput = await screen.findByLabelText("Dark");
+    await userEvent.clear(darkInput);
+    await userEvent.type(darkInput, "oklch(0.132 0.036 276.6)");
+
+    const saveButton = await screen.findByRole("button", { name: "save" });
+    await userEvent.click(saveButton);
+
+    expect(onSave).toHaveBeenCalledWith(
+      "row-1",
+      expect.objectContaining({
+        name: "token-name",
+        value: { light: "oklch(1 0 89.9)", dark: "oklch(0.132 0.036 276.6)" },
+      }),
+    );
+  });
+
+  it("saves updated typography semantic value payload", async () => {});
 });
