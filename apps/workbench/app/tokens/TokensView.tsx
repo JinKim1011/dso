@@ -154,7 +154,7 @@ export function TokensView({ model }: TokensViewProps) {
         />
       ) : null,
     );
-  }, [selectedRow, shellActions]);
+  }, [handleSaveRow, selectedRow, shellActions, typographyOptions]);
 
   useEffect(() => {
     return () => {
