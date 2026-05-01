@@ -87,7 +87,7 @@ function buildUpdate(
     const typographyDraft = draft as TokenTypographyDraft;
     return {
       name: typographyDraft.name,
-      meta: `${typographyDraft.fontSize}/${typographyDraft.fontWeight}/${typographyDraft.lineHeight}`,
+      meta: `${typographyDraft.fontSize} / ${typographyDraft.fontWeight} / ${typographyDraft.lineHeight}`,
       preview: {
         kind: "typography",
         typography: {
