@@ -67,4 +67,38 @@ describe("Container-level behavior, TokensView", () => {
       expect(nameInput).toHaveValue(value.name);
     }
   });
+
+  it("saving edited name updates row label", async () => {
+    const group = result.model.tokenTypes.at(0);
+    if (!group) throw new Error("Expected at least one token type in fixture");
+
+    function ShellDetailSlot() {
+      const slot = useContext(WorkbenchShellDetailContext);
+      return <div data-testid="shell-detail">{slot}</div>;
+    }
+
+    render(
+      <WorkbenchShellProvider>
+        <ShellDetailSlot />
+        <TokensView model={result.model} />
+      </WorkbenchShellProvider>,
+    );
+
+    const row = group.values[0];
+    if (!row) throw new Error("Expected token value in fixture");
+
+    const valueButton = screen.getByTestId(row.id);
+    await userEvent.click(valueButton);
+
+    const shell = await screen.findByTestId("shell-detail");
+
+    const nameInput = await within(shell).findByLabelText("Name");
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, "primary-updated");
+
+    const saveButton = within(shell).getByRole("button", { name: "save" });
+    await userEvent.click(saveButton);
+
+    expect(await screen.findByText("primary-updated")).toBeInTheDocument();
+  });
 });
