@@ -147,7 +147,7 @@ export function TokensView({ model }: TokensViewProps) {
       selectedRow ? (
         <TokenValueDetail
           rowId={selectedRow.id}
-          name={selectedRow.name}
+          name={selectedRow.name ?? ""}
           cssVar={selectedRow.cssVar}
           meta={selectedRow.meta}
           category={selectedRow.category}
