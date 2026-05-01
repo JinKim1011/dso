@@ -105,6 +105,23 @@ export function TokensView({ model }: TokensViewProps) {
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
+  const handleSaveRow = useCallback((rowId: string, update: TokenValueDetailUpdate) => {
+    setEditableModel((current) => ({
+      ...current,
+      tokenTypes: current.tokenTypes.map((tokenType) => ({
+        ...tokenType,
+        values: tokenType.values.map((valueItem) =>
+          valueItem.id === rowId
+            ? {
+                ...valueItem,
+                ...update,
+              }
+            : valueItem,
+        ),
+      })),
+    }));
+  }, []);
+
   const selectedRow = useMemo(
     () => (selectedRowId === null ? null : (rowById.get(selectedRowId) ?? null)),
     [rowById, selectedRowId],
