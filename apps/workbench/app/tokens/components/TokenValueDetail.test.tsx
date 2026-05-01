@@ -49,4 +49,21 @@ describe("TokenValueDetail", () => {
     expect(await screen.findByLabelText("Name")).toBeInTheDocument();
     expect(await screen.findByLabelText("Value")).toBeInTheDocument();
   });
+
+  it("renders light/dark editor fields", async () => {
+    renderDetail({
+      category: "color",
+      kind: "primitive",
+      value: {
+        id: "color-1",
+        name: "primary",
+        value: { light: "#ffffff", dark: "#000000" },
+        preview: { kind: "color", light: "#ffffff", dark: "#000000" },
+      },
+    });
+
+    expect(await screen.findByLabelText("Name")).toBeInTheDocument();
+    expect(await screen.findByLabelText("Light")).toBeInTheDocument();
+    expect(await screen.findByLabelText("Dark")).toBeInTheDocument();
+  });
 });
