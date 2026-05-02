@@ -46,6 +46,10 @@ export function StagedManifestProvider({
       body: JSON.stringify({ manifest: draftModel }),
     });
 
+    if (response.ok) {
+      setBaseModel(draftModel);
+    }
+
     return response;
   };
 
