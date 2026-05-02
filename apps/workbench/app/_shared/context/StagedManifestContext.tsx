@@ -7,6 +7,7 @@ type StagedContextType = {
   baseModel: TokenGraphModel;
   draftModel: TokenGraphModel;
   updateRow: (rowId: string, update: Partial<any>) => void;
+  resetDraft: () => void;
 };
 
 const StagedManifestContext = createContext<StagedContextType | undefined>(undefined);
@@ -33,8 +34,12 @@ export function StagedManifestProvider({
     }));
   };
 
+  const resetDraft = () => {
+    setDraftModel(baseModel);
+  };
+
   const value = useMemo(
-    () => ({ baseModel, draftModel, updateRow }),
+    () => ({ baseModel, draftModel, updateRow, resetDraft }),
     [baseModel, draftModel],
   );
 
