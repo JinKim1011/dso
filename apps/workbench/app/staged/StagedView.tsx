@@ -22,11 +22,11 @@ export function StagedView() {
   const selected = changedRows.find((row) => row.rowId === selectedRowId) ?? null;
 
   return (
-    <section>
-      <Button variant="outlined" onClick={resetDraft}>
+    <section className="py-largePlus flex flex-col items-center justify-center">
+      <Button variant="outlined" onClick={resetDraft} data-testId="reset-draft">
         Discard all
       </Button>
-      <Button variant="fill" size="sm" onClick={handleApply}>
+      <Button variant="fill" onClick={handleApply} data-textId="apply-all">
         {isApplying ? "Applying..." : "Apply"}
       </Button>
       <ul>
@@ -35,13 +35,15 @@ export function StagedView() {
             <button
               aria-pressed={selectedRowId === row.rowId}
               onClick={() => setSelectedRowId(row.rowId)}
+              data-testId={row.rowId}
             >
               <span>
                 {row.nameBefore !== row.nameAfter
                   ? `${row.nameAfter}(prev. ${row.nameBefore})`
                   : row.nameBefore}
               </span>
-              <span>{`${row.category}(${row.kind})`}</span>
+              <span>${row.category}</span>
+              <span>${row.kind}</span>
             </button>
           </li>
         ))}
