@@ -21,10 +21,6 @@ import {
 import type { TokenGraphModel } from "./lib/manifestAdapter";
 import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
 
-type TokensViewProps = {
-  model: TokenGraphModel;
-};
-
 type TokenRow = {
   id: string;
   name: string;
@@ -41,7 +37,7 @@ type InteractiveTokenTypeData = TokenTypeNodeData & {
   onSelectRow: (rowId: string) => void;
 };
 
-export function TokensView({ model }: TokensViewProps) {
+export function TokensView() {
   const shellActions = useContext(WorkbenchShellActionsContext);
   const { draftModel, updateRow } = useStagedManifest();
 
