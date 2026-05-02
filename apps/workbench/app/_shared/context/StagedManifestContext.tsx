@@ -39,6 +39,17 @@ function buildRowIndex(model: TokenGraphModel) {
       });
     }
   }
+
+  return index;
+}
+
+function isRowChanged(
+  baseRow: TokenTypeValueItem,
+  draftRow: TokenTypeValueItem,
+): boolean {
+  if (!baseRow) return true;
+
+  return JSON.stringify(baseRow) !== JSON.stringify(draftRow);
 }
 
 export function StagedManifestProvider({
