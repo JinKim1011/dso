@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, ReactNode, useMemo, useState } from "react";
+import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 import { TokenGraphModel } from "../../tokens/lib/manifestAdapter";
 
 type StagedContextType = {
@@ -63,4 +63,11 @@ export function StagedManifestProvider({
       {children}
     </StagedManifestContext.Provider>
   );
+}
+
+export function useStagedManifest() {
+  const context = useContext(StagedManifestContext);
+  if (!context)
+    throw new Error("useStagedManifest must be used inside StagedManifestProvider");
+  return context;
 }
