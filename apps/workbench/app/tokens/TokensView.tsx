@@ -43,6 +43,7 @@ type InteractiveTokenTypeData = TokenTypeNodeData & {
 export function TokensView({ model }: TokensViewProps) {
   const shellActions = useContext(WorkbenchShellActionsContext);
   const [editableModel, setEditableModel] = useState(model);
+  const { draftModel, updateRow } = useStagedManifest();
 
   useEffect(() => {
     setEditableModel(model);
@@ -109,22 +110,12 @@ export function TokensView({ model }: TokensViewProps) {
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
-  const handleSaveRow = useCallback((rowId: string, update: TokenValueDetailUpdate) => {
-    setEditableModel((current) => ({
-      ...current,
-      tokenTypes: current.tokenTypes.map((tokenType) => ({
-        ...tokenType,
-        values: tokenType.values.map((valueItem) =>
-          valueItem.id === rowId
-            ? {
-                ...valueItem,
-                ...update,
-              }
-            : valueItem,
-        ),
-      })),
-    }));
-  }, []);
+  const handleSaveRow = useCallback(
+    (rowId: string, update: TokenValueDetailUpdate) => {
+      updateRow(rowId, update);
+    },
+    [updateRow],
+  );
 
   const selectedRow = useMemo(
     () => (selectedRowId === null ? null : (rowById.get(selectedRowId) ?? null)),
