@@ -8,6 +8,7 @@ type StagedContextType = {
   draftModel: TokenGraphModel;
   updateRow: (rowId: string, update: Partial<any>) => void;
   resetDraft: () => void;
+  applyDraft: () => Promise<Response>;
 };
 
 const StagedManifestContext = createContext<StagedContextType | undefined>(undefined);
@@ -38,8 +39,18 @@ export function StagedManifestProvider({
     setDraftModel(baseModel);
   };
 
+  const applyDraft = async (): Promise<Response> => {
+    const response = await fetch("/api/manifest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ manifest: draftModel }),
+    });
+
+    return response;
+  };
+
   const value = useMemo(
-    () => ({ baseModel, draftModel, updateRow, resetDraft }),
+    () => ({ baseModel, draftModel, updateRow, resetDraft, applyDraft }),
     [baseModel, draftModel],
   );
 
