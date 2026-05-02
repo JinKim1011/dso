@@ -122,6 +122,11 @@ export function StagedManifestProvider({
     return response;
   };
 
+  const changedRows = useMemo(
+    () => buildChangedRows(baseModel, draftModel),
+    [baseModel, draftModel],
+  );
+
   const value = useMemo(
     () => ({ baseModel, draftModel, updateRow, resetDraft, applyDraft }),
     [baseModel, draftModel],
