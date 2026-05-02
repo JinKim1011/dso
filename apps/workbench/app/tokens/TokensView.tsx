@@ -54,7 +54,7 @@ export function TokensView({ model }: TokensViewProps) {
   }, [draftModel]);
 
   const rows = useMemo<TokenRow[]>(() => {
-    return editableModel.tokenTypes.flatMap((tokenType) =>
+    return draftModel.tokenTypes.flatMap((tokenType) =>
       tokenType.values.map((valueItem) => ({
         id: valueItem.id,
         name: valueItem.name,
@@ -66,7 +66,7 @@ export function TokensView({ model }: TokensViewProps) {
         value: valueItem,
       })),
     );
-  }, [editableModel]);
+  }, [draftModel]);
 
   const typographyOptions = useMemo<TokenTypographyOptions>(() => {
     const fontSize = new Set<string>();
