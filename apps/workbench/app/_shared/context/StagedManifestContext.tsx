@@ -128,8 +128,8 @@ export function StagedManifestProvider({
   );
 
   const value = useMemo(
-    () => ({ baseModel, draftModel, updateRow, resetDraft, applyDraft }),
-    [baseModel, draftModel],
+    () => ({ baseModel, draftModel, changedRows, updateRow, resetDraft, applyDraft }),
+    [baseModel, draftModel, changedRows],
   );
 
   return (
