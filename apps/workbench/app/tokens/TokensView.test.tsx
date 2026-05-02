@@ -1,7 +1,8 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { createElement, useContext } from "react";
+import { useContext } from "react";
 import { describe, expect, it } from "vitest";
+import { StagedManifestProvider } from "../_shared/context/StagedManifestContext";
 import WorkbenchShellProvider, {
   WorkbenchShellDetailContext,
 } from "../_shared/context/WorkbenchShellContext";
@@ -13,7 +14,13 @@ const result = buildTokenGraphModel(happyManifest);
 
 describe("Container-level behavior, TokensView", () => {
   it("renders root heading/container", async () => {
-    render(createElement(TokensView, { model: result.model }));
+    render(
+      <StagedManifestProvider baseManifest={result.model}>
+        <WorkbenchShellProvider>
+          <TokensView />
+        </WorkbenchShellProvider>
+      </StagedManifestProvider>,
+    );
     const root = result.model.root;
 
     // query by text not by role, since root label is rendered inside a custom node
@@ -22,7 +29,13 @@ describe("Container-level behavior, TokensView", () => {
   });
 
   it("renders categories", async () => {
-    render(createElement(TokensView, { model: result.model }));
+    render(
+      <StagedManifestProvider baseManifest={result.model}>
+        <WorkbenchShellProvider>
+          <TokensView />
+        </WorkbenchShellProvider>
+      </StagedManifestProvider>,
+    );
     const categories = result.model.categories;
 
     for (const category of categories) {
@@ -32,7 +45,13 @@ describe("Container-level behavior, TokensView", () => {
   });
 
   it("does not duplicate token type groups across categories", async () => {
-    render(createElement(TokensView, { model: result.model }));
+    render(
+      <StagedManifestProvider baseManifest={result.model}>
+        <WorkbenchShellProvider>
+          <TokensView />
+        </WorkbenchShellProvider>
+      </StagedManifestProvider>,
+    );
     const allTokenTypes = result.model.tokenTypes;
 
     for (const tokenType of allTokenTypes) {
@@ -51,10 +70,12 @@ describe("Container-level behavior, TokensView", () => {
     }
 
     render(
-      <WorkbenchShellProvider>
-        <ShellDetailSlot />
-        <TokensView model={result.model} />
-      </WorkbenchShellProvider>,
+      <StagedManifestProvider baseManifest={result.model}>
+        <WorkbenchShellProvider>
+          <ShellDetailSlot />
+          <TokensView />
+        </WorkbenchShellProvider>
+      </StagedManifestProvider>,
     );
 
     for (const value of group.values) {
@@ -78,10 +99,12 @@ describe("Container-level behavior, TokensView", () => {
     }
 
     render(
-      <WorkbenchShellProvider>
-        <ShellDetailSlot />
-        <TokensView model={result.model} />
-      </WorkbenchShellProvider>,
+      <StagedManifestProvider baseManifest={result.model}>
+        <WorkbenchShellProvider>
+          <ShellDetailSlot />
+          <TokensView />
+        </WorkbenchShellProvider>
+      </StagedManifestProvider>,
     );
 
     const row = group.values[0];
