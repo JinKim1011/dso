@@ -24,7 +24,7 @@ export function WorkbenchShell({ children }: WorkbenchShellProps) {
       <StagedManifestProvider baseManifest={result.model}>
         <div>
           <Header currentBranch={currentBranch} userName={userName}></Header>
-          <Navigation stagedCount={stagedCount} />
+          <Navigation />
           <main>{children}</main>
         </div>
       </StagedManifestProvider>
