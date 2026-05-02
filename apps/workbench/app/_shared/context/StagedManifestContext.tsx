@@ -17,6 +17,7 @@ type StagedContextType = {
   baseModel: TokenGraphModel;
   draftModel: TokenGraphModel;
   changedRows: ChangedRow[];
+  changedRowCount: number;
   updateRow: (rowId: string, update: Partial<any>) => void;
   resetDraft: () => void;
   applyDraft: () => Promise<Response>;
@@ -128,7 +129,15 @@ export function StagedManifestProvider({
   );
 
   const value = useMemo(
-    () => ({ baseModel, draftModel, changedRows, updateRow, resetDraft, applyDraft }),
+    () => ({
+      baseModel,
+      draftModel,
+      changedRows,
+      changedRowCount: changedRows.length,
+      updateRow,
+      resetDraft,
+      applyDraft,
+    }),
     [baseModel, draftModel, changedRows],
   );
 
