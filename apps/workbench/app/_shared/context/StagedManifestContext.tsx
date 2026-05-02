@@ -6,6 +6,7 @@ import { TokenGraphModel } from "../../tokens/lib/manifestAdapter";
 type StagedContextType = {
   baseModel: TokenGraphModel;
   draftModel: TokenGraphModel;
+  updateRow: (rowId: string, update: Partial<any>) => void;
 };
 
 const StagedManifestContext = createContext<StagedContextType | undefined>(undefined);
