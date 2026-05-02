@@ -52,6 +52,36 @@ function isRowChanged(
   return JSON.stringify(baseRow) !== JSON.stringify(draftRow);
 }
 
+function buildChangedRows(
+  baseModel: TokenGraphModel,
+  draftModel: TokenGraphModel,
+): ChangedRow[] {
+  const baseIndex = buildRowIndex(baseModel);
+  const changedRows: ChangedRow[] = [];
+
+  for (const tokenType of draftModel.tokenTypes) {
+    for (const draftRow of tokenType.values) {
+      const baseRow = baseIndex.get(draftRow.id);
+      if (!baseRow) continue;
+
+      if (!isRowChanged(baseRow?.value, draftRow)) {
+        continue;
+      }
+
+      changedRows.push({
+        rowId: draftRow.id,
+        nameBefore: baseRow.value.name ?? "",
+        nameAfter: draftRow.name,
+        category: tokenType.category,
+        kind: tokenType.kind,
+        before: baseRow?.value ?? draftRow,
+        after: draftRow,
+      });
+    }
+  }
+  return changedRows;
+}
+
 export function StagedManifestProvider({
   baseManifest,
   children,
