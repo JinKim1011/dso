@@ -8,6 +8,7 @@ import {
   type NodeTypes,
 } from "@xyflow/react";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 import { WorkbenchShellActionsContext } from "../_shared/context/WorkbenchShellContext";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { RootFlowNode } from "./components/RootFlowNode";
@@ -42,12 +43,7 @@ type InteractiveTokenTypeData = TokenTypeNodeData & {
 
 export function TokensView({ model }: TokensViewProps) {
   const shellActions = useContext(WorkbenchShellActionsContext);
-  const [editableModel, setEditableModel] = useState(model);
   const { draftModel, updateRow } = useStagedManifest();
-
-  useEffect(() => {
-    setEditableModel(model);
-  }, [model]);
 
   const flowBase = useMemo(() => {
     return mapTokenGraphToFlow(draftModel);
