@@ -1,7 +1,17 @@
 "use client";
 
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
-import { TokenGraphModel } from "../../tokens/lib/manifestAdapter";
+import { TokenGraphModel, TokenTypeValueItem } from "../../tokens/lib/manifestAdapter";
+
+type ChangedRow = {
+  rowId: string;
+  nameBefore: string;
+  nameAfter: string;
+  category: string;
+  kind: string;
+  before: TokenTypeValueItem;
+  after: TokenTypeValueItem;
+};
 
 type StagedContextType = {
   baseModel: TokenGraphModel;
