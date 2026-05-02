@@ -73,7 +73,7 @@ export function TokensView({ model }: TokensViewProps) {
     const fontWeight = new Set<string>();
     const lineHeight = new Set<string>();
 
-    editableModel.tokenTypes
+    draftModel.tokenTypes
       .filter(
         (tokenType) =>
           tokenType.category === "typography" && tokenType.kind === "primitive",
@@ -105,7 +105,7 @@ export function TokensView({ model }: TokensViewProps) {
       fontWeight: [...fontWeight].sort(),
       lineHeight: [...lineHeight].sort(),
     };
-  }, [editableModel]);
+  }, [draftModel]);
 
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
