@@ -24,6 +24,23 @@ type StagedContextType = {
 
 const StagedManifestContext = createContext<StagedContextType | undefined>(undefined);
 
+function buildRowIndex(model: TokenGraphModel) {
+  const index = new Map<
+    string,
+    { category: string; kind: string; value: TokenTypeValueItem }
+  >();
+
+  for (const tokenType of model.tokenTypes) {
+    for (const value of tokenType.values) {
+      index.set(value.id, {
+        category: tokenType.category,
+        kind: tokenType.kind,
+        value,
+      });
+    }
+  }
+}
+
 export function StagedManifestProvider({
   baseManifest,
   children,
