@@ -6,6 +6,7 @@ import { TokenGraphModel } from "../../tokens/lib/manifestAdapter";
 type StagedContextType = {
   baseModel: TokenGraphModel;
   draftModel: TokenGraphModel;
+  changedRows: ChangedRow[];
   updateRow: (rowId: string, update: Partial<any>) => void;
   resetDraft: () => void;
   applyDraft: () => Promise<Response>;
