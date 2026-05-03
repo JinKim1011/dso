@@ -14,7 +14,6 @@ type WorkbenchShellProps = {
 const result = buildTokenGraphModel(designTokensManifest);
 
 export function WorkbenchShell({ children }: WorkbenchShellProps) {
-  const stagedCount = Number(process.env.NEXT_PUBLIC_WORKBENCH_STAGED_COUNT ?? 12);
   const currentBranch =
     process.env.NEXT_PUBLIC_WORKBENCH_CURRENT_BRANCH ?? "style/add-color-design-tokens";
   const userName = process.env.NEXT_PUBLIC_WORKBENCH_USER_NAME ?? "jin1011";
