@@ -8,6 +8,7 @@ import {
   type NodeTypes,
 } from "@xyflow/react";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 import { WorkbenchShellActionsContext } from "../_shared/context/WorkbenchShellContext";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { RootFlowNode } from "./components/RootFlowNode";
@@ -19,10 +20,6 @@ import {
 } from "./components/TokenValueDetail";
 import type { TokenGraphModel } from "./lib/manifestAdapter";
 import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
-
-type TokensViewProps = {
-  model: TokenGraphModel;
-};
 
 type TokenRow = {
   id: string;
@@ -40,20 +37,16 @@ type InteractiveTokenTypeData = TokenTypeNodeData & {
   onSelectRow: (rowId: string) => void;
 };
 
-export function TokensView({ model }: TokensViewProps) {
+export function TokensView() {
   const shellActions = useContext(WorkbenchShellActionsContext);
-  const [editableModel, setEditableModel] = useState(model);
-
-  useEffect(() => {
-    setEditableModel(model);
-  }, [model]);
+  const { draftModel, updateRow } = useStagedManifest();
 
   const flowBase = useMemo(() => {
-    return mapTokenGraphToFlow(editableModel);
-  }, [editableModel]);
+    return mapTokenGraphToFlow(draftModel);
+  }, [draftModel]);
 
   const rows = useMemo<TokenRow[]>(() => {
-    return editableModel.tokenTypes.flatMap((tokenType) =>
+    return draftModel.tokenTypes.flatMap((tokenType) =>
       tokenType.values.map((valueItem) => ({
         id: valueItem.id,
         name: valueItem.name,
@@ -65,14 +58,14 @@ export function TokensView({ model }: TokensViewProps) {
         value: valueItem,
       })),
     );
-  }, [editableModel]);
+  }, [draftModel]);
 
   const typographyOptions = useMemo<TokenTypographyOptions>(() => {
     const fontSize = new Set<string>();
     const fontWeight = new Set<string>();
     const lineHeight = new Set<string>();
 
-    editableModel.tokenTypes
+    draftModel.tokenTypes
       .filter(
         (tokenType) =>
           tokenType.category === "typography" && tokenType.kind === "primitive",
@@ -104,27 +97,17 @@ export function TokensView({ model }: TokensViewProps) {
       fontWeight: [...fontWeight].sort(),
       lineHeight: [...lineHeight].sort(),
     };
-  }, [editableModel]);
+  }, [draftModel]);
 
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
-  const handleSaveRow = useCallback((rowId: string, update: TokenValueDetailUpdate) => {
-    setEditableModel((current) => ({
-      ...current,
-      tokenTypes: current.tokenTypes.map((tokenType) => ({
-        ...tokenType,
-        values: tokenType.values.map((valueItem) =>
-          valueItem.id === rowId
-            ? {
-                ...valueItem,
-                ...update,
-              }
-            : valueItem,
-        ),
-      })),
-    }));
-  }, []);
+  const handleSaveRow = useCallback(
+    (rowId: string, update: TokenValueDetailUpdate) => {
+      updateRow(rowId, update);
+    },
+    [updateRow],
+  );
 
   const selectedRow = useMemo(
     () => (selectedRowId === null ? null : (rowById.get(selectedRowId) ?? null)),
