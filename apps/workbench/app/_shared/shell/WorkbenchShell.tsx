@@ -1,5 +1,3 @@
-"use client";
-
 import { type ReactNode } from "react";
 import { TokenGraphModel } from "../../tokens/lib/manifestAdapter";
 import { StagedManifestProvider } from "../context/StagedManifestContext";
