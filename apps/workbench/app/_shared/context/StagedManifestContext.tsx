@@ -123,6 +123,7 @@ export function StagedManifestProvider({
     });
 
     if (response.ok) {
+      const { draftModel } = await response.json();
       setBaseModel(draftModel);
     }
 
