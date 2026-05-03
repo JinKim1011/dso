@@ -7,6 +7,7 @@ import {
   type ManifestAdapterResult,
   type NormalizedManifestEntry,
   type SupportedKind,
+  TokenGraphModel,
   type TokenTypeModel,
   type TokenTypeValueItem,
 } from "./types";
@@ -216,4 +217,27 @@ export function buildTokenGraphModel(
     },
     skippedCount,
   };
+}
+
+export function buildManifestFromGraph(
+  model: TokenGraphModel,
+): NormalizedManifestEntry[] {
+  const entries: NormalizedManifestEntry[] = [];
+
+  for (const tokenType of model.tokenTypes) {
+    entries.push({
+      category: tokenType.category,
+      type: tokenType.type,
+      kind: tokenType.kind,
+      value: tokenType.values.map((value) => value.value as string),
+      tokens: tokenType.values.map((value) => ({
+        name: value.name,
+        cssVar: value.cssVar,
+        value: value.value as string,
+        status: value.status,
+      })),
+    });
+  }
+
+  return entries;
 }
