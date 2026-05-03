@@ -35,7 +35,6 @@ export function StagedView() {
             <button
               aria-pressed={selectedRowId === row.rowId}
               onClick={() => setSelectedRowId(row.rowId)}
-              data-testId={row.rowId}
             >
               <span>
                 {row.nameBefore !== row.nameAfter
