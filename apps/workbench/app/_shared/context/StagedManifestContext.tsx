@@ -1,7 +1,11 @@
 "use client";
 
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
-import { TokenGraphModel, TokenTypeValueItem } from "../../tokens/lib/manifestAdapter";
+import {
+  buildManifestFromGraph,
+  TokenGraphModel,
+  TokenTypeValueItem,
+} from "../../tokens/lib/manifestAdapter";
 
 type ChangedRow = {
   rowId: string;
@@ -110,10 +114,12 @@ export function StagedManifestProvider({
   };
 
   const applyDraft = async (): Promise<Response> => {
+    const manifest = buildManifestFromGraph(draftModel);
+
     const response = await fetch("/api/manifest", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ manifest: draftModel }),
+      body: JSON.stringify({ manifest: manifest }),
     });
 
     if (response.ok) {
