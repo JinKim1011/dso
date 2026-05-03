@@ -11,11 +11,14 @@ export function StagedView() {
 
   const handleApply = async () => {
     setIsApplying(true);
-    const response = await applyDraft();
-    setIsApplying(false);
 
-    if (!response.ok) {
-      console.error("Failed to apply manifest");
+    try {
+      const response = await applyDraft();
+      if (!response.ok) {
+        console.error("Failed to apply manifest");
+      }
+    } finally {
+      setIsApplying(false);
     }
   };
 
