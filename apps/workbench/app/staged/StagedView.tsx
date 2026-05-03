@@ -41,8 +41,8 @@ export function StagedView() {
                   ? `${row.nameAfter}(prev. ${row.nameBefore})`
                   : row.nameBefore}
               </span>
-              <span>${row.category}</span>
-              <span>${row.kind}</span>
+              <span>{row.category}</span>
+              <span>{row.kind}</span>
             </button>
           </li>
         ))}
