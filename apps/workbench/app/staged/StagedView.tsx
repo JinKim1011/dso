@@ -53,13 +53,13 @@ export function StagedView() {
         <div data-testid={`detail: ${selected.rowId}`}>
           <div data-testid={`before: ${selected.rowId}`}>
             {selected.before.preview
-              ? `show ${selected.before.preview.kind} preview`
+              ? `show before ${selected.before.preview.kind} preview`
               : null}
             {selected.before.meta}
           </div>
           <div data-testid={`after: ${selected.rowId}`}>
             {selected.after.preview
-              ? `show ${selected.after.preview.kind} preview`
+              ? `show after ${selected.after.preview.kind} preview`
               : null}
             {selected.after.meta}
           </div>
