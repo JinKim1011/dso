@@ -100,7 +100,7 @@ describe("StagedView", () => {
     });
   });
 
-  it("appy button calls API and clear changes on success", async () => {
+  it("apply button calls API and clear changes on success", async () => {
     const base = makeStagedViewFixture();
     const value = base.tokenTypes[1]?.values[0];
 
