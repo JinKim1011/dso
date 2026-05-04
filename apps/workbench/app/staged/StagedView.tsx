@@ -34,7 +34,7 @@ export function StagedView() {
       </Button>
       <ul>
         {changedRows.map((row) => (
-          <li key={row.rowId} data-testId={row.rowId}>
+          <li key={row.rowId} data-testid={row.rowId}>
             <button
               aria-pressed={selectedRowId === row.rowId}
               onClick={() => setSelectedRowId(row.rowId)}
