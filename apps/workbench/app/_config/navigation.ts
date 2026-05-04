@@ -6,7 +6,7 @@ type IconComponent = React.ElementType<{
 }>;
 
 export type WorkbenchNavigationItem = {
-  id: "tokens" | "preview" | "staged";
+  id: "tokens" | "schema" | "staged";
   href: string;
   iconOnly: boolean;
   icon: IconComponent;
@@ -20,8 +20,8 @@ export const workbenchNavigation: WorkbenchNavigationItem[] = [
     icon: TokensIcon,
   },
   {
-    id: "preview",
-    href: "/preview",
+    id: "schema",
+    href: "/schema",
     iconOnly: true,
     icon: Component1Icon,
   },
