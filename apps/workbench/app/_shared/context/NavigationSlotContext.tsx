@@ -2,16 +2,16 @@
 
 import { createContext, ReactNode, useCallback, useMemo, useState } from "react";
 
-type WorkbenchShellActions = {
+type NavigationSlotActions = {
   setNavigationDetail: (node: ReactNode) => void;
   clearNavigationDetail: () => void;
 };
 
-export const WorkbenchShellActionsContext = createContext<WorkbenchShellActions | null>(
+export const NavigationSlotActionsContext = createContext<NavigationSlotActions | null>(
   null,
 );
 
-export const WorkbenchShellDetailContext = createContext<ReactNode>(null);
+export const NavigationSlotContentContext = createContext<ReactNode>(null);
 
 type WorkbenchShellProviderProps = {
   children: ReactNode;
@@ -35,10 +35,10 @@ export default function WorkbenchShellProvider({
   );
 
   return (
-    <WorkbenchShellActionsContext.Provider value={actions}>
-      <WorkbenchShellDetailContext.Provider value={navigationDetail}>
+    <NavigationSlotActionsContext.Provider value={actions}>
+      <NavigationSlotContentContext.Provider value={navigationDetail}>
         {children}
-      </WorkbenchShellDetailContext.Provider>
-    </WorkbenchShellActionsContext.Provider>
+      </NavigationSlotContentContext.Provider>
+    </NavigationSlotActionsContext.Provider>
   );
 }
