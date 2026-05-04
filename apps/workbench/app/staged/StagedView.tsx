@@ -26,24 +26,23 @@ export function StagedView() {
 
   return (
     <section className="py-largePlus flex flex-col items-center justify-center">
-      <Button variant="outlined" onClick={resetDraft}>
+      <Button variant="outlined" onClick={resetDraft} disabled={isApplying}>
         Discard all
       </Button>
-      <Button variant="fill" onClick={handleApply}>
+      <Button variant="fill" onClick={handleApply} disabled={isApplying}>
         {isApplying ? "Applying..." : "Apply"}
       </Button>
       <ul>
         {changedRows.map((row) => (
-          <li key={row.rowId}>
+          <li key={row.rowId} data-testid={row.rowId}>
             <button
               aria-pressed={selectedRowId === row.rowId}
               onClick={() => setSelectedRowId(row.rowId)}
             >
-              <span>
-                {row.nameBefore !== row.nameAfter
-                  ? `${row.nameAfter}(prev. ${row.nameBefore})`
-                  : row.nameBefore}
-              </span>
+              {row.nameBefore !== row.nameAfter
+                ? `${row.nameAfter}(prev. ${row.nameBefore})`
+                : row.nameBefore}
+
               <span>{row.category}</span>
               <span>{row.kind}</span>
             </button>
@@ -51,16 +50,16 @@ export function StagedView() {
         ))}
       </ul>
       {selected && (
-        <div data-testId={`detail: ${selected.rowId}`}>
-          <div data-testId={`before: ${selected.rowId}`}>
+        <div data-testid={`detail: ${selected.rowId}`}>
+          <div data-testid={`before: ${selected.rowId}`}>
             {selected.before.preview
-              ? `show ${selected.before.preview.kind} preview`
+              ? `show before ${selected.before.preview.kind} preview`
               : null}
             {selected.before.meta}
           </div>
-          <div data-testId={`after: ${selected.rowId}`}>
+          <div data-testid={`after: ${selected.rowId}`}>
             {selected.after.preview
-              ? `show ${selected.after.preview.kind} preview`
+              ? `show after ${selected.after.preview.kind} preview`
               : null}
             {selected.after.meta}
           </div>

@@ -8,8 +8,8 @@ import {
   type NodeTypes,
 } from "@xyflow/react";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { NavigationSlotActionsContext } from "../_shared/context/NavigationSlotContext";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
-import { WorkbenchShellActionsContext } from "../_shared/context/WorkbenchShellContext";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { RootFlowNode } from "./components/RootFlowNode";
 import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
@@ -38,7 +38,7 @@ type InteractiveTokenTypeData = TokenTypeNodeData & {
 };
 
 export function TokensView() {
-  const shellActions = useContext(WorkbenchShellActionsContext);
+  const shellActions = useContext(NavigationSlotActionsContext);
   const { draftModel, updateRow } = useStagedManifest();
 
   const flowBase = useMemo(() => {

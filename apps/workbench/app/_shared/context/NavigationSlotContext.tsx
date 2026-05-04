@@ -2,24 +2,24 @@
 
 import { createContext, ReactNode, useCallback, useMemo, useState } from "react";
 
-type WorkbenchShellActions = {
+type NavigationSlotActions = {
   setNavigationDetail: (node: ReactNode) => void;
   clearNavigationDetail: () => void;
 };
 
-export const WorkbenchShellActionsContext = createContext<WorkbenchShellActions | null>(
+export const NavigationSlotActionsContext = createContext<NavigationSlotActions | null>(
   null,
 );
 
-export const WorkbenchShellDetailContext = createContext<ReactNode>(null);
+export const NavigationSlotDetailContext = createContext<ReactNode>(null);
 
-type WorkbenchShellProviderProps = {
+type NavigationSlotProviderProps = {
   children: ReactNode;
 };
 
-export default function WorkbenchShellProvider({
+export default function NavigationSlotProvider({
   children,
-}: WorkbenchShellProviderProps) {
+}: NavigationSlotProviderProps) {
   const [navigationDetail, setNavigationDetail] = useState<ReactNode>(null);
 
   const clearNavigationDetail = useCallback(() => {
@@ -35,10 +35,10 @@ export default function WorkbenchShellProvider({
   );
 
   return (
-    <WorkbenchShellActionsContext.Provider value={actions}>
-      <WorkbenchShellDetailContext.Provider value={navigationDetail}>
+    <NavigationSlotActionsContext.Provider value={actions}>
+      <NavigationSlotDetailContext.Provider value={navigationDetail}>
         {children}
-      </WorkbenchShellDetailContext.Provider>
-    </WorkbenchShellActionsContext.Provider>
+      </NavigationSlotDetailContext.Provider>
+    </NavigationSlotActionsContext.Provider>
   );
 }
