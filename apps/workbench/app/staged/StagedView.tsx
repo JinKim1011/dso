@@ -26,7 +26,7 @@ export function StagedView() {
 
   return (
     <section className="py-largePlus flex flex-col items-center justify-center">
-      <Button variant="outlined" onClick={resetDraft}>
+      <Button variant="outlined" onClick={resetDraft} disabled={isApplying}>
         Discard all
       </Button>
       <Button variant="fill" onClick={handleApply} disabled={isApplying}>
