@@ -149,7 +149,7 @@ describe("StagedView", () => {
     });
   });
 
-  it("appy button shows applying... and is disabled while pending", async () => {
+  it("apply button shows applying... and is disabled while pending", async () => {
     const base = makeStagedViewFixture();
     const value = base.tokenTypes[1]?.values[0];
     if (!value) throw new Error("Expected spacing token value in fixture");
