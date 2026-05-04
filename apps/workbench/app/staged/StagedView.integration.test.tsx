@@ -1,5 +1,13 @@
-import { describe, it } from "vitest";
+import { render, screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { useEffect } from "react";
+import { describe, expect, it, vi } from "vitest";
+import {
+  StagedManifestProvider,
+  useStagedManifest,
+} from "../_shared/context/StagedManifestContext";
 import { makeStagedViewFixture } from "./lib/fixtures/StagedViewFixture";
+import { StagedView } from "./StagedView";
 
 function Draft({ rowId, update }: { rowId: string; update: Partial<any> }) {
   const { updateRow } = useStagedManifest();
