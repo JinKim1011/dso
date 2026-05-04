@@ -39,11 +39,10 @@ export function StagedView() {
               aria-pressed={selectedRowId === row.rowId}
               onClick={() => setSelectedRowId(row.rowId)}
             >
-              <span>
-                {row.nameBefore !== row.nameAfter
-                  ? `${row.nameAfter}(prev. ${row.nameBefore})`
-                  : row.nameBefore}
-              </span>
+              {row.nameBefore !== row.nameAfter
+                ? `${row.nameAfter}(prev. ${row.nameBefore})`
+                : row.nameBefore}
+
               <span>{row.category}</span>
               <span>{row.kind}</span>
             </button>
