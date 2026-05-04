@@ -143,5 +143,54 @@ describe("StagedView", () => {
 
   it("appy button shows applying... and is disabled while pending", async () => {
     const base = makeStagedViewFixture();
+    const value = base.tokenTypes[1]?.values[0];
+    if (!value) throw new Error("Expected spacing token value in fixture");
+
+    let resolveFetch: (value: Response) => void;
+    const pedningFetch = new Promise<Response>((resolve) => {
+      resolveFetch = resolve;
+    });
+    global.fetch = vi.fn(() => pedningFetch) as any;
+
+    render(
+      <StagedManifestProvider baseManifest={base}>
+        <Draft
+          rowId={value.id}
+          update={{
+            value: "0.25rem",
+          }}
+        />
+        <StagedView></StagedView>
+      </StagedManifestProvider>,
+    );
+
+    const applyButton = await screen.findByRole("button", { name: "Apply" });
+
+    await userEvent.click(applyButton);
+
+    await expect(applyButton).toBeDisabled();
+    await expect(applyButton).toHaveTextContent(/^Applying...$/);
+
+    const updatedDraft = {
+      ...base,
+      tokenTypes: base.tokenTypes.map((tokenType) => ({
+        ...tokenType,
+        values: tokenType.values.map((row) =>
+          row.id === value.id ? { ...row, value: "0.25rem" } : row,
+        ),
+      })),
+    };
+
+    resolveFetch!(
+      new Response(JSON.stringify({ draftModel: updatedDraft }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    await waitFor(() => {
+      expect(applyButton).toHaveTextContent(/^Apply$/);
+      expect(applyButton).not.toBeDisabled();
+    });
   });
 });
