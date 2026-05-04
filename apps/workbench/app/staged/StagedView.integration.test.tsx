@@ -94,6 +94,51 @@ describe("StagedView", () => {
 
   it("appy button calls API and clear changes on success", async () => {
     const base = makeStagedViewFixture();
+    const value = base.tokenTypes[1]?.values[0];
+
+    if (!value) throw new Error("Expected spacing token value in fixture");
+
+    const updatedDraft = {
+      ...base,
+      tokenTypes: base.tokenTypes.map((tokenType) => ({
+        ...tokenType,
+        values: tokenType.values.map((row) =>
+          row.id === value.id ? { ...row, value: "0.25rem" } : row,
+        ),
+      })),
+    };
+
+    const fakeFetch = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ draftModel: updatedDraft }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+    );
+
+    global.fetch = fakeFetch as any;
+
+    render(
+      <StagedManifestProvider baseManifest={base}>
+        <Draft
+          rowId={value.id}
+          update={{
+            value: "0.25rem",
+          }}
+        />
+        <StagedView></StagedView>
+      </StagedManifestProvider>,
+    );
+
+    await screen.findByTestId(value.id);
+
+    const applyButton = await screen.findByRole("button", { name: "Apply" });
+    await userEvent.click(applyButton);
+
+    await waitFor(() => {
+      expect(fakeFetch).toHaveBeenCalled();
+      expect(screen.findByTestId(value.id)).toBeNull;
+    });
   });
 
   it("appy button shows applying... and is disabled while pending", async () => {
