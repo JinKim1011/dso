@@ -2,10 +2,10 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useContext } from "react";
 import { describe, expect, it } from "vitest";
+import NavigationSlotProvider, {
+  NavigationSlotDetailContext,
+} from "../_shared/context/NavigationSlotContext";
 import { StagedManifestProvider } from "../_shared/context/StagedManifestContext";
-import WorkbenchShellProvider, {
-  WorkbenchShellDetailContext,
-} from "../_shared/context/WorkbenchShellContext";
 import happyManifest from "./lib/manifest/fixtures/happy-manifest.json";
 import { buildTokenGraphModel } from "./lib/manifestAdapter";
 import { TokensView } from "./TokensView";
@@ -16,9 +16,9 @@ describe("Container-level behavior, TokensView", () => {
   it("renders root heading/container", async () => {
     render(
       <StagedManifestProvider baseManifest={result.model}>
-        <WorkbenchShellProvider>
+        <NavigationSlotProvider>
           <TokensView />
-        </WorkbenchShellProvider>
+        </NavigationSlotProvider>
       </StagedManifestProvider>,
     );
     const root = result.model.root;
@@ -31,9 +31,9 @@ describe("Container-level behavior, TokensView", () => {
   it("renders categories", async () => {
     render(
       <StagedManifestProvider baseManifest={result.model}>
-        <WorkbenchShellProvider>
+        <NavigationSlotProvider>
           <TokensView />
-        </WorkbenchShellProvider>
+        </NavigationSlotProvider>
       </StagedManifestProvider>,
     );
     const categories = result.model.categories;
@@ -47,9 +47,9 @@ describe("Container-level behavior, TokensView", () => {
   it("does not duplicate token type groups across categories", async () => {
     render(
       <StagedManifestProvider baseManifest={result.model}>
-        <WorkbenchShellProvider>
+        <NavigationSlotProvider>
           <TokensView />
-        </WorkbenchShellProvider>
+        </NavigationSlotProvider>
       </StagedManifestProvider>,
     );
     const allTokenTypes = result.model.tokenTypes;
@@ -65,16 +65,16 @@ describe("Container-level behavior, TokensView", () => {
     if (!group) throw new Error("Expected background token type in happy fixture");
 
     function ShellDetailSlot() {
-      const slot = useContext(WorkbenchShellDetailContext);
+      const slot = useContext(NavigationSlotDetailContext);
       return <div data-testid="shell-detail">{slot}</div>;
     }
 
     render(
       <StagedManifestProvider baseManifest={result.model}>
-        <WorkbenchShellProvider>
+        <NavigationSlotProvider>
           <ShellDetailSlot />
           <TokensView />
-        </WorkbenchShellProvider>
+        </NavigationSlotProvider>
       </StagedManifestProvider>,
     );
 
@@ -94,16 +94,16 @@ describe("Container-level behavior, TokensView", () => {
     if (!group) throw new Error("Expected at least one token type in fixture");
 
     function ShellDetailSlot() {
-      const slot = useContext(WorkbenchShellDetailContext);
+      const slot = useContext(NavigationSlotDetailContext);
       return <div data-testid="shell-detail">{slot}</div>;
     }
 
     render(
       <StagedManifestProvider baseManifest={result.model}>
-        <WorkbenchShellProvider>
+        <NavigationSlotProvider>
           <ShellDetailSlot />
           <TokensView />
-        </WorkbenchShellProvider>
+        </NavigationSlotProvider>
       </StagedManifestProvider>,
     );
 
