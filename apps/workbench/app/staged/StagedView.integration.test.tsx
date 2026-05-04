@@ -96,7 +96,7 @@ describe("StagedView", () => {
     await userEvent.click(resetButton);
 
     await waitFor(() => {
-      expect(screen.findByTestId(value.id)).toBeNull;
+      expect(screen.queryByTestId(value.id)).not.toBeInTheDocument();
     });
   });
 
@@ -145,7 +145,7 @@ describe("StagedView", () => {
 
     await waitFor(() => {
       expect(fakeFetch).toHaveBeenCalled();
-      expect(screen.findByTestId(value.id)).toBeNull;
+      expect(screen.queryByTestId(value.id)).not.toBeInTheDocument();
     });
   });
 
