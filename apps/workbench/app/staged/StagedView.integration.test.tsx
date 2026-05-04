@@ -67,6 +67,29 @@ describe("StagedView", () => {
 
   it("discard all button resets draft", async () => {
     const base = makeStagedViewFixture();
+    const value = base.tokenTypes[1]?.values[0];
+
+    if (!value) throw new Error("Expected spacing token value in fixture");
+
+    render(
+      <StagedManifestProvider baseManifest={base}>
+        <Draft
+          rowId={value.id}
+          update={{
+            value: "0.25rem",
+          }}
+        ></Draft>
+        <StagedView></StagedView>
+      </StagedManifestProvider>,
+    );
+
+    const resetButton = await screen.findByRole("button", { name: "Discard all" });
+
+    await userEvent.click(resetButton);
+
+    await waitFor(() => {
+      expect(screen.findByTestId(value.id)).toBeNull;
+    });
   });
 
   it("appy button calls API and clear changes on success", async () => {
