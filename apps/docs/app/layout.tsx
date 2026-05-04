@@ -16,9 +16,15 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              const theme = localStorage.getItem('dso-theme') || 
-                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-              document.documentElement.setAttribute('data-theme', theme);
+              const saved = localStorage.getItem('dso-theme');
+              const mode = saved === 'light' || saved === 'dark' || saved === 'system'
+                ? saved
+                : 'system';
+              const resolved = mode === 'system'
+                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                : mode;
+              document.documentElement.setAttribute('data-theme', resolved);
+              document.documentElement.setAttribute('data-theme-mode', mode);
             `,
           }}
         />
