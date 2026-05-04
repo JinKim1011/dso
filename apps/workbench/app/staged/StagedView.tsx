@@ -29,7 +29,7 @@ export function StagedView() {
       <Button variant="outlined" onClick={resetDraft}>
         Discard all
       </Button>
-      <Button variant="fill" onClick={handleApply}>
+      <Button variant="fill" onClick={handleApply} disabled={isApplying}>
         {isApplying ? "Applying..." : "Apply"}
       </Button>
       <ul>
