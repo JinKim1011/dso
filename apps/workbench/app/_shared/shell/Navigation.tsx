@@ -4,12 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useContext } from "react";
 import { workbenchNavigation } from "../../_config/navigation";
+import { NavigationSlotContentContext } from "../context/NavigationSlotContext";
 import { useStagedManifest } from "../context/StagedManifestContext";
-import { WorkbenchShellDetailContext } from "../context/WorkbenchShellContext";
 
 export function Navigation() {
   const path = usePathname();
-  const navigationSlot = useContext(WorkbenchShellDetailContext);
+  const navigationSlot = useContext(NavigationSlotContentContext);
   const { changedRowCount } = useStagedManifest();
   const stagedCount = changedRowCount;
 
