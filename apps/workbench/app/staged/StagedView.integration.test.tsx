@@ -12,6 +12,22 @@ function Draft({ rowId, update }: { rowId: string; update: Partial<any> }) {
 describe("StagedView", () => {
   it("shows changed rows after an edit", async () => {
     const base = makeStagedViewFixture();
+    const value = base.tokenTypes[0]?.values[0];
+
+    if (!value) throw new Error("Expected color token value in fixture");
+
+    const beforeName = value.name;
+
+    render(
+      <StagedManifestProvider baseManifest={base}>
+        <Draft rowId={value.id} update={{ name: "brand" }}></Draft>
+        <StagedView></StagedView>
+      </StagedManifestProvider>,
+    );
+
+    const list = await screen.findByTestId(value.id);
+    const button = await within(list).findByText(`brand(prev. ${beforeName})`);
+    expect(button).toBeInTheDocument();
   });
 
   it("selecting a row shows before/after detail", async () => {
