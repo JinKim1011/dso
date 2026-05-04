@@ -155,10 +155,10 @@ describe("StagedView", () => {
     if (!value) throw new Error("Expected spacing token value in fixture");
 
     let resolveFetch: (value: Response) => void;
-    const pedningFetch = new Promise<Response>((resolve) => {
+    const pendingFetch = new Promise<Response>((resolve) => {
       resolveFetch = resolve;
     });
-    global.fetch = vi.fn(() => pedningFetch) as any;
+    global.fetch = vi.fn(() => pendingFetch) as any;
 
     render(
       <StagedManifestProvider baseManifest={base}>
