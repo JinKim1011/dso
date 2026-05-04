@@ -1,6 +1,14 @@
 import { describe, it } from "vitest";
 import { makeStagedViewFixture } from "./lib/fixtures/StagedViewFixture";
 
+function Draft({ rowId, update }: { rowId: string; update: Partial<any> }) {
+  const { updateRow } = useStagedManifest();
+  useEffect(() => {
+    updateRow(rowId, update);
+  }, [rowId, update]);
+  return null;
+}
+
 describe("StagedView", () => {
   it("shows changed rows after an edit", async () => {
     const base = makeStagedViewFixture();
