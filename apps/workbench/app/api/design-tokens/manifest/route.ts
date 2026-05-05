@@ -14,8 +14,8 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const manifest = body.manifest;
-    if (!manifest) {
+    const manifest = body?.manifest;
+    if (manifest === undefined) {
       return NextResponse.json({ ok: false, error: "missing manifest" }, { status: 400 });
     }
 
