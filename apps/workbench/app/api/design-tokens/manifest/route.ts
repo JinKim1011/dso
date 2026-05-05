@@ -23,7 +23,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: "invalid manifest" }, { status: 400 });
     }
 
-    const filePath = path.join(process.cwd(), "design-tokens-manifest.json");
+    const repoRoot = path.join(__dirname, "../../../../..");
+    const defaultPath = path.join(repoRoot, "design-tokens-manifest.json");
+    const filePath = process.env.DSO_MANIFEST_PATH ?? defaultPath;
     fs.writeFileSync(filePath, JSON.stringify(manifest, null, 2), "utf-8");
 
     return NextResponse.json({ ok: true, manifest });
