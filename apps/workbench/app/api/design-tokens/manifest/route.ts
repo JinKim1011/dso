@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "fs/promises";
 import { NextResponse } from "next/server";
 import path from "path";
 
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     const repoRoot = path.join(__dirname, "../../../../..");
     const defaultPath = path.join(repoRoot, "design-tokens-manifest.json");
     const filePath = process.env.DSO_MANIFEST_PATH ?? defaultPath;
-    fs.writeFileSync(filePath, JSON.stringify(manifest, null, 2), "utf-8");
+    await fs.writeFile(filePath, JSON.stringify(manifest, null, 2), "utf-8");
 
     return NextResponse.json({ ok: true, manifest });
   } catch (err) {
