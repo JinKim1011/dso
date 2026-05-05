@@ -13,6 +13,7 @@ type ChangedRow = {
   nameAfter: string;
   category: string;
   kind: string;
+  tokenType: string;
   before: TokenTypeValueItem;
   after: TokenTypeValueItem;
 };
@@ -79,6 +80,7 @@ function buildChangedRows(
         nameAfter: draftRow.name,
         category: tokenType.category,
         kind: tokenType.kind,
+        tokenType: tokenType.type,
         before: baseRow?.value ?? draftRow,
         after: draftRow,
       });
