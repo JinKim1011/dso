@@ -116,14 +116,13 @@ export function StagedManifestProvider({
   const applyDraft = async (): Promise<Response> => {
     const manifest = buildManifestFromGraph(draftModel);
 
-    const response = await fetch("/api/manifest", {
+    const response = await fetch("/api/design-tokens/manifest", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ manifest: manifest }),
     });
 
     if (response.ok) {
-      const { draftModel } = await response.json();
       setBaseModel(draftModel);
     }
 
