@@ -78,7 +78,15 @@ The current direction assumes a few practical constraints.
 - hardcoded assumptions that cannot be validated
 - large migrations before the semantic layer is stable
 
-## 4. Initialization Path
+## 4. Persistence Model
+
+DSO persists design tokens and the manifest as versioned files in the repository, such as JSON and TypeScript outputs. It does not require a database. The workbench's manifest-save route is a dev-time helper for writing those files locally, not a public API for production apps or end users.
+
+The storage location should be defined by a repo-level config file that is committed with the project, similar to how Storybook uses `main.ts` for repo-scoped setup. That keeps the manifest path explicit and makes it easy for teams to move the output into a custom folder if needed.
+
+When the repo config is absent, the current default is the repository root `design-tokens-manifest.json`.
+
+## 5. Initialization Path
 
 There are two initialization paths in the PoC.
 
@@ -103,7 +111,7 @@ This approach is cleaner because the system can be designed around inference-rea
 
 If the goal is to prove the DSO direction, start from the DSO template first. Use direct scratch setup when the intent is to explore a custom flow.
 
-## 5. Step-by-Step Usage
+## 6. Step-by-Step Usage
 
 ### Step 1: Install the package
 
@@ -219,7 +227,7 @@ The ideal input shape is:
 
 This is the format that will make LLM or agent ingestion easier later.
 
-## 6. Practical Workflow Summary
+## 7. Practical Workflow Summary
 
 For the current PoC, the recommended loop is:
 
@@ -235,6 +243,6 @@ For the current PoC, the recommended loop is:
 10. connect it to related tokens
 11. keep the structure ready for future ingestion
 
-## 7. Draft Status
+## 8. Draft Status
 
 This document is intentionally incomplete. It should be updated as the package flow, terminal init flow, workbench flow, and template strategy become more concrete.
