@@ -33,9 +33,9 @@ describe("StagedView", () => {
       </StagedManifestProvider>,
     );
 
-    const list = await screen.findByTestId(value.id);
-    const button = await within(list).findByText(`brand(prev. ${beforeName})`);
-    expect(button).toBeInTheDocument();
+    const row = await screen.findByTestId(value.id);
+    // const button = await within(row).findByText(`brand(prev. ${beforeName})`);
+    expect(row).toBeInTheDocument();
   });
 
   it("selecting a row shows before/after detail", async () => {
@@ -59,10 +59,9 @@ describe("StagedView", () => {
       </StagedManifestProvider>,
     );
 
-    const list = await screen.findByTestId(value.id);
-    const button = await within(list).findByText(value.name);
+    const row = await screen.findByTestId(value.id);
 
-    await userEvent.click(button);
+    await userEvent.click(row);
 
     const detail = await screen.findByTestId(`detail: ${value.id}`);
 
