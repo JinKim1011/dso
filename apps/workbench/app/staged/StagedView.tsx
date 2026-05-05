@@ -55,7 +55,7 @@ export function StagedView() {
                   : row.nameBefore}
               </td>
               <td>{row.category}</td>
-              <td>token type</td>
+              <td>{row.tokenType}</td>
               <td>{row.kind}</td>
             </tr>
           ))}
