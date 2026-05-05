@@ -69,6 +69,14 @@ Define and inspect token schema structures, including intent, axes, context, and
 
 Review and manage token changes before applying them to your manifest. Useful for testing multiple changes together.
 
+### Persistence & Configuration
+
+The staged editor persists changes by calling the internal manifest-save route currently exposed at `/api/design-tokens/manifest`. This endpoint is for local DSO workbench use only; it is not a public API for consumer apps or production runtime use.
+
+DSO persists design tokens and the manifest as versioned files in the repository, such as JSON or TypeScript outputs. It does not require a database. The output location should be defined by a repo-level config file that is checked into source control, so teams can keep the storage path aligned with their project layout without relying on ad hoc environment-specific settings.
+
+By default, the workbench writes to the repository root `design-tokens-manifest.json`, but that location should remain configurable through the repo config as the implementation evolves.
+
 ## Future Direction
 
 The workbench should eventually feed structured token data to downstream tooling. The intended shape is not just a token JSON file, but token JSON plus a relationship graph that captures inheritance, aliases, references, and usage rules.
