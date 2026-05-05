@@ -32,23 +32,35 @@ export function StagedView() {
       <Button variant="fill" onClick={handleApply} disabled={isApplying}>
         {isApplying ? "Applying..." : "Apply"}
       </Button>
-      <ul>
-        {changedRows.map((row) => (
-          <li key={row.rowId} data-testid={row.rowId}>
-            <button
-              aria-pressed={selectedRowId === row.rowId}
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">NAME</th>
+            <th scope="col">CATEGORY</th>
+            <th scope="col">TOKEN TYPE</th>
+            <th scope="col">KIND</th>
+          </tr>
+        </thead>
+        <tbody>
+          {changedRows.map((row) => (
+            <tr
+              key={row.rowId}
+              data-testid={row.rowId}
+              aria-selected={selectedRowId === row.rowId}
               onClick={() => setSelectedRowId(row.rowId)}
             >
-              {row.nameBefore !== row.nameAfter
-                ? `${row.nameAfter}(prev. ${row.nameBefore})`
-                : row.nameBefore}
-
-              <span>{row.category}</span>
-              <span>{row.kind}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
+              <td>
+                {row.nameBefore !== row.nameAfter
+                  ? `${row.nameAfter}(prev. ${row.nameBefore})`
+                  : row.nameBefore}
+              </td>
+              <td>{row.category}</td>
+              <td>token type</td>
+              <td>{row.kind}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       {selected && (
         <div data-testid={`detail: ${selected.rowId}`}>
           <div data-testid={`before: ${selected.rowId}`}>
