@@ -1,0 +1,21 @@
+import { NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const manifest = body.manifest;
+    if (!manifest) {
+      return NextResponse.json({ ok: false, error: "missing manifest" }, { status: 400 });
+    }
+
+    const filePath = path.join(process.cwd(), "design-tokens-manifest.json");
+    fs.writeFileSync(filePath, JSON.stringify(manifest, null, 2), "utf-8");
+
+    return NextResponse.json({ ok: true, manifest });
+  } catch (err) {
+    console.error("Failed to write manifest:", err);
+    return NextResponse.json({ ok: false, error: String(err) }, { status: 500 });
+  }
+}
