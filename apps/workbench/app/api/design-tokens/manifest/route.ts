@@ -19,6 +19,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: "missing manifest" }, { status: 400 });
     }
 
+    if (!Array.isArray(manifest)) {
+      return NextResponse.json({ ok: false, error: "invalid manifest" }, { status: 400 });
+    }
+
     const filePath = path.join(process.cwd(), "design-tokens-manifest.json");
     fs.writeFileSync(filePath, JSON.stringify(manifest, null, 2), "utf-8");
 
