@@ -5,7 +5,8 @@ import { useState } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 
 export function StagedView() {
-  const { changedRows, resetDraft, applyDraft } = useStagedManifest();
+  const { changedRows, resetDraft, applyDraft, discardRow, applyRow } =
+    useStagedManifest();
   const [isApplying, setIsApplying] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
