@@ -57,6 +57,30 @@ export function StagedView() {
               <td>{row.category}</td>
               <td>{row.tokenType}</td>
               <td>{row.kind}</td>
+              <td>
+                <Button
+                  variant="void"
+                  aria-label="discard-row"
+                  inline={true}
+                  iconOnly={true}
+                  leftIcon={ResetIcon}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    discardRow(row.rowId);
+                  }}
+                />
+                <Button
+                  variant="void"
+                  aria-label="apply-row"
+                  inline={true}
+                  iconOnly={true}
+                  leftIcon={CheckIcon}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    applyRow(row.rowId);
+                  }}
+                />
+              </td>
             </tr>
           ))}
         </tbody>
