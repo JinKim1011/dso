@@ -89,6 +89,33 @@ function buildChangedRows(
   return changedRows;
 }
 
+function findRowById(
+  model: TokenGraphModel,
+  rowId: string,
+): TokenTypeValueItem | undefined {
+  for (const tokenType of model.tokenTypes) {
+    const found = tokenType.values.find((value) => value.id === rowId);
+
+    if (found) return found;
+  }
+
+  return undefined;
+}
+
+function replaceRowInModel(
+  model: TokenGraphModel,
+  rowId: string,
+  replacement: TokenTypeValueItem,
+): TokenGraphModel {
+  return {
+    ...model,
+    tokenTypes: model.tokenTypes.map((tokenType) => ({
+      ...tokenType,
+      values: tokenType.values.map((value) => (value.id === rowId ? replacement : value)),
+    })),
+  };
+}
+
 export function StagedManifestProvider({
   baseManifest,
   children,
@@ -98,35 +125,6 @@ export function StagedManifestProvider({
 }) {
   const [baseModel, setBaseModel] = useState<TokenGraphModel>(baseManifest);
   const [draftModel, setDraftModel] = useState<TokenGraphModel>(baseManifest);
-
-  const findRowById = (
-    model: TokenGraphModel,
-    rowId: string,
-  ): TokenTypeValueItem | undefined => {
-    for (const tokenType of model.tokenTypes) {
-      const found = tokenType.values.find((value) => value.id === rowId);
-
-      if (found) return found;
-    }
-
-    return undefined;
-  };
-
-  const replaceRowInModel = (
-    model: TokenGraphModel,
-    rowId: string,
-    replacement: TokenTypeValueItem,
-  ): TokenGraphModel => {
-    return {
-      ...model,
-      tokenTypes: model.tokenTypes.map((tokenType) => ({
-        ...tokenType,
-        values: tokenType.values.map((value) =>
-          value.id === rowId ? replacement : value,
-        ),
-      })),
-    };
-  };
 
   const updateRow = (rowId: string, update: Partial<any>) => {
     setDraftModel((current) => ({
