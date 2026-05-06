@@ -99,6 +99,19 @@ export function StagedManifestProvider({
   const [baseModel, setBaseModel] = useState<TokenGraphModel>(baseManifest);
   const [draftModel, setDraftModel] = useState<TokenGraphModel>(baseManifest);
 
+  const findRowById = (
+    model: TokenGraphModel,
+    rowId: string,
+  ): TokenTypeValueItem | undefined => {
+    for (const tokenType of model.tokenTypes) {
+      const found = tokenType.values.find((value) => value.id === rowId);
+
+      if (found) return found;
+    }
+
+    return undefined;
+  };
+
   const updateRow = (rowId: string, update: Partial<any>) => {
     setDraftModel((current) => ({
       ...current,
