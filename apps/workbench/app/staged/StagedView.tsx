@@ -17,7 +17,20 @@ export function StagedView() {
     try {
       const response = await applyDraft();
       if (!response.ok) {
-        console.error("Failed to apply manifest");
+        console.error("Failed to apply manifest(bulk)");
+      }
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  const handleRowApply = async (rowId: string) => {
+    setIsApplying(true);
+
+    try {
+      const response = await applyRow(rowId);
+      if (!response.ok) {
+        console.error("Failed to apply manifest(row)");
       }
     } finally {
       setIsApplying(false);
@@ -80,7 +93,7 @@ export function StagedView() {
                   leftIcon={CheckIcon}
                   onClick={(event) => {
                     event.stopPropagation();
-                    applyRow(row.rowId);
+                    handleRowApply(row.rowId);
                   }}
                 />
               </td>
