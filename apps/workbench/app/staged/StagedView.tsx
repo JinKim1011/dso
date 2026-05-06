@@ -31,7 +31,7 @@ export function StagedView() {
       <Button variant="outlined" onClick={resetDraft} disabled={isApplying}>
         Discard all
       </Button>
-      <Button variant="fill" onClick={handleApply} disabled={isApplying}>
+      <Button variant="fill" onClick={handleBulkApply} disabled={isApplying}>
         {isApplying ? "Applying..." : "Apply"}
       </Button>
       <table>
