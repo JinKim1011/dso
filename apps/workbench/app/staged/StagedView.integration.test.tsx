@@ -200,4 +200,44 @@ describe("StagedView", () => {
       expect(applyButton).not.toBeDisabled();
     });
   });
+
+  it("discard per-row button replacing changed row in model with the unchaged version", async () => {
+    const base = makeStagedViewFixture();
+    const rowA = base.tokenTypes[1]?.values[0];
+    const rowB = base.tokenTypes[1]?.values[1];
+    const rowC = base.tokenTypes[1]?.values[2];
+
+    if (!rowA) throw new Error("Expected spacing micro token value in fixture");
+    if (!rowB) throw new Error("Expected spacing mini token value in fixture");
+    if (!rowC) throw new Error("Expected spacing small token value in fixture");
+
+    const drafts = [
+      { rowId: rowA.id, update: { value: "0.25rem" } },
+      { rowId: rowB.id, update: { value: "0.5rem" } },
+      { rowId: rowC.id, update: { value: "0.75rem" } },
+    ];
+
+    render(
+      <StagedManifestProvider baseManifest={base}>
+        {drafts.map((drat) => (
+          <Draft rowId={drat.rowId} update={drat.update} />
+        ))}
+        <StagedView></StagedView>
+      </StagedManifestProvider>,
+    );
+
+    const tableRowA = await screen.findByTestId(rowA.id);
+
+    const discardRowA = await within(tableRowA).findByRole("button", {
+      name: "discard-row",
+    });
+
+    await userEvent.click(discardRowA);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId(rowA.id)).not.toBeInTheDocument();
+      expect(screen.queryByTestId(rowB.id)).toBeInTheDocument();
+      expect(screen.queryByTestId(rowC.id)).toBeInTheDocument();
+    });
+  });
 });
