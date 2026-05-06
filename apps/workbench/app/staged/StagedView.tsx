@@ -39,6 +39,7 @@ export function StagedView() {
             <th scope="col">CATEGORY</th>
             <th scope="col">TOKEN TYPE</th>
             <th scope="col">KIND</th>
+            <th scope="col"> </th>
           </tr>
         </thead>
         <tbody>
