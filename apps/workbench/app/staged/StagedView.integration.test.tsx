@@ -240,4 +240,75 @@ describe("StagedView", () => {
       expect(screen.queryByTestId(rowC.id)).toBeInTheDocument();
     });
   });
+
+  it("apply the API call per row, and only update the draft row on success while other rows unchaged", async () => {
+    const base = makeStagedViewFixture();
+    const rowA = base.tokenTypes[1]?.values[0];
+    const rowB = base.tokenTypes[1]?.values[1];
+    const rowC = base.tokenTypes[1]?.values[2];
+
+    if (!rowA) throw new Error("Expected spacing micro token value in fixture");
+    if (!rowB) throw new Error("Expected spacing mini token value in fixture");
+    if (!rowC) throw new Error("Expected spacing small token value in fixture");
+
+    const drafts = [
+      { rowId: rowA.id, update: { value: "0.25rem" } },
+      { rowId: rowB.id, update: { value: "0.5rem" } },
+      { rowId: rowC.id, update: { value: "0.75rem" } },
+    ];
+
+    const draftByRowId = drafts.reduce<Record<string, { value: string }>>(
+      (accumulator, { rowId, update }) => {
+        accumulator[rowId] = update;
+        return accumulator;
+      },
+      {},
+    );
+
+    const updatedDraft = {
+      ...base,
+      tokenTypes: base.tokenTypes.map((tokenType) => ({
+        ...tokenType,
+        values: tokenType.values.map((row) =>
+          draftByRowId[row.id] ? { ...row, ...draftByRowId[row.id] } : row,
+        ),
+      })),
+    };
+
+    const fakeFetch = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ draftModel: updatedDraft }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+    );
+
+    global.fetch = fakeFetch as any;
+
+    render(
+      <StagedManifestProvider baseManifest={base}>
+        {drafts.map((drat) => (
+          <Draft rowId={drat.rowId} update={drat.update} />
+        ))}
+        <StagedView></StagedView>
+      </StagedManifestProvider>,
+    );
+
+    await screen.findByTestId(rowA.id);
+    await screen.findByTestId(rowB.id);
+    await screen.findByTestId(rowC.id);
+
+    const tableRowA = await screen.findByTestId(rowA.id);
+    const applyRowA = await within(tableRowA).findByRole("button", { name: "apply-row" });
+
+    await userEvent.click(applyRowA);
+
+    await waitFor(() => {
+      expect(fakeFetch).toHaveBeenCalled();
+
+      expect(screen.queryByTestId(rowA.id)).not.toBeInTheDocument();
+      expect(screen.queryByTestId(rowB.id)).toBeInTheDocument();
+      expect(screen.queryByTestId(rowC.id)).toBeInTheDocument();
+    });
+  });
 });
