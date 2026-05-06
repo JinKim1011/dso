@@ -120,29 +120,34 @@ describe("StagedView", () => {
         }),
     );
 
+    const originalFetch = global.fetch;
     global.fetch = fakeFetch as any;
 
-    render(
-      <StagedManifestProvider baseManifest={base}>
-        <Draft
-          rowId={value.id}
-          update={{
-            value: "0.25rem",
-          }}
-        />
-        <StagedView></StagedView>
-      </StagedManifestProvider>,
-    );
+    try {
+      render(
+        <StagedManifestProvider baseManifest={base}>
+          <Draft
+            rowId={value.id}
+            update={{
+              value: "0.25rem",
+            }}
+          />
+          <StagedView></StagedView>
+        </StagedManifestProvider>,
+      );
 
-    await screen.findByTestId(value.id);
+      await screen.findByTestId(value.id);
 
-    const applyButton = await screen.findByRole("button", { name: "Apply" });
-    await userEvent.click(applyButton);
+      const applyButton = await screen.findByRole("button", { name: "Apply" });
+      await userEvent.click(applyButton);
 
-    await waitFor(() => {
-      expect(fakeFetch).toHaveBeenCalled();
-      expect(screen.queryByTestId(value.id)).not.toBeInTheDocument();
-    });
+      await waitFor(() => {
+        expect(fakeFetch).toHaveBeenCalled();
+        expect(screen.queryByTestId(value.id)).not.toBeInTheDocument();
+      });
+    } finally {
+      global.fetch = originalFetch;
+    }
   });
 
   it("apply button shows applying... and is disabled while pending", async () => {
