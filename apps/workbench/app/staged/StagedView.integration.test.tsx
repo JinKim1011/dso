@@ -280,32 +280,39 @@ describe("StagedView", () => {
         }),
     );
 
+    const originalFetch = global.fetch;
     global.fetch = fakeFetch as any;
 
-    render(
-      <StagedManifestProvider baseManifest={base}>
-        {drafts.map((draft) => (
-          <Draft key={draft.rowId} rowId={draft.rowId} update={draft.update} />
-        ))}
-        <StagedView></StagedView>
-      </StagedManifestProvider>,
-    );
+    try {
+      render(
+        <StagedManifestProvider baseManifest={base}>
+          {drafts.map((draft) => (
+            <Draft key={draft.rowId} rowId={draft.rowId} update={draft.update} />
+          ))}
+          <StagedView></StagedView>
+        </StagedManifestProvider>,
+      );
 
-    await screen.findByTestId(rowA.id);
-    await screen.findByTestId(rowB.id);
-    await screen.findByTestId(rowC.id);
+      await screen.findByTestId(rowA.id);
+      await screen.findByTestId(rowB.id);
+      await screen.findByTestId(rowC.id);
 
-    const tableRowA = await screen.findByTestId(rowA.id);
-    const applyRowA = await within(tableRowA).findByRole("button", { name: "apply-row" });
+      const tableRowA = await screen.findByTestId(rowA.id);
+      const applyRowA = await within(tableRowA).findByRole("button", {
+        name: "apply-row",
+      });
 
-    await userEvent.click(applyRowA);
+      await userEvent.click(applyRowA);
 
-    await waitFor(() => {
-      expect(fakeFetch).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(fakeFetch).toHaveBeenCalled();
 
-      expect(screen.queryByTestId(rowA.id)).not.toBeInTheDocument();
-      expect(screen.queryByTestId(rowB.id)).toBeInTheDocument();
-      expect(screen.queryByTestId(rowC.id)).toBeInTheDocument();
-    });
+        expect(screen.queryByTestId(rowA.id)).not.toBeInTheDocument();
+        expect(screen.queryByTestId(rowB.id)).toBeInTheDocument();
+        expect(screen.queryByTestId(rowC.id)).toBeInTheDocument();
+      });
+    } finally {
+      global.fetch = originalFetch;
+    }
   });
 });
