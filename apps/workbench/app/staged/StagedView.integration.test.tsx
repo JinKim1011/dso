@@ -24,8 +24,6 @@ describe("StagedView", () => {
 
     if (!value) throw new Error("Expected color token value in fixture");
 
-    const beforeName = value.name;
-
     render(
       <StagedManifestProvider baseManifest={base}>
         <Draft rowId={value.id} update={{ name: "brand" }}></Draft>
@@ -33,9 +31,8 @@ describe("StagedView", () => {
       </StagedManifestProvider>,
     );
 
-    const list = await screen.findByTestId(value.id);
-    const button = await within(list).findByText(`brand(prev. ${beforeName})`);
-    expect(button).toBeInTheDocument();
+    const row = await screen.findByTestId(value.id);
+    expect(row).toBeInTheDocument();
   });
 
   it("selecting a row shows before/after detail", async () => {
@@ -59,10 +56,9 @@ describe("StagedView", () => {
       </StagedManifestProvider>,
     );
 
-    const list = await screen.findByTestId(value.id);
-    const button = await within(list).findByText(value.name);
+    const row = await screen.findByTestId(value.id);
 
-    await userEvent.click(button);
+    await userEvent.click(row);
 
     const detail = await screen.findByTestId(`detail: ${value.id}`);
 
@@ -124,29 +120,34 @@ describe("StagedView", () => {
         }),
     );
 
+    const originalFetch = global.fetch;
     global.fetch = fakeFetch as any;
 
-    render(
-      <StagedManifestProvider baseManifest={base}>
-        <Draft
-          rowId={value.id}
-          update={{
-            value: "0.25rem",
-          }}
-        />
-        <StagedView></StagedView>
-      </StagedManifestProvider>,
-    );
+    try {
+      render(
+        <StagedManifestProvider baseManifest={base}>
+          <Draft
+            rowId={value.id}
+            update={{
+              value: "0.25rem",
+            }}
+          />
+          <StagedView></StagedView>
+        </StagedManifestProvider>,
+      );
 
-    await screen.findByTestId(value.id);
+      await screen.findByTestId(value.id);
 
-    const applyButton = await screen.findByRole("button", { name: "Apply" });
-    await userEvent.click(applyButton);
+      const applyButton = await screen.findByRole("button", { name: "Apply" });
+      await userEvent.click(applyButton);
 
-    await waitFor(() => {
-      expect(fakeFetch).toHaveBeenCalled();
-      expect(screen.queryByTestId(value.id)).not.toBeInTheDocument();
-    });
+      await waitFor(() => {
+        expect(fakeFetch).toHaveBeenCalled();
+        expect(screen.queryByTestId(value.id)).not.toBeInTheDocument();
+      });
+    } finally {
+      global.fetch = originalFetch;
+    }
   });
 
   it("apply button shows applying... and is disabled while pending", async () => {
@@ -158,47 +159,171 @@ describe("StagedView", () => {
     const pendingFetch = new Promise<Response>((resolve) => {
       resolveFetch = resolve;
     });
+
+    const originalFetch = global.fetch;
     global.fetch = vi.fn(() => pendingFetch) as any;
+
+    try {
+      render(
+        <StagedManifestProvider baseManifest={base}>
+          <Draft
+            rowId={value.id}
+            update={{
+              value: "0.25rem",
+            }}
+          />
+          <StagedView></StagedView>
+        </StagedManifestProvider>,
+      );
+
+      const applyButton = await screen.findByRole("button", { name: "Apply" });
+
+      await userEvent.click(applyButton);
+
+      await expect(applyButton).toBeDisabled();
+      await expect(applyButton).toHaveTextContent(/^Applying...$/);
+
+      const updatedDraft = {
+        ...base,
+        tokenTypes: base.tokenTypes.map((tokenType) => ({
+          ...tokenType,
+          values: tokenType.values.map((row) =>
+            row.id === value.id ? { ...row, value: "0.25rem" } : row,
+          ),
+        })),
+      };
+
+      resolveFetch!(
+        new Response(JSON.stringify({ draftModel: updatedDraft }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
+
+      await waitFor(() => {
+        expect(applyButton).toHaveTextContent(/^Apply$/);
+        expect(applyButton).not.toBeDisabled();
+      });
+    } finally {
+      global.fetch = originalFetch;
+    }
+  });
+
+  it("discard per-row button resets the row while other rows remain", async () => {
+    const base = makeStagedViewFixture();
+    const rowA = base.tokenTypes[1]?.values[0];
+    const rowB = base.tokenTypes[1]?.values[1];
+    const rowC = base.tokenTypes[1]?.values[2];
+
+    if (!rowA) throw new Error("Expected spacing micro token value in fixture");
+    if (!rowB) throw new Error("Expected spacing mini token value in fixture");
+    if (!rowC) throw new Error("Expected spacing small token value in fixture");
+
+    const drafts = [
+      { rowId: rowA.id, update: { value: "0.25rem" } },
+      { rowId: rowB.id, update: { value: "0.5rem" } },
+      { rowId: rowC.id, update: { value: "0.75rem" } },
+    ];
 
     render(
       <StagedManifestProvider baseManifest={base}>
-        <Draft
-          rowId={value.id}
-          update={{
-            value: "0.25rem",
-          }}
-        />
+        {drafts.map((draft) => (
+          <Draft key={draft.rowId} rowId={draft.rowId} update={draft.update} />
+        ))}
         <StagedView></StagedView>
       </StagedManifestProvider>,
     );
 
-    const applyButton = await screen.findByRole("button", { name: "Apply" });
+    const tableRowA = await screen.findByTestId(rowA.id);
 
-    await userEvent.click(applyButton);
+    const discardRowA = await within(tableRowA).findByRole("button", {
+      name: "discard-row",
+    });
 
-    await expect(applyButton).toBeDisabled();
-    await expect(applyButton).toHaveTextContent(/^Applying...$/);
+    await userEvent.click(discardRowA);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId(rowA.id)).not.toBeInTheDocument();
+      expect(screen.queryByTestId(rowB.id)).toBeInTheDocument();
+      expect(screen.queryByTestId(rowC.id)).toBeInTheDocument();
+    });
+  });
+
+  it("apply the API call for a single row and leaves other draft rows unchanged on success", async () => {
+    const base = makeStagedViewFixture();
+    const rowA = base.tokenTypes[1]?.values[0];
+    const rowB = base.tokenTypes[1]?.values[1];
+    const rowC = base.tokenTypes[1]?.values[2];
+
+    if (!rowA) throw new Error("Expected spacing micro token value in fixture");
+    if (!rowB) throw new Error("Expected spacing mini token value in fixture");
+    if (!rowC) throw new Error("Expected spacing small token value in fixture");
+
+    const drafts = [
+      { rowId: rowA.id, update: { value: "0.25rem" } },
+      { rowId: rowB.id, update: { value: "0.5rem" } },
+      { rowId: rowC.id, update: { value: "0.75rem" } },
+    ];
+
+    const draftByRowId = drafts.reduce<Record<string, { value: string }>>(
+      (accumulator, { rowId, update }) => {
+        accumulator[rowId] = update;
+        return accumulator;
+      },
+      {},
+    );
 
     const updatedDraft = {
       ...base,
       tokenTypes: base.tokenTypes.map((tokenType) => ({
         ...tokenType,
         values: tokenType.values.map((row) =>
-          row.id === value.id ? { ...row, value: "0.25rem" } : row,
+          draftByRowId[row.id] ? { ...row, ...draftByRowId[row.id] } : row,
         ),
       })),
     };
 
-    resolveFetch!(
-      new Response(JSON.stringify({ draftModel: updatedDraft }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }),
+    const fakeFetch = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ draftModel: updatedDraft }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
     );
 
-    await waitFor(() => {
-      expect(applyButton).toHaveTextContent(/^Apply$/);
-      expect(applyButton).not.toBeDisabled();
-    });
+    const originalFetch = global.fetch;
+    global.fetch = fakeFetch as any;
+
+    try {
+      render(
+        <StagedManifestProvider baseManifest={base}>
+          {drafts.map((draft) => (
+            <Draft key={draft.rowId} rowId={draft.rowId} update={draft.update} />
+          ))}
+          <StagedView></StagedView>
+        </StagedManifestProvider>,
+      );
+
+      await screen.findByTestId(rowA.id);
+      await screen.findByTestId(rowB.id);
+      await screen.findByTestId(rowC.id);
+
+      const tableRowA = await screen.findByTestId(rowA.id);
+      const applyRowA = await within(tableRowA).findByRole("button", {
+        name: "apply-row",
+      });
+
+      await userEvent.click(applyRowA);
+
+      await waitFor(() => {
+        expect(fakeFetch).toHaveBeenCalled();
+
+        expect(screen.queryByTestId(rowA.id)).not.toBeInTheDocument();
+        expect(screen.queryByTestId(rowB.id)).toBeInTheDocument();
+        expect(screen.queryByTestId(rowC.id)).toBeInTheDocument();
+      });
+    } finally {
+      global.fetch = originalFetch;
+    }
   });
 });

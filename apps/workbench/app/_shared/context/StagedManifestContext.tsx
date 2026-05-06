@@ -13,6 +13,7 @@ type ChangedRow = {
   nameAfter: string;
   category: string;
   kind: string;
+  tokenType: string;
   before: TokenTypeValueItem;
   after: TokenTypeValueItem;
 };
@@ -25,6 +26,8 @@ type StagedContextType = {
   updateRow: (rowId: string, update: Partial<any>) => void;
   resetDraft: () => void;
   applyDraft: () => Promise<Response>;
+  discardRow: (rowId: string) => void;
+  applyRow: (rowId: string) => Promise<Response>;
 };
 
 const StagedManifestContext = createContext<StagedContextType | undefined>(undefined);
@@ -79,12 +82,40 @@ function buildChangedRows(
         nameAfter: draftRow.name,
         category: tokenType.category,
         kind: tokenType.kind,
+        tokenType: tokenType.type,
         before: baseRow?.value ?? draftRow,
         after: draftRow,
       });
     }
   }
   return changedRows;
+}
+
+function findRowById(
+  model: TokenGraphModel,
+  rowId: string,
+): TokenTypeValueItem | undefined {
+  for (const tokenType of model.tokenTypes) {
+    const found = tokenType.values.find((value) => value.id === rowId);
+
+    if (found) return found;
+  }
+
+  return undefined;
+}
+
+function replaceRowInModel(
+  model: TokenGraphModel,
+  rowId: string,
+  replacement: TokenTypeValueItem,
+): TokenGraphModel {
+  return {
+    ...model,
+    tokenTypes: model.tokenTypes.map((tokenType) => ({
+      ...tokenType,
+      values: tokenType.values.map((value) => (value.id === rowId ? replacement : value)),
+    })),
+  };
 }
 
 export function StagedManifestProvider({
@@ -134,6 +165,35 @@ export function StagedManifestProvider({
     [baseModel, draftModel],
   );
 
+  const discardRow = (rowId: string) => {
+    const baseRow = findRowById(baseModel, rowId);
+    if (!baseRow) return;
+
+    setDraftModel((current) => replaceRowInModel(current, rowId, baseRow));
+  };
+
+  const applyRow = async (rowId: string): Promise<Response> => {
+    const draftRow = findRowById(draftModel, rowId);
+    if (!draftRow) {
+      return new Response("Row not found in draft model", { status: 404 });
+    }
+
+    const nextBaseModel = replaceRowInModel(baseModel, rowId, draftRow);
+    const manifest = buildManifestFromGraph(nextBaseModel);
+
+    const response = await fetch("/api/design-tokens/manifest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ manifest }),
+    });
+
+    if (response.ok) {
+      setBaseModel(nextBaseModel);
+    }
+
+    return response;
+  };
+
   const value = useMemo(
     () => ({
       baseModel,
@@ -143,6 +203,8 @@ export function StagedManifestProvider({
       updateRow,
       resetDraft,
       applyDraft,
+      discardRow,
+      applyRow,
     }),
     [baseModel, draftModel, changedRows],
   );

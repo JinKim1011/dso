@@ -1,21 +1,36 @@
 "use client";
 
+import { CheckIcon, ResetIcon } from "@radix-ui/react-icons";
 import { Button } from "@repo/ui";
 import { useState } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 
 export function StagedView() {
-  const { changedRows, resetDraft, applyDraft } = useStagedManifest();
+  const { changedRows, resetDraft, applyDraft, discardRow, applyRow } =
+    useStagedManifest();
   const [isApplying, setIsApplying] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
-  const handleApply = async () => {
+  const handleBulkApply = async () => {
     setIsApplying(true);
 
     try {
       const response = await applyDraft();
       if (!response.ok) {
-        console.error("Failed to apply manifest");
+        console.error("Failed to apply manifest(bulk)");
+      }
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  const handleRowApply = async (rowId: string) => {
+    setIsApplying(true);
+
+    try {
+      const response = await applyRow(rowId);
+      if (!response.ok) {
+        console.error("Failed to apply manifest(row)");
       }
     } finally {
       setIsApplying(false);
@@ -29,26 +44,70 @@ export function StagedView() {
       <Button variant="outlined" onClick={resetDraft} disabled={isApplying}>
         Discard all
       </Button>
-      <Button variant="fill" onClick={handleApply} disabled={isApplying}>
+      <Button variant="fill" onClick={handleBulkApply} disabled={isApplying}>
         {isApplying ? "Applying..." : "Apply"}
       </Button>
-      <ul>
-        {changedRows.map((row) => (
-          <li key={row.rowId} data-testid={row.rowId}>
-            <button
-              aria-pressed={selectedRowId === row.rowId}
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">NAME</th>
+            <th scope="col">CATEGORY</th>
+            <th scope="col">TOKEN TYPE</th>
+            <th scope="col"> </th>
+          </tr>
+        </thead>
+        <tbody>
+          {changedRows.map((row) => (
+            <tr
+              key={row.rowId}
+              data-testid={row.rowId}
+              aria-selected={selectedRowId === row.rowId}
+              tabIndex={0}
               onClick={() => setSelectedRowId(row.rowId)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setSelectedRowId(row.rowId);
+                }
+              }}
             >
-              {row.nameBefore !== row.nameAfter
-                ? `${row.nameAfter}(prev. ${row.nameBefore})`
-                : row.nameBefore}
-
-              <span>{row.category}</span>
-              <span>{row.kind}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
+              <td>
+                {row.nameBefore !== row.nameAfter
+                  ? `${row.nameAfter}(prev. ${row.nameBefore})`
+                  : row.nameBefore}
+              </td>
+              <td>{row.category}</td>
+              <td>{row.tokenType}</td>
+              <td>
+                <Button
+                  variant="void"
+                  aria-label="discard-row"
+                  inline={true}
+                  iconOnly={true}
+                  leftIcon={ResetIcon}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    discardRow(row.rowId);
+                  }}
+                  disabled={isApplying}
+                />
+                <Button
+                  variant="void"
+                  aria-label="apply-row"
+                  inline={true}
+                  iconOnly={true}
+                  leftIcon={CheckIcon}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleRowApply(row.rowId);
+                  }}
+                  disabled={isApplying}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       {selected && (
         <div data-testid={`detail: ${selected.rowId}`}>
           <div data-testid={`before: ${selected.rowId}`}>
