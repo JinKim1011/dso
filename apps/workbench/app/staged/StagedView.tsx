@@ -53,7 +53,6 @@ export function StagedView() {
             <th scope="col">NAME</th>
             <th scope="col">CATEGORY</th>
             <th scope="col">TOKEN TYPE</th>
-            <th scope="col">KIND</th>
             <th scope="col"> </th>
           </tr>
         </thead>
@@ -72,7 +71,6 @@ export function StagedView() {
               </td>
               <td>{row.category}</td>
               <td>{row.tokenType}</td>
-              <td>{row.kind}</td>
               <td>
                 <Button
                   variant="void"
