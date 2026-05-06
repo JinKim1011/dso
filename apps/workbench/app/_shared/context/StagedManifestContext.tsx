@@ -26,6 +26,8 @@ type StagedContextType = {
   updateRow: (rowId: string, update: Partial<any>) => void;
   resetDraft: () => void;
   applyDraft: () => Promise<Response>;
+  discardRow: (rowId: string) => void;
+  applyRow: (rowId: string) => Promise<Response>;
 };
 
 const StagedManifestContext = createContext<StagedContextType | undefined>(undefined);
@@ -163,6 +165,13 @@ export function StagedManifestProvider({
     [baseModel, draftModel],
   );
 
+  const discardRow = (rowId: string) => {
+    const baseRow = findRowById(baseModel, rowId);
+    if (!baseRow) return;
+
+    setDraftModel((current) => replaceRowInModel(current, rowId, baseRow));
+  };
+
   const value = useMemo(
     () => ({
       baseModel,
@@ -172,6 +181,7 @@ export function StagedManifestProvider({
       updateRow,
       resetDraft,
       applyDraft,
+      discardRow,
     }),
     [baseModel, draftModel, changedRows],
   );
