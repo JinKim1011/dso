@@ -62,7 +62,14 @@ export function StagedView() {
               key={row.rowId}
               data-testid={row.rowId}
               aria-selected={selectedRowId === row.rowId}
+              tabIndex={0}
               onClick={() => setSelectedRowId(row.rowId)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setSelectedRowId(row.rowId);
+                }
+              }}
             >
               <td>
                 {row.nameBefore !== row.nameAfter
