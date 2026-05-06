@@ -24,8 +24,6 @@ describe("StagedView", () => {
 
     if (!value) throw new Error("Expected color token value in fixture");
 
-    const beforeName = value.name;
-
     render(
       <StagedManifestProvider baseManifest={base}>
         <Draft rowId={value.id} update={{ name: "brand" }}></Draft>
@@ -34,7 +32,6 @@ describe("StagedView", () => {
     );
 
     const row = await screen.findByTestId(value.id);
-    // const button = await within(row).findByText(`brand(prev. ${beforeName})`);
     expect(row).toBeInTheDocument();
   });
 
