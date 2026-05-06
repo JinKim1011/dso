@@ -112,6 +112,22 @@ export function StagedManifestProvider({
     return undefined;
   };
 
+  const replaceRowInModel = (
+    model: TokenGraphModel,
+    rowId: string,
+    replacement: TokenTypeValueItem,
+  ): TokenGraphModel => {
+    return {
+      ...model,
+      tokenTypes: model.tokenTypes.map((tokenType) => ({
+        ...tokenType,
+        values: tokenType.values.map((value) =>
+          value.id === rowId ? replacement : value,
+        ),
+      })),
+    };
+  };
+
   const updateRow = (rowId: string, update: Partial<any>) => {
     setDraftModel((current) => ({
       ...current,
