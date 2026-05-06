@@ -11,7 +11,7 @@ export function StagedView() {
   const [isApplying, setIsApplying] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
-  const handleApply = async () => {
+  const handleBulkApply = async () => {
     setIsApplying(true);
 
     try {
