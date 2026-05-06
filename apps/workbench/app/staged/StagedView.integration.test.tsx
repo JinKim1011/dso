@@ -216,8 +216,8 @@ describe("StagedView", () => {
 
     render(
       <StagedManifestProvider baseManifest={base}>
-        {drafts.map((drat) => (
-          <Draft rowId={drat.rowId} update={drat.update} />
+        {drafts.map((draft) => (
+          <Draft rowId={draft.rowId} update={draft.update} />
         ))}
         <StagedView></StagedView>
       </StagedManifestProvider>,
@@ -284,8 +284,8 @@ describe("StagedView", () => {
 
     render(
       <StagedManifestProvider baseManifest={base}>
-        {drafts.map((drat) => (
-          <Draft rowId={drat.rowId} update={drat.update} />
+        {drafts.map((draft) => (
+          <Draft rowId={draft.rowId} update={draft.update} />
         ))}
         <StagedView></StagedView>
       </StagedManifestProvider>,
