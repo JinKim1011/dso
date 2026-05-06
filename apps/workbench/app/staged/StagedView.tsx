@@ -84,6 +84,7 @@ export function StagedView() {
                     event.stopPropagation();
                     discardRow(row.rowId);
                   }}
+                  disabled={isApplying}
                 />
                 <Button
                   variant="void"
@@ -95,6 +96,7 @@ export function StagedView() {
                     event.stopPropagation();
                     handleRowApply(row.rowId);
                   }}
+                  disabled={isApplying}
                 />
               </td>
             </tr>
