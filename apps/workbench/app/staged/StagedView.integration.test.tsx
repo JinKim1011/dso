@@ -238,7 +238,7 @@ describe("StagedView", () => {
     });
   });
 
-  it("apply the API call per row, and only update the draft row on success while other rows unchaged", async () => {
+  it("apply the API call for a single row and leaves other draft rows unchanged on success", async () => {
     const base = makeStagedViewFixture();
     const rowA = base.tokenTypes[1]?.values[0];
     const rowB = base.tokenTypes[1]?.values[1];
