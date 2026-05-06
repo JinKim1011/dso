@@ -201,7 +201,7 @@ describe("StagedView", () => {
     });
   });
 
-  it("discard per-row button replacing changed row in model with the unchaged version", async () => {
+  it("discard per-row button remove row in staged table while other rows remained", async () => {
     const base = makeStagedViewFixture();
     const rowA = base.tokenTypes[1]?.values[0];
     const rowB = base.tokenTypes[1]?.values[1];
