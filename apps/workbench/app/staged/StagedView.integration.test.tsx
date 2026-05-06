@@ -159,48 +159,54 @@ describe("StagedView", () => {
     const pendingFetch = new Promise<Response>((resolve) => {
       resolveFetch = resolve;
     });
+
+    const originalFetch = global.fetch;
     global.fetch = vi.fn(() => pendingFetch) as any;
 
-    render(
-      <StagedManifestProvider baseManifest={base}>
-        <Draft
-          rowId={value.id}
-          update={{
-            value: "0.25rem",
-          }}
-        />
-        <StagedView></StagedView>
-      </StagedManifestProvider>,
-    );
+    try {
+      render(
+        <StagedManifestProvider baseManifest={base}>
+          <Draft
+            rowId={value.id}
+            update={{
+              value: "0.25rem",
+            }}
+          />
+          <StagedView></StagedView>
+        </StagedManifestProvider>,
+      );
 
-    const applyButton = await screen.findByRole("button", { name: "Apply" });
+      const applyButton = await screen.findByRole("button", { name: "Apply" });
 
-    await userEvent.click(applyButton);
+      await userEvent.click(applyButton);
 
-    await expect(applyButton).toBeDisabled();
-    await expect(applyButton).toHaveTextContent(/^Applying...$/);
+      await expect(applyButton).toBeDisabled();
+      await expect(applyButton).toHaveTextContent(/^Applying...$/);
 
-    const updatedDraft = {
-      ...base,
-      tokenTypes: base.tokenTypes.map((tokenType) => ({
-        ...tokenType,
-        values: tokenType.values.map((row) =>
-          row.id === value.id ? { ...row, value: "0.25rem" } : row,
-        ),
-      })),
-    };
+      const updatedDraft = {
+        ...base,
+        tokenTypes: base.tokenTypes.map((tokenType) => ({
+          ...tokenType,
+          values: tokenType.values.map((row) =>
+            row.id === value.id ? { ...row, value: "0.25rem" } : row,
+          ),
+        })),
+      };
 
-    resolveFetch!(
-      new Response(JSON.stringify({ draftModel: updatedDraft }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }),
-    );
+      resolveFetch!(
+        new Response(JSON.stringify({ draftModel: updatedDraft }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
 
-    await waitFor(() => {
-      expect(applyButton).toHaveTextContent(/^Apply$/);
-      expect(applyButton).not.toBeDisabled();
-    });
+      await waitFor(() => {
+        expect(applyButton).toHaveTextContent(/^Apply$/);
+        expect(applyButton).not.toBeDisabled();
+      });
+    } finally {
+      global.fetch = originalFetch;
+    }
   });
 
   it("discard per-row button resets the row while other rows remain", async () => {
