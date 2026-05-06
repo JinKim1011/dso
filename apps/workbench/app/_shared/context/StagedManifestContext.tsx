@@ -172,6 +172,28 @@ export function StagedManifestProvider({
     setDraftModel((current) => replaceRowInModel(current, rowId, baseRow));
   };
 
+  const applyRow = async (rowId: string): Promise<Response> => {
+    const draftRow = findRowById(draftModel, rowId);
+    if (!draftRow) {
+      return new Response("Row not found in draft model", { status: 404 });
+    }
+
+    const nextBaseModel = replaceRowInModel(baseModel, rowId, draftRow);
+    const manifest = buildManifestFromGraph(nextBaseModel);
+
+    const response = await fetch("/api/design-tokens/manifest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ manifest }),
+    });
+
+    if (response.ok) {
+      setBaseModel(nextBaseModel);
+    }
+
+    return response;
+  };
+
   const value = useMemo(
     () => ({
       baseModel,
@@ -182,6 +204,7 @@ export function StagedManifestProvider({
       resetDraft,
       applyDraft,
       discardRow,
+      applyRow,
     }),
     [baseModel, draftModel, changedRows],
   );
