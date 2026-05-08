@@ -1,7 +1,7 @@
 "use client";
 
 import { DotsVerticalIcon, PlusCircledIcon } from "@radix-ui/react-icons";
-import { Button, List, Text } from "@repo/ui";
+import { Button, Card, Text } from "@repo/ui";
 import type { TokenGraphModel } from "../lib/manifestAdapter";
 
 export type TokenTypeGroup = {
