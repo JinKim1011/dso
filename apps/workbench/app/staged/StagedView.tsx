@@ -47,21 +47,12 @@ export function StagedView() {
       <Button variant="fill" onClick={handleBulkApply} disabled={isApplying}>
         {isApplying ? "Applying..." : "Apply"}
       </Button>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">NAME</th>
-            <th scope="col">CATEGORY</th>
-            <th scope="col">TOKEN TYPE</th>
-            <th scope="col"> </th>
-          </tr>
-        </thead>
-        <tbody>
-          {changedRows.map((row) => (
-            <tr
-              key={row.rowId}
-              data-testid={row.rowId}
+      <ul>
+        {changedRows.map((row) => (
+          <li key={row.rowId} data-testid={row.rowId}>
+            <button
               aria-selected={selectedRowId === row.rowId}
+              aria-label={row.nameAfter}
               tabIndex={0}
               onClick={() => setSelectedRowId(row.rowId)}
               onKeyDown={(event) => {
@@ -71,43 +62,43 @@ export function StagedView() {
                 }
               }}
             >
-              <td>
-                {row.nameBefore !== row.nameAfter
-                  ? `${row.nameAfter}(prev. ${row.nameBefore})`
-                  : row.nameBefore}
-              </td>
-              <td>{row.category}</td>
-              <td>{row.tokenType}</td>
-              <td>
-                <Button
-                  variant="void"
-                  aria-label="discard-row"
-                  inline={true}
-                  iconOnly={true}
-                  leftIcon={ResetIcon}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    discardRow(row.rowId);
-                  }}
-                  disabled={isApplying}
-                />
-                <Button
-                  variant="void"
-                  aria-label="apply-row"
-                  inline={true}
-                  iconOnly={true}
-                  leftIcon={CheckIcon}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    handleRowApply(row.rowId);
-                  }}
-                  disabled={isApplying}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              {row.nameBefore !== row.nameAfter
+                ? `${row.nameAfter}(prev. ${row.nameBefore})`
+                : row.nameBefore}
+              <span>
+                {row.category}
+                {row.tokenType}
+              </span>
+            </button>
+            <div>
+              <Button
+                variant="void"
+                aria-label="discard-row"
+                inline={true}
+                iconOnly={true}
+                leftIcon={ResetIcon}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  discardRow(row.rowId);
+                }}
+                disabled={isApplying}
+              />
+              <Button
+                variant="void"
+                aria-label="apply-row"
+                inline={true}
+                iconOnly={true}
+                leftIcon={CheckIcon}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleRowApply(row.rowId);
+                }}
+                disabled={isApplying}
+              />
+            </div>
+          </li>
+        ))}
+      </ul>
       {selected && (
         <div data-testid={`detail: ${selected.rowId}`}>
           <div data-testid={`before: ${selected.rowId}`}>
