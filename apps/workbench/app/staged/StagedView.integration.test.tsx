@@ -57,8 +57,9 @@ describe("StagedView", () => {
     );
 
     const row = await screen.findByTestId(value.id);
+    const rowButton = await within(row).findByRole("button", { name: `${value.name}` });
 
-    await userEvent.click(row);
+    await userEvent.click(rowButton);
 
     const detail = await screen.findByTestId(`detail: ${value.id}`);
 
