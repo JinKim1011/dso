@@ -5,7 +5,7 @@ import { Text } from "../Text";
 
 type Level = 0 | 1 | 2 | 3 | 4;
 
-export interface ListItemProps extends Omit<
+export interface CardItemProps extends Omit<
   HTMLMotionProps<"button">,
   "className" | "onClick" | "onKeyDown"
 > {
@@ -20,7 +20,7 @@ export interface ListItemProps extends Omit<
   onSelect?: () => void;
 }
 
-export const ListItem = ({
+export const CardItem = ({
   id,
   index,
   text,
@@ -31,7 +31,7 @@ export const ListItem = ({
   onClick,
   onKeyDown,
   ...props
-}: ListItemProps) => {
+}: CardItemProps) => {
   const isInteractive = Boolean(onSelect);
 
   const handleClick: HTMLMotionProps<"button">["onClick"] = (event) => {
