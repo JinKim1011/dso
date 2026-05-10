@@ -59,7 +59,6 @@ export const ListItem = ({
 
   const actionWrapperClass = [
     "absolute right-0 -translate-y-10",
-    "transition-[opacity] ease-outExpo duration-regularTransition",
     selected ? "opacity-100" : "opacity-0 group-hover:opacity-100",
   ]
     .filter(Boolean)
