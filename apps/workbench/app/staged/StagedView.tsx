@@ -39,66 +39,55 @@ export function StagedView() {
 
   const selected = changedRows.find((row) => row.rowId === selectedRowId) ?? null;
 
+  const listItems = changedRows.map((row) => ({
+    id: row.rowId,
+    text: row.nameAfter,
+    subText: `${row.category} > ${row.tokenType}`,
+    selected: selectedRowId === row.rowId,
+    children: (
+      <div className="gap-microPlus px-mini flex w-fit">
+        <Button
+          size="sm"
+          iconOnly={true}
+          overrideBgClass="bg-surface-tertiary hover:bg-surface-warn active:bg-surface-warn"
+          overrideTextColorClass="text-content-tertiary hover:text-content-warn active:text-content-warn"
+          aria-label="discard-row"
+          leftIcon={ResetIcon}
+          onClick={(event) => {
+            event.stopPropagation();
+            discardRow(row.rowId);
+          }}
+          disabled={isApplying}
+        />
+        <Button
+          size="sm"
+          iconOnly={true}
+          overrideBgClass="bg-surface-tertiary hover:bg-surface-success active:bg-surface-success"
+          overrideTextColorClass="text-content-tertiary hover:text-content-success active:text-content-success"
+          aria-label="apply-row"
+          leftIcon={CheckIcon}
+          onClick={(event) => {
+            event.stopPropagation();
+            handleRowApply(row.rowId);
+          }}
+          disabled={isApplying}
+        />
+      </div>
+    ),
+    onSelect: () => setSelectedRowId(row.rowId),
+  }));
+
+  const pageWrapper = "flex ";
+
   return (
-    <section className="py-largePlus flex flex-col items-center justify-center">
+    <section className="py-large px-smallPlus m-auto flex w-full max-w-5xl flex-col">
       <Button variant="outlined" onClick={resetDraft} disabled={isApplying}>
         Discard all
       </Button>
       <Button variant="fill" onClick={handleBulkApply} disabled={isApplying}>
         {isApplying ? "Applying..." : "Apply"}
       </Button>
-      <ul>
-        {changedRows.map((row) => (
-          <li key={row.rowId} data-testid={row.rowId}>
-            <button
-              aria-selected={selectedRowId === row.rowId}
-              aria-label={row.nameAfter}
-              tabIndex={0}
-              onClick={() => setSelectedRowId(row.rowId)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  setSelectedRowId(row.rowId);
-                }
-              }}
-            >
-              {row.nameBefore !== row.nameAfter
-                ? `${row.nameAfter}(prev. ${row.nameBefore})`
-                : row.nameBefore}
-              <span>
-                {row.category}
-                {row.tokenType}
-              </span>
-            </button>
-            <div>
-              <Button
-                variant="void"
-                aria-label="discard-row"
-                inline={true}
-                iconOnly={true}
-                leftIcon={ResetIcon}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  discardRow(row.rowId);
-                }}
-                disabled={isApplying}
-              />
-              <Button
-                variant="void"
-                aria-label="apply-row"
-                inline={true}
-                iconOnly={true}
-                leftIcon={CheckIcon}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  handleRowApply(row.rowId);
-                }}
-                disabled={isApplying}
-              />
-            </div>
-          </li>
-        ))}
-      </ul>
+      <List listItems={listItems} />
       {selected && (
         <div data-testid={`detail: ${selected.rowId}`}>
           <div data-testid={`before: ${selected.rowId}`}>
