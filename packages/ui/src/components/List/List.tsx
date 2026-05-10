@@ -35,7 +35,7 @@ export const List = ({ listItems, ...props }: ListProps) => {
     const ulRect = ul.getBoundingClientRect();
     const btnRect = selectedBtn.getBoundingClientRect();
 
-    const centerY = btnRect.top - ulRect.top + btnRect.height / 2;
+    const centerY = btnRect.top - ulRect.top + btnRect.height / 2 - 2;
     setDotY(centerY);
   }, [listItems]);
 
