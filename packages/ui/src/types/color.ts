@@ -5,14 +5,20 @@ export type SurfaceVariant =
   | "quaternary"
   | "quinary"
   | "accent"
-  | "accentStrong";
+  | "accentStrong"
+  | "error"
+  | "success"
+  | "warn";
 export type ContentVariant =
   | "primary"
   | "secondary"
   | "tertiary"
   | "quaternary"
   | "accent"
-  | "accentStrong";
+  | "accentStrong"
+  | "error"
+  | "success"
+  | "warn";
 export type StrokeVariant =
   | "primary"
   | "secondary"
