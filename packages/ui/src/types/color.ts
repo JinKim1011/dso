@@ -30,9 +30,32 @@ export type BgClass = `bg-surface-${SurfaceVariant}` | "bg-transparent";
 export type TextColorClass = `text-content-${ContentVariant}` | "text-primary";
 export type BorderClass = `border-stroke-${StrokeVariant}` | "border-transparent";
 
-export type OverrideBGClass = BgClass;
-export type OverrideTextColorClass = TextColorClass;
-export type OverrideBorderClass = BorderClass;
+export type OverrideBGClass =
+  | BgClass
+  | HoverBgClass
+  | ActiveBgClass
+  | `${BgClass} ${HoverBgClass}`
+  | `${BgClass} ${ActiveBgClass}`
+  | `${HoverBgClass} ${ActiveBgClass}`
+  | `${BgClass} ${HoverBgClass} ${ActiveBgClass}`;
+
+export type OverrideTextColorClass =
+  | TextColorClass
+  | HoverTextColorClass
+  | ActiveTextColorClass
+  | `${TextColorClass} ${HoverTextColorClass}`
+  | `${TextColorClass} ${ActiveTextColorClass}`
+  | `${HoverTextColorClass} ${ActiveTextColorClass}`
+  | `${TextColorClass} ${HoverTextColorClass} ${ActiveTextColorClass}`;
+
+export type OverrideBorderClass =
+  | BorderClass
+  | HoverBorderClass
+  | ActiveBorderClass
+  | `${BorderClass} ${HoverBorderClass}`
+  | `${BorderClass} ${ActiveBorderClass}`
+  | `${HoverBorderClass} ${ActiveBorderClass}`
+  | `${BorderClass} ${HoverBorderClass} ${ActiveBorderClass}`;
 
 export type HoverBgClass = `hover:bg-surface-${SurfaceVariant}` | "hover:bg-transparent";
 export type HoverTextColorClass =
