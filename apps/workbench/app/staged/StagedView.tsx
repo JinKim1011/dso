@@ -92,36 +92,40 @@ export function StagedView() {
           </Text>
         </div>
       )}
-      <StagedViewHeader length={rowsLength} guidedText={!!selected}>
-        <Button variant="outlined" onClick={resetDraft} disabled={isApplying}>
-          Discard all
-        </Button>
-        <Button variant="outlined" onClick={handleBulkApply} disabled={isApplying}>
-          {isApplying ? "Pushing..." : "Push all"}
-        </Button>
-      </StagedViewHeader>
-      <div className="grid h-full grid-cols-2">
-        <List listItems={listItems} />
-        {selected && (
-          <StagedRowDetail
-            id={selected.rowId}
-            beforeName={selected.nameBefore}
-            afterName={selected.nameAfter}
-            before={selected.before}
-            after={selected.after}
-          />
-        )}
-        {!selected && (
-          <div className="py-regular px-small bg-dot-pattern flex h-full w-full justify-center overflow-hidden">
-            <Text
-              variant="meta-xs"
-              className="text-content-accentStrong w-full text-center"
-            >
-              select to review
-            </Text>
+      {rowsLength !== 0 && (
+        <>
+          <StagedViewHeader length={rowsLength} guidedText={!!selected}>
+            <Button variant="outlined" onClick={resetDraft} disabled={isApplying}>
+              Discard all
+            </Button>
+            <Button variant="outlined" onClick={handleBulkApply} disabled={isApplying}>
+              {isApplying ? "Pushing..." : "Push all"}
+            </Button>
+          </StagedViewHeader>
+          <div className="grid h-full grid-cols-2">
+            <List listItems={listItems} />
+            {selected && (
+              <StagedRowDetail
+                id={selected.rowId}
+                beforeName={selected.nameBefore}
+                afterName={selected.nameAfter}
+                before={selected.before}
+                after={selected.after}
+              />
+            )}
+            {!selected && (
+              <div className="py-regular px-small bg-dot-pattern flex h-full w-full justify-center overflow-hidden">
+                <Text
+                  variant="meta-xs"
+                  className="text-content-accentStrong w-full text-center"
+                >
+                  select to review
+                </Text>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </section>
   );
 }
