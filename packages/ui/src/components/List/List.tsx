@@ -58,13 +58,14 @@ export const List = ({ listItems, ...props }: ListProps) => {
 
   return (
     <ul {...props} ref={ulRef} className="relative flex h-full flex-col">
-      <motion.div
+      <motion.li
         className={dotClass}
         initial={false}
         animate={dotY != null ? { y: dotY, opacity: 1 } : { opacity: 0 }}
         transition={createMotionTransition("regular", "inOutExpo")}
         style={{ top: 0 }}
         aria-hidden
+        role="presentation"
       />
       {listItems.map((item) => (
         <ListItem key={item.id} {...item} />
