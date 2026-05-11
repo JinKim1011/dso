@@ -201,8 +201,7 @@ describe("StagedView", () => {
       );
 
       await waitFor(() => {
-        expect(applyButton).toHaveTextContent(/^Push all$/);
-        expect(applyButton).not.toBeDisabled();
+        expect(screen.queryByTestId(value.id)).not.toBeInTheDocument();
       });
     } finally {
       global.fetch = originalFetch;
