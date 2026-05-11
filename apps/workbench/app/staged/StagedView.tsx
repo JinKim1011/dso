@@ -1,9 +1,11 @@
 "use client";
 
 import { CheckIcon, ResetIcon } from "@radix-ui/react-icons";
-import { Button } from "@repo/ui";
+import { Button, List, Text } from "@repo/ui";
 import { useState } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
+import { StagedRowDetail } from "./component/StagedRowDetail";
+import { StagedViewHeader } from "./component/StagedViewHeader";
 
 export function StagedView() {
   const { changedRows, resetDraft, applyDraft, discardRow, applyRow } =
