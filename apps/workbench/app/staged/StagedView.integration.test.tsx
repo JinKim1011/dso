@@ -57,16 +57,16 @@ describe("StagedView", () => {
     );
 
     const row = await screen.findByTestId(value.id);
+    const rowButton = await within(row).findByRole("button", { name: `${value.name}` });
 
-    await userEvent.click(row);
+    await userEvent.click(rowButton);
 
     const detail = await screen.findByTestId(`detail: ${value.id}`);
 
-    const beforeDetail = await within(detail).findByTestId(`before: ${value.id}`);
-    expect(beforeDetail).toHaveTextContent(`show before ${value.preview?.kind} preview`);
-
-    const afterDetail = await within(detail).findByTestId(`after: ${value.id}`);
-    expect(afterDetail).toHaveTextContent(`show after ${value.preview?.kind} preview`);
+    const beforeDetail = await within(detail).findByTestId(`before-detail: ${value.id}`);
+    const afterDetail = await within(detail).findByTestId(`after-detail: ${value.id}`);
+    expect(beforeDetail).toBeInTheDocument();
+    expect(afterDetail).toBeInTheDocument();
   });
 
   it("discard all button resets draft", async () => {
@@ -138,7 +138,7 @@ describe("StagedView", () => {
 
       await screen.findByTestId(value.id);
 
-      const applyButton = await screen.findByRole("button", { name: "Apply" });
+      const applyButton = await screen.findByRole("button", { name: "Push all" });
       await userEvent.click(applyButton);
 
       await waitFor(() => {
@@ -176,12 +176,12 @@ describe("StagedView", () => {
         </StagedManifestProvider>,
       );
 
-      const applyButton = await screen.findByRole("button", { name: "Apply" });
+      const applyButton = await screen.findByRole("button", { name: "Push all" });
 
       await userEvent.click(applyButton);
 
       await expect(applyButton).toBeDisabled();
-      await expect(applyButton).toHaveTextContent(/^Applying...$/);
+      await expect(applyButton).toHaveTextContent(/^Pushing...$/);
 
       const updatedDraft = {
         ...base,
@@ -201,8 +201,7 @@ describe("StagedView", () => {
       );
 
       await waitFor(() => {
-        expect(applyButton).toHaveTextContent(/^Apply$/);
-        expect(applyButton).not.toBeDisabled();
+        expect(screen.queryByTestId(value.id)).not.toBeInTheDocument();
       });
     } finally {
       global.fetch = originalFetch;

@@ -1,138 +1,97 @@
 "use client";
 
-import { motion, type HTMLMotionProps } from "framer-motion";
+import { ButtonHTMLAttributes, ReactNode } from "react";
 import { Text } from "../Text";
 
-type Level = 0 | 1 | 2 | 3 | 4;
-
 export interface ListItemProps extends Omit<
-  HTMLMotionProps<"button">,
-  "className" | "onClick" | "onKeyDown"
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "className"
 > {
   id: string;
-  index?: string;
   text?: string;
   subText?: string;
-  level?: Level | number;
   selected?: boolean;
-  onClick?: HTMLMotionProps<"button">["onClick"];
-  onKeyDown?: HTMLMotionProps<"button">["onKeyDown"];
+  children?: ReactNode;
   onSelect?: () => void;
 }
 
 export const ListItem = ({
   id,
-  index,
   text,
   subText,
-  level = 0,
   selected = false,
+  children,
   onSelect,
-  onClick,
-  onKeyDown,
   ...props
 }: ListItemProps) => {
-  const isInteractive = Boolean(onSelect);
-
-  const handleClick: HTMLMotionProps<"button">["onClick"] = (event) => {
-    onClick?.(event);
-
-    if (event.defaultPrevented || !isInteractive) {
-      return;
-    }
-
-    onSelect?.();
-  };
-
-  const handleKeyDown: HTMLMotionProps<"button">["onKeyDown"] = (event) => {
-    onKeyDown?.(event);
-
-    if (!isInteractive) {
-      return;
-    }
-  };
-
-  const indexTextClass = selected
-    ? "text-content-tertiary"
-    : "text-content-quaternary group-hover:text-content-tertiary";
-  const titleTextClass = selected
-    ? "text-content-primary"
-    : "text-content-secondary group-hover:text-content-primary";
-  const subTextClass = selected
-    ? "text-content-tertiary"
-    : "text-content-quaternary group-hover:text-content-tertiary";
-  const wrapperClasses = [
-    "group flex w-full items-start justify-start",
-    "py-miniPlus px-small gap-regularPlus rounded-micro",
-    "transition-[box-shadow,background-color,color] duration-slowTransition ease-outExpo",
-    isInteractive
-      ? "cursor-pointer focus-visible:outline-none focus-visible:shadow-focus-accent"
-      : "cursor-default",
-    selected
-      ? "bg-surface-quinary shadow-surface-pressed text-content-accent"
-      : "bg-surface-tertiary shadow-surface-lifted hover:bg-surface-quaternary hover:shadow-surface-pressed hover:text-content-accent",
+  const wrapperClass = [
+    "flex w-full h-[3.25rem] items-center",
+    "border-stroke-primary border-b-[0.5px]",
+    "transition-[color] ease-outExpo duration-quickTransition",
+    "cursor-pointer",
   ]
     .filter(Boolean)
     .join(" ");
 
-  const finiteLevel = Number.isFinite(level) ? level : 0;
-  const normalizedLevel = Math.min(4, Math.max(0, Math.floor(finiteLevel)));
-  const baseIndicator = "h-2.5 w-0.5";
-  const activeIndicator = "bg-surface-accentStrong";
-  const inactiveIndicator = [
-    selected
-      ? "bg-surface-tertiary"
-      : "bg-surface-quaternary group-hover:bg-surface-tertiary",
+  const textWrapperClass = [
+    "flex w-full h-full items-center gap-miniPlus",
+    "transition-[color] ease-outExpo duration-regularTransition",
+    "will-change-transform",
   ]
     .filter(Boolean)
     .join(" ");
 
-  const hoverTransform = { y: 2, scale: 0.98 };
+  const textClass = [
+    selected
+      ? "text-content-accentStrong"
+      : "text-content-primary/50 group-hover:text-content-accentStrong",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const subTextClass = [
+    selected
+      ? "text-content-accentStrong/50"
+      : "text-content-secondary/30 group-hover:text-content-accentStrong/50",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const actionWrapperClass = [
+    "absolute right-0 -translate-y-10",
+    selected ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <li>
-      <motion.button
+    <li data-testid={id} className="group relative">
+      <button
         {...props}
-        data-testid={id}
         type="button"
         aria-label={text}
-        aria-pressed={isInteractive ? selected : undefined}
-        aria-disabled={!isInteractive ? true : undefined}
-        disabled={!isInteractive}
-        className={wrapperClasses}
-        whileHover={hoverTransform}
-        animate={selected ? hoverTransform : { y: 0, scale: 1 }}
-        tabIndex={isInteractive ? 0 : -1}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        layout
+        aria-pressed={selected}
+        data-selected={selected}
+        className={wrapperClass}
+        tabIndex={0}
+        onClick={(event) => {
+          props.onClick?.(event);
+          if (event.defaultPrevented) {
+            return;
+          }
+          onSelect?.();
+        }}
       >
-        <Text variant="label-xs" className={indexTextClass}>
-          {index}
-        </Text>
-        <div className="gap-miniPlus flex min-w-0 flex-1 flex-col text-left">
-          <Text variant="label-xs" className={titleTextClass}>
+        <div className={textWrapperClass}>
+          <Text variant="meta-sm" className={textClass}>
             {text}
           </Text>
-          <div className="gap-mini flex w-full min-w-0 justify-between">
-            <Text
-              variant="meta-xs"
-              className={`${subTextClass} max-w-40 min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap`}
-            >
-              {subText}
-            </Text>
-            <div className="gap-microPlus flex shrink-0 items-center">
-              {Array.from({ length: 5 }).map((_, stepIndex) => {
-                const isStepActive = stepIndex <= normalizedLevel;
-                const colorClass = isStepActive ? activeIndicator : inactiveIndicator;
-                const indicatorClasses = `${baseIndicator} ${colorClass}`;
-
-                return <span key={stepIndex} className={indicatorClasses} />;
-              })}
-            </div>
-          </div>
+          <Text variant="meta-xs" className={subTextClass}>
+            {subText}
+          </Text>
         </div>
-      </motion.button>
+      </button>
+      <div className={actionWrapperClass}>{children}</div>
     </li>
   );
 };

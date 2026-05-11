@@ -1,9 +1,12 @@
 "use client";
 
 import { CheckIcon, ResetIcon } from "@radix-ui/react-icons";
-import { Button } from "@repo/ui";
+import { Button, List, Text } from "@repo/ui";
 import { useState } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
+import { StagedRowDetail } from "./component/StagedRowDetail";
+import { StagedViewHeader } from "./component/StagedViewHeader";
+import { UseStagedRowKeyboardNavigation } from "./lib/useStagedRowKeyboardNavigation";
 
 export function StagedView() {
   const { changedRows, resetDraft, applyDraft, discardRow, applyRow } =
@@ -38,91 +41,97 @@ export function StagedView() {
   };
 
   const selected = changedRows.find((row) => row.rowId === selectedRowId) ?? null;
+  const rowsLength = changedRows.length;
+
+  const listItems = changedRows.map((row) => ({
+    id: row.rowId,
+    text: row.nameAfter,
+    subText: `${row.category} > ${row.tokenType}`,
+    selected: selectedRowId === row.rowId,
+    children: (
+      <div className="gap-microPlus px-mini flex w-fit">
+        <Button
+          size="sm"
+          iconOnly={true}
+          overrideBgClass="bg-surface-tertiary hover:bg-surface-warn active:bg-surface-warn"
+          overrideTextColorClass="text-content-tertiary hover:text-content-warn active:text-content-warn"
+          aria-label="discard-row"
+          leftIcon={ResetIcon}
+          onClick={(event) => {
+            event.stopPropagation();
+            discardRow(row.rowId);
+          }}
+          disabled={isApplying}
+        />
+        <Button
+          size="sm"
+          iconOnly={true}
+          overrideBgClass="bg-surface-tertiary hover:bg-surface-success active:bg-surface-success"
+          overrideTextColorClass="text-content-tertiary hover:text-content-success active:text-content-success"
+          aria-label="apply-row"
+          leftIcon={CheckIcon}
+          onClick={(event) => {
+            event.stopPropagation();
+            handleRowApply(row.rowId);
+          }}
+          disabled={isApplying}
+        />
+      </div>
+    ),
+    onSelect: () => setSelectedRowId(selectedRowId === row.rowId ? null : row.rowId),
+  }));
+
+  UseStagedRowKeyboardNavigation({
+    rows: changedRows,
+    selectedRowId,
+    onSelectRow: (rowId) => setSelectedRowId(rowId),
+  });
 
   return (
-    <section className="py-largePlus flex flex-col items-center justify-center">
-      <Button variant="outlined" onClick={resetDraft} disabled={isApplying}>
-        Discard all
-      </Button>
-      <Button variant="fill" onClick={handleBulkApply} disabled={isApplying}>
-        {isApplying ? "Applying..." : "Apply"}
-      </Button>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">NAME</th>
-            <th scope="col">CATEGORY</th>
-            <th scope="col">TOKEN TYPE</th>
-            <th scope="col"> </th>
-          </tr>
-        </thead>
-        <tbody>
-          {changedRows.map((row) => (
-            <tr
-              key={row.rowId}
-              data-testid={row.rowId}
-              aria-selected={selectedRowId === row.rowId}
-              tabIndex={0}
-              onClick={() => setSelectedRowId(row.rowId)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  setSelectedRowId(row.rowId);
-                }
-              }}
-            >
-              <td>
-                {row.nameBefore !== row.nameAfter
-                  ? `${row.nameAfter}(prev. ${row.nameBefore})`
-                  : row.nameBefore}
-              </td>
-              <td>{row.category}</td>
-              <td>{row.tokenType}</td>
-              <td>
-                <Button
-                  variant="void"
-                  aria-label="discard-row"
-                  inline={true}
-                  iconOnly={true}
-                  leftIcon={ResetIcon}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    discardRow(row.rowId);
-                  }}
-                  disabled={isApplying}
-                />
-                <Button
-                  variant="void"
-                  aria-label="apply-row"
-                  inline={true}
-                  iconOnly={true}
-                  leftIcon={CheckIcon}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    handleRowApply(row.rowId);
-                  }}
-                  disabled={isApplying}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {selected && (
-        <div data-testid={`detail: ${selected.rowId}`}>
-          <div data-testid={`before: ${selected.rowId}`}>
-            {selected.before.preview
-              ? `show before ${selected.before.preview.kind} preview`
-              : null}
-            {selected.before.meta}
-          </div>
-          <div data-testid={`after: ${selected.rowId}`}>
-            {selected.after.preview
-              ? `show after ${selected.after.preview.kind} preview`
-              : null}
-            {selected.after.meta}
-          </div>
+    <section className="py-large px-smallPlus m-auto flex h-dvh w-full max-w-5xl flex-col">
+      {rowsLength === 0 && (
+        <div className="py-regular px-small bg-dot-pattern flex h-full w-full items-center justify-center overflow-hidden">
+          <Text
+            variant="meta-xs"
+            className="text-content-accentStrong w-full text-center"
+          >
+            No staged changes
+          </Text>
         </div>
+      )}
+      {rowsLength !== 0 && (
+        <>
+          <StagedViewHeader length={rowsLength} guidedText={!!selected}>
+            <Button variant="outlined" onClick={resetDraft} disabled={isApplying}>
+              Discard all
+            </Button>
+            <Button variant="outlined" onClick={handleBulkApply} disabled={isApplying}>
+              {isApplying ? "Pushing..." : "Push all"}
+            </Button>
+          </StagedViewHeader>
+          <div className="grid h-full grid-cols-2">
+            <List listItems={listItems} />
+            {selected && (
+              <StagedRowDetail
+                id={selected.rowId}
+                beforeName={selected.nameBefore}
+                afterName={selected.nameAfter}
+                before={selected.before}
+                after={selected.after}
+              />
+            )}
+            {!selected && (
+              <div className="py-regular px-small bg-dot-pattern flex h-full w-full justify-center overflow-hidden">
+                <Text
+                  variant="meta-xs"
+                  className="text-content-accentStrong w-full text-center"
+                >
+                  select to review
+                </Text>
+              </div>
+            )}
+          </div>
+        </>
       )}
     </section>
   );

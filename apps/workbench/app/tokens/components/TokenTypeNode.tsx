@@ -1,7 +1,7 @@
 "use client";
 
 import { DotsVerticalIcon, PlusCircledIcon } from "@radix-ui/react-icons";
-import { Button, List, Text } from "@repo/ui";
+import { Button, Card, Text } from "@repo/ui";
 import type { TokenGraphModel } from "../lib/manifestAdapter";
 
 export type TokenTypeGroup = {
@@ -18,7 +18,7 @@ type TokenTypeNodeProps = {
 };
 
 export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNodeProps) {
-  const listItems = group.values.map((valueItem, index) => ({
+  const cardItems = group.values.map((valueItem, index) => ({
     id: valueItem.id,
     text: valueItem.name,
     subText: valueItem.meta,
@@ -54,7 +54,7 @@ export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNo
           ></Button>
         </div>
       </div>
-      <List listItems={listItems} />
+      <Card cardItems={cardItems} />
       <div className="self-center">
         {/* Below button will be used for adding value action */}
         <Button

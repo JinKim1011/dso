@@ -16,6 +16,9 @@
   --bg-quinary: oklch(0.89 0.016 266.7);
   --bg-accent: oklch(0.93 0.034 283.4);
   --bg-accentStrong: oklch(0.692 0.152 283.4);
+  --bg-error: oklch(0.945 0.03 25);
+  --bg-success: oklch(0.945 0.03 145);
+  --bg-warn: oklch(0.955 0.035 90);
 
   --text-primary: oklch(0.222 0 89.9 / 1);
   --text-secondary: oklch(0.222 0 89.9 / 0.72);
@@ -23,6 +26,9 @@
   --text-quaternary: oklch(0.222 0 89.9 / 0.36);
   --text-accent: oklch(0.42 0.12 283.4);
   --text-accentStrong: oklch(0.3 0.14 283.4);
+  --text-error: oklch(0.55 0.19 25);
+  --text-success: oklch(0.53 0.16 145);
+  --text-warn: oklch(0.62 0.16 90);
 
   --stroke-primary: oklch(0.89 0 0);
   --stroke-secondary: oklch(0.93 0 89.9);
@@ -53,17 +59,23 @@
   --bg-quinary: oklch(0.36 0.05 271.4);
   --bg-accent: oklch(0.93 0.034 283.4);
   --bg-accentStrong: oklch(0.692 0.152 283.4);
+  --bg-error: oklch(0.22 0.09 25);
+  --bg-success: oklch(0.22 0.09 145);
+  --bg-warn: oklch(0.24 0.09 90);
 
   --text-primary: oklch(0.95 0 89.9 / 1);
   --text-secondary: oklch(0.95 0 89.9 / 0.84);
   --text-tertiary: oklch(0.95 0 89.9 / 0.62);
   --text-quaternary: oklch(0.95 0 89.9 / 0.46);
-  --text-accent: oklch(0.92 0.06 283.4);
-  --text-accentStrong: oklch(0.98 0.03 283.4);
+  --text-accent: oklch(75.886% 0.10866 282.325);
+  --text-accentStrong: oklch(0.692 0.152 283.4);
+  --text-error: oklch(0.76 0.16 25);
+  --text-success: oklch(0.79 0.14 145);
+  --text-warn: oklch(0.82 0.13 90);
 
-  --stroke-primary: oklch(0.35 0 0);
-  --stroke-secondary: oklch(0.3 0 89.9);
-  --stroke-tertiary: oklch(0.25 0 89.9);
+  --stroke-primary: oklch(25% 0.04884 276.728);
+  --stroke-secondary: oklch(20% 0.04884 276.728);
+  --stroke-tertiary: oklch(18% 0.04884 276.728);
   --stroke-accent: oklch(0.78 0.108 283.4);
   --stroke-accentStrong: oklch(0.58 0.207 283.4);
 
@@ -90,6 +102,9 @@
   --color-surface-quinary: var(--bg-quinary);
   --color-surface-accent: var(--bg-accent);
   --color-surface-accentStrong: var(--bg-accentStrong);
+  --color-surface-error: var(--bg-error);
+  --color-surface-success: var(--bg-success);
+  --color-surface-warn: var(--bg-warn);
 
   --color-content-primary: var(--text-primary);
   --color-content-secondary: var(--text-secondary);
@@ -97,6 +112,9 @@
   --color-content-quaternary: var(--text-quaternary);
   --color-content-accent: var(--text-accent);
   --color-content-accentStrong: var(--text-accentStrong);
+  --color-content-error: var(--text-error);
+  --color-content-success: var(--text-success);
+  --color-content-warn: var(--text-warn);
 
   --color-stroke-primary: var(--stroke-primary);
   --color-stroke-secondary: var(--stroke-secondary);
