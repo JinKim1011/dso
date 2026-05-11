@@ -77,7 +77,7 @@ export function StagedView() {
         />
       </div>
     ),
-    onSelect: () => setSelectedRowId(row.rowId),
+    onSelect: () => setSelectedRowId(selectedRowId === row.rowId ? null : row.rowId),
   }));
 
   return (
