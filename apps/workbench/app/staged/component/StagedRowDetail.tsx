@@ -54,7 +54,7 @@ export function StagedRowDetail({
             background="bg-surface-primary"
             textColor="text-content-accentStrong"
           />
-          <div className="py-miniPlus bg-surface-primary gap-mirco flex h-fit w-full flex-col">
+          <div className="py-miniPlus bg-surface-primary gap-micro flex h-fit w-full flex-col">
             <StagedRowDetailValue
               type="beforeName"
               beforeName={beforeName}
