@@ -96,14 +96,8 @@ export function StagedView() {
               : null}
             {selected.before.meta}
           </div>
-          <div data-testid={`after: ${selected.rowId}`}>
-            {selected.after.preview
-              ? `show after ${selected.after.preview.kind} preview`
-              : null}
-            {selected.after.meta}
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 }
