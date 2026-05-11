@@ -68,6 +68,7 @@ export const ListItem = ({
     <li data-testid={id} className="group relative">
       <button
         {...props}
+        type="button"
         aria-label={text}
         aria-pressed={selected}
         data-selected={selected}
