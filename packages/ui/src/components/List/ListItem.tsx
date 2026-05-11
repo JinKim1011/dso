@@ -75,6 +75,9 @@ export const ListItem = ({
         tabIndex={0}
         onClick={(event) => {
           props.onClick?.(event);
+          if (event.defaultPrevented) {
+            return;
+          }
           onSelect?.();
         }}
       >
