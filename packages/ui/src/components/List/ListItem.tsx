@@ -26,7 +26,7 @@ export const ListItem = ({
 }: ListItemProps) => {
   const wrapperClass = [
     "flex w-full h-[3.25rem] items-center",
-    "border-stroke-primary border-b-[0.5]",
+    "border-stroke-primary border-b-[0.5px]",
     "transition-[color] ease-outExpo duration-quickTransition",
     "cursor-pointer",
   ]
