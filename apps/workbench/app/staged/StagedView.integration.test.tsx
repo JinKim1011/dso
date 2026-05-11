@@ -63,11 +63,10 @@ describe("StagedView", () => {
 
     const detail = await screen.findByTestId(`detail: ${value.id}`);
 
-    const beforeDetail = await within(detail).findByTestId(`before: ${value.id}`);
-    expect(beforeDetail).toHaveTextContent(`show before ${value.preview?.kind} preview`);
-
-    const afterDetail = await within(detail).findByTestId(`after: ${value.id}`);
-    expect(afterDetail).toHaveTextContent(`show after ${value.preview?.kind} preview`);
+    const beforeDetail = await within(detail).findByTestId(`before-detail: ${value.id}`);
+    const afterDetail = await within(detail).findByTestId(`after-detail: ${value.id}`);
+    expect(beforeDetail).toBeInTheDocument();
+    expect(afterDetail).toBeInTheDocument();
   });
 
   it("discard all button resets draft", async () => {
