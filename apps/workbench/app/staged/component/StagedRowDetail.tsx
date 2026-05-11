@@ -27,7 +27,7 @@ export function StagedRowDetail({
   return (
     <aside className={wrapperStyle} data-testid={`detail: ${id}`}>
       <div className="gap-regular flex w-full flex-col">
-        <div className="item-start flex flex-col" data-testid={`after-detail: ${id}`}>
+        <div className="flex flex-col" data-testid={`after-detail: ${id}`}>
           <StagedRowDetailTag
             label="AFTER"
             background="bg-surface-primary"
@@ -48,7 +48,7 @@ export function StagedRowDetail({
           textColor="text-content-accentStrong"
           leftIcon={RowSpacingIcon}
         />
-        <div className="item-start flex flex-col" data-testid={`before-detail: ${id}`}>
+        <div className="flex flex-col" data-testid={`before-detail: ${id}`}>
           <StagedRowDetailTag
             label="BEFORE"
             background="bg-surface-primary"
