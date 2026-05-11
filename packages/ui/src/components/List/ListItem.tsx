@@ -65,7 +65,7 @@ export const ListItem = ({
     .join(" ");
 
   return (
-    <li data-testid={id} className="group">
+    <li data-testid={id} className="group relative">
       <button
         {...props}
         aria-label={text}
