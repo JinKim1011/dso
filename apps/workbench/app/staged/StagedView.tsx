@@ -82,7 +82,7 @@ export function StagedView() {
 
   return (
     <section className="py-large px-smallPlus m-auto flex h-dvh w-full max-w-5xl flex-col">
-      {!!changedRows && (
+      {rowsLength === 0 && (
         <div className="py-regular px-small bg-dot-pattern flex h-full w-full items-center justify-center overflow-hidden">
           <Text
             variant="meta-xs"
