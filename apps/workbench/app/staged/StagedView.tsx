@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 import { StagedRowDetail } from "./component/StagedRowDetail";
 import { StagedViewHeader } from "./component/StagedViewHeader";
+import { UseStagedRowKeyboardNavigation } from "./lib/useStagedRowKeyboardNavigation";
 
 export function StagedView() {
   const { changedRows, resetDraft, applyDraft, discardRow, applyRow } =
@@ -79,6 +80,12 @@ export function StagedView() {
     ),
     onSelect: () => setSelectedRowId(selectedRowId === row.rowId ? null : row.rowId),
   }));
+
+  UseStagedRowKeyboardNavigation({
+    rows: changedRows,
+    selectedRowId,
+    onSelectRow: (rowId) => setSelectedRowId(rowId),
+  });
 
   return (
     <section className="py-large px-smallPlus m-auto flex h-dvh w-full max-w-5xl flex-col">
