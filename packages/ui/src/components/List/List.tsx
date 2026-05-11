@@ -1,14 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { HtmlHTMLAttributes, useCallback, useEffect, useRef, useState } from "react";
+import { HTMLAttributes, useCallback, useEffect, useRef, useState } from "react";
 import { createMotionTransition } from "../../types/motion";
 import { ListItem, type ListItemProps } from "./ListItem";
 
-export interface ListProps extends Omit<
-  HtmlHTMLAttributes<HTMLUListElement>,
-  "className"
-> {
+export interface ListProps extends Omit<HTMLAttributes<HTMLUListElement>, "className"> {
   listItems: ListItemProps[];
 }
 
