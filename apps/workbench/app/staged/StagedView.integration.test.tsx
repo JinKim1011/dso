@@ -138,7 +138,7 @@ describe("StagedView", () => {
 
       await screen.findByTestId(value.id);
 
-      const applyButton = await screen.findByRole("button", { name: "Apply" });
+      const applyButton = await screen.findByRole("button", { name: "Push all" });
       await userEvent.click(applyButton);
 
       await waitFor(() => {
@@ -176,7 +176,7 @@ describe("StagedView", () => {
         </StagedManifestProvider>,
       );
 
-      const applyButton = await screen.findByRole("button", { name: "Apply" });
+      const applyButton = await screen.findByRole("button", { name: "Push all" });
 
       await userEvent.click(applyButton);
 
