@@ -38,6 +38,7 @@ export function StagedView() {
   };
 
   const selected = changedRows.find((row) => row.rowId === selectedRowId) ?? null;
+  const rowsLength = changedRows.length;
 
   const listItems = changedRows.map((row) => ({
     id: row.rowId,
@@ -76,8 +77,6 @@ export function StagedView() {
     ),
     onSelect: () => setSelectedRowId(row.rowId),
   }));
-
-  const pageWrapper = "flex ";
 
   return (
     <section className="py-large px-smallPlus m-auto flex h-dvh w-full max-w-5xl flex-col">
