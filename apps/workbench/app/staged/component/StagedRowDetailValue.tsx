@@ -99,7 +99,7 @@ export function StagedRowDetailValue({
       {type === "beforeName" && (
         <div
           className={[
-            "px-miniPlus py-microPlus mb-mirco gap-mini grid grid-cols-3",
+            "px-miniPlus py-microPlus gap-mini grid grid-cols-3",
             afterName !== beforeName ? "bg-surface-warn" : "bg-transparent",
           ]
             .filter(Boolean)
@@ -205,7 +205,7 @@ export function StagedRowDetailValue({
       {type === "afterName" && (
         <div
           className={[
-            "px-miniPlus py-microPlus mb-mirco gap-mini grid grid-cols-3",
+            "px-miniPlus py-microPlus gap-mini grid grid-cols-3",
             afterName !== beforeName ? "bg-surface-success" : "bg-transparent",
           ]
             .filter(Boolean)
