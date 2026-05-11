@@ -80,21 +80,34 @@ export function StagedView() {
   const pageWrapper = "flex ";
 
   return (
-    <section className="py-large px-smallPlus m-auto flex w-full max-w-5xl flex-col">
-      <Button variant="outlined" onClick={resetDraft} disabled={isApplying}>
-        Discard all
-      </Button>
-      <Button variant="fill" onClick={handleBulkApply} disabled={isApplying}>
-        {isApplying ? "Applying..." : "Apply"}
-      </Button>
-      <List listItems={listItems} />
-      {selected && (
-        <div data-testid={`detail: ${selected.rowId}`}>
-          <div data-testid={`before: ${selected.rowId}`}>
-            {selected.before.preview
-              ? `show before ${selected.before.preview.kind} preview`
-              : null}
-            {selected.before.meta}
+    <section className="py-large px-smallPlus m-auto flex h-dvh w-full max-w-5xl flex-col">
+      <StagedViewHeader length={rowsLength} guidedText={!!selected}>
+        <Button variant="outlined" onClick={resetDraft} disabled={isApplying}>
+          Discard all
+        </Button>
+        <Button variant="outlined" onClick={handleBulkApply} disabled={isApplying}>
+          {isApplying ? "Pushing..." : "Push all"}
+        </Button>
+      </StagedViewHeader>
+      <div className="grid h-full grid-cols-2">
+        <List listItems={listItems} />
+        {selected && (
+          <StagedRowDetail
+            id={selected.rowId}
+            beforeName={selected.nameBefore}
+            afterName={selected.nameAfter}
+            before={selected.before}
+            after={selected.after}
+          />
+        )}
+        {!selected && (
+          <div className="py-regular px-small bg-dot-pattern flex h-full w-full justify-center overflow-hidden">
+            <Text
+              variant="meta-xs"
+              className="text-content-accentStrong w-full text-center"
+            >
+              select to review
+            </Text>
           </div>
         )}
       </div>
