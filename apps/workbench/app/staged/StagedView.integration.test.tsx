@@ -181,7 +181,7 @@ describe("StagedView", () => {
       await userEvent.click(applyButton);
 
       await expect(applyButton).toBeDisabled();
-      await expect(applyButton).toHaveTextContent(/^Applying...$/);
+      await expect(applyButton).toHaveTextContent(/^Pushing...$/);
 
       const updatedDraft = {
         ...base,
@@ -201,7 +201,7 @@ describe("StagedView", () => {
       );
 
       await waitFor(() => {
-        expect(applyButton).toHaveTextContent(/^Apply$/);
+        expect(applyButton).toHaveTextContent(/^Push all$/);
         expect(applyButton).not.toBeDisabled();
       });
     } finally {
