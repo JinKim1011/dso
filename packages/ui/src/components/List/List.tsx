@@ -57,7 +57,7 @@ export const List = ({ listItems, ...props }: ListProps) => {
   }, [updateDot]);
 
   return (
-    <ul {...props} ref={ulRef} className="relative flex flex-col">
+    <ul {...props} ref={ulRef} className="relative flex h-full flex-col">
       <motion.div
         className={dotClass}
         initial={false}
