@@ -105,8 +105,11 @@ export function TokensView() {
   const handleSaveRow = useCallback(
     (rowId: string, update: TokenValueDetailUpdate) => {
       updateRow(rowId, update);
+
+      setSelectedRowId(null);
+      shellActions?.clearNavigationDetail();
     },
-    [updateRow],
+    [updateRow, shellActions],
   );
 
   const selectedRow = useMemo(
@@ -138,7 +141,10 @@ export function TokensView() {
           value={selectedRow.value}
           typographyOptions={typographyOptions}
           onSave={handleSaveRow}
-          onClose={() => shellActions?.clearNavigationDetail()}
+          onClose={() => {
+            shellActions?.clearNavigationDetail();
+            setSelectedRowId(null);
+          }}
         />
       ) : null,
     );
@@ -206,6 +212,7 @@ export function TokensView() {
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={true}
+        onPaneClick={() => setSelectedRowId(null)}
       />
     </div>
   );
