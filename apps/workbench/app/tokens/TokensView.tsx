@@ -138,7 +138,10 @@ export function TokensView() {
           value={selectedRow.value}
           typographyOptions={typographyOptions}
           onSave={handleSaveRow}
-          onClose={() => shellActions?.clearNavigationDetail()}
+          onClose={() => {
+            shellActions?.clearNavigationDetail();
+            setSelectedRowId(null);
+          }}
         />
       ) : null,
     );
