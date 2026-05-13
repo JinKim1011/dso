@@ -105,6 +105,9 @@ export function TokensView() {
   const handleSaveRow = useCallback(
     (rowId: string, update: TokenValueDetailUpdate) => {
       updateRow(rowId, update);
+
+      setSelectedRowId(null);
+      shellActions?.clearNavigationDetail();
     },
     [updateRow],
   );
