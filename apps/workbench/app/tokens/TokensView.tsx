@@ -212,6 +212,7 @@ export function TokensView() {
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={true}
+        onPaneClick={() => setSelectedRowId(null)}
       />
     </div>
   );
