@@ -2,7 +2,7 @@
 
 import { CheckIcon, ResetIcon } from "@radix-ui/react-icons";
 import { Button, List, Text } from "@repo/ui";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 import { StagedRowDetail } from "./component/StagedRowDetail";
 import { StagedViewHeader } from "./component/StagedViewHeader";
@@ -13,6 +13,21 @@ export function StagedView() {
     useStagedManifest();
   const [isApplying, setIsApplying] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    if (event.target instanceof Node && !container.contains(event.target)) {
+      setSelectedRowId(null);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleBulkApply = async () => {
     setIsApplying(true);
@@ -100,7 +115,7 @@ export function StagedView() {
         </div>
       )}
       {rowsLength !== 0 && (
-        <>
+        <div ref={containerRef}>
           <StagedViewHeader length={rowsLength} guidedText={!!selected}>
             <Button variant="outlined" onClick={resetDraft} disabled={isApplying}>
               Discard all
@@ -131,7 +146,7 @@ export function StagedView() {
               </div>
             )}
           </div>
-        </>
+        </div>
       )}
     </section>
   );
