@@ -15,16 +15,15 @@ export function StagedView() {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleClickOutside = (event: MouseEvent) => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    if (event.target instanceof Node && !container.contains(event.target)) {
-      setSelectedRowId(null);
-    }
-  };
-
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      if (event.target instanceof Node && !container.contains(event.target)) {
+        setSelectedRowId(null);
+      }
+    };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
