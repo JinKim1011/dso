@@ -109,7 +109,7 @@ export function TokensView() {
       setSelectedRowId(null);
       shellActions?.clearNavigationDetail();
     },
-    [updateRow],
+    [updateRow, shellActions],
   );
 
   const selectedRow = useMemo(
