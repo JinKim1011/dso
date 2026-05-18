@@ -13,14 +13,24 @@ type ListboxProps = {
   options: ListboxItem[];
   selectedValue: string;
   onSelect: (value: string) => void;
+  maxHeight?: number;
 };
 
-export function Listbox({ id, options, selectedValue, onSelect }: ListboxProps) {
+export function Listbox({
+  id,
+  options,
+  selectedValue,
+  onSelect,
+  maxHeight = 300,
+}: ListboxProps) {
   return (
     <div
       id={id}
       role="listbox"
-      className="py-microPlus px-micro rounded-mini shadow-overlay-menu absolute flex w-full translate-y-[0.25rem] flex-col"
+      className="py-microPlus px-micro rounded-mini shadow-overlay-menu bg-surface-secondary absolute flex w-full translate-y-[0.25rem] flex-col overflow-y-auto"
+      style={{
+        maxHeight: `${maxHeight}px`,
+      }}
     >
       {options.map((option) => {
         const isDisabled = Boolean(option.disabled);

@@ -1,5 +1,6 @@
 "use client";
 
+import { autoUpdate, flip, size, useFloating } from "@floating-ui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import { type FocusEventHandler, type KeyboardEventHandler, useState } from "react";
@@ -26,6 +27,22 @@ export function Combobox({
   const [isOpen, setIsOpen] = useState(false);
   const selectedOption = options.find((option) => option.value === value);
   const inputValue = selectedOption ? selectedOption.label : "";
+  const [maxHeight, setMaxHeight] = useState(500);
+
+  const { floatingStyles, refs } = useFloating({
+    open: isOpen,
+    placement: "bottom-start",
+    middleware: [
+      flip(),
+      size({
+        apply({ availableHeight }) {
+          const calc = Math.min(500, availableHeight - 16);
+          setMaxHeight(calc);
+        },
+      }),
+    ],
+    whileElementsMounted: autoUpdate,
+  });
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (disabled) return;
@@ -78,7 +95,7 @@ export function Combobox({
   const listboxId = `${id}-listbox`;
 
   return (
-    <div className="relative w-full" onBlur={handleBlur}>
+    <div ref={refs.setReference} className="relative w-full" onBlur={handleBlur}>
       <InputBase
         id={id}
         readOnly
@@ -95,11 +112,13 @@ export function Combobox({
       <AnimatePresence>
         {isOpen ? (
           <motion.div
+            ref={refs.setFloating}
             key="dropdown"
             initial="closed"
             animate="open"
             exit="closed"
-            className="absolute w-full"
+            className="w-full"
+            style={{ ...floatingStyles, zIndex: 100, top: 32 }}
             variants={dropdownVariants}
           >
             <Listbox
@@ -107,6 +126,7 @@ export function Combobox({
               options={options}
               selectedValue={value ?? ""}
               onSelect={handleSelect}
+              maxHeight={maxHeight}
             ></Listbox>
           </motion.div>
         ) : null}
