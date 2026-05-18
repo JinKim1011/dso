@@ -120,7 +120,8 @@ export function Combobox({
             initial="closed"
             animate="open"
             exit="closed"
-            className="absolute w-full"
+            className="w-full"
+            style={{ ...floatingStyles, zIndex: 100, top: 32 }}
             variants={dropdownVariants}
           >
             <Listbox
