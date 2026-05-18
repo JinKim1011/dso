@@ -27,7 +27,7 @@ export function Listbox({
     <div
       id={id}
       role="listbox"
-      className="py-microPlus px-micro rounded-mini shadow-overlay-menu bg-surface-secondary absolute flex w-full translate-y-[0.25rem] flex-col"
+      className="py-microPlus px-micro rounded-mini shadow-overlay-menu bg-surface-secondary absolute flex w-full translate-y-[0.25rem] flex-col overflow-y-scroll"
       style={{
         maxHeight: `${maxHeight}px`,
       }}
