@@ -116,6 +116,7 @@ export function Combobox({
       <AnimatePresence>
         {isOpen ? (
           <motion.div
+            ref={refs.setFloating}
             key="dropdown"
             initial="closed"
             animate="open"
