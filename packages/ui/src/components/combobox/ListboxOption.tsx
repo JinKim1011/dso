@@ -32,7 +32,7 @@ export function ListboxOption({
   const baseClasses = [
     "flex items-start w-full",
     "py-microPlus px-mini gap-microPlus",
-    "bg-surface-transparent text-content-primary cursor-pointer",
+    "bg-transparent text-content-primary cursor-pointer",
     "transition-colors duration-highlightFadeOut ease-outQuad",
     disabled
       ? variantClasses.disabled
