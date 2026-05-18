@@ -1,6 +1,6 @@
 "use client";
 
-import { flip, size, useFloating } from "@floating-ui/react";
+import { autoUpdate, flip, size, useFloating } from "@floating-ui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import { type FocusEventHandler, type KeyboardEventHandler, useState } from "react";
@@ -41,6 +41,7 @@ export function Combobox({
         },
       }),
     ],
+    whileElementsMounted: autoUpdate,
   });
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
