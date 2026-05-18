@@ -33,6 +33,7 @@ export function Combobox({
   const inputValue = selectedOption ? selectedOption.label : "";
 
   const triggerRef = useRef<HTMLDivElement>(null);
+  const [maxHeight, setMaxHeight] = useState(300);
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (disabled) return;
@@ -116,6 +117,7 @@ export function Combobox({
               options={options}
               selectedValue={value ?? ""}
               onSelect={handleSelect}
+              maxHeight={maxHeight}
             ></Listbox>
           </motion.div>
         ) : null}
