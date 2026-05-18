@@ -1,5 +1,6 @@
 "use client";
 
+import { flip, size, useFloating } from "@floating-ui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -31,9 +32,21 @@ export function Combobox({
   const [isOpen, setIsOpen] = useState(false);
   const selectedOption = options.find((option) => option.value === value);
   const inputValue = selectedOption ? selectedOption.label : "";
+  const [maxHeight, setMaxHeight] = useState(500);
 
-  const triggerRef = useRef<HTMLDivElement>(null);
-  const [maxHeight, setMaxHeight] = useState(300);
+  const { floatingStyles, refs } = useFloating({
+    open: isOpen,
+    placement: "bottom-start",
+    middleware: [
+      flip(),
+      size({
+        apply({ availableHeight }) {
+          const calc = Math.min(500, availableHeight - 16);
+          setMaxHeight(calc);
+        },
+      }),
+    ],
+  });
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (disabled) return;
