@@ -16,8 +16,8 @@ export type ListboxOptionProps = {
 };
 
 const variantClasses = {
-  default: "bg-surface-secondary hover:bg-surface-primary",
-  selected: "bg-surface-quaternary hover:bg-surface-quaternary",
+  default: "bg-transparent hover:bg-surface-tertiary",
+  selected: "bg-surface-tertiary hover:bg-surface-tertiary",
   disabled: "bg-surface-tertiary cursor-not-allowed",
 };
 
@@ -32,7 +32,7 @@ export function ListboxOption({
   const baseClasses = [
     "flex items-start w-full",
     "py-microPlus px-mini gap-microPlus",
-    "bg-surface-secondary text-content-primary cursor-pointer",
+    "bg-surface-transparent text-content-primary cursor-pointer",
     "transition-colors duration-highlightFadeOut ease-outQuad",
     disabled
       ? variantClasses.disabled
