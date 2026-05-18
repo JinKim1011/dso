@@ -99,7 +99,7 @@ export function Combobox({
   const listboxId = `${id}-listbox`;
 
   return (
-    <div ref={triggerRef} className="relative w-full" onBlur={handleBlur}>
+    <div ref={refs.setReference} className="relative w-full" onBlur={handleBlur}>
       <InputBase
         id={id}
         readOnly
