@@ -2,7 +2,12 @@
 
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
-import { type FocusEventHandler, type KeyboardEventHandler, useState } from "react";
+import {
+  type FocusEventHandler,
+  type KeyboardEventHandler,
+  useRef,
+  useState,
+} from "react";
 import { InputBase } from "../input/InputBase";
 import { Listbox, type ListboxItem } from "./Listbox";
 
@@ -26,6 +31,8 @@ export function Combobox({
   const [isOpen, setIsOpen] = useState(false);
   const selectedOption = options.find((option) => option.value === value);
   const inputValue = selectedOption ? selectedOption.label : "";
+
+  const triggerRef = useRef<HTMLDivElement>(null);
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (disabled) return;
@@ -80,7 +87,7 @@ export function Combobox({
   const listboxId = `${id}-listbox`;
 
   return (
-    <div className="relative w-full" onBlur={handleBlur}>
+    <div ref={triggerRef} className="relative w-full" onBlur={handleBlur}>
       <InputBase
         id={id}
         readOnly
