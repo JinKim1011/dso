@@ -73,14 +73,12 @@ export function Combobox({
       opacity: 0,
       y: -4,
       scale: 0.98,
-      zIndex: 0,
       transition: dropdownTransition,
     },
     open: {
       opacity: 1,
       y: 0,
       scale: 1,
-      zIndex: 100,
       transition: dropdownTransition,
     },
   };
