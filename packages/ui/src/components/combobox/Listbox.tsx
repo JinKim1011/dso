@@ -20,7 +20,7 @@ export function Listbox({ id, options, selectedValue, onSelect }: ListboxProps) 
     <div
       id={id}
       role="listbox"
-      className="py-microPlus px-micro rounded-mini shadow-overlay-menu absolute flex w-full translate-y-[0.25rem] flex-col"
+      className="py-microPlus px-micro rounded-mini shadow-overlay-menu bg-surface-secondary absolute flex w-full translate-y-[0.25rem] flex-col"
     >
       {options.map((option) => {
         const isDisabled = Boolean(option.disabled);
