@@ -34,6 +34,15 @@ const subTextVariant = cva("", {
   },
 });
 
+const actionsVariant = cva("absolute right-0 -translate-y-10", {
+  variants: {
+    selected: {
+      true: "opacity-100",
+      false: "opacity-0 group-hover:opacity-100",
+    },
+  },
+});
+
 export const ListItem = ({
   id,
   text,
@@ -110,7 +119,7 @@ export const ListItem = ({
           </Text>
         </div>
       </button>
-      <div className={actionWrapperClass}>{children}</div>
+      <div className={actionsVariant({ selected })}>{children}</div>
     </li>
   );
 };
