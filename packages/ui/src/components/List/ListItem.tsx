@@ -25,6 +25,15 @@ const textVariant = cva("", {
   },
 });
 
+const subTextVariant = cva("", {
+  variants: {
+    selected: {
+      true: "text-content-accentStrong/50",
+      false: "text-content-secondary/30 group-hover:text-content-accentStrong/50",
+    },
+  },
+});
+
 export const ListItem = ({
   id,
   text,
@@ -96,7 +105,7 @@ export const ListItem = ({
           <Text variant="meta-sm" className={textVariant({ selected })}>
             {text}
           </Text>
-          <Text variant="meta-xs" className={subTextClass}>
+          <Text variant="meta-xs" className={subTextVariant({ selected })}>
             {subText}
           </Text>
         </div>
