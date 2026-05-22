@@ -68,13 +68,6 @@ export const InputBase = ({
   readOnly = false,
   ...props
 }: InputBaseProps) => {
-  const iconClassName = [
-    "size-4 shrink-0",
-    disabled ? "text-content-quaternary" : "text-content-secondary",
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   return (
     <div
       className={inputBaseVariant({ disabled })}
