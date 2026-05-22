@@ -112,29 +112,6 @@ export const CardItem = ({
     }
   };
 
-  const indexTextClass = selected
-    ? "text-content-tertiary"
-    : "text-content-quaternary group-hover:text-content-tertiary";
-  const titleTextClass = selected
-    ? "text-content-primary"
-    : "text-content-secondary group-hover:text-content-primary";
-  const subTextClass = selected
-    ? "text-content-tertiary"
-    : "text-content-quaternary group-hover:text-content-tertiary";
-  const wrapperClasses = [
-    "group flex w-full items-start justify-start",
-    "py-miniPlus px-small gap-regularPlus rounded-micro",
-    "transition-[box-shadow,background-color,color] duration-slowTransition ease-outExpo",
-    isInteractive
-      ? "cursor-pointer focus-visible:outline-none focus-visible:shadow-focus-accent"
-      : "cursor-default",
-    selected
-      ? "bg-surface-quinary shadow-surface-pressed text-content-accent"
-      : "bg-surface-tertiary shadow-surface-lifted hover:bg-surface-quaternary hover:shadow-surface-pressed hover:text-content-accent",
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   const finiteLevel = Number.isFinite(level) ? level : 0;
   const normalizedLevel = Math.min(4, Math.max(0, Math.floor(finiteLevel)));
   const baseIndicator = "h-2.5 w-0.5";
