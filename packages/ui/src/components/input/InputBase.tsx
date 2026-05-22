@@ -50,6 +50,18 @@ const inputVariant = cva(
   },
 );
 
+const iconVariant = cva("size-4 shrink-0", {
+  variants: {
+    disabled: {
+      true: "text-content-quaternary",
+      false: "text-content-secondary",
+    },
+  },
+  defaultVariants: {
+    disabled: false,
+  },
+});
+
 export const InputBase = ({
   rightIcon: RightIcon,
   disabled = false,
@@ -76,7 +88,7 @@ export const InputBase = ({
         className={inputVariant({ readOnly, disabled })}
         spellCheck={false}
       ></input>
-      {RightIcon && <RightIcon aria-hidden className={iconClassName} />}
+      {RightIcon && <RightIcon aria-hidden className={iconVariant({ disabled })} />}
     </div>
   );
 };
