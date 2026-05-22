@@ -16,7 +16,10 @@ export interface ListItemProps extends Omit<
   onSelect?: () => void;
 }
 
-const textWrapperClasses =
+const buttonWrapperClassess =
+  "flex w-full h-[3.25rem] items-center border-stroke-primary border-b-[0.5px] transition-[color] ease-outExpo duration-quickTransition cursor-pointer";
+
+const textWrapperClassess =
   "flex w-full h-full items-center gap-miniPlus transition-[color] ease-outExpo duration-regularTransition will-change-transform";
 
 const titleVariant = cva("", {
@@ -72,7 +75,7 @@ export const ListItem = ({
         aria-label={text}
         aria-pressed={selected}
         data-selected={selected}
-        className={wrapperClass}
+        className={buttonWrapperClassess}
         tabIndex={0}
         onClick={(event) => {
           props.onClick?.(event);
