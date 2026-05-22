@@ -167,18 +167,15 @@ export const CardItem = ({
         onKeyDown={handleKeyDown}
         layout
       >
-        <Text variant="label-xs" className={indexTextClass}>
+        <Text variant="label-xs" className={indexTextVariant({ selected })}>
           {index}
         </Text>
         <div className="gap-miniPlus flex min-w-0 flex-1 flex-col text-left">
-          <Text variant="label-xs" className={titleTextClass}>
+          <Text variant="label-xs" className={titleTextVariant({ selected })}>
             {text}
           </Text>
           <div className="gap-mini flex w-full min-w-0 justify-between">
-            <Text
-              variant="meta-xs"
-              className={`${subTextClass} max-w-40 min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap`}
-            >
+            <Text variant="meta-xs" className={subTextVariant({ selected })}>
               {subText}
             </Text>
             <div className="gap-microPlus flex shrink-0 items-center">
