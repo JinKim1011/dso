@@ -13,87 +13,118 @@ export type IconComponent = React.ElementType<{
   "aria-hidden"?: boolean;
 }>;
 
-const variantClasses: Record<
-  ButtonVariant,
+const buttonVariants = cva(
+  "inline-flex items-center justify-center border cursor-pointer transition-colors transition-transform duration-highlightFadeOut ease-outQuad active:translate-y-0.5 active:scale-[0.98]",
   {
-    base: `${BgClass} ${TextColorClass} ${BorderClass}`;
-    hover: `${HoverBgClass} ${HoverTextColorClass} ${HoverBorderClass}`;
-    active: `${ActiveBgClass} ${ActiveTextColorClass} ${ActiveBorderClass}`;
-    selected: `${BgClass} ${TextColorClass} ${BorderClass}`;
-    selectedHover: `${HoverBgClass} ${HoverTextColorClass} ${HoverBorderClass}`;
-    selectedActive: `${ActiveBgClass} ${ActiveTextColorClass} ${ActiveBorderClass}`;
-  }
-> = {
-  fill: {
-    base: "bg-surface-primary text-content-tertiary border-transparent",
-    hover:
-      "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
-    active:
-      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
-    selected: "bg-surface-quaternary text-content-primary border-transparent",
-    selectedHover:
-      "hover:bg-surface-quaternary hover:text-content-primary hover:border-transparent",
-    selectedActive:
-      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
+    variants: {
+      variant: {
+        fill: "",
+        outlined: "",
+        void: "",
+      },
+      size: {
+        sm: `${typographyStyles["control-xs"]} gap-micro px-microPlus py-0`,
+        md: `${typographyStyles["control-sm"]} gap-microPlus px-mini py-microPlus`,
+        lg: `${typographyStyles["control-sm"]} gap-mini px-mini py-mini`,
+      },
+      selected: {
+        true: "",
+        false: "",
+      },
+      inline: {
+        true: "",
+        false: "",
+      },
+      fullWidth: {
+        true: "w-full",
+        false: "w-fit",
+      },
+      iconOnly: {
+        true: "",
+        false: "",
+      },
+    },
+    defaultVariants: {
+      variant: "fill",
+      size: "md",
+      selected: false,
+      inline: false,
+      fullWidth: false,
+      iconOnly: false,
+    },
+    compoundVariants: [
+      {
+        variant: "fill",
+        selected: false,
+        class:
+          "border-transparent bg-surface-primary text-content-tertiary hover:border-transparent hover:bg-surface-secondary hover:text-content-primary active:border-transparent active:bg-surface-quaternary active:text-content-primary",
+      },
+      {
+        variant: "fill",
+        selected: true,
+        class:
+          "border-transparent bg-surface-quaternary text-content-primary hover:border-transparent hover:bg-surface-quaternary hover:text-content-primary active:border-transparent active:bg-surface-quaternary active:text-content-primary",
+      },
+      {
+        variant: "outlined",
+        selected: false,
+        class:
+          "border-stroke-primary bg-transparent text-content-tertiary hover:border-stroke-primary hover:bg-surface-secondary hover:text-content-primary active:border-stroke-primary active:bg-surface-quaternary active:text-content-primary",
+      },
+      {
+        variant: "outlined",
+        selected: true,
+        class:
+          "border-stroke-primary bg-surface-quaternary text-content-primary hover:border-stroke-primary hover:bg-surface-quaternary hover:text-content-primary active:border-stroke-primary active:bg-surface-quaternary active:text-content-primary",
+      },
+      {
+        variant: "void",
+        selected: false,
+        class:
+          "border-transparent bg-transparent text-content-tertiary hover:border-transparent hover:bg-surface-secondary hover:text-content-primary active:border-transparent active:bg-surface-quaternary active:text-content-primary",
+      },
+      {
+        variant: "void",
+        selected: true,
+        class:
+          "border-transparent bg-surface-quaternary text-content-primary hover:border-transparent hover:bg-surface-quaternary hover:text-content-primary active:border-transparent active:bg-surface-quaternary active:text-content-primary",
+      },
+      {
+        size: "sm",
+        inline: true,
+        class: "-mx-microPlus -my-micro",
+      },
+      {
+        size: "md",
+        inline: true,
+        class: "-mx-mini -my-microPlus",
+      },
+      {
+        size: "lg",
+        inline: true,
+        class: "-mx-mini -my-mini",
+      },
+      {
+        size: "sm",
+        iconOnly: true,
+        class: "px-microPlus py-microPlus",
+      },
+      {
+        size: "md",
+        iconOnly: true,
+        class: "px-mini py-mini",
+      },
+      {
+        size: "lg",
+        iconOnly: true,
+        class: "px-mini py-mini",
+      },
+    ],
   },
-  outlined: {
-    base: "bg-transparent text-content-tertiary border-stroke-primary",
-    hover:
-      "hover:bg-surface-secondary hover:text-content-primary hover:border-stroke-primary",
-    active:
-      "active:bg-surface-quaternary active:text-content-primary active:border-stroke-primary",
-    selected: "bg-surface-quaternary text-content-primary border-stroke-primary",
-    selectedHover:
-      "hover:bg-surface-quaternary hover:text-content-primary hover:border-stroke-primary",
-    selectedActive:
-      "active:bg-surface-quaternary active:text-content-primary active:border-stroke-primary",
-  },
-  void: {
-    base: "bg-transparent text-content-tertiary border-transparent",
-    hover:
-      "hover:bg-surface-secondary hover:text-content-primary hover:border-transparent",
-    active:
-      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
-    selected: "bg-surface-quaternary text-content-primary border-transparent",
-    selectedHover:
-      "hover:bg-surface-quaternary hover:text-content-primary hover:border-transparent",
-    selectedActive:
-      "active:bg-surface-quaternary active:text-content-primary active:border-transparent",
-  },
-};
+);
 
-const sizeClasses: Record<
-  ButtonSize,
-  {
-    base: string;
-    hover: `-${MarginXClass} -${MarginYClass}`;
-    active: `-${MarginXClass} -${MarginYClass}`;
-    icon: string;
-    iconOnly: string;
-  }
-> = {
-  sm: {
-    base: `${typographyStyles["control-sm"]} px-microPlus py-0 gap-micro`,
-    hover: "-mx-microPlus -my-micro",
-    active: "-mx-microPlus -my-micro",
-    icon: "size-3.5 shrink-0",
-    iconOnly: "p-microPlus",
-  },
-  md: {
-    base: `${typographyStyles["control-md"]} px-mini py-microPlus gap-microPlus`,
-    hover: "-mx-mini -my-microPlus",
-    active: "-mx-mini -my-microPlus",
-    icon: "size-4 shrink-0",
-    iconOnly: "p-mini",
-  },
-  lg: {
-    base: `${typographyStyles["control-md"]} px-mini py-mini gap-mini`,
-    hover: "-mx-mini -my-mini",
-    active: "-mx-mini -my-mini",
-    icon: "size-5 shrink-0",
-    iconOnly: "p-mini",
-  },
-};
+type ButtonVariant = NonNullable<VariantProps<typeof buttonVariants>["variant"]>;
+type ButtonSize = NonNullable<VariantProps<typeof buttonVariants>["size"]>;
 
 export interface ButtonProps extends Omit<
   React.ComponentPropsWithoutRef<"button">,
