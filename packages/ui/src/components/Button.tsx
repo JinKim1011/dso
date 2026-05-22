@@ -8,9 +8,6 @@ import {
   typographyStyles,
 } from "../types/tokens";
 
-type ButtonVariant = "fill" | "outlined" | "void";
-type ButtonSize = "sm" | "md" | "lg";
-
 export type IconComponent = React.ElementType<{
   className?: string;
   "aria-hidden"?: boolean;
