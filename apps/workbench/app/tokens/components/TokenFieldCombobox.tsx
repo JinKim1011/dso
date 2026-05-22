@@ -24,7 +24,7 @@ export function TokenFieldCombobox({
           as="label"
           htmlFor={id}
           variant="input-label-sm"
-          className="text-content-primary my-auto"
+          className="text-content-primary/35 my-auto"
         >
           {label}
         </Text>
