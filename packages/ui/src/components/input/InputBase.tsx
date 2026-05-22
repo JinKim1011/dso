@@ -27,8 +27,8 @@ export const InputBase = ({
     "transition-colors duration-highlightFadeOut ease-outQuad",
 
     disabled
-      ? "bg-surface-secondary text-content-quaternary cursor-not-allowed"
-      : "bg-surface-tertiary text-content-primary focus-within:bg-surface-quaternary focus-within:shadow-focus-accent",
+      ? "text-content-quaternary cursor-not-allowed"
+      : "bg-surface-secondary text-content-primary focus-within:bg-surface-quaternary focus-within:shadow-focus-accent",
   ]
     .filter(Boolean)
     .join(" ");
