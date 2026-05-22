@@ -24,8 +24,28 @@ const inputBaseVariant = cva(
           "bg-surface-secondary text-content-primary focus-within:bg-surface-quaternary focus-within:shadow-focus-accent",
       },
     },
+    defaultVariants: {
+      disabled: false,
+    },
   },
 );
+
+const inputVariant = cva("w-full p-0 bg-transparent outline-none", {
+  variants: {
+    readOnly: {
+      true: "cursor-pointer select-none caret-transparent",
+      false: "cursor-text select-text",
+    },
+    disabled: {
+      true: "text-content-quaternary placeholder:text-content-quaternary cursor-not-allowed",
+      false: "text-content-primary placeholder:text-content-tertiary",
+    },
+  },
+  defaultVariants: {
+    readOnly: false,
+    disabled: false,
+  },
+});
 
 export const InputBase = ({
   rightIcon: RightIcon,
@@ -77,7 +97,7 @@ export const InputBase = ({
         {...props}
         disabled={disabled}
         readOnly={readOnly}
-        className={inputClassName}
+        className={inputVariant({ readOnly, disabled })}
         spellCheck={false}
       ></input>
       {RightIcon && <RightIcon aria-hidden className={iconClassName} />}
