@@ -64,37 +64,6 @@ export const ListItem = ({
     .filter(Boolean)
     .join(" ");
 
-  const textWrapperClass = [
-    "flex w-full h-full items-center gap-miniPlus",
-    "transition-[color] ease-outExpo duration-regularTransition",
-    "will-change-transform",
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const textClass = [
-    selected
-      ? "text-content-accentStrong"
-      : "text-content-primary/50 group-hover:text-content-accentStrong",
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const subTextClass = [
-    selected
-      ? "text-content-accentStrong/50"
-      : "text-content-secondary/30 group-hover:text-content-accentStrong/50",
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const actionWrapperClass = [
-    "absolute right-0 -translate-y-10",
-    selected ? "opacity-100" : "opacity-0 group-hover:opacity-100",
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   return (
     <li data-testid={id} className="group relative">
       <button
