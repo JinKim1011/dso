@@ -6,6 +6,7 @@ import {
   OverrideBorderClass,
   OverrideTextColorClass,
   typographyStyles,
+  TypographyVariant,
 } from "../types/tokens";
 
 export type IconComponent = React.ElementType<{
@@ -143,6 +144,18 @@ export interface ButtonProps extends Omit<
   overrideBorderClass?: OverrideBorderClass;
   selected?: boolean;
 }
+
+const iconSizeClasses: Record<ButtonSize, string> = {
+  sm: "size-3.5 shrink-0",
+  md: "size-4 shrink-0",
+  lg: "size-5 shrink-0",
+};
+
+const textVariant: Record<ButtonSize, TypographyVariant> = {
+  sm: "control-xs",
+  md: "control-sm",
+  lg: "control-sm",
+};
 
 export const Button = ({
   type = "button",
