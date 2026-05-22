@@ -195,10 +195,14 @@ export const Button = ({
   );
 
   return (
-    <button type={type} {...props} className={className}>
-      {LeftIcon && <LeftIcon aria-hidden className={sizeClasses[size].icon} />}
-      {!iconOnly && children}
-      {RightIcon && <RightIcon aria-hidden className={sizeClasses[size].icon} />}
+    <button type={type} {...props} className={buttonClassName}>
+      {LeftIcon && <LeftIcon aria-hidden className={iconSizeClasses[size]} />}
+      {!iconOnly && (
+        <Text variant={textVariant[size]} as="span">
+          {children}
+        </Text>
+      )}
+      {RightIcon && <RightIcon aria-hidden className={iconSizeClasses[size]} />}
     </button>
   );
 };
