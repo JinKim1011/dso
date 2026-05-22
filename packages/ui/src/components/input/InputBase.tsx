@@ -1,5 +1,6 @@
 import { cva } from "class-variance-authority";
 import type React from "react";
+import { typographyStyles } from "../../types/tokens";
 
 export type IconComponent = React.ElementType<{
   className?: string;
@@ -29,22 +30,25 @@ const inputBaseVariant = cva(
   },
 );
 
-const inputVariant = cva("w-full p-0 bg-transparent outline-none", {
-  variants: {
-    readOnly: {
-      true: "cursor-pointer select-none caret-transparent",
-      false: "cursor-text select-text",
+const inputVariant = cva(
+  `${typographyStyles["control-sm"]} w-full p-0 bg-transparent outline-none`,
+  {
+    variants: {
+      readOnly: {
+        true: "cursor-pointer select-none caret-transparent",
+        false: "cursor-text select-text",
+      },
+      disabled: {
+        true: "text-content-quaternary placeholder:text-content-quaternary cursor-not-allowed",
+        false: "text-content-primary placeholder:text-content-tertiary",
+      },
     },
-    disabled: {
-      true: "text-content-quaternary placeholder:text-content-quaternary cursor-not-allowed",
-      false: "text-content-primary placeholder:text-content-tertiary",
+    defaultVariants: {
+      readOnly: false,
+      disabled: false,
     },
   },
-  defaultVariants: {
-    readOnly: false,
-    disabled: false,
-  },
-});
+);
 
 export const InputBase = ({
   rightIcon: RightIcon,
