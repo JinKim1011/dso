@@ -64,6 +64,7 @@ export const InputBase = ({
         disabled={disabled}
         readOnly={readOnly}
         className={inputClassName}
+        spellCheck={false}
       ></input>
       {RightIcon && <RightIcon aria-hidden className={iconClassName} />}
     </div>
