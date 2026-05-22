@@ -16,7 +16,7 @@ export interface ListItemProps extends Omit<
   onSelect?: () => void;
 }
 
-const textVariant = cva("", {
+const titleVariant = cva("", {
   variants: {
     selected: {
       true: "text-content-accentStrong",
@@ -111,7 +111,7 @@ export const ListItem = ({
         }}
       >
         <div className={textWrapperClass}>
-          <Text variant="meta-sm" className={textVariant({ selected })}>
+          <Text variant="meta-sm" className={titleVariant({ selected })}>
             {text}
           </Text>
           <Text variant="meta-xs" className={subTextVariant({ selected })}>
