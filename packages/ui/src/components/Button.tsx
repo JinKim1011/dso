@@ -157,32 +157,24 @@ export const Button = ({
   overrideBgClass,
   overrideTextColorClass,
   overrideBorderClass,
+  className,
   children,
   ...props
 }: ButtonProps) => {
-  const paddingClass = iconOnly ? sizeClasses[size].iconOnly : sizeClasses[size].base;
-
-  const className = [
-    selected ? variantClasses[variant].selectedHover : variantClasses[variant].hover,
-    selected ? variantClasses[variant].selectedActive : variantClasses[variant].active,
-    selected ? variantClasses[variant].selected : variantClasses[variant].base,
-    paddingClass,
-    inline ? sizeClasses[size].hover : "",
-    inline ? sizeClasses[size].active : "",
-    fullWidth ? "w-full" : "w-fit",
+  const buttonClassName = cn(
+    buttonVariants({
+      variant,
+      size,
+      selected,
+      inline,
+      fullWidth,
+      iconOnly,
+    }),
     overrideBgClass,
     overrideTextColorClass,
     overrideBorderClass,
-    "border",
-    "inline-flex items-center justify-center",
-    "transition-colors transition-transform",
-    "duration-highlightFadeOut",
-    "ease-outQuad",
-    "active:translate-y-0.5 active:scale-[0.98]",
-    "cursor-pointer",
-  ]
-    .filter(Boolean)
-    .join(" ");
+    className,
+  );
 
   return (
     <button type={type} {...props} className={className}>
