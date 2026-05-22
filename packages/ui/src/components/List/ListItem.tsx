@@ -1,5 +1,6 @@
 "use client";
 
+import { cva } from "class-variance-authority";
 import { ButtonHTMLAttributes, ReactNode } from "react";
 import { Text } from "../Text";
 
@@ -14,6 +15,15 @@ export interface ListItemProps extends Omit<
   children?: ReactNode;
   onSelect?: () => void;
 }
+
+const textVariant = cva("", {
+  variants: {
+    selected: {
+      true: "text-content-accentStrong",
+      false: "text-content-primary/50 group-hover:text-content-accentStrong",
+    },
+  },
+});
 
 export const ListItem = ({
   id,
@@ -83,7 +93,7 @@ export const ListItem = ({
         }}
       >
         <div className={textWrapperClass}>
-          <Text variant="meta-sm" className={textClass}>
+          <Text variant="meta-sm" className={textVariant({ selected })}>
             {text}
           </Text>
           <Text variant="meta-xs" className={subTextClass}>
