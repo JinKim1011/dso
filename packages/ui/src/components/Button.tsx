@@ -2,20 +2,9 @@
 
 import type React from "react";
 import {
-  ActiveBgClass,
-  ActiveBorderClass,
-  ActiveTextColorClass,
-  BgClass,
-  BorderClass,
-  HoverBgClass,
-  HoverBorderClass,
-  HoverTextColorClass,
-  MarginXClass,
-  MarginYClass,
   OverrideBGClass,
   OverrideBorderClass,
   OverrideTextColorClass,
-  TextColorClass,
   typographyStyles,
 } from "../types/tokens";
 
