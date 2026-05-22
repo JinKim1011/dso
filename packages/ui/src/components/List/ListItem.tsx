@@ -58,15 +58,6 @@ export const ListItem = ({
   onSelect,
   ...props
 }: ListItemProps) => {
-  const wrapperClass = [
-    "flex w-full h-[3.25rem] items-center",
-    "border-stroke-primary border-b-[0.5px]",
-    "transition-[color] ease-outExpo duration-quickTransition",
-    "cursor-pointer",
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   return (
     <li data-testid={id} className="group relative">
       <button
