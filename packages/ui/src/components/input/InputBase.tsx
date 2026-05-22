@@ -1,3 +1,4 @@
+import { cva } from "class-variance-authority";
 import type React from "react";
 import { typographyStyles } from "../../types/typography";
 
@@ -12,6 +13,19 @@ export interface InputBaseProps extends Omit<
 > {
   rightIcon?: IconComponent;
 }
+
+const inputBaseVariant = cva(
+  "inline-flex items-center w-full p-mini gap-mini rounded-mini shadow-surface-lifted transition-colors duration-highlightFadeOut ease-outQuad",
+  {
+    variants: {
+      disabled: {
+        true: "text-content-quaternary cursor-not-allowed",
+        false:
+          "bg-surface-secondary text-content-primary focus-within:bg-surface-quaternary focus-within:shadow-focus-accent",
+      },
+    },
+  },
+);
 
 export const InputBase = ({
   rightIcon: RightIcon,
@@ -55,7 +69,7 @@ export const InputBase = ({
 
   return (
     <div
-      className={wrapperClassName}
+      className={inputBaseVariant({ disabled })}
       data-disabled={disabled || undefined}
       aria-disabled={disabled || undefined}
     >
