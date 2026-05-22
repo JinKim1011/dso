@@ -20,6 +20,27 @@ export interface CardItemProps extends Omit<
   onSelect?: () => void;
 }
 
+const cardItemVariant = cva(
+  "group flex w-full items-start justify-start py-miniPlus px-small gap-regularPlus rounded-micro transition-[box-shadow,background-color,color] duration-slowTransition ease-outExpo",
+  {
+    variants: {
+      isInteractive: {
+        true: "cursor-pointer focus-visible:outline-none focus-visible:shadow-focus-accent",
+        false: "cursor-default",
+      },
+      selected: {
+        true: "bg-surface-quinary shadow-surface-pressed text-content-accent",
+        false:
+          "bg-surface-tertiary shadow-surface-lifted hover:bg-surface-quaternary hover:shadow-surface-pressed hover:text-content-accent",
+      },
+    },
+    defaultVariants: {
+      isInteractive: false,
+      selected: false,
+    },
+  },
+);
+
 export const CardItem = ({
   id,
   index,
