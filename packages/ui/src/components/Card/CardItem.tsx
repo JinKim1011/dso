@@ -56,7 +56,7 @@ const indexTextVariant = cva("", {
 const titleTextVariant = cva("", {
   variants: {
     selected: {
-      ture: "text-content-primary",
+      true: "text-content-primary",
       false: "text-content-secondary group-hover:text-content-primary",
     },
   },
