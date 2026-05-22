@@ -85,7 +85,7 @@ export const ListItem = ({
           onSelect?.();
         }}
       >
-        <div className={textWrapperClasses}>
+        <div className={textWrapperClassess}>
           <Text variant="meta-sm" className={titleVariant({ selected })}>
             {text}
           </Text>
