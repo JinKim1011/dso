@@ -1,5 +1,9 @@
 "use client";
 
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../lib/utils";
+import { Text } from "./Text";
+
 import type React from "react";
 import {
   OverrideBGClass,
@@ -131,6 +135,7 @@ export interface ButtonProps extends Omit<
   React.ComponentPropsWithoutRef<"button">,
   "className"
 > {
+  className?: string;
   type?: "button" | "submit" | "reset";
   variant?: ButtonVariant;
   size?: ButtonSize;
