@@ -22,7 +22,7 @@ export function TokenFieldInput({
           as="label"
           htmlFor={id}
           variant="input-label-sm"
-          className="text-content-primary"
+          className="text-content-primary/35"
         >
           {label}
         </Text>
