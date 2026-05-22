@@ -16,6 +16,9 @@ export interface ListItemProps extends Omit<
   onSelect?: () => void;
 }
 
+const textWrapperClasses =
+  "flex w-full h-full items-center gap-miniPlus transition-[color] ease-outExpo duration-regularTransition will-change-transform";
+
 const titleVariant = cva("", {
   variants: {
     selected: {
@@ -110,7 +113,7 @@ export const ListItem = ({
           onSelect?.();
         }}
       >
-        <div className={textWrapperClass}>
+        <div className={textWrapperClasses}>
           <Text variant="meta-sm" className={titleVariant({ selected })}>
             {text}
           </Text>
