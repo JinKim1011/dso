@@ -41,6 +41,45 @@ const cardItemVariant = cva(
   },
 );
 
+const indexTextVariant = cva("", {
+  variants: {
+    selected: {
+      true: "text-content-tertiary",
+      false: "text-content-quaternary group-hover:text-content-tertiary",
+    },
+  },
+  defaultVariants: {
+    selected: false,
+  },
+});
+
+const titleTextVariant = cva("", {
+  variants: {
+    selected: {
+      ture: "text-content-primary",
+      false: "text-content-secondary group-hover:text-content-primary",
+    },
+  },
+  defaultVariants: {
+    selected: false,
+  },
+});
+
+const subTextVariant = cva(
+  "max-w-40 min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap",
+  {
+    variants: {
+      selected: {
+        true: "text-content-tertiary",
+        false: "text-content-quaternary group-hover:text-content-tertiary",
+      },
+    },
+    defaultVariants: {
+      selected: false,
+    },
+  },
+);
+
 export const CardItem = ({
   id,
   index,
