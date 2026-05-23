@@ -1,5 +1,6 @@
 "use client";
 
+import { cva } from "class-variance-authority";
 import { motion, type HTMLMotionProps } from "framer-motion";
 import { Text } from "../Text";
 
@@ -80,6 +81,45 @@ const subTextVariant = cva(
   },
 );
 
+const indicatorVariant = cva("h-2.5 w-0.5", {
+  variants: {
+    active: {
+      true: "",
+      false: "",
+    },
+    selected: {
+      true: "",
+      false: "",
+    },
+  },
+  compoundVariants: [
+    {
+      active: true,
+      selected: true,
+      class: "bg-surface-accentStrong",
+    },
+    {
+      active: true,
+      selected: false,
+      class: "bg-surface-accentStrong",
+    },
+    {
+      active: false,
+      selected: true,
+      class: "bg-surface-tertiary",
+    },
+    {
+      active: false,
+      selected: false,
+      class: "bg-surface-quaternary group-hover:bg-surface-tertiary",
+    },
+  ],
+  defaultVariants: {
+    active: false,
+    selected: false,
+  },
+});
+
 export const CardItem = ({
   id,
   index,
@@ -114,15 +154,6 @@ export const CardItem = ({
 
   const finiteLevel = Number.isFinite(level) ? level : 0;
   const normalizedLevel = Math.min(4, Math.max(0, Math.floor(finiteLevel)));
-  const baseIndicator = "h-2.5 w-0.5";
-  const activeIndicator = "bg-surface-accentStrong";
-  const inactiveIndicator = [
-    selected
-      ? "bg-surface-tertiary"
-      : "bg-surface-quaternary group-hover:bg-surface-tertiary",
-  ]
-    .filter(Boolean)
-    .join(" ");
 
   const hoverTransform = { y: 2, scale: 0.98 };
 
@@ -158,8 +189,10 @@ export const CardItem = ({
             <div className="gap-microPlus flex shrink-0 items-center">
               {Array.from({ length: 5 }).map((_, stepIndex) => {
                 const isStepActive = stepIndex <= normalizedLevel;
-                const colorClass = isStepActive ? activeIndicator : inactiveIndicator;
-                const indicatorClasses = `${baseIndicator} ${colorClass}`;
+                const indicatorClasses = indicatorVariant({
+                  active: isStepActive,
+                  selected,
+                });
 
                 return <span key={stepIndex} className={indicatorClasses} />;
               })}
