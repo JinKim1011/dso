@@ -77,10 +77,10 @@ export const ListItem = ({
         }}
       >
         <div className={textWrapperClassess}>
-          <Text variant="meta-sm" className={titleVariant({ selected })}>
+          <Text variant="meta-sm" className={titleVariant({ selected })} as="span">
             {text}
           </Text>
-          <Text variant="meta-xs" className={subTextVariant({ selected })}>
+          <Text variant="meta-xs" className={subTextVariant({ selected })} as="span">
             {subText}
           </Text>
         </div>
