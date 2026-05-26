@@ -29,6 +29,9 @@ const titleVariant = cva("", {
       false: "text-content-primary/50 group-hover:text-content-accentStrong",
     },
   },
+  defaultVariants: {
+    selected: false,
+  },
 });
 
 const subTextVariant = cva("", {
@@ -38,6 +41,9 @@ const subTextVariant = cva("", {
       false: "text-content-secondary/30 group-hover:text-content-accentStrong/50",
     },
   },
+  defaultVariants: {
+    selected: false,
+  },
 });
 
 const actionsVariant = cva("absolute right-0 -translate-y-10", {
@@ -46,6 +52,9 @@ const actionsVariant = cva("absolute right-0 -translate-y-10", {
       true: "opacity-100",
       false: "opacity-0 group-hover:opacity-100",
     },
+  },
+  defaultVariants: {
+    selected: false,
   },
 });
 
