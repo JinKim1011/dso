@@ -19,7 +19,7 @@ const inputBaseVariant = cva(
   {
     variants: {
       disabled: {
-        true: "text-content-quaternary cursor-not-allowed",
+        true: "bg-surface-secondary text-content-quaternary cursor-not-allowed",
         false:
           "bg-surface-secondary text-content-primary focus-within:bg-surface-quaternary focus-within:shadow-focus-accent",
       },
