@@ -95,12 +95,6 @@ const indicatorVariant = cva("h-2.5 w-0.5", {
   compoundVariants: [
     {
       active: true,
-      selected: true,
-      class: "bg-surface-accentStrong",
-    },
-    {
-      active: true,
-      selected: false,
       class: "bg-surface-accentStrong",
     },
     {
