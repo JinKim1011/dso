@@ -51,7 +51,7 @@ export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNo
             iconOnly={true}
             leftIcon={DotsVerticalIcon}
             disabled={true}
-          ></Button>
+          />
         </div>
       </div>
       <Card cardItems={cardItems} />
@@ -64,7 +64,7 @@ export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNo
           iconOnly={true}
           leftIcon={PlusCircledIcon}
           disabled={true}
-        ></Button>
+        />
       </div>
     </section>
   );
