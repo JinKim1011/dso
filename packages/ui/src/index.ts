@@ -12,3 +12,6 @@ export { Text } from "./components/Text";
 // Hooks
 export { useTheme } from "./hooks/useTheme";
 export type { ThemeMode } from "./hooks/useTheme";
+
+// lib
+export { cn } from "./lib/utils";

@@ -1,5 +1,6 @@
 "use client";
 
+import { cva } from "class-variance-authority";
 import { motion, type HTMLMotionProps } from "framer-motion";
 import { Text } from "../Text";
 
@@ -19,6 +20,99 @@ export interface CardItemProps extends Omit<
   onKeyDown?: HTMLMotionProps<"button">["onKeyDown"];
   onSelect?: () => void;
 }
+
+const cardItemVariant = cva(
+  "group flex w-full items-start justify-start py-miniPlus px-small gap-regularPlus rounded-micro transition-[box-shadow,background-color,color] duration-slowTransition ease-outExpo",
+  {
+    variants: {
+      isInteractive: {
+        true: "cursor-pointer focus-visible:outline-none focus-visible:shadow-focus-accent",
+        false: "cursor-default",
+      },
+      selected: {
+        true: "bg-surface-quinary shadow-surface-pressed text-content-accent",
+        false:
+          "bg-surface-tertiary shadow-surface-lifted hover:bg-surface-quaternary hover:shadow-surface-pressed hover:text-content-accent",
+      },
+    },
+    defaultVariants: {
+      isInteractive: false,
+      selected: false,
+    },
+  },
+);
+
+const indexTextVariant = cva("", {
+  variants: {
+    selected: {
+      true: "text-content-tertiary",
+      false: "text-content-quaternary group-hover:text-content-tertiary",
+    },
+  },
+  defaultVariants: {
+    selected: false,
+  },
+});
+
+const titleTextVariant = cva("", {
+  variants: {
+    selected: {
+      true: "text-content-primary",
+      false: "text-content-secondary group-hover:text-content-primary",
+    },
+  },
+  defaultVariants: {
+    selected: false,
+  },
+});
+
+const subTextVariant = cva(
+  "max-w-40 min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap",
+  {
+    variants: {
+      selected: {
+        true: "text-content-tertiary",
+        false: "text-content-quaternary group-hover:text-content-tertiary",
+      },
+    },
+    defaultVariants: {
+      selected: false,
+    },
+  },
+);
+
+const indicatorVariant = cva("h-2.5 w-0.5", {
+  variants: {
+    active: {
+      true: "",
+      false: "",
+    },
+    selected: {
+      true: "",
+      false: "",
+    },
+  },
+  compoundVariants: [
+    {
+      active: true,
+      class: "bg-surface-accentStrong",
+    },
+    {
+      active: false,
+      selected: true,
+      class: "bg-surface-tertiary",
+    },
+    {
+      active: false,
+      selected: false,
+      class: "bg-surface-quaternary group-hover:bg-surface-tertiary",
+    },
+  ],
+  defaultVariants: {
+    active: false,
+    selected: false,
+  },
+});
 
 export const CardItem = ({
   id,
@@ -52,40 +146,8 @@ export const CardItem = ({
     }
   };
 
-  const indexTextClass = selected
-    ? "text-content-tertiary"
-    : "text-content-quaternary group-hover:text-content-tertiary";
-  const titleTextClass = selected
-    ? "text-content-primary"
-    : "text-content-secondary group-hover:text-content-primary";
-  const subTextClass = selected
-    ? "text-content-tertiary"
-    : "text-content-quaternary group-hover:text-content-tertiary";
-  const wrapperClasses = [
-    "group flex w-full items-start justify-start",
-    "py-miniPlus px-small gap-regularPlus rounded-micro",
-    "transition-[box-shadow,background-color,color] duration-slowTransition ease-outExpo",
-    isInteractive
-      ? "cursor-pointer focus-visible:outline-none focus-visible:shadow-focus-accent"
-      : "cursor-default",
-    selected
-      ? "bg-surface-quinary shadow-surface-pressed text-content-accent"
-      : "bg-surface-tertiary shadow-surface-lifted hover:bg-surface-quaternary hover:shadow-surface-pressed hover:text-content-accent",
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   const finiteLevel = Number.isFinite(level) ? level : 0;
   const normalizedLevel = Math.min(4, Math.max(0, Math.floor(finiteLevel)));
-  const baseIndicator = "h-2.5 w-0.5";
-  const activeIndicator = "bg-surface-accentStrong";
-  const inactiveIndicator = [
-    selected
-      ? "bg-surface-tertiary"
-      : "bg-surface-quaternary group-hover:bg-surface-tertiary",
-  ]
-    .filter(Boolean)
-    .join(" ");
 
   const hoverTransform = { y: 2, scale: 0.98 };
 
@@ -99,7 +161,7 @@ export const CardItem = ({
         aria-pressed={isInteractive ? selected : undefined}
         aria-disabled={!isInteractive ? true : undefined}
         disabled={!isInteractive}
-        className={wrapperClasses}
+        className={cardItemVariant({ isInteractive, selected })}
         whileHover={hoverTransform}
         animate={selected ? hoverTransform : { y: 0, scale: 1 }}
         tabIndex={isInteractive ? 0 : -1}
@@ -107,25 +169,24 @@ export const CardItem = ({
         onKeyDown={handleKeyDown}
         layout
       >
-        <Text variant="label-xs" className={indexTextClass}>
+        <Text variant="label-xs" className={indexTextVariant({ selected })}>
           {index}
         </Text>
         <div className="gap-miniPlus flex min-w-0 flex-1 flex-col text-left">
-          <Text variant="label-xs" className={titleTextClass}>
+          <Text variant="label-xs" className={titleTextVariant({ selected })}>
             {text}
           </Text>
           <div className="gap-mini flex w-full min-w-0 justify-between">
-            <Text
-              variant="meta-xs"
-              className={`${subTextClass} max-w-40 min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap`}
-            >
+            <Text variant="meta-xs" className={subTextVariant({ selected })}>
               {subText}
             </Text>
             <div className="gap-microPlus flex shrink-0 items-center">
               {Array.from({ length: 5 }).map((_, stepIndex) => {
                 const isStepActive = stepIndex <= normalizedLevel;
-                const colorClass = isStepActive ? activeIndicator : inactiveIndicator;
-                const indicatorClasses = `${baseIndicator} ${colorClass}`;
+                const indicatorClasses = indicatorVariant({
+                  active: isStepActive,
+                  selected,
+                });
 
                 return <span key={stepIndex} className={indicatorClasses} />;
               })}

@@ -35,6 +35,7 @@ export type TypographyVariant =
   | "meta-xs"
   | "control-md"
   | "control-sm"
+  | "control-xs"
   | "input-label-sm"
   | "input-helper-sm";
 
@@ -110,6 +111,11 @@ export const typographyRecipes: Record<TypographyVariant, TypographyRecipe> = {
     fontWeight: "regular",
     lineHeight: "tight",
   },
+  "control-xs": {
+    fontSize: "small",
+    fontWeight: "regular",
+    lineHeight: "tight",
+  },
   "input-label-sm": {
     fontSize: "small",
     fontWeight: "semibold",
@@ -142,8 +148,9 @@ export const typographyStyles: Record<TypographyVariant, string> = {
   "label-xs": "text-mini font-semibold leading-tight",
   "meta-sm": "text-small font-regular leading-relaxed",
   "meta-xs": "text-mini font-regular leading-relaxed",
-  "control-md": "text-regular font-regular leading-tight",
+  "control-md": "text-small font-regular leading-tight",
   "control-sm": "text-small font-regular leading-tight",
+  "control-xs": "text-mini font-regular leading-tight",
   "input-label-sm": "text-small font-semibold leading-tight",
   "input-helper-sm": "text-mini font-regular leading-normal",
 };

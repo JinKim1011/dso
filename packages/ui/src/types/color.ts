@@ -26,10 +26,6 @@ export type StrokeVariant =
   | "accent"
   | "accentStrong";
 
-export type BgClass = `bg-surface-${SurfaceVariant}` | "bg-transparent";
-export type TextColorClass = `text-content-${ContentVariant}` | "text-primary";
-export type BorderClass = `border-stroke-${StrokeVariant}` | "border-transparent";
-
 export type OverrideBGClass =
   | BgClass
   | HoverBgClass
@@ -57,20 +53,20 @@ export type OverrideBorderClass =
   | `${HoverBorderClass} ${ActiveBorderClass}`
   | `${BorderClass} ${HoverBorderClass} ${ActiveBorderClass}`;
 
-export type HoverBgClass = `hover:bg-surface-${SurfaceVariant}` | "hover:bg-transparent";
-export type HoverTextColorClass =
-  | `hover:text-content-${ContentVariant}`
-  | "hover:text-primary";
-export type HoverBorderClass =
+type BgClass = `bg-surface-${SurfaceVariant}` | "bg-transparent";
+type TextColorClass = `text-content-${ContentVariant}` | "text-primary";
+type BorderClass = `border-stroke-${StrokeVariant}` | "border-transparent";
+
+type HoverBgClass = `hover:bg-surface-${SurfaceVariant}` | "hover:bg-transparent";
+type HoverTextColorClass = `hover:text-content-${ContentVariant}` | "hover:text-primary";
+type HoverBorderClass =
   | `hover:border-stroke-${StrokeVariant}`
   | "hover:border-transparent";
 
-export type ActiveBgClass =
-  | `active:bg-surface-${SurfaceVariant}`
-  | "active:bg-transparent";
-export type ActiveTextColorClass =
+type ActiveBgClass = `active:bg-surface-${SurfaceVariant}` | "active:bg-transparent";
+type ActiveTextColorClass =
   | `active:text-content-${ContentVariant}`
   | "active:text-primary";
-export type ActiveBorderClass =
+type ActiveBorderClass =
   | `active:border-stroke-${StrokeVariant}`
   | "active:border-transparent";

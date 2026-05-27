@@ -116,12 +116,20 @@ export function StagedView() {
       {rowsLength !== 0 && (
         <div ref={containerRef}>
           <StagedViewHeader length={rowsLength} guidedText={!!selected}>
-            <Button variant="outlined" onClick={resetDraft} disabled={isApplying}>
-              Discard all
-            </Button>
-            <Button variant="outlined" onClick={handleBulkApply} disabled={isApplying}>
-              {isApplying ? "Pushing..." : "Push all"}
-            </Button>
+            <Button
+              variant="outlined"
+              size="lg"
+              onClick={resetDraft}
+              disabled={isApplying}
+              label="Discard all"
+            />
+            <Button
+              variant="outlined"
+              size="lg"
+              onClick={handleBulkApply}
+              disabled={isApplying}
+              label={isApplying ? "Pushing..." : "Push all"}
+            />
           </StagedViewHeader>
           <div className="grid h-full grid-cols-2">
             <List listItems={listItems} />

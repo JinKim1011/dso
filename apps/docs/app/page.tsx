@@ -7,9 +7,12 @@ export default function Home() {
 
   return (
     <div className="">
-      <Button variant="fill" size="lg" onClick={toggleTheme}>
-        {theme === "light" ? "Dark" : "Light"} Mode
-      </Button>
+      <Button
+        variant="fill"
+        size="lg"
+        onClick={toggleTheme}
+        label={`${theme === "light" ? "Dark" : "Light"} Mode`}
+      />
       <main className=""></main>
     </div>
   );
