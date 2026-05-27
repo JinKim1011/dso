@@ -136,6 +136,7 @@ export interface ButtonProps extends Omit<
 > {
   className?: string;
   type?: "button" | "submit" | "reset";
+  label?: string;
   variant?: ButtonVariant;
   size?: ButtonSize;
   inline?: boolean;
@@ -169,13 +170,13 @@ export const Button = ({
   fullWidth = false,
   iconOnly = false,
   selected = false,
+  label,
   leftIcon: LeftIcon,
   rightIcon: RightIcon,
   overrideBgClass,
   overrideTextColorClass,
   overrideBorderClass,
   className,
-  children,
   ...props
 }: ButtonProps) => {
   const buttonClassName = cn(
@@ -198,7 +199,7 @@ export const Button = ({
       {LeftIcon && <LeftIcon aria-hidden className={iconSizeClasses[size]} />}
       {!iconOnly && (
         <Text variant={textVariant[size]} as="span">
-          {children}
+          {label}
         </Text>
       )}
       {RightIcon && <RightIcon aria-hidden className={iconSizeClasses[size]} />}
