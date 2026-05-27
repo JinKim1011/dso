@@ -9,7 +9,6 @@ import {
   OverrideBGClass,
   OverrideBorderClass,
   OverrideTextColorClass,
-  typographyStyles,
   TypographyVariant,
 } from "../types/tokens";
 
@@ -28,9 +27,9 @@ const buttonVariants = cva(
         void: "",
       },
       size: {
-        sm: `${typographyStyles["control-xs"]} gap-micro px-microPlus py-0`,
-        md: `${typographyStyles["control-sm"]} gap-microPlus px-mini py-microPlus`,
-        lg: `${typographyStyles["control-sm"]} gap-mini px-mini py-mini`,
+        sm: `gap-micro px-microPlus py-0`,
+        md: `gap-microPlus px-mini py-microPlus`,
+        lg: `gap-mini px-mini py-mini`,
       },
       selected: {
         true: "",
