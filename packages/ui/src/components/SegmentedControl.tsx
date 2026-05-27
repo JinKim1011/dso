@@ -40,9 +40,8 @@ export function SegmentedControl({
             leftIcon={option.iconName}
             onClick={() => onChange(option.value)}
             aria-pressed={isActive}
-          >
-            {option.label}
-          </Button>
+            label={option.label}
+          />
         );
       })}
     </div>
