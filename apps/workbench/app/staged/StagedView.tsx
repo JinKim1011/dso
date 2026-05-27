@@ -121,17 +121,15 @@ export function StagedView() {
               size="lg"
               onClick={resetDraft}
               disabled={isApplying}
-            >
-              Discard all
-            </Button>
+              label="Discard all"
+            />
             <Button
               variant="outlined"
               size="lg"
               onClick={handleBulkApply}
               disabled={isApplying}
-            >
-              {isApplying ? "Pushing..." : "Push all"}
-            </Button>
+              label={isApplying ? "Pushing..." : "Push all"}
+            />
           </StagedViewHeader>
           <div className="grid h-full grid-cols-2">
             <List listItems={listItems} />
