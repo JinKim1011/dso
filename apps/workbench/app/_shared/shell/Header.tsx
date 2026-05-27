@@ -31,12 +31,8 @@ export function Header({ currentBranch, userName }: HeaderProps) {
         <Text variant="label-sm" as="span">
           DS0
         </Text>
-        <Button variant="void" size="sm">
-          GitHub
-        </Button>
-        <Button variant="void" size="sm">
-          Docs
-        </Button>
+        <Button variant="void" size="sm" label="GitHub" />
+        <Button variant="void" size="sm" label="Docs" />
       </div>
       <div className="gap-miniPlus inline-flex w-fit">
         <div className="gap-micro inline-flex items-center">
