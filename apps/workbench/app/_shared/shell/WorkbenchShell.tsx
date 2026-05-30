@@ -9,8 +9,12 @@ type WorkbenchShellProps = {
   children: ReactNode;
 };
 
-export function WorkbenchShell({ children }: WorkbenchShellProps) {
-  const result = buildTokenGraphModel(designTokensManifest);
+export async function WorkbenchShell({ children }: WorkbenchShellProps) {
+  const repoRoot = path.resolve(process.cwd(), "..", "..");
+  const manifestPath = path.join(repoRoot, "design-tokens-manifest.json");
+  const manifestText = await fs.readFile(manifestPath, "utf-8");
+  const manifest = JSON.parse(manifestText);
+  const result = buildTokenGraphModel(manifest);
 
   const currentBranch =
     process.env.NEXT_PUBLIC_WORKBENCH_CURRENT_BRANCH ?? "style/add-color-design-tokens";
