@@ -177,6 +177,7 @@
       "meta-xs",
       "control-md",
       "control-sm",
+      "control-xs",
       "input-label-sm",
       "input-helper-sm"
     ],
@@ -255,6 +256,12 @@
       },
       {
         "name": "control-sm",
+        "fontSize": "small",
+        "fontWeight": "regular",
+        "lineHeight": "tight"
+      },
+      {
+        "name": "control-xs",
         "fontSize": "small",
         "fontWeight": "regular",
         "lineHeight": "tight"
@@ -459,6 +466,38 @@
         }
       ]
     }
+  },
+  {
+    "type": "PaddingTClass",
+    "kind": "unknown",
+    "value": [
+      "pt-${SpacingStep}",
+      "pt-0"
+    ]
+  },
+  {
+    "type": "PaddingRClass",
+    "kind": "unknown",
+    "value": [
+      "pr-${SpacingStep}",
+      "pr-0"
+    ]
+  },
+  {
+    "type": "PaddingBClass",
+    "kind": "unknown",
+    "value": [
+      "pb-${SpacingStep}",
+      "pb-0"
+    ]
+  },
+  {
+    "type": "PaddingLClass",
+    "kind": "unknown",
+    "value": [
+      "pl-${SpacingStep}",
+      "pl-0"
+    ]
   },
   {
     "category": "spacing",
@@ -1084,8 +1123,12 @@
       "secondary",
       "tertiary",
       "quaternary",
+      "quinary",
       "accent",
-      "accentStrong"
+      "accentStrong",
+      "error",
+      "success",
+      "warn"
     ],
     "tokens": [
       {
@@ -1137,6 +1180,18 @@
         }
       },
       {
+        "name": "quinary",
+        "cssVar": "--bg-quinary",
+        "values": {
+          "light": "oklch(0.89 0.016 266.7)",
+          "dark": "oklch(0.36 0.05 271.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
         "name": "accent",
         "cssVar": "--bg-accent",
         "values": {
@@ -1153,7 +1208,43 @@
         "cssVar": "--bg-accentStrong",
         "values": {
           "light": "oklch(0.692 0.152 283.4)",
-          "dark": "oklch(0.78 0.108 283.4)"
+          "dark": "oklch(0.692 0.152 283.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "error",
+        "cssVar": "--bg-error",
+        "values": {
+          "light": "oklch(0.945 0.03 25)",
+          "dark": "oklch(0.22 0.09 25)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "success",
+        "cssVar": "--bg-success",
+        "values": {
+          "light": "oklch(0.945 0.03 145)",
+          "dark": "oklch(0.22 0.09 145)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "warn",
+        "cssVar": "--bg-warn",
+        "values": {
+          "light": "oklch(0.955 0.035 90)",
+          "dark": "oklch(0.24 0.09 90)"
         },
         "status": {
           "light": "matched",
@@ -1172,15 +1263,18 @@
       "tertiary",
       "quaternary",
       "accent",
-      "accentStrong"
+      "accentStrong",
+      "error",
+      "success",
+      "warn"
     ],
     "tokens": [
       {
         "name": "primary",
         "cssVar": "--text-primary",
         "values": {
-          "light": "oklch(0.222 0 89.9)",
-          "dark": "oklch(0.95 0 89.9)"
+          "light": "oklch(0.222 0 89.9 / 1)",
+          "dark": "oklch(0.95 0 89.9 / 1)"
         },
         "status": {
           "light": "matched",
@@ -1191,8 +1285,8 @@
         "name": "secondary",
         "cssVar": "--text-secondary",
         "values": {
-          "light": "oklch(0.39 0 89.9)",
-          "dark": "oklch(0.85 0 89.9)"
+          "light": "oklch(0.222 0 89.9 / 0.72)",
+          "dark": "oklch(0.95 0 89.9 / 0.84)"
         },
         "status": {
           "light": "matched",
@@ -1203,8 +1297,8 @@
         "name": "tertiary",
         "cssVar": "--text-tertiary",
         "values": {
-          "light": "oklch(0.58 0 89.9)",
-          "dark": "oklch(0.7 0 89.9)"
+          "light": "oklch(0.222 0 89.9 / 0.52)",
+          "dark": "oklch(0.95 0 89.9 / 0.62)"
         },
         "status": {
           "light": "matched",
@@ -1215,8 +1309,8 @@
         "name": "quaternary",
         "cssVar": "--text-quaternary",
         "values": {
-          "light": "oklch(0.78 0 89.9)",
-          "dark": "oklch(0.55 0 89.9)"
+          "light": "oklch(0.222 0 89.9 / 0.36)",
+          "dark": "oklch(0.95 0 89.9 / 0.46)"
         },
         "status": {
           "light": "matched",
@@ -1227,8 +1321,8 @@
         "name": "accent",
         "cssVar": "--text-accent",
         "values": {
-          "light": "oklch(0.692 0.152 283.4)",
-          "dark": "oklch(0.78 0.108 283.4)"
+          "light": "oklch(0.42 0.12 283.4)",
+          "dark": "oklch(75.886% 0.10866 282.325)"
         },
         "status": {
           "light": "matched",
@@ -1239,8 +1333,44 @@
         "name": "accentStrong",
         "cssVar": "--text-accentStrong",
         "values": {
-          "light": "oklch(0.58 0.207 283.4)",
-          "dark": "oklch(0.58 0.207 283.4)"
+          "light": "oklch(0.3 0.14 283.4)",
+          "dark": "oklch(0.692 0.152 283.4)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "error",
+        "cssVar": "--text-error",
+        "values": {
+          "light": "oklch(0.55 0.19 25)",
+          "dark": "oklch(0.76 0.16 25)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "success",
+        "cssVar": "--text-success",
+        "values": {
+          "light": "oklch(0.53 0.16 145)",
+          "dark": "oklch(0.79 0.14 145)"
+        },
+        "status": {
+          "light": "matched",
+          "dark": "matched"
+        }
+      },
+      {
+        "name": "warn",
+        "cssVar": "--text-warn",
+        "values": {
+          "light": "oklch(0.62 0.16 90)",
+          "dark": "oklch(0.82 0.13 90)"
         },
         "status": {
           "light": "matched",
@@ -1266,7 +1396,7 @@
         "cssVar": "--stroke-primary",
         "values": {
           "light": "oklch(0.89 0 0)",
-          "dark": "oklch(0.35 0 0)"
+          "dark": "oklch(25% 0.04884 276.728)"
         },
         "status": {
           "light": "matched",
@@ -1278,7 +1408,7 @@
         "cssVar": "--stroke-secondary",
         "values": {
           "light": "oklch(0.93 0 89.9)",
-          "dark": "oklch(0.3 0 89.9)"
+          "dark": "oklch(20% 0.04884 276.728)"
         },
         "status": {
           "light": "matched",
@@ -1290,7 +1420,7 @@
         "cssVar": "--stroke-tertiary",
         "values": {
           "light": "oklch(0.97 0 89.9)",
-          "dark": "oklch(0.25 0 89.9)"
+          "dark": "oklch(18% 0.04884 276.728)"
         },
         "status": {
           "light": "matched",
@@ -1324,6 +1454,45 @@
     ]
   },
   {
+    "type": "OverrideBGClass",
+    "kind": "unknown",
+    "value": [
+      "BgClass",
+      "HoverBgClass",
+      "ActiveBgClass",
+      "${BgClass} ${HoverBgClass}",
+      "${BgClass} ${ActiveBgClass}",
+      "${HoverBgClass} ${ActiveBgClass}",
+      "${BgClass} ${HoverBgClass} ${ActiveBgClass}"
+    ]
+  },
+  {
+    "type": "OverrideTextColorClass",
+    "kind": "unknown",
+    "value": [
+      "TextColorClass",
+      "HoverTextColorClass",
+      "ActiveTextColorClass",
+      "${TextColorClass} ${HoverTextColorClass}",
+      "${TextColorClass} ${ActiveTextColorClass}",
+      "${HoverTextColorClass} ${ActiveTextColorClass}",
+      "${TextColorClass} ${HoverTextColorClass} ${ActiveTextColorClass}"
+    ]
+  },
+  {
+    "type": "OverrideBorderClass",
+    "kind": "unknown",
+    "value": [
+      "BorderClass",
+      "HoverBorderClass",
+      "ActiveBorderClass",
+      "${BorderClass} ${HoverBorderClass}",
+      "${BorderClass} ${ActiveBorderClass}",
+      "${HoverBorderClass} ${ActiveBorderClass}",
+      "${BorderClass} ${HoverBorderClass} ${ActiveBorderClass}"
+    ]
+  },
+  {
     "category": "color",
     "type": "BgClass",
     "kind": "class-union",
@@ -1347,8 +1516,12 @@
             "bg-surface-secondary",
             "bg-surface-tertiary",
             "bg-surface-quaternary",
+            "bg-surface-quinary",
             "bg-surface-accent",
-            "bg-surface-accentStrong"
+            "bg-surface-accentStrong",
+            "bg-surface-error",
+            "bg-surface-success",
+            "bg-surface-warn"
           ],
           "status": "resolved"
         }
@@ -1380,7 +1553,10 @@
             "text-content-tertiary",
             "text-content-quaternary",
             "text-content-accent",
-            "text-content-accentStrong"
+            "text-content-accentStrong",
+            "text-content-error",
+            "text-content-success",
+            "text-content-warn"
           ],
           "status": "resolved"
         }
@@ -1442,8 +1618,12 @@
             "hover:bg-surface-secondary",
             "hover:bg-surface-tertiary",
             "hover:bg-surface-quaternary",
+            "hover:bg-surface-quinary",
             "hover:bg-surface-accent",
-            "hover:bg-surface-accentStrong"
+            "hover:bg-surface-accentStrong",
+            "hover:bg-surface-error",
+            "hover:bg-surface-success",
+            "hover:bg-surface-warn"
           ],
           "status": "resolved"
         }
@@ -1475,7 +1655,10 @@
             "hover:text-content-tertiary",
             "hover:text-content-quaternary",
             "hover:text-content-accent",
-            "hover:text-content-accentStrong"
+            "hover:text-content-accentStrong",
+            "hover:text-content-error",
+            "hover:text-content-success",
+            "hover:text-content-warn"
           ],
           "status": "resolved"
         }
@@ -1537,8 +1720,12 @@
             "active:bg-surface-secondary",
             "active:bg-surface-tertiary",
             "active:bg-surface-quaternary",
+            "active:bg-surface-quinary",
             "active:bg-surface-accent",
-            "active:bg-surface-accentStrong"
+            "active:bg-surface-accentStrong",
+            "active:bg-surface-error",
+            "active:bg-surface-success",
+            "active:bg-surface-warn"
           ],
           "status": "resolved"
         }
@@ -1570,7 +1757,10 @@
             "active:text-content-tertiary",
             "active:text-content-quaternary",
             "active:text-content-accent",
-            "active:text-content-accentStrong"
+            "active:text-content-accentStrong",
+            "active:text-content-error",
+            "active:text-content-success",
+            "active:text-content-warn"
           ],
           "status": "resolved"
         }
