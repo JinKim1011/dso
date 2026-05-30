@@ -26,7 +26,16 @@ export async function POST(req: Request) {
     const repoRoot = path.join(__dirname, "../../../../..");
     const defaultPath = path.join(repoRoot, "design-tokens-manifest.json");
     const filePath = process.env.DSO_MANIFEST_PATH ?? defaultPath;
-    await fs.writeFile(filePath, JSON.stringify(manifest, null, 2), "utf-8");
+    const nextContent = JSON.stringify(manifest, null, 2);
+
+    try {
+      const currentContent = await fs.readFile(filePath, "utf-8");
+      if (currentContent !== nextContent) {
+        await fs.writeFile(filePath, nextContent, "utf-8");
+      }
+    } catch {
+      await fs.writeFile(filePath, nextContent, "utf-8");
+    }
 
     return NextResponse.json({ ok: true, manifest });
   } catch (err) {
