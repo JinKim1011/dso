@@ -1,5 +1,4 @@
 import { type ReactNode } from "react";
-import designTokensManifest from "../../../../../design-tokens-manifest.json";
 import { buildTokenGraphModel } from "../../tokens/lib/manifestAdapter";
 import NavigationSlotProvider from "../context/NavigationSlotContext";
 import { StagedManifestProvider } from "../context/StagedManifestContext";
