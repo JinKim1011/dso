@@ -7,7 +7,11 @@ import { extractTypographyRecipes } from "./lib/typeParser.mjs";
 
 const TOKENS_PATH = path.resolve("./packages/ui/src/types");
 const CSS_PATH = path.resolve("./packages/ui/src/index.css");
-const OUTPUT_PATH = path.resolve("./design-tokens-manifest.json");
+
+// Resolve output path from env or default to repo-root manifest
+const OUTPUT_PATH = process.env.DSO_MANIFEST_PATH
+  ? path.resolve(process.cwd(), process.env.DSO_MANIFEST_PATH)
+  : path.resolve("./design-tokens-manifest.json");
 
 const tokenFiles = globSync(`${TOKENS_PATH}/**/*.ts`);
 
@@ -225,6 +229,14 @@ function parseTokenFiles(filePath) {
   return results;
 }
 
+// Guard: avoid running accidentally in interactive dev unless forced or in CI
+if (!process.env.CI && process.env.FORCE_SCAN !== "1") {
+  console.log(
+    "Skipping scan-tokens in non-CI environment. Set FORCE_SCAN=1 to force or run in CI.",
+  );
+  process.exit(0);
+}
+
 const cssContent = fs.readFileSync(CSS_PATH, "utf-8");
 const cssVarMap = extractCssVars(cssContent);
 
@@ -232,4 +244,25 @@ const manifest = tokenFiles.flatMap((file) => parseTokenFiles(file)).filter(Bool
 
 attachClassUnionTemplateMetadata(manifest);
 
-fs.writeFileSync(OUTPUT_PATH, JSON.stringify(manifest, null, 2));
+// Ensure output directory exists
+try {
+  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
+} catch (err) {
+  // ignore
+}
+
+// Write manifest only when content changes to avoid triggering file watchers
+const nextContent = JSON.stringify(manifest, null, 2);
+try {
+  const current = fs.readFileSync(OUTPUT_PATH, "utf-8");
+  if (current !== nextContent) {
+    fs.writeFileSync(OUTPUT_PATH, nextContent, "utf-8");
+    console.log(`Wrote ${OUTPUT_PATH}`);
+  } else {
+    console.log(`No changes to ${OUTPUT_PATH}`);
+  }
+} catch (err) {
+  // If the file doesn't exist or can't be read, write it.
+  fs.writeFileSync(OUTPUT_PATH, nextContent, "utf-8");
+  console.log(`Wrote ${OUTPUT_PATH}`);
+}
