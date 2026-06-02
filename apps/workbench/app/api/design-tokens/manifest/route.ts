@@ -25,7 +25,13 @@ export async function POST(req: Request) {
 
     const repoRoot = path.join(__dirname, "../../../../..");
     const defaultPath = path.join(repoRoot, "design-tokens-manifest.json");
-    const filePath = process.env.DSO_MANIFEST_PATH ?? defaultPath;
+    const rawPath = process.env.DSO_MANIFEST_PATH;
+    const filePath = rawPath
+      ? path.isAbsolute(rawPath)
+        ? rawPath
+        : path.join(repoRoot, rawPath)
+      : defaultPath;
+
     const nextContent = JSON.stringify(manifest, null, 2);
 
     try {
