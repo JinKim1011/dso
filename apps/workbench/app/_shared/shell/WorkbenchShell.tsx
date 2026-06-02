@@ -21,8 +21,16 @@ export async function WorkbenchShell({ children }: WorkbenchShellProps) {
       : path.join(repoRoot, rawManifestPath)
     : defaultManifest;
 
-  const manifestText = await fs.readFile(manifestPath, "utf-8");
-  const manifest = JSON.parse(manifestText);
+  let manifest: unknown;
+  try {
+    const manifestText = await fs.readFile(manifestPath, "utf-8");
+    manifest = JSON.parse(manifestText);
+  } catch (error) {
+    throw new Error(
+      `Failed to load design tokens manifest from ${manifestPath}: ${String(error)}`,
+    );
+  }
+
   const result = buildTokenGraphModel(manifest);
 
   const currentBranch =
