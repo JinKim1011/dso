@@ -14,8 +14,11 @@ type WorkbenchShellProps = {
 export async function WorkbenchShell({ children }: WorkbenchShellProps) {
   const repoRoot = path.resolve(process.cwd(), "..", "..");
   const defaultManifest = path.join(repoRoot, "design-tokens-manifest.json");
-  const manifestPath = process.env.DSO_MANIFEST_PATH
-    ? path.resolve(process.cwd(), process.env.DSO_MANIFEST_PATH)
+  const rawManifestPath = process.env.DSO_MANIFEST_PATH;
+  const manifestPath = rawManifestPath
+    ? path.isAbsolute(rawManifestPath)
+      ? rawManifestPath
+      : path.join(repoRoot, rawManifestPath)
     : defaultManifest;
 
   const manifestText = await fs.readFile(manifestPath, "utf-8");
