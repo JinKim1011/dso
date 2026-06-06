@@ -1,4 +1,4 @@
-import type { TokenGraphModel } from "../../../tokens/lib/manifestAdapter";
+import type { TokenGraphModel } from "../../../tokens/_shared/lib/manifestAdapter";
 
 export function makeStagedViewFixture(): TokenGraphModel {
   return {
