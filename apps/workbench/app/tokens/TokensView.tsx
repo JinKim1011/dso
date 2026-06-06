@@ -63,8 +63,8 @@ export function TokensView({ category }: TokensViewProps) {
   }, [draftModel, category]);
 
   const flowBase = useMemo(() => {
-    return mapTokenGraphToFlow(draftModel);
-  }, [draftModel]);
+    return mapTokenGraphToFlow(filteredModel);
+  }, [filteredModel]);
 
   const rows = useMemo<TokenRow[]>(() => {
     return draftModel.tokenTypes.flatMap((tokenType) =>
