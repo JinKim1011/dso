@@ -1,9 +1,11 @@
 import {
   ColorWheelIcon,
-  Component1Icon,
+  CornersIcon,
   FrameIcon,
   LoopIcon,
+  ShadowIcon,
   TextIcon,
+  TransformIcon,
 } from "@radix-ui/react-icons";
 
 type IconComponent = React.ElementType<{
@@ -12,7 +14,15 @@ type IconComponent = React.ElementType<{
 }>;
 
 export type WorkbenchNavigationItem = {
-  id: "color" | "typography" | "spacing" | "schema" | "staged";
+  id:
+    | "color"
+    | "typography"
+    | "spacing"
+    | "radius"
+    | "shadow"
+    | "motion"
+    | "schema"
+    | "staged";
   href: string;
   iconOnly: boolean;
   icon: IconComponent;
@@ -38,10 +48,22 @@ export const workbenchNavigation: WorkbenchNavigationItem[] = [
     icon: FrameIcon,
   },
   {
-    id: "schema",
-    href: "/schema",
+    id: "radius",
+    href: "/tokens/radius",
     iconOnly: true,
-    icon: Component1Icon,
+    icon: CornersIcon,
+  },
+  {
+    id: "shadow",
+    href: "/tokens/shadow",
+    iconOnly: true,
+    icon: ShadowIcon,
+  },
+  {
+    id: "motion",
+    href: "/tokens/motion",
+    iconOnly: true,
+    icon: TransformIcon,
   },
   {
     id: "staged",
