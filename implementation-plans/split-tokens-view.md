@@ -34,7 +34,7 @@
 ## 6. Steps
 
 - Step 1: Keep each category route as a thin wrapper that passes `category` into shared `TokensView`.
-- Step 2: Add routes incrementally (`typography`, `spacing`, `radius`, `motion`, `elevation`) following `color/page.tsx`.
+- Step 2: Add routes `typography`, `spacing`, `radius`, `motion`, `elevation`.
 - Step 3: Keep navigation default route aligned with rollout (currently `/tokens/color`).
 - Step 4: Add category-specific form components only when an existing shared form is no longer adequate.
 - Step 5: If layout must diverge, extend flow mapping for category-only layout and fit behavior.
