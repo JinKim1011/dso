@@ -1,4 +1,9 @@
-import { ColorWheelIcon, Component1Icon, LoopIcon } from "@radix-ui/react-icons";
+import {
+  ColorWheelIcon,
+  Component1Icon,
+  LoopIcon,
+  TextIcon,
+} from "@radix-ui/react-icons";
 
 type IconComponent = React.ElementType<{
   className?: string;
@@ -6,7 +11,7 @@ type IconComponent = React.ElementType<{
 }>;
 
 export type WorkbenchNavigationItem = {
-  id: "color" | "schema" | "staged";
+  id: "color" | "typography" | "schema" | "staged";
   href: string;
   iconOnly: boolean;
   icon: IconComponent;
@@ -18,6 +23,12 @@ export const workbenchNavigation: WorkbenchNavigationItem[] = [
     href: "/tokens/color",
     iconOnly: true,
     icon: ColorWheelIcon,
+  },
+  {
+    id: "color",
+    href: "/tokens/typography",
+    iconOnly: true,
+    icon: TextIcon,
   },
   {
     id: "schema",
