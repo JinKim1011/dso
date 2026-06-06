@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import type { TokenTypeValueItem } from "../../lib/manifestAdapter";
+import type { TokenTypeValueItem } from "../lib/manifestAdapter";
 import { TokenValueDetail } from "./TokenValueDetail";
 
 const typographyOptions = {
