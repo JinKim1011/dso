@@ -3,14 +3,17 @@
 import { CheckIcon, Cross2Icon, ResetIcon } from "@radix-ui/react-icons";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
-import { TokenTypeValueItem } from "../lib/manifestAdapter";
-import { TokenColorDraft, TokenColorForm } from "./TokenColorForm";
-import { TokenSingleValueDraft, TokenSingleValueForm } from "./TokenSingleValueForm";
+import { TokenColorDraft, TokenColorForm } from "../../components/TokenColorForm";
+import {
+  TokenSingleValueDraft,
+  TokenSingleValueForm,
+} from "../../components/TokenSingleValueForm";
 import {
   TokenTypographyDraft,
   TokenTypographyForm,
   TokenTypographyOptions,
-} from "./TokenTypographyForm";
+} from "../../components/TokenTypographyForm";
+import { TokenTypeValueItem } from "../../lib/manifestAdapter";
 import { TokenValuePreview } from "./TokenValuePreview";
 
 export type TokenValueDetailUpdate = {
