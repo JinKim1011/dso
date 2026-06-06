@@ -37,7 +37,18 @@ type InteractiveTokenTypeData = TokenTypeNodeData & {
   onSelectRow: (rowId: string) => void;
 };
 
-export function TokensView() {
+type TokensViewProps = {
+  category?:
+    | "typography"
+    | "spacing"
+    | "color"
+    | "motion"
+    | "radius"
+    | "shadow"
+    | "elevation";
+};
+
+export function TokensView({ category }: TokensViewProps) {
   const shellActions = useContext(NavigationSlotActionsContext);
   const { draftModel, updateRow } = useStagedManifest();
 
