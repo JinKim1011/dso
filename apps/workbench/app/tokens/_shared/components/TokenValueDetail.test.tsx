@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { TokenValueDetail } from "../_shared/components/TokenValueDetail";
-import type { TokenTypeValueItem } from "../lib/manifestAdapter";
+import type { TokenTypeValueItem } from "../../lib/manifestAdapter";
+import { TokenValueDetail } from "./TokenValueDetail";
 
 const typographyOptions = {
   fontSize: ["small", "regular", "title1"],
