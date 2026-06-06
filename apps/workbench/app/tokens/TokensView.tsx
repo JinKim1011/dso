@@ -52,6 +52,16 @@ export function TokensView({ category }: TokensViewProps) {
   const shellActions = useContext(NavigationSlotActionsContext);
   const { draftModel, updateRow } = useStagedManifest();
 
+  const filteredModel = useMemo(() => {
+    if (!category) return draftModel;
+
+    return {
+      ...draftModel,
+      categories: draftModel.categories.filter((c) => c.category === category),
+      tokenTypes: draftModel.tokenTypes.filter((t) => t.category === category),
+    };
+  }, [draftModel, category]);
+
   const flowBase = useMemo(() => {
     return mapTokenGraphToFlow(draftModel);
   }, [draftModel]);
