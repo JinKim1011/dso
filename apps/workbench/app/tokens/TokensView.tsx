@@ -196,10 +196,17 @@ export function TokensView({ category }: TokensViewProps) {
     });
   }, [flowBase.nodes, selectedRowId, handleSelectRow]);
 
-  const rootNodeId = useMemo(
-    () => flowBase.nodes.find((node) => node.type === "root")?.id ?? null,
-    [flowBase.nodes],
-  );
+  const rootNodeId = useMemo(() => {
+    if (category) {
+      return flowBase.nodes.find((node) => node.type === "category")?.id ?? null;
+    }
+
+    return (
+      flowBase.nodes.find((node) => node.type === "root")?.id ??
+      flowBase.nodes.find((node) => node.type === "category")?.id ??
+      null
+    );
+  }, [flowBase.nodes, category]);
 
   const handleInit = useCallback(
     (reactflow: ReactFlowInstance<FlowNode, BuiltInEdge>) => {
