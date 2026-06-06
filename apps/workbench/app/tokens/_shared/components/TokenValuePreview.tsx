@@ -1,5 +1,5 @@
 import { Text } from "@repo/ui";
-import { TokenTypeValueItem } from "../../lib/manifestAdapter";
+import { TokenTypeValueItem } from "../lib/manifestAdapter";
 
 type TokenValuePreviewProps = {
   category: string;
