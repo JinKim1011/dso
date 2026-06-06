@@ -3,7 +3,7 @@
 import { CheckIcon, Cross2Icon, ResetIcon } from "@radix-ui/react-icons";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
-import { TokenColorDraft, TokenColorForm } from "../../components/TokenColorForm";
+import { TokenColorDraft, TokenColorForm } from "../../color/components/TokenColorForm";
 import {
   TokenSingleValueDraft,
   TokenSingleValueForm,
