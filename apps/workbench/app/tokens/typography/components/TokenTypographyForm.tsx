@@ -1,5 +1,5 @@
-import { TokenFieldCombobox } from "./TokenFieldCombobox";
-import { TokenFieldInput } from "./TokenFieldInput";
+import { TokenFieldCombobox } from "../../components/TokenFieldCombobox";
+import { TokenFieldInput } from "../../components/TokenFieldInput";
 
 export type TokenTypographyDraft = {
   name: string;
