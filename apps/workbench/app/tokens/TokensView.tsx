@@ -10,15 +10,15 @@ import {
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { NavigationSlotActionsContext } from "../_shared/context/NavigationSlotContext";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
+import { CategoryFlowNode } from "./_shared/components/CategoryFlowNode";
+import { TokenTypeFlowNode } from "./_shared/components/TokenTypeFlowNode";
 import {
   TokenValueDetail,
   type TokenValueDetailUpdate,
 } from "./_shared/components/TokenValueDetail";
-import { CategoryFlowNode } from "./components/CategoryFlowNode";
+import type { TokenGraphModel } from "./_shared/lib/manifestAdapter";
+import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./_shared/lib/mapToFlow";
 import { RootFlowNode } from "./components/RootFlowNode";
-import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
-import type { TokenGraphModel } from "./lib/manifestAdapter";
-import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
 import type { TokenTypographyOptions } from "./typography/components/TokenTypographyForm";
 
 type TokenRow = {
