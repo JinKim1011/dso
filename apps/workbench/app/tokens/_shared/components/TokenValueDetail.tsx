@@ -5,15 +5,12 @@ import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
 import { TokenColorDraft, TokenColorForm } from "../../color/components/TokenColorForm";
 import {
-  TokenSingleValueDraft,
-  TokenSingleValueForm,
-} from "../../components/TokenSingleValueForm";
-import {
   TokenTypographyDraft,
   TokenTypographyForm,
   TokenTypographyOptions,
-} from "../../components/TokenTypographyForm";
-import { TokenTypeValueItem } from "../../lib/manifestAdapter";
+} from "../../typography/components/TokenTypographyForm";
+import { TokenTypeValueItem } from "../lib/manifestAdapter";
+import { TokenSingleValueDraft, TokenSingleValueForm } from "./TokenSingleValueForm";
 import { TokenValuePreview } from "./TokenValuePreview";
 
 export type TokenValueDetailUpdate = {
