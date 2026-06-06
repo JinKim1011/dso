@@ -219,7 +219,7 @@ export function TokensView({ category }: TokensViewProps) {
         maxZoom: 1,
       });
     },
-    [flowBase.nodes, rootNodeId],
+    [rootNodeId],
   );
 
   return (
