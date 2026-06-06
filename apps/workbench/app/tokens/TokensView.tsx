@@ -10,14 +10,14 @@ import {
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { NavigationSlotActionsContext } from "../_shared/context/NavigationSlotContext";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
+import {
+  TokenValueDetail,
+  type TokenValueDetailUpdate,
+} from "./_shared/components/TokenValueDetail";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { RootFlowNode } from "./components/RootFlowNode";
 import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
 import type { TokenTypographyOptions } from "./components/TokenTypographyForm";
-import {
-  TokenValueDetail,
-  type TokenValueDetailUpdate,
-} from "./components/TokenValueDetail";
 import type { TokenGraphModel } from "./lib/manifestAdapter";
 import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
 
