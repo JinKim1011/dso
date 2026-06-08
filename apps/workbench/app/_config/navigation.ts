@@ -14,15 +14,7 @@ type IconComponent = React.ElementType<{
 }>;
 
 export type WorkbenchNavigationItem = {
-  id:
-    | "color"
-    | "typography"
-    | "spacing"
-    | "radius"
-    | "shadow"
-    | "motion"
-    | "schema"
-    | "staged";
+  id: "color" | "typography" | "spacing" | "radius" | "shadow" | "motion" | "staged";
   href: string;
   iconOnly: boolean;
   icon: IconComponent;
