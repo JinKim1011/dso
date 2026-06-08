@@ -190,6 +190,16 @@ export function TokensView({ category }: TokensViewProps) {
   }, [flowBase.nodes, selectedRowId, handleSelectRow]);
 
   const rootNodeId = useMemo(() => {
+    const categoryNodeId =
+      flowBase.nodes.find((node) => {
+        if (!category) return true;
+        if (node.type !== "category") return false;
+
+        return (node.data as { label?: string } | undefined)?.label === category;
+      })?.id ?? null;
+
+    if (category && categoryNodeId) return categoryNodeId;
+
     if (category) {
       return flowBase.nodes.find((node) => node.type === "category")?.id ?? null;
     }
