@@ -38,14 +38,7 @@ type InteractiveTokenTypeData = TokenTypeNodeData & {
 };
 
 type TokensViewProps = {
-  category?:
-    | "typography"
-    | "spacing"
-    | "color"
-    | "motion"
-    | "radius"
-    | "shadow"
-    | "elevation";
+  category?: "typography" | "spacing" | "color" | "motion" | "radius" | "shadow";
 };
 
 export function TokensView({ category }: TokensViewProps) {
