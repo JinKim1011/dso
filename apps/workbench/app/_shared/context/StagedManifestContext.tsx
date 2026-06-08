@@ -5,7 +5,7 @@ import {
   buildManifestFromGraph,
   TokenGraphModel,
   TokenTypeValueItem,
-} from "../../tokens/lib/manifestAdapter";
+} from "../../tokens/_shared/lib/manifestAdapter";
 
 type ChangedRow = {
   rowId: string;

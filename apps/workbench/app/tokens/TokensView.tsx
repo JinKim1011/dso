@@ -10,16 +10,16 @@ import {
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { NavigationSlotActionsContext } from "../_shared/context/NavigationSlotContext";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
-import { CategoryFlowNode } from "./components/CategoryFlowNode";
-import { RootFlowNode } from "./components/RootFlowNode";
-import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
-import type { TokenTypographyOptions } from "./components/TokenTypographyForm";
+import { CategoryFlowNode } from "./_shared/components/CategoryFlowNode";
+import { TokenTypeFlowNode } from "./_shared/components/TokenTypeFlowNode";
 import {
   TokenValueDetail,
   type TokenValueDetailUpdate,
-} from "./components/TokenValueDetail";
-import type { TokenGraphModel } from "./lib/manifestAdapter";
-import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
+} from "./_shared/components/TokenValueDetail";
+import type { TokenGraphModel } from "./_shared/lib/manifestAdapter";
+import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./_shared/lib/mapToFlow";
+import { RootFlowNode } from "./components/RootFlowNode";
+import type { TokenTypographyOptions } from "./typography/components/TokenTypographyForm";
 
 type TokenRow = {
   id: string;
@@ -37,16 +37,30 @@ type InteractiveTokenTypeData = TokenTypeNodeData & {
   onSelectRow: (rowId: string) => void;
 };
 
-export function TokensView() {
+type TokensViewProps = {
+  category?: "typography" | "spacing" | "color" | "motion" | "radius" | "shadow";
+};
+
+export function TokensView({ category }: TokensViewProps) {
   const shellActions = useContext(NavigationSlotActionsContext);
   const { draftModel, updateRow } = useStagedManifest();
 
+  const filteredModel = useMemo(() => {
+    if (!category) return draftModel;
+
+    return {
+      ...draftModel,
+      categories: draftModel.categories.filter((c) => c.category === category),
+      tokenTypes: draftModel.tokenTypes.filter((t) => t.category === category),
+    };
+  }, [draftModel, category]);
+
   const flowBase = useMemo(() => {
-    return mapTokenGraphToFlow(draftModel);
-  }, [draftModel]);
+    return mapTokenGraphToFlow(filteredModel);
+  }, [filteredModel]);
 
   const rows = useMemo<TokenRow[]>(() => {
-    return draftModel.tokenTypes.flatMap((tokenType) =>
+    return filteredModel.tokenTypes.flatMap((tokenType) =>
       tokenType.values.map((valueItem) => ({
         id: valueItem.id,
         name: valueItem.name,
@@ -58,7 +72,7 @@ export function TokensView() {
         value: valueItem,
       })),
     );
-  }, [draftModel]);
+  }, [filteredModel]);
 
   const typographyOptions = useMemo<TokenTypographyOptions>(() => {
     const fontSize = new Set<string>();
@@ -175,10 +189,21 @@ export function TokensView() {
     });
   }, [flowBase.nodes, selectedRowId, handleSelectRow]);
 
-  const rootNodeId = useMemo(
-    () => flowBase.nodes.find((node) => node.type === "root")?.id ?? null,
-    [flowBase.nodes],
-  );
+  const rootNodeId = useMemo(() => {
+    const categoryNodeId =
+      flowBase.nodes.find((node) => {
+        if (!category) return true;
+        if (node.type !== "category") return false;
+
+        return (node.data as { label?: string } | undefined)?.label === category;
+      })?.id ?? null;
+
+    if (category && categoryNodeId) return categoryNodeId;
+
+    return (
+      flowBase.nodes.find((node) => node.type === "root")?.id ?? categoryNodeId ?? null
+    );
+  }, [flowBase.nodes, category]);
 
   const handleInit = useCallback(
     (reactflow: ReactFlowInstance<FlowNode, BuiltInEdge>) => {
@@ -191,7 +216,7 @@ export function TokensView() {
         maxZoom: 1,
       });
     },
-    [flowBase.nodes, rootNodeId],
+    [rootNodeId],
   );
 
   return (
