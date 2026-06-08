@@ -189,7 +189,7 @@ export function TokensView({ category }: TokensViewProps) {
     });
   }, [flowBase.nodes, selectedRowId, handleSelectRow]);
 
-  const categoryNodeId = useMemo(() => {
+  const rootNodeId = useMemo(() => {
     if (category) {
       return flowBase.nodes.find((node) => node.type === "category")?.id ?? null;
     }
@@ -203,16 +203,16 @@ export function TokensView({ category }: TokensViewProps) {
 
   const handleInit = useCallback(
     (reactflow: ReactFlowInstance<FlowNode, BuiltInEdge>) => {
-      if (!categoryNodeId) return;
+      if (!rootNodeId) return;
 
       reactflow.fitView({
-        nodes: [{ id: categoryNodeId }],
+        nodes: [{ id: rootNodeId }],
         padding: 0.5,
         minZoom: 1,
         maxZoom: 1,
       });
     },
-    [categoryNodeId],
+    [rootNodeId],
   );
 
   return (
