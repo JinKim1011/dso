@@ -1,6 +1,6 @@
 @import "@repo/ui/index.css";
 
-@source "./**/*.{ts,tsx}" "../../packages/ui/src/**/*.{ts,tsx}";
+@source "./**/*.{ts,tsx}" "../../../packages/ui/src/**/*.{ts,tsx}";
 
 :root {
   --header-gradient: linear-gradient(
