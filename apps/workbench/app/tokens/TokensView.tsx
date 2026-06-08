@@ -200,10 +200,6 @@ export function TokensView({ category }: TokensViewProps) {
 
     if (category && categoryNodeId) return categoryNodeId;
 
-    if (category) {
-      return flowBase.nodes.find((node) => node.type === "category")?.id ?? null;
-    }
-
     return (
       flowBase.nodes.find((node) => node.type === "root")?.id ?? categoryNodeId ?? null
     );
