@@ -205,9 +205,7 @@ export function TokensView({ category }: TokensViewProps) {
     }
 
     return (
-      flowBase.nodes.find((node) => node.type === "root")?.id ??
-      flowBase.nodes.find((node) => node.type === "category")?.id ??
-      null
+      flowBase.nodes.find((node) => node.type === "root")?.id ?? categoryNodeId ?? null
     );
   }, [flowBase.nodes, category]);
 
