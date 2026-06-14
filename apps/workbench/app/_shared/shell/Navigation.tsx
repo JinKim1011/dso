@@ -13,6 +13,9 @@ export function Navigation() {
   const { changedRowCount } = useStagedManifest();
   const stagedCount = changedRowCount;
 
+  const tokensMenuItems = workbenchNavigation.filter((menu) => menu.id !== "staged");
+  const stagedMenuItem = workbenchNavigation.filter((menu) => menu.id === "staged");
+
   const navWrapperStyles =
     "p-mini bg-surface-primary shadow-overlay-floating gap-mini fixed bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center rounded-[1.625rem]";
   const menuItemStyles =
@@ -22,7 +25,7 @@ export function Navigation() {
     <nav aria-label="navigation" className={navWrapperStyles}>
       {navigationSlot}
       <div className="gap-microPlus inline-flex w-fit p-0">
-        {workbenchNavigation.map((menu) => {
+        {tokensMenuItems.map((menu) => {
           const isActive = path === menu.href;
           const Icon = menu.icon;
           const displayLabel =
