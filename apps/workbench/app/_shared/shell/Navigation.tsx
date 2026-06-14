@@ -13,11 +13,14 @@ export function Navigation() {
   const { changedRowCount } = useStagedManifest();
   const stagedCount = changedRowCount;
 
+  const navWrapperStyles =
+    "p-mini bg-surface-primary shadow-overlay-floating gap-mini flex -translate-x-1/2 flex-col items-center rounded-[1.625rem]";
+
+  const navItemStyles =
+    "rounded-round gap-microPlus p-mini text-content-quaternary duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary inline-flex h-9 w-fit shrink-0 items-center justify-center bg-transparent transition-colors";
+
   return (
-    <nav
-      aria-label="navigation"
-      className="p-mini bg-surface-primary shadow-overlay-floating gap-mini fixed bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center rounded-[1.625rem]"
-    >
+    <nav aria-label="navigation" className={navWrapperStyles}>
       {navigationSlot}
       <div className="gap-microPlus inline-flex w-fit p-0">
         {workbenchNavigation.map((menu) => {
@@ -34,7 +37,7 @@ export function Navigation() {
               href={menu.href}
               aria-label={menu.id}
               aria-current={isActive ? "page" : undefined}
-              className="rounded-round gap-microPlus p-mini text-content-quaternary duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary inline-flex h-9 w-fit shrink-0 items-center justify-center bg-transparent transition-colors"
+              className={navItemStyles}
             >
               {Icon ? <Icon aria-hidden className="size-5 shrink-0" /> : null}
               {!menu.iconOnly ? displayLabel : null}
