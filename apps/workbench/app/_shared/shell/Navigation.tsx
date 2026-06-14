@@ -19,7 +19,7 @@ export function Navigation() {
   const navWrapperStyles =
     "p-microPlus bg-surface-primary shadow-overlay-floating gap-mini flex-col items-center rounded-mini h-fit";
   const menuItemStyles =
-    "rounded-round gap-microPlus p-mini text-content-quaternary duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary inline-flex h-9 w-fit shrink-0 items-center justify-center bg-transparent transition-colors";
+    "rounded-micro gap-microPlus p-mini text-content-quaternary duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary inline-flex h-9 w-fit shrink-0 items-center justify-center bg-transparent transition-colors";
 
   return (
     <div className="gap-microPlus fixed bottom-10 left-1/2 z-10 flex -translate-x-1/2">
