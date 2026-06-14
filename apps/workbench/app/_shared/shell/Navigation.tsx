@@ -44,29 +44,27 @@ export function Navigation() {
         </div>
       </nav>
       <nav aria-label="navigation" className={navWrapperStyles}>
-        <div className="gap-microPlus inline-flex w-fit p-0">
-          {stagedMenuItem.map((menu) => {
-            const isActive = path === menu.href;
-            const Icon = menu.icon;
-            const displayLabel =
-              menu.id === "staged" && stagedCount != null && stagedCount > 0
-                ? String(stagedCount)
-                : null;
+        {stagedMenuItem.map((menu) => {
+          const isActive = path === menu.href;
+          const Icon = menu.icon;
+          const displayLabel =
+            menu.id === "staged" && stagedCount != null && stagedCount > 0
+              ? String(stagedCount)
+              : null;
 
-            return (
-              <Link
-                key={menu.href}
-                href={menu.href}
-                aria-label={menu.id}
-                aria-current={isActive ? "page" : undefined}
-                className={menuItemStyles}
-              >
-                {Icon ? <Icon aria-hidden className="size-5 shrink-0" /> : null}
-                {!menu.iconOnly ? displayLabel : null}
-              </Link>
-            );
-          })}
-        </div>
+          return (
+            <Link
+              key={menu.href}
+              href={menu.href}
+              aria-label={menu.id}
+              aria-current={isActive ? "page" : undefined}
+              className={menuItemStyles}
+            >
+              {Icon ? <Icon aria-hidden className="size-4.5 shrink-0" /> : null}
+              {!menu.iconOnly ? displayLabel : null}
+            </Link>
+          );
+        })}
       </nav>
     </div>
   );
