@@ -201,7 +201,7 @@ export function TokenValueDetail({
 
   return (
     <div className="px-microPlus pb-small gap-mini pt-microPlus flex w-80 flex-col">
-      <div className="flex items-center justify-between">
+      <div className="pl-micro flex items-center justify-between">
         <Text variant="label-xs" className="text-content-primary">
           {title}
         </Text>
