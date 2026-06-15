@@ -191,15 +191,19 @@ export function TokenValueDetail({
 
   const between = rowId.match(/token-type:(.*?):value/)?.[1] ?? "";
   const parts = between.split("-");
-  const categoryText = `${parts[0]?.charAt(0).toUpperCase()}${parts[0]?.slice(1).toLowerCase()}`;
   const tokenTypeText = `${parts[1]?.charAt(0).toUpperCase()}${parts[1]?.slice(1).toLowerCase()}`;
-  const title = `${categoryText}, ${tokenTypeText}`;
+
+  const rawIndex = rowId.split(":").pop() ?? "0";
+  const numericIndex = Number(rawIndex);
+  const displayIndex = String(numericIndex + 1).padStart(2, "0");
+
+  const title = `${displayIndex} - ${tokenTypeText}`;
 
   return (
     <div className="px-microPlus pb-small gap-mini pt-microPlus flex w-80 flex-col">
       <div className="flex items-center justify-between">
         <Text variant="label-xs" className="text-content-primary">
-          {tokenTypeText}
+          {title}
         </Text>
         {!isDirty && (
           <Button
@@ -216,7 +220,6 @@ export function TokenValueDetail({
               variant="void"
               size="sm"
               label="CANCEL"
-              // overrideBgClass="bg-transparent hover:bg-surface-warn active:bg-surface-warn"
               overrideTextColorClass="text-content-tertiary hover:text-content-warn active:text-content-warn"
               disabled={!isDirty}
               onClick={handleCancel}
@@ -225,7 +228,6 @@ export function TokenValueDetail({
               variant="void"
               size="sm"
               label="SAVE"
-              // overrideBgClass="bg-transparent hover:bg-surface-success active:bg-surface-success"
               overrideTextColorClass="text-content-tertiary hover:text-content-success active:text-content-success"
               disabled={!isDirty}
               onClick={handleSave}
