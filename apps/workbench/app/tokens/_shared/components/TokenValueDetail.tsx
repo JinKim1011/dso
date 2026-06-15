@@ -1,6 +1,5 @@
 "use client";
 
-import { CheckIcon, Cross2Icon, ResetIcon } from "@radix-ui/react-icons";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
 import { TokenColorDraft, TokenColorForm } from "../../color/components/TokenColorForm";
@@ -197,18 +196,16 @@ export function TokenValueDetail({
   const title = `${categoryText}, ${tokenTypeText}`;
 
   return (
-    <div className="px-mini pt-mini pb-miniPlus gap-small flex w-90 flex-col">
+    <div className="px-microPlus pb-small gap-mini pt-microPlus flex w-90 flex-col">
       <div className="flex items-center justify-between">
-        <Text variant="label-sm" className="text-content-primary">
-          {title}
+        <Text variant="label-xs" className="text-content-primary">
+          {tokenTypeText}
         </Text>
         {!isDirty && (
           <Button
             variant="void"
-            size="md"
-            aria-label="close"
-            iconOnly={true}
-            leftIcon={Cross2Icon}
+            size="sm"
+            label="CLOSE"
             disabled={false}
             onClick={() => onClose?.()}
           />
@@ -217,19 +214,19 @@ export function TokenValueDetail({
           <div className="flex">
             <Button
               variant="void"
-              size="md"
-              aria-label="undo"
-              iconOnly={true}
-              leftIcon={ResetIcon}
+              size="sm"
+              label="CANCEL"
+              // overrideBgClass="bg-transparent hover:bg-surface-warn active:bg-surface-warn"
+              overrideTextColorClass="text-content-tertiary hover:text-content-warn active:text-content-warn"
               disabled={!isDirty}
               onClick={handleCancel}
             />
             <Button
               variant="void"
-              size="md"
-              aria-label="save"
-              iconOnly={true}
-              leftIcon={CheckIcon}
+              size="sm"
+              label="SAVE"
+              // overrideBgClass="bg-transparent hover:bg-surface-success active:bg-surface-success"
+              overrideTextColorClass="text-content-tertiary hover:text-content-success active:text-content-success"
               disabled={!isDirty}
               onClick={handleSave}
             />
