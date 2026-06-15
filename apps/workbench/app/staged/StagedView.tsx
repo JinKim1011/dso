@@ -114,7 +114,10 @@ export function StagedView() {
         </div>
       )}
       {rowsLength !== 0 && (
-        <div ref={containerRef}>
+        <div
+          ref={containerRef}
+          className="py-large px-smallPlus m-auto h-dvh w-full max-w-5xl"
+        >
           <StagedViewHeader length={rowsLength} guidedText={!!selected}>
             <Button
               variant="outlined"
