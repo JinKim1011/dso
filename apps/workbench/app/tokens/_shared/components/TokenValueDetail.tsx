@@ -197,7 +197,7 @@ export function TokenValueDetail({
   const numericIndex = Number(rawIndex);
   const displayIndex = String(numericIndex + 1).padStart(2, "0");
 
-  const title = `${displayIndex} - ${tokenTypeText}`;
+  const title = `${tokenTypeText}-${displayIndex}`;
 
   return (
     <div className="px-mini pb-small gap-miniPlus pt-mini flex w-80 flex-col">
