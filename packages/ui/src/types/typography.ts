@@ -112,6 +112,11 @@ export const typographyRecipes: Record<TypographyVariant, TypographyRecipe> = {
     fontWeight: "regular",
     lineHeight: "relaxed",
   },
+  "meta-xxs": {
+    fontSize: "micro",
+    fontWeight: "regular",
+    lineHeight: "relaxed",
+  },
   "control-md": {
     fontSize: "regular",
     fontWeight: "regular",
@@ -156,6 +161,7 @@ export const typographyStyles: Record<TypographyVariant, string> = {
   "body-sm": "text-small font-regular leading-normal",
   "body-sm-strong": "text-small font-semibold leading-normal",
   "body-xs": "text-micro font-regular leading-normal",
+  "meta-xxs": "text-micro font-regular leading-relaxed",
   "label-sm": "text-small font-semibold leading-tight",
   "label-xs": "text-mini font-semibold leading-tight",
   "label-xxs": "text-micro font-semibold leading-tight",
