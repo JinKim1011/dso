@@ -226,7 +226,7 @@ export function TokenValueDetail({
               variant="void"
               size="sm"
               label="UNDO"
-              overrideTextColorClass="text-content-tertiary hover:text-content-warn active:text-content-warn"
+              // overrideTextColorClass="text-content-tertiary hover:text-content-warn active:text-content-warn"
               disabled={!isDirty}
               onClick={handleCancel}
             />
@@ -234,7 +234,7 @@ export function TokenValueDetail({
               variant="void"
               size="sm"
               label="SAVE"
-              overrideTextColorClass="text-content-tertiary hover:text-content-success active:text-content-success"
+              overrideTextColorClass="text-content-accentStrong hover:text-content-accent active:text-content-accentStrong"
               disabled={!isDirty}
               onClick={handleSave}
             />
