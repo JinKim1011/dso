@@ -157,8 +157,8 @@ const iconSizeClasses: Record<ButtonSize, string> = {
 };
 
 const textVariant: Record<ButtonSize, TypographyVariant> = {
-  sm: "control-xs",
-  md: "control-sm",
+  sm: "control-xxs",
+  md: "control-xs",
   lg: "control-sm",
 };
 
