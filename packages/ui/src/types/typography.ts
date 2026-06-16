@@ -32,8 +32,10 @@ export type TypographyVariant =
   | "body-sm-strong"
   | "label-sm"
   | "label-xs"
+  | "label-xxs"
   | "meta-sm"
   | "meta-xs"
+  | "meta-xxs"
   | "control-md"
   | "control-sm"
   | "control-xs"
@@ -161,12 +163,12 @@ export const typographyStyles: Record<TypographyVariant, string> = {
   "body-sm": "text-small font-regular leading-normal",
   "body-sm-strong": "text-small font-semibold leading-normal",
   "body-xs": "text-micro font-regular leading-normal",
-  "meta-xxs": "text-micro font-regular leading-relaxed",
   "label-sm": "text-small font-semibold leading-tight",
   "label-xs": "text-mini font-semibold leading-tight",
   "label-xxs": "text-micro font-semibold leading-tight",
   "meta-sm": "text-small font-regular leading-relaxed",
   "meta-xs": "text-mini font-regular leading-relaxed",
+  "meta-xxs": "text-micro font-regular leading-relaxed",
   "control-md": "text-small font-regular leading-tight",
   "control-sm": "text-small font-regular leading-tight",
   "control-xs": "text-mini font-regular leading-tight",
