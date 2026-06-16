@@ -21,7 +21,7 @@ export function TokenFieldInput({
         <Text
           as="label"
           htmlFor={id}
-          variant="input-label-sm"
+          variant="label-xs"
           className="text-content-primary/35"
         >
           {label}
