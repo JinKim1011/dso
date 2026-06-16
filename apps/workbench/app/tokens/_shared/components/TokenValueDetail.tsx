@@ -206,13 +206,15 @@ export function TokenValueDetail({
           {title}
         </Text>
         {!isDirty && (
-          <Button
-            variant="void"
-            size="sm"
-            label="CLOSE"
-            disabled={false}
-            onClick={() => onClose?.()}
-          />
+          <div className="flex flex-1 justify-end">
+            <Button
+              variant="void"
+              size="sm"
+              label="CLOSE"
+              disabled={false}
+              onClick={() => onClose?.()}
+            />
+          </div>
         )}
         {isDirty && (
           <div className="flex">
