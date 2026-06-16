@@ -28,6 +28,7 @@ export type TypographyVariant =
   | "body-md"
   | "body-md-strong"
   | "body-sm"
+  | "body-xs"
   | "body-sm-strong"
   | "label-sm"
   | "label-xs"
@@ -73,6 +74,11 @@ export const typographyRecipes: Record<TypographyVariant, TypographyRecipe> = {
   },
   "body-sm": {
     fontSize: "small",
+    fontWeight: "regular",
+    lineHeight: "normal",
+  },
+  "body-xs": {
+    fontSize: "mini",
     fontWeight: "regular",
     lineHeight: "normal",
   },
@@ -144,6 +150,7 @@ export const typographyStyles: Record<TypographyVariant, string> = {
   "body-md-strong": "text-regular font-semibold leading-normal",
   "body-sm": "text-small font-regular leading-normal",
   "body-sm-strong": "text-small font-semibold leading-normal",
+  "body-xs": "text-micro font-regular leading-normal",
   "label-sm": "text-small font-semibold leading-tight",
   "label-xs": "text-mini font-semibold leading-tight",
   "meta-sm": "text-small font-regular leading-relaxed",
