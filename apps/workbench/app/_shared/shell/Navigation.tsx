@@ -17,15 +17,15 @@ export function Navigation() {
   const stagedMenuItem = workbenchNavigation.filter((menu) => menu.id === "staged");
 
   const navWrapperStyles =
-    "p-microPlus bg-surface-primary shadow-overlay-floating gap-mini flex-col items-center rounded-mini h-fit";
+    "p-microPlus bg-surface-primary shadow-overlay-floating gap-mini flex-col items-center rounded-small h-fit";
   const menuItemStyles =
-    "rounded-micro gap-microPlus p-mini text-content-quaternary duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary inline-flex h-9 w-fit shrink-0 items-center justify-center bg-transparent transition-colors";
+    "rounded-mini p-mini text-content-quaternary duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary inline-flex h-9 w-fit shrink-0 items-center justify-center bg-transparent transition-colors";
 
   return (
-    <div className="gap-microPlus fixed bottom-10 left-1/2 z-10 flex -translate-x-1/2 items-end">
+    <div className="gap-microPlus fixed bottom-10 left-1/2 z-10 flex -translate-x-1/2 cursor-grab items-end">
       <nav aria-label="navigation" className={navWrapperStyles}>
         {navigationSlot}
-        <div className="gap-microPlus inline-flex w-full justify-center p-0">
+        <div className="gap-micro inline-flex w-full justify-center p-0">
           {tokensMenuItems.map((menu) => {
             const isActive = path === menu.href;
             const Icon = menu.icon;
