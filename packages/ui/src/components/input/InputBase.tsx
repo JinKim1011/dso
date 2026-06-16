@@ -31,7 +31,7 @@ const inputBaseVariant = cva(
 );
 
 const inputVariant = cva(
-  `${typographyStyles["control-sm"]} w-full p-0 bg-transparent outline-none`,
+  `${typographyStyles["control-xs"]} w-full p-0 bg-transparent outline-none`,
   {
     variants: {
       readOnly: {
