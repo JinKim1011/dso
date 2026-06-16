@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { DragHandleDots1Icon } from "@radix-ui/react-icons";
+import { motion, useDragControls } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useContext } from "react";
@@ -22,10 +23,14 @@ export function Navigation() {
   const menuItemStyles =
     "rounded-mini p-mini text-content-quaternary duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary inline-flex h-9 w-fit shrink-0 items-center justify-center bg-transparent transition-colors";
 
+  const dragControl = useDragControls();
+
   return (
     <motion.div
       drag
-      whileDrag={{ scale: 0.98 }}
+      dragControls={dragControl}
+      dragListener={false}
+      dragElastic={0.04}
       dragMomentum={false}
       dragConstraints={{
         top: 0,
@@ -36,8 +41,28 @@ export function Navigation() {
       className="gap-microPlus fixed bottom-10 left-1/2 z-10 flex -translate-x-1/2 cursor-grab items-end"
     >
       <nav aria-label="navigation" className={navWrapperStyles}>
+        {navigationSlot && (
+          <div
+            className="mr-mini text-content-quaternary/60 hover:text-content-primary top-miniPlus left-mini absolute flex cursor-grab items-center active:cursor-grabbing"
+            onPointerDown={(event) => {
+              dragControl.start(event);
+            }}
+          >
+            <DragHandleDots1Icon className="size-4" />
+          </div>
+        )}
         {navigationSlot}
         <div className="gap-micro inline-flex w-full justify-center p-0">
+          {!navigationSlot && (
+            <div
+              className="mr-mini text-content-quaternary/60 hover:text-content-primary flex cursor-grab items-center active:cursor-grabbing"
+              onPointerDown={(event) => {
+                dragControl.start(event);
+              }}
+            >
+              <DragHandleDots1Icon className="size-4" />
+            </div>
+          )}
           {tokensMenuItems.map((menu) => {
             const isActive = path === menu.href;
             const Icon = menu.icon;
