@@ -200,9 +200,13 @@ export function TokenValueDetail({
   const title = `${tokenTypeText}-${displayIndex}`;
 
   return (
-    <div className="px-mini pb-small gap-miniPlus pt-mini flex w-80 flex-col">
+    <div className="px-mini pb-small gap-miniPlus pt-mini flex w-90 flex-col select-none">
       <div className="pl-micro flex items-center justify-between">
-        <Text variant="label-xs" className="text-content-primary">
+        <div className="block flex-1"></div>
+        <Text
+          variant="label-xxs"
+          className="text-content-primary flex-2 truncate text-center"
+        >
           {title}
         </Text>
         {!isDirty && (
@@ -217,7 +221,7 @@ export function TokenValueDetail({
           </div>
         )}
         {isDirty && (
-          <div className="flex">
+          <div className="flex flex-1 justify-end">
             <Button
               variant="void"
               size="sm"
