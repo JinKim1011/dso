@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useContext } from "react";
@@ -22,7 +23,18 @@ export function Navigation() {
     "rounded-mini p-mini text-content-quaternary duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary inline-flex h-9 w-fit shrink-0 items-center justify-center bg-transparent transition-colors";
 
   return (
-    <div className="gap-microPlus fixed bottom-10 left-1/2 z-10 flex -translate-x-1/2 cursor-grab items-end">
+    <motion.div
+      drag
+      whileDrag={{ scale: 0.98 }}
+      dragMomentum={false}
+      dragConstraints={{
+        top: 0,
+        left: -500,
+        right: 500,
+        bottom: 0,
+      }}
+      className="gap-microPlus fixed bottom-10 left-1/2 z-10 flex -translate-x-1/2 cursor-grab items-end"
+    >
       <nav aria-label="navigation" className={navWrapperStyles}>
         {navigationSlot}
         <div className="gap-micro inline-flex w-full justify-center p-0">
@@ -66,6 +78,6 @@ export function Navigation() {
           );
         })}
       </nav>
-    </div>
+    </motion.div>
   );
 }
