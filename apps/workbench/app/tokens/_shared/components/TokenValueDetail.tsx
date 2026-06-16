@@ -221,7 +221,7 @@ export function TokenValueDetail({
             <Button
               variant="void"
               size="sm"
-              label="CANCEL"
+              label="UNDO"
               overrideTextColorClass="text-content-tertiary hover:text-content-warn active:text-content-warn"
               disabled={!isDirty}
               onClick={handleCancel}
