@@ -207,7 +207,7 @@ export function TokenValueDetail({
           variant="label-xxs"
           className="text-content-primary flex-2 truncate text-center"
         >
-          {title}
+          {title ? title : rowId}
         </Text>
         {!isDirty && (
           <div className="flex flex-1 justify-end">
