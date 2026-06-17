@@ -168,7 +168,7 @@ export const typographyStyles: Record<TypographyVariant, string> = {
   "body-md-strong": "text-regular font-semibold leading-normal",
   "body-sm": "text-small font-regular leading-normal",
   "body-sm-strong": "text-small font-semibold leading-normal",
-  "body-xs": "text-micro font-regular leading-normal",
+  "body-xs": "text-mini font-regular leading-normal",
   "label-sm": "text-small font-semibold leading-tight",
   "label-xs": "text-mini font-semibold leading-tight",
   "label-xxs": "text-micro font-semibold leading-tight",
