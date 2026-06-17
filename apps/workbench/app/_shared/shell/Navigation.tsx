@@ -79,9 +79,9 @@ export function Navigation() {
               <motion.div
                 ref={elementRef}
                 key="navigationSlot"
-                animate={{ opacity: 1 }}
-                initial={{ opacity: 0 }}
-                exit={{ opacity: 0 }}
+                animate={{ opacity: 1, width: 320 }}
+                initial={{ opacity: 0, width: 246 }}
+                exit={{ opacity: 0, width: 246 }}
                 transition={{ type: "tween", ease: [0.16, 1, 0.3, 1], duration: 0.3 }}
               >
                 <div
