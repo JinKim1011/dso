@@ -1,10 +1,10 @@
 "use client";
 
 import { DragHandleDots1Icon } from "@radix-ui/react-icons";
-import { motion, useDragControls } from "framer-motion";
+import { AnimatePresence, motion, useDragControls } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useContext } from "react";
+import { useContext, useLayoutEffect, useRef, useState } from "react";
 import { workbenchNavigation } from "../../_config/navigation";
 import { NavigationSlotDetailContext } from "../context/NavigationSlotContext";
 import { useStagedManifest } from "../context/StagedManifestContext";
