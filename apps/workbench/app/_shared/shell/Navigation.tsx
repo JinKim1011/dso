@@ -78,12 +78,6 @@ export function Navigation() {
               </Link>
             );
           })}
-          {/* <div className="relative h-full w-[8px]">
-            <div className="bg-surface-quaternary absolute inset-y-0 left-[2px] w-[0.5px]" />
-            <div className="bg-surface-quaternary absolute inset-y-0 right-[2px] w-[0.5px]" />
-            <div className="bg-surface-primary absolute inset-x-0 bottom-0 h-[2px] w-[8px] flex-none rounded-t-full shadow-[0_-1px_0_0_rgba(255,255,255,0.08)]" />
-            <div className="bg-surface-primary absolute inset-x-0 top-0 h-[2px] w-[8px] flex-none rounded-b-full shadow-[0_1px_0_0_rgba(255,255,255,0.08)]" />
-          </div> */}
         </div>
       </nav>
       {!navigationSlot && (
