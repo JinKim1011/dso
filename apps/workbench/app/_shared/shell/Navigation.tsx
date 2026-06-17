@@ -69,17 +69,34 @@ export function Navigation() {
       className="gap-microPlus fixed bottom-10 left-1/2 z-10 flex -translate-x-1/2 items-end"
     >
       <nav aria-label="navigation" className={navWrapperStyles}>
-        {navigationSlot && (
-          <div
-            className="mr-mini text-content-quaternary/60 hover:text-content-primary top-miniPlus left-mini absolute flex cursor-grab items-center active:cursor-grabbing"
-            onPointerDown={(event) => {
-              dragControl.start(event);
-            }}
-          >
-            <DragHandleDots1Icon className="size-4" />
-          </div>
-        )}
-        {navigationSlot}
+        <motion.div
+          animate={{ height: height }}
+          className="overflow-hidden"
+          transition={{ type: "tween", ease: [0.16, 1, 0.3, 1], duration: 0.3 }}
+        >
+          <AnimatePresence>
+            {navigationSlot ? (
+              <motion.div
+                ref={elementRef}
+                key="navigationSlot"
+                animate={{ opacity: 1 }}
+                initial={{ opacity: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ type: "tween", ease: [0.16, 1, 0.3, 1], duration: 0.3 }}
+              >
+                <div
+                  className="mr-mini text-content-quaternary/60 hover:text-content-primary top-miniPlus left-mini absolute flex cursor-grab items-center active:cursor-grabbing"
+                  onPointerDown={(event) => {
+                    dragControl.start(event);
+                  }}
+                >
+                  <DragHandleDots1Icon className="size-4" />
+                </div>
+                {navigationSlot}
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </motion.div>
         <div className="gap-micro inline-flex w-full justify-center p-0">
           {!navigationSlot && (
             <div
