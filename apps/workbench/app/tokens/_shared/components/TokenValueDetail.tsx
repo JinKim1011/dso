@@ -226,7 +226,6 @@ export function TokenValueDetail({
               variant="void"
               size="sm"
               label="UNDO"
-              // overrideTextColorClass="text-content-tertiary hover:text-content-warn active:text-content-warn"
               disabled={!isDirty}
               onClick={handleCancel}
             />
