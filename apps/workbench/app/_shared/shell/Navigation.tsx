@@ -15,6 +15,34 @@ export function Navigation() {
   const { changedRowCount } = useStagedManifest();
   const stagedCount = changedRowCount;
 
+  const [height, setHeight] = useState(0);
+  const elementRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    const node = elementRef.current;
+
+    if (!node) {
+      setHeight(0);
+      return;
+    }
+
+    if (!navigationSlot) {
+      setHeight(0);
+      return;
+    }
+
+    const updateSize = () => {
+      setHeight(node.getBoundingClientRect().height);
+    };
+
+    updateSize();
+
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, [navigationSlot]);
+
   const tokensMenuItems = workbenchNavigation.filter((menu) => menu.id !== "staged");
   const stagedMenuItem = workbenchNavigation.filter((menu) => menu.id === "staged");
 
