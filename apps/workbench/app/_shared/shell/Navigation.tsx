@@ -47,7 +47,7 @@ export function Navigation() {
   const stagedMenuItem = workbenchNavigation.filter((menu) => menu.id === "staged");
 
   const navWrapperStyles =
-    "p-microPlus bg-surface-primary shadow-overlay-floating gap-mini flex-col items-center rounded-small h-fit";
+    "p-microPlus bg-surface-primary shadow-overlay-floating gap-mini flex-col items-center rounded-small h-fit ";
   const menuItemStyles =
     "rounded-mini p-mini text-content-quaternary duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary inline-flex h-9 w-fit shrink-0 items-center justify-center bg-transparent transition-colors";
 
