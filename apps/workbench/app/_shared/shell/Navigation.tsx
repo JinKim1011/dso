@@ -15,24 +15,24 @@ export function Navigation() {
   const { changedRowCount } = useStagedManifest();
   const stagedCount = changedRowCount;
 
-  const [height, setHeight] = useState(0);
+  const [slotHeight, setSlotHeight] = useState(0);
   const elementRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
     const node = elementRef.current;
 
     if (!node) {
-      setHeight(0);
+      setSlotHeight(0);
       return;
     }
 
     if (!navigationSlot) {
-      setHeight(0);
+      setSlotHeight(0);
       return;
     }
 
     const updateSize = () => {
-      setHeight(node.getBoundingClientRect().height);
+      setSlotHeight(node.getBoundingClientRect().height);
     };
 
     updateSize();
@@ -70,7 +70,7 @@ export function Navigation() {
     >
       <nav aria-label="navigation" className={navWrapperStyles}>
         <motion.div
-          animate={{ height: height }}
+          animate={{ height: slotHeight }}
           className="overflow-hidden"
           transition={{ type: "tween", ease: [0.16, 1, 0.3, 1], duration: 0.3 }}
         >
