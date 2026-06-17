@@ -85,7 +85,7 @@ export function Navigation() {
                 transition={{ type: "tween", ease: [0.16, 1, 0.3, 1], duration: 0.3 }}
               >
                 <div
-                  className="mr-mini text-content-quaternary/60 hover:text-content-primary top-miniPlus left-mini absolute flex cursor-grab items-center active:cursor-grabbing"
+                  className="text-content-quaternary/60 hover:text-content-primary top-miniPlus left-mini absolute flex cursor-grab items-center active:cursor-grabbing"
                   onPointerDown={(event) => {
                     dragControl.start(event);
                   }}
@@ -97,10 +97,10 @@ export function Navigation() {
             ) : null}
           </AnimatePresence>
         </motion.div>
-        <div className="gap-micro inline-flex w-full justify-center p-0">
+        <div className="gap-micro px-small inline-flex w-full justify-center">
           {!navigationSlot && (
             <div
-              className="mr-mini text-content-quaternary/60 hover:text-content-primary flex cursor-grab items-center active:cursor-grabbing"
+              className="text-content-quaternary/60 hover:text-content-primary px-micro absolute top-0 left-0 flex h-full cursor-grab items-center active:cursor-grabbing"
               onPointerDown={(event) => {
                 dragControl.start(event);
               }}
