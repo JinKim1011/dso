@@ -201,16 +201,16 @@ export function TokenValueDetail({
 
   return (
     <div className="px-mini pb-small gap-miniPlus pt-mini flex w-80 flex-col select-none">
-      <div className="pl-micro flex items-center justify-between">
-        <div className="block flex-1"></div>
+      <div className="flex items-center justify-between">
+        <div className="grow basis-0"></div>
         <Text
           variant="label-xxs"
-          className="text-content-primary flex-2 truncate text-center"
+          className="text-content-primary grow-2 basis-0 truncate text-center"
         >
           {title ? title : rowId}
         </Text>
         {!isDirty && (
-          <div className="flex flex-1 justify-end">
+          <div className="flex grow basis-0 justify-end">
             <Button
               variant="void"
               size="sm"
@@ -221,7 +221,7 @@ export function TokenValueDetail({
           </div>
         )}
         {isDirty && (
-          <div className="flex flex-1 justify-end">
+          <div className="flex grow basis-0 justify-end">
             <Button
               variant="void"
               size="sm"
