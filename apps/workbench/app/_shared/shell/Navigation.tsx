@@ -131,7 +131,7 @@ export function Navigation() {
         </div>
       </nav>
       {!navigationSlot && (
-        <nav aria-label="navigation" className={navWrapperStyles}>
+        <nav aria-label="staged navigation" className={navWrapperStyles}>
           {stagedMenuItem.map((menu) => {
             const isActive = path === menu.href;
             const Icon = menu.icon;
