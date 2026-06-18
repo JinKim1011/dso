@@ -78,6 +78,7 @@ export function Navigation() {
             {navigationSlot ? (
               <motion.div
                 ref={elementRef}
+                className="relative"
                 key="navigationSlot"
                 animate={{ opacity: 1, width: 320 }}
                 initial={{ opacity: 0, width: 230 }}
