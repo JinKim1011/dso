@@ -28,14 +28,18 @@ export type TypographyVariant =
   | "body-md"
   | "body-md-strong"
   | "body-sm"
+  | "body-xs"
   | "body-sm-strong"
   | "label-sm"
   | "label-xs"
+  | "label-xxs"
   | "meta-sm"
   | "meta-xs"
+  | "meta-xxs"
   | "control-md"
   | "control-sm"
   | "control-xs"
+  | "control-xxs"
   | "input-label-sm"
   | "input-helper-sm";
 
@@ -76,6 +80,11 @@ export const typographyRecipes: Record<TypographyVariant, TypographyRecipe> = {
     fontWeight: "regular",
     lineHeight: "normal",
   },
+  "body-xs": {
+    fontSize: "mini",
+    fontWeight: "regular",
+    lineHeight: "normal",
+  },
   "body-sm-strong": {
     fontSize: "small",
     fontWeight: "semibold",
@@ -91,6 +100,11 @@ export const typographyRecipes: Record<TypographyVariant, TypographyRecipe> = {
     fontWeight: "semibold",
     lineHeight: "tight",
   },
+  "label-xxs": {
+    fontSize: "micro",
+    fontWeight: "semibold",
+    lineHeight: "tight",
+  },
   "meta-sm": {
     fontSize: "small",
     fontWeight: "regular",
@@ -98,6 +112,11 @@ export const typographyRecipes: Record<TypographyVariant, TypographyRecipe> = {
   },
   "meta-xs": {
     fontSize: "mini",
+    fontWeight: "regular",
+    lineHeight: "relaxed",
+  },
+  "meta-xxs": {
+    fontSize: "micro",
     fontWeight: "regular",
     lineHeight: "relaxed",
   },
@@ -113,6 +132,11 @@ export const typographyRecipes: Record<TypographyVariant, TypographyRecipe> = {
   },
   "control-xs": {
     fontSize: "small",
+    fontWeight: "regular",
+    lineHeight: "tight",
+  },
+  "control-xxs": {
+    fontSize: "micro",
     fontWeight: "regular",
     lineHeight: "tight",
   },
@@ -144,13 +168,17 @@ export const typographyStyles: Record<TypographyVariant, string> = {
   "body-md-strong": "text-regular font-semibold leading-normal",
   "body-sm": "text-small font-regular leading-normal",
   "body-sm-strong": "text-small font-semibold leading-normal",
+  "body-xs": "text-mini font-regular leading-normal",
   "label-sm": "text-small font-semibold leading-tight",
   "label-xs": "text-mini font-semibold leading-tight",
+  "label-xxs": "text-micro font-semibold leading-tight",
   "meta-sm": "text-small font-regular leading-relaxed",
   "meta-xs": "text-mini font-regular leading-relaxed",
+  "meta-xxs": "text-micro font-regular leading-relaxed",
   "control-md": "text-small font-regular leading-tight",
   "control-sm": "text-small font-regular leading-tight",
   "control-xs": "text-mini font-regular leading-tight",
+  "control-xxs": "text-micro font-regular leading-tight",
   "input-label-sm": "text-small font-semibold leading-tight",
   "input-helper-sm": "text-mini font-regular leading-normal",
 };

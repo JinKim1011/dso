@@ -102,9 +102,9 @@ export function StagedView() {
   });
 
   return (
-    <section className="py-large px-smallPlus m-auto flex h-dvh w-full max-w-5xl flex-col">
+    <section className="flex h-dvh w-full flex-col">
       {rowsLength === 0 && (
-        <div className="py-regular px-small bg-dot-pattern flex h-full w-full items-center justify-center overflow-hidden">
+        <div className="bg-dot-pattern flex h-full w-full items-center justify-center overflow-hidden">
           <Text
             variant="meta-xs"
             className="text-content-accentStrong w-full text-center"
@@ -114,7 +114,10 @@ export function StagedView() {
         </div>
       )}
       {rowsLength !== 0 && (
-        <div ref={containerRef}>
+        <div
+          ref={containerRef}
+          className="py-large px-smallPlus m-auto h-dvh w-full max-w-5xl"
+        >
           <StagedViewHeader length={rowsLength} guidedText={!!selected}>
             <Button
               variant="outlined"

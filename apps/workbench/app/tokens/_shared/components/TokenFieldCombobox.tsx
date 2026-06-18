@@ -18,19 +18,19 @@ export function TokenFieldCombobox({
   onChange,
 }: TokenFieldComboboxProps) {
   return (
-    <div className="gap-mini grid grid-cols-3">
-      <div className="col-span-1">
+    <div className="gap-mini grid grid-cols-5">
+      <div className="col-span-2">
         <Text
           as="label"
           htmlFor={id}
-          variant="input-label-sm"
+          variant="label-xs"
           className="text-content-primary/35 my-auto"
         >
           {label}
         </Text>
       </div>
 
-      <div className="col-span-2">
+      <div className="col-span-3">
         <Combobox
           id={id}
           value={value}

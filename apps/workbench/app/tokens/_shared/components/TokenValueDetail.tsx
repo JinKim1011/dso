@@ -1,6 +1,5 @@
 "use client";
 
-import { CheckIcon, Cross2Icon, ResetIcon } from "@radix-ui/react-icons";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
 import { TokenColorDraft, TokenColorForm } from "../../color/components/TokenColorForm";
@@ -192,44 +191,49 @@ export function TokenValueDetail({
 
   const between = rowId.match(/token-type:(.*?):value/)?.[1] ?? "";
   const parts = between.split("-");
-  const categoryText = `${parts[0]?.charAt(0).toUpperCase()}${parts[0]?.slice(1).toLowerCase()}`;
   const tokenTypeText = `${parts[1]?.charAt(0).toUpperCase()}${parts[1]?.slice(1).toLowerCase()}`;
-  const title = `${categoryText}, ${tokenTypeText}`;
+
+  const rawIndex = rowId.split(":").pop() ?? "0";
+  const numericIndex = Number(rawIndex);
+  const displayIndex = String(numericIndex + 1).padStart(2, "0");
+
+  const title = `${tokenTypeText}-${displayIndex}`;
 
   return (
-    <div className="px-mini pt-mini pb-miniPlus gap-small flex w-90 flex-col">
+    <div className="px-mini pb-small gap-miniPlus pt-mini flex w-80 flex-col select-none">
       <div className="flex items-center justify-between">
-        <Text variant="label-sm" className="text-content-primary">
-          {title}
+        <div className="grow basis-0"></div>
+        <Text
+          variant="label-xxs"
+          className="text-content-primary grow-2 basis-0 truncate text-center"
+        >
+          {title ? title : rowId}
         </Text>
         {!isDirty && (
-          <Button
-            variant="void"
-            size="md"
-            aria-label="close"
-            iconOnly={true}
-            leftIcon={Cross2Icon}
-            disabled={false}
-            onClick={() => onClose?.()}
-          />
-        )}
-        {isDirty && (
-          <div className="flex">
+          <div className="flex grow basis-0 justify-end">
             <Button
               variant="void"
-              size="md"
-              aria-label="undo"
-              iconOnly={true}
-              leftIcon={ResetIcon}
+              size="sm"
+              label="CLOSE"
+              disabled={false}
+              onClick={() => onClose?.()}
+            />
+          </div>
+        )}
+        {isDirty && (
+          <div className="flex grow basis-0 justify-end">
+            <Button
+              variant="void"
+              size="sm"
+              label="UNDO"
               disabled={!isDirty}
               onClick={handleCancel}
             />
             <Button
               variant="void"
-              size="md"
-              aria-label="save"
-              iconOnly={true}
-              leftIcon={CheckIcon}
+              size="sm"
+              label="SAVE"
+              overrideTextColorClass="text-content-accentStrong hover:text-content-accent active:text-content-accentStrong"
               disabled={!isDirty}
               onClick={handleSave}
             />

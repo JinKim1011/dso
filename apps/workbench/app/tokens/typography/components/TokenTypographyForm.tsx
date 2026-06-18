@@ -26,7 +26,7 @@ export function TokenTypographyForm({
   onChange,
 }: TokenTypographyFormProps) {
   return (
-    <div className="gap-mini flex flex-col">
+    <div className="gap-microPlus flex flex-col">
       <TokenFieldInput
         id="token-name"
         label="Name"

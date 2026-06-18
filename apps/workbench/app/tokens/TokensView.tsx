@@ -220,7 +220,7 @@ export function TokensView({ category }: TokensViewProps) {
   );
 
   return (
-    <div className="relative h-dvh w-full overflow-hidden">
+    <div className="bg-dot-pattern relative h-dvh w-full overflow-hidden">
       <ReactFlow
         onInit={handleInit}
         className="h-full w-full"
