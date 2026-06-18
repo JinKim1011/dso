@@ -85,14 +85,16 @@ export function Navigation() {
                 exit={{ opacity: 0, width: 230 }}
                 transition={{ type: "tween", ease: [0.16, 1, 0.3, 1], duration: 0.3 }}
               >
-                <div
+                <button
+                  type="button"
+                  aria-label="drag-handle"
                   className="text-content-quaternary/60 hover:text-content-primary top-miniPlus left-mini absolute flex cursor-grab items-center active:cursor-grabbing"
                   onPointerDown={(event) => {
                     dragControl.start(event);
                   }}
                 >
                   <DragHandleDots1Icon className="size-4" />
-                </div>
+                </button>
                 {navigationSlot}
               </motion.div>
             ) : null}
@@ -100,14 +102,16 @@ export function Navigation() {
         </motion.div>
         <div className="gap-micro pl-small inline-flex w-full justify-center">
           {!navigationSlot && (
-            <div
+            <button
+              type="button"
+              aria-label="drag-handle"
               className="text-content-quaternary/60 hover:text-content-primary px-micro absolute top-0 left-0 flex h-full cursor-grab items-center active:cursor-grabbing"
               onPointerDown={(event) => {
                 dragControl.start(event);
               }}
             >
               <DragHandleDots1Icon className="size-4" />
-            </div>
+            </button>
           )}
           {tokensMenuItems.map((menu) => {
             const isActive = path === menu.href;
