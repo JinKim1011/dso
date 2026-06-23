@@ -44,7 +44,7 @@ export function Header() {
         ) : null}
         <Link
           key="staged"
-          href="/staged"
+          href="/staged?from=${encodeURIComponent(path)}`}
           aria-label="staged"
         >
           <Button
