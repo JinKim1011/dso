@@ -3,7 +3,7 @@
 @source "./**/*.{ts,tsx}" "../../../packages/ui/src/**/*.{ts,tsx}";
 
 body {
-  background-color: var(--color-surface-secondary);
+  background-color: var(--color-surface-primary);
 }
 .react-flow__node {
   overflow: visible;
