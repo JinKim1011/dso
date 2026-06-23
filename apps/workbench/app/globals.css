@@ -2,14 +2,6 @@
 
 @source "./**/*.{ts,tsx}" "../../../packages/ui/src/**/*.{ts,tsx}";
 
-:root {
-  --header-gradient: linear-gradient(
-    to bottom,
-    var(--color-surface-secondary) 0%,
-    transparent 100%
-  );
-}
-
 body {
   background-color: var(--color-surface-secondary);
 }
