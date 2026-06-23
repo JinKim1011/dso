@@ -66,7 +66,7 @@ export function Navigation() {
         right: 500,
         bottom: 0,
       }}
-      className="gap-microPlus fixed bottom-10 left-1/2 z-10 flex -translate-x-1/2 items-end"
+      className="gap-microPlus fixed bottom-16 left-1/2 z-10 flex -translate-x-1/2 items-end"
     >
       <nav aria-label="navigation" className={navWrapperStyles}>
         <motion.div
