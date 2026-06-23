@@ -33,6 +33,11 @@ export function Header() {
     router.back();
   };
 
+  const overrideLinkButtonBGClass =
+    "bg-transparent hover:bg-transparent active:bg-transparent";
+  const overrideLinkButtonTextClass =
+    "text-content-primary hover:text-content-accent active:text-content-accentStrong";
+
   return (
     <div
       className="px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between"
@@ -47,6 +52,8 @@ export function Header() {
               variant="void"
               leftIcon={ChevronLeftIcon}
               onClick={handleBack}
+              overrideBgClass={overrideLinkButtonBGClass}
+              overrideTextColorClass={overrideLinkButtonTextClass}
             />
           </>
         ) : (
@@ -76,6 +83,8 @@ export function Header() {
             label={displayLabel}
             variant="void"
             rightIcon={ChevronRightIcon}
+            overrideBgClass={overrideLinkButtonBGClass}
+            overrideTextColorClass={overrideLinkButtonTextClass}
           />
         </Link>
       </div>
