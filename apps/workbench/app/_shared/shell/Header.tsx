@@ -1,9 +1,9 @@
 "use client";
 
-import { ChevronRightIcon } from "@radix-ui/react-icons";
+import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { Button, Text } from "@repo/ui";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useStagedManifest } from "../context/StagedManifestContext";
 
 export function Header() {
