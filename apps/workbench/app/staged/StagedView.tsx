@@ -114,10 +114,7 @@ export function StagedView() {
         </div>
       )}
       {rowsLength !== 0 && (
-        <div
-          ref={containerRef}
-          className="py-large px-smallPlus m-auto h-dvh w-full max-w-5xl"
-        >
+        <div ref={containerRef} className="m-auto h-dvh w-full">
           <StagedViewHeader length={rowsLength} guidedText={!!selected}>
             <Button
               variant="outlined"
@@ -134,8 +131,8 @@ export function StagedView() {
               label={isApplying ? "Pushing..." : "Push all"}
             />
           </StagedViewHeader>
-          <div className="grid h-full grid-cols-2">
-            <List listItems={listItems} />
+          <div className="flex h-full">
+            <List listItems={listItems} className="w-full max-w-md" />
             {selected && (
               <StagedRowDetail
                 id={selected.rowId}
@@ -146,7 +143,7 @@ export function StagedView() {
               />
             )}
             {!selected && (
-              <div className="py-regular px-small bg-dot-pattern flex h-full w-full justify-center overflow-hidden">
+              <div className="px-small bg-dot-pattern flex h-full w-full justify-center overflow-hidden">
                 <Text
                   variant="meta-xs"
                   className="text-content-accentStrong w-full text-center"
