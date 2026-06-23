@@ -34,15 +34,11 @@ export async function WorkbenchShell({ children }: WorkbenchShellProps) {
 
   const result = buildTokenGraphModel(manifest);
 
-  const currentBranch =
-    process.env.NEXT_PUBLIC_WORKBENCH_CURRENT_BRANCH ?? "style/add-color-design-tokens";
-  const userName = process.env.NEXT_PUBLIC_WORKBENCH_USER_NAME ?? "jin1011";
-
   return (
     <NavigationSlotProvider>
       <StagedManifestProvider baseManifest={result.model}>
-        <div>
-          <Header currentBranch={currentBranch} userName={userName}></Header>
+        <div className="flex h-screen flex-col">
+          <Header />
           <Navigation />
           <main className="mx-mini rounded-mini border-stroke-secondary flex-1 overflow-hidden border">
             {children}
