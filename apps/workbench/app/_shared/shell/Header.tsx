@@ -31,17 +31,28 @@ export function Header() {
         <Button variant="void" size="sm" label="GitHub" />
         <Button variant="void" size="sm" label="Docs" />
       </div>
-
-      <Link
-        key="staged"
-        href="/staged"
-        aria-label="staged"
-        aria-current={isActive ? "page" : undefined}
-        className="px-microPlus gap-micro hover:text-content-accent active:text-content-accentStrong flex cursor-pointer items-center"
-      >
-        <Text variant="control-xs">{displayLabel}</Text>
-        <ChevronRightIcon className="size-3.5 shrink-0" />
-      </Link>
+      <div className="gap-small flex">
+        {addedManifestLineCount > 0 ? (
+          <Text variant="label-xs" className="text-content-success">
+            `+ ${String(addedManifestLineCount)}`
+          </Text>
+        ) : null}
+        {deletedManifestLineCount > 0 ? (
+          <Text variant="label-xs" className="text-content-error">
+            `- ${String(deletedManifestLineCount)}`
+          </Text>
+        ) : null}
+        <Link
+          key="staged"
+          href="/staged"
+          aria-label="staged"
+          aria-current={isActive ? "page" : undefined}
+          className="px-microPlus gap-micro hover:text-content-accent active:text-content-accentStrong flex cursor-pointer items-center"
+        >
+          <Text variant="control-xs">{displayLabel}</Text>
+          <ChevronRightIcon className="size-3.5 shrink-0" />
+        </Link>
+      </div>
     </div>
   );
 }
