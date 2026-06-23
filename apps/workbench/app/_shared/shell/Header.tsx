@@ -7,15 +7,15 @@ import { usePathname } from "next/navigation";
 import { useStagedManifest } from "../context/StagedManifestContext";
 
 export function Header() {
-  const { changedRowCount } = useStagedManifest();
-  const stagedCount = changedRowCount;
+  const { changedRowCount, addedManifestLineCount, deletedManifestLineCount } =
+    useStagedManifest();
   const path = usePathname();
   const menu = "/staged";
   const isActive = path === menu;
   const displayLabel =
-    stagedCount != null && stagedCount > 1
-      ? `${String(stagedCount)} TOKENS CHANGED`
-      : stagedCount === 1
+    changedRowCount != null && changedRowCount > 1
+      ? `${String(changedRowCount)} TOKENS CHANGED`
+      : changedRowCount === 1
         ? "1 TOKEN CHANGED"
         : "NO TOKENS CHANGED";
 
@@ -31,6 +31,7 @@ export function Header() {
         <Button variant="void" size="sm" label="GitHub" />
         <Button variant="void" size="sm" label="Docs" />
       </div>
+
       <Link
         key="staged"
         href="/staged"
