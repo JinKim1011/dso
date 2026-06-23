@@ -43,9 +43,6 @@ export function Navigation() {
     return () => observer.disconnect();
   }, [navigationSlot]);
 
-  const tokensMenuItems = workbenchNavigation.filter((menu) => menu.id !== "staged");
-  const stagedMenuItem = workbenchNavigation.filter((menu) => menu.id === "staged");
-
   const navWrapperStyles =
     "p-microPlus bg-surface-primary shadow-overlay-floating gap-mini flex-col items-center rounded-small h-fit ";
   const menuItemStyles =
@@ -113,7 +110,7 @@ export function Navigation() {
               <DragHandleDots1Icon className="size-4" />
             </button>
           )}
-          {tokensMenuItems.map((menu) => {
+          {workbenchNavigation.map((menu) => {
             const isActive = path === menu.href;
             const Icon = menu.icon;
             return (
@@ -130,31 +127,6 @@ export function Navigation() {
           })}
         </div>
       </nav>
-      {!navigationSlot && (
-        <nav aria-label="staged navigation" className={navWrapperStyles}>
-          {stagedMenuItem.map((menu) => {
-            const isActive = path === menu.href;
-            const Icon = menu.icon;
-            const displayLabel =
-              menu.id === "staged" && stagedCount != null && stagedCount > 0
-                ? String(stagedCount)
-                : null;
-
-            return (
-              <Link
-                key={menu.href}
-                href={menu.href}
-                aria-label={menu.id}
-                aria-current={isActive ? "page" : undefined}
-                className={menuItemStyles}
-              >
-                {Icon ? <Icon aria-hidden className="size-4.5 shrink-0" /> : null}
-                {!menu.iconOnly ? displayLabel : null}
-              </Link>
-            );
-          })}
-        </nav>
-      )}
     </motion.div>
   );
 }
