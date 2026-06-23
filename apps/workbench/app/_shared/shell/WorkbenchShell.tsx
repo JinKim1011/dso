@@ -4,6 +4,7 @@ import { type ReactNode } from "react";
 import { buildTokenGraphModel } from "../../tokens/_shared/lib/manifestAdapter";
 import NavigationSlotProvider from "../context/NavigationSlotContext";
 import { StagedManifestProvider } from "../context/StagedManifestContext";
+import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { Navigation } from "./Navigation";
 
@@ -43,7 +44,10 @@ export async function WorkbenchShell({ children }: WorkbenchShellProps) {
         <div>
           <Header currentBranch={currentBranch} userName={userName}></Header>
           <Navigation />
-          <main>{children}</main>
+          <main className="mx-mini rounded-mini border-stroke-secondary flex-1 overflow-hidden border">
+            {children}
+          </main>
+          <Footer />
         </div>
       </StagedManifestProvider>
     </NavigationSlotProvider>
