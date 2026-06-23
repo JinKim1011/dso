@@ -35,11 +35,25 @@ export function Header() {
       style={{ backgroundImage: "var(--header-gradient)" }}
     >
       <div className="gap-mini inline-flex">
-        <Text variant="label-sm" as="span">
-          DS0
-        </Text>
-        <Button variant="void" size="sm" label="GitHub" />
-        <Button variant="void" size="sm" label="Docs" />
+        {path === "/staged" ? (
+          <>
+            <Button
+              size="sm"
+              label="BACK"
+              variant="void"
+              leftIcon={ChevronLeftIcon}
+              onClick={handleBack}
+            />
+          </>
+        ) : (
+          <>
+            <Text variant="label-sm" as="span">
+              DS0
+            </Text>
+            <Button variant="void" size="sm" label="GitHub" />
+            <Button variant="void" size="sm" label="Docs" />
+          </>
+        )}
       </div>
       <div className="gap-small flex">
         {addedManifestLineCount > 0 ? (
