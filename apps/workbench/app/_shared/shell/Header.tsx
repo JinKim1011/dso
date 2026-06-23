@@ -49,8 +49,12 @@ export function Header() {
           aria-current={isActive ? "page" : undefined}
           className="px-microPlus gap-micro hover:text-content-accent active:text-content-accentStrong flex cursor-pointer items-center"
         >
-          <Text variant="control-xs">{displayLabel}</Text>
-          <ChevronRightIcon className="size-3.5 shrink-0" />
+          <Button
+            size="sm"
+            label={displayLabel}
+            variant="void"
+            rightIcon={ChevronRightIcon}
+          />
         </Link>
       </div>
     </div>
