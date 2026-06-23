@@ -10,14 +10,24 @@ export function Header() {
   const { changedRowCount, addedManifestLineCount, deletedManifestLineCount } =
     useStagedManifest();
   const path = usePathname();
-  const menu = "/staged";
-  const isActive = path === menu;
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const displayLabel =
     changedRowCount != null && changedRowCount > 1
       ? `${String(changedRowCount)} TOKENS CHANGED`
       : changedRowCount === 1
         ? "1 TOKEN CHANGED"
         : "NO TOKENS CHANGED";
+  const returnTo = searchParams.get("from");
+
+  const handleBack = () => {
+    if (returnTo && returnTo.startsWith("/") && returnTo !== "/staged") {
+      router.push(returnTo);
+      return;
+    }
+
+    router.back();
+  };
 
   return (
     <div
