@@ -2,7 +2,6 @@ import {
   ColorWheelIcon,
   CornersIcon,
   FrameIcon,
-  LoopIcon,
   ShadowIcon,
   TextIcon,
   TransformIcon,
@@ -14,7 +13,7 @@ type IconComponent = React.ElementType<{
 }>;
 
 export type WorkbenchNavigationItem = {
-  id: "color" | "typography" | "spacing" | "radius" | "shadow" | "motion" | "staged";
+  id: "color" | "typography" | "spacing" | "radius" | "shadow" | "motion";
   href: string;
   iconOnly: boolean;
   icon: IconComponent;
@@ -56,11 +55,5 @@ export const workbenchNavigation: WorkbenchNavigationItem[] = [
     href: "/tokens/motion",
     iconOnly: true,
     icon: TransformIcon,
-  },
-  {
-    id: "staged",
-    href: "/staged",
-    iconOnly: false,
-    icon: LoopIcon,
   },
 ];
