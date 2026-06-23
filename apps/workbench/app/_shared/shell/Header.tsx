@@ -46,8 +46,6 @@ export function Header() {
           key="staged"
           href="/staged"
           aria-label="staged"
-          aria-current={isActive ? "page" : undefined}
-          className="px-microPlus gap-micro hover:text-content-accent active:text-content-accentStrong flex cursor-pointer items-center"
         >
           <Button
             size="sm"
