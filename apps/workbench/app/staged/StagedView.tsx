@@ -115,7 +115,7 @@ export function StagedView() {
       )}
       {rowsLength !== 0 && (
         <div ref={containerRef} className="m-auto h-dvh w-full">
-          <StagedViewHeader length={rowsLength} guidedText={!!selected}>
+          <StagedViewHeader guidedText={!!selected}>
             <Button
               variant="outlined"
               size="lg"
