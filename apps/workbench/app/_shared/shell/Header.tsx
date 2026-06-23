@@ -5,7 +5,7 @@ import { Button, Text } from "@repo/ui";
 export function Header() {
   return (
     <div
-      className="px-mini py-mini text-content-primary fixed top-0 z-10 flex w-full items-center justify-between backdrop-blur-[3px]"
+      className="px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between"
       style={{ backgroundImage: "var(--header-gradient)" }}
     >
       <div className="gap-mini inline-flex">
