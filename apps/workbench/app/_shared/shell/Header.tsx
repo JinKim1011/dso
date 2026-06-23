@@ -19,6 +19,10 @@ export function Header() {
         ? "1 TOKEN CHANGED"
         : "NO TOKENS CHANGED";
   const returnTo = searchParams.get("from");
+  const stagedHref =
+    path === "/staged"
+      ? `/staged?from=${encodeURIComponent(returnTo ?? "/tokens/color")}`
+      : `/staged?from=${encodeURIComponent(path)}`;
 
   const handleBack = () => {
     if (returnTo && returnTo.startsWith("/") && returnTo !== "/staged") {
@@ -66,11 +70,7 @@ export function Header() {
             `- ${String(deletedManifestLineCount)}`
           </Text>
         ) : null}
-        <Link
-          key="staged"
-          href={`/staged?from=${encodeURIComponent(path)}`}
-          aria-label="staged"
-        >
+        <Link key="staged" href={stagedHref} aria-label="staged">
           <Button
             size="sm"
             label={displayLabel}
