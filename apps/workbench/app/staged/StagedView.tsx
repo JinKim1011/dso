@@ -7,7 +7,7 @@ import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 import { StagedFilter } from "./component/StagedFilter";
 import { StagedRowDetail } from "./component/StagedRowDetail";
 import FILTER_OPTIONS, { type StagedFilterOption } from "./lib/StageFilterOption";
-import { UseStagedRowKeyboardNavigation } from "./lib/useStagedRowKeyboardNavigation";
+import { useStagedRowKeyboardNavigation } from "./lib/useStagedRowKeyboardNavigation";
 
 export function StagedView() {
   const { changedRows, discardRow, applyRow } = useStagedManifest();
@@ -109,7 +109,7 @@ export function StagedView() {
     onSelect: () => setSelectedRowId(selectedRowId === row.rowId ? null : row.rowId),
   }));
 
-  UseStagedRowKeyboardNavigation({
+  useStagedRowKeyboardNavigation({
     rows: filteredRows,
     selectedRowId,
     onSelectRow: (rowId) => setSelectedRowId(rowId),
