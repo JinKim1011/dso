@@ -30,12 +30,16 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
 
   return (
     <div className={wrapperClasses}>
-      <div className="gap-mini inline-flex">
+      <div className="gap-mini inline-flex items-center">
         <Text variant="label-sm" as="span">
           DS0
         </Text>
-        <Button variant="void" size="sm" label="GitHub" />
-        <Button variant="void" size="sm" label="Docs" />
+        <Text variant="label-xxs" as="span" className="text-content-tertiary/30">
+          |
+        </Text>
+        <Text variant="label-xxs" as="span" className="text-content-tertiary/50">
+          Deisgn Token Manager
+        </Text>
       </div>
       <div className="gap-small flex">
         {addedManifestLineCount > 0 ? (
