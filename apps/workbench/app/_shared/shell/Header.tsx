@@ -2,7 +2,6 @@
 
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { Button, Text } from "@repo/ui";
-import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useStagedManifest } from "../context/StagedManifestContext";
 
@@ -74,16 +73,16 @@ export function Header() {
             -{String(deletedManifestLineCount)}
           </Text>
         ) : null}
-        <Link key="staged" href={stagedHref} aria-label="staged">
-          <Button
-            size="sm"
-            label={displayLabel}
-            variant="void"
-            rightIcon={ChevronRightIcon}
-            overrideBgClass={overrideLinkButtonBGClass}
-            overrideTextColorClass={overrideLinkButtonTextClass}
-          />
-        </Link>
+        <Button
+          size="sm"
+          label={displayLabel}
+          variant="void"
+          rightIcon={ChevronRightIcon}
+          onClick={() => router.push(stagedHref)}
+          overrideBgClass={overrideLinkButtonBGClass}
+          overrideTextColorClass={overrideLinkButtonTextClass}
+          aria-label="staged"
+        />
       </div>
     </div>
   );
