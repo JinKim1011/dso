@@ -60,7 +60,7 @@ export function StagedView() {
   const listItems = changedRows.map((row) => ({
     id: row.rowId,
     text: row.nameAfter,
-    subText: `${row.category} > ${row.tokenType}`,
+    subText: row.tokenType,
     selected: selectedRowId === row.rowId,
     children: (
       <div className="gap-microPlus px-mini flex w-fit">
