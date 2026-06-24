@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import { diffLines } from "diff";
 import {
   buildManifestFromGraph,
   TokenGraphModel,
@@ -93,11 +94,6 @@ function buildChangedRows(
   return changedRows;
 }
 
-function countLines(content: string): number {
-  if (!content) return 0;
-  return content.split("\n").length;
-}
-
 type ManifestLineChangeStats = {
   addedLines: number;
   deletedLines: number;
@@ -113,11 +109,23 @@ function getManifestLineChangeStats(
   const baseContent = JSON.stringify(baseManifest, null, 2);
   const draftContent = JSON.stringify(draftManifest, null, 2);
 
-  const netLineChange = countLines(draftContent) - countLines(baseContent);
+  const diff = diffLines(baseContent, draftContent);
+  let addedLines = 0;
+  let deletedLines = 0;
+
+  for (const part of diff) {
+    if (part.added) {
+      addedLines += part.count ?? 0;
+    }
+
+    if (part.removed) {
+      deletedLines += part.count ?? 0;
+    }
+  }
 
   return {
-    addedLines: netLineChange > 0 ? netLineChange : 0,
-    deletedLines: netLineChange < 0 ? Math.abs(netLineChange) : 0,
+    addedLines,
+    deletedLines,
   };
 }
 
