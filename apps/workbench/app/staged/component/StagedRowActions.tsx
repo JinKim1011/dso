@@ -15,7 +15,7 @@ export function StagedRowActions({
   onApply,
 }: StagedRowActionsProps) {
   return (
-    <div className="gap-microPlus px-mini flex w-fit">
+    <div className="gap-microPlus px-microPlus flex w-fit">
       <Button
         size="sm"
         iconOnly={true}
