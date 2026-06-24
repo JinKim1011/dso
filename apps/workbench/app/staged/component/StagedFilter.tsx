@@ -17,12 +17,17 @@ export type StagedFilterOption = (typeof FILTER_OPTIONS)[number];
 type StagedFilterProps = {
   activeFilter: StagedFilterOption;
   onChange: (filter: StagedFilterOption) => void;
+  availableOptions?: readonly StagedFilterOption[];
 };
 
-export function StagedFilter({ activeFilter, onChange }: StagedFilterProps) {
+export function StagedFilter({
+  activeFilter,
+  onChange,
+  availableOptions = FILTER_OPTIONS,
+}: StagedFilterProps) {
   return (
     <div className="gap-microPlus p-mini border-stroke-primary scrollbar-none-all flex overflow-x-scroll border-b-[0.5px]">
-      {FILTER_OPTIONS.map((option) => (
+      {availableOptions.map((option) => (
         <Button
           key={option}
           size="md"
