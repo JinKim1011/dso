@@ -24,8 +24,8 @@
   --text-secondary: oklch(0.222 0 89.9 / 0.72);
   --text-tertiary: oklch(0.222 0 89.9 / 0.52);
   --text-quaternary: oklch(0.222 0 89.9 / 0.36);
-  --text-accent: oklch(0.42 0.12 283.4);
-  --text-accentStrong: oklch(0.3 0.14 283.4);
+  --text-accent: oklch(75.886% 0.10866 282.325);
+  --text-accentStrong: oklch(0.692 0.152 283.4);
   --text-error: oklch(0.55 0.19 25);
   --text-success: oklch(0.53 0.16 145);
   --text-warn: oklch(0.62 0.16 90);
