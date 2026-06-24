@@ -3,15 +3,18 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { Button, Text } from "@repo/ui";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { useStagedManifest } from "../context/StagedManifestContext";
 
 export function Header() {
   const {
+    applyDraft,
     resetDraft,
     changedRowCount,
     addedManifestLineCount,
     deletedManifestLineCount,
   } = useStagedManifest();
+  const [isApplying, setIsApplying] = useState(false);
   const path = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -34,6 +37,19 @@ export function Header() {
     }
 
     router.back();
+  };
+
+  const handleBulkApply = async () => {
+    setIsApplying(true);
+
+    try {
+      const response = await applyDraft();
+      if (!response.ok) {
+        console.error("Failed to apply manifest(bulk)");
+      }
+    } finally {
+      setIsApplying(false);
+    }
   };
 
   const overrideLinkButtonBGClass =
@@ -64,6 +80,15 @@ export function Header() {
           onClick={resetDraft}
           overrideBgClass="bg-transparent hover:bg-surface-error active:bg-surface-error"
           overrideTextColorClass="text-content-error hover:text-content-error active:text-content-error"
+        />
+        <Button
+          size="sm"
+          disabled={isApplying}
+          label={isApplying ? "PUSHING..." : "PUSH ALL"}
+          variant="void"
+          onClick={handleBulkApply}
+          overrideBgClass="bg-transparent hover:bg-surface-success active:bg-surface-success"
+          overrideTextColorClass="text-content-success hover:text-content-success active:text-content-success"
         />
       </div>
     </div>
