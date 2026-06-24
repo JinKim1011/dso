@@ -2,15 +2,18 @@
 
 import { CheckIcon, ResetIcon } from "@radix-ui/react-icons";
 import { Button, List, Text } from "@repo/ui";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
+import { StagedFilter } from "./component/StagedFilter";
 import { StagedRowDetail } from "./component/StagedRowDetail";
+import FILTER_OPTIONS, { type StagedFilterOption } from "./lib/StageFilterOption";
 import { UseStagedRowKeyboardNavigation } from "./lib/useStagedRowKeyboardNavigation";
 
 export function StagedView() {
   const { changedRows, discardRow, applyRow } = useStagedManifest();
   const [isApplying, setIsApplying] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<StagedFilterOption>("All");
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -26,6 +29,28 @@ export function StagedView() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    setSelectedRowId(null);
+  }, [activeFilter]);
+
+  const filteredCategories = useMemo(() => {
+    const categories = FILTER_OPTIONS.filter(
+      (option) =>
+        option === "All" ||
+        changedRows.some((row) => row.category.toUpperCase() === option),
+    );
+
+    return categories;
+  }, [changedRows]);
+
+  useEffect(() => {
+    if (activeFilter === "All") return;
+
+    if (!filteredCategories.includes(activeFilter)) {
+      setActiveFilter("All");
+    }
+  }, [activeFilter, filteredCategories]);
+
   const handleRowApply = async (rowId: string) => {
     setIsApplying(true);
 
@@ -39,10 +64,14 @@ export function StagedView() {
     }
   };
 
-  const selected = changedRows.find((row) => row.rowId === selectedRowId) ?? null;
-  const rowsLength = changedRows.length;
+  const filteredRows = changedRows.filter(
+    (row) => activeFilter === "All" || row.category.toUpperCase() === activeFilter,
+  );
 
-  const listItems = changedRows.map((row) => ({
+  const selected = filteredRows.find((row) => row.rowId === selectedRowId) ?? null;
+  const rowsLength = filteredRows.length;
+
+  const listItems = filteredRows.map((row) => ({
     id: row.rowId,
     text: row.nameAfter,
     subText: row.tokenType,
@@ -81,7 +110,7 @@ export function StagedView() {
   }));
 
   UseStagedRowKeyboardNavigation({
-    rows: changedRows,
+    rows: filteredRows,
     selectedRowId,
     onSelectRow: (rowId) => setSelectedRowId(rowId),
   });
@@ -102,6 +131,11 @@ export function StagedView() {
         <div ref={containerRef} className="m-auto h-full w-full">
           <div className="flex h-full">
             <div className="bg-surface-secondary flex w-full max-w-100 flex-col">
+              <StagedFilter
+                activeFilter={activeFilter}
+                onChange={setActiveFilter}
+                availableOptions={filteredCategories}
+              />
               <List listItems={listItems} className="w-full max-w-md" />
             </div>
             {selected && (
