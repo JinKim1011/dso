@@ -8,8 +8,7 @@ import { StagedRowDetail } from "./component/StagedRowDetail";
 import { UseStagedRowKeyboardNavigation } from "./lib/useStagedRowKeyboardNavigation";
 
 export function StagedView() {
-  const { changedRows, resetDraft, applyDraft, discardRow, applyRow } =
-    useStagedManifest();
+  const { changedRows, discardRow, applyRow } = useStagedManifest();
   const [isApplying, setIsApplying] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -26,19 +25,6 @@ export function StagedView() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const handleBulkApply = async () => {
-    setIsApplying(true);
-
-    try {
-      const response = await applyDraft();
-      if (!response.ok) {
-        console.error("Failed to apply manifest(bulk)");
-      }
-    } finally {
-      setIsApplying(false);
-    }
-  };
 
   const handleRowApply = async (rowId: string) => {
     setIsApplying(true);
