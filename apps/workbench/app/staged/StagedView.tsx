@@ -52,49 +52,7 @@ export function StagedView() {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    setSelectedRowId(null);
-  }, [activeFilter]);
-
-  const filteredCategories = useMemo(() => {
-    const categories = FILTER_OPTIONS.filter(
-      (option) =>
-        option === "All" ||
-        changedRows.some((row) => row.category.toUpperCase() === option),
-    );
-
-    return categories;
-  }, [changedRows]);
-
-  useEffect(() => {
-    if (activeFilter === "All") return;
-
-    if (!filteredCategories.includes(activeFilter)) {
-      setActiveFilter("All");
-    }
-  }, [activeFilter, filteredCategories]);
-
-  const handleRowApply = async (rowId: string) => {
-    setIsApplying(true);
-
-    try {
-      const response = await applyRow(rowId);
-      if (!response.ok) {
-        console.error("Failed to apply manifest(row)");
-      }
-    } finally {
-      setIsApplying(false);
-    }
-  };
-
-  const filteredRows = changedRows.filter(
-    (row) => activeFilter === "All" || row.category.toUpperCase() === activeFilter,
-  );
-
-  const selected = filteredRows.find((row) => row.rowId === selectedRowId) ?? null;
-  const rowsLength = filteredRows.length;
+  }, [selectedRowId, toggleRowSelection]);
 
   const listItems = filteredRows.map((row) => ({
     id: row.rowId,
