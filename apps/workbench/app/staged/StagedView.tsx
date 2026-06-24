@@ -7,7 +7,9 @@ import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 import { StagedFilter } from "./component/StagedFilter";
 import { StagedRowActions } from "./component/StagedRowActions";
 import { StagedRowDetail } from "./component/StagedRowDetail";
-import FILTER_OPTIONS, { type StagedFilterOption } from "./lib/StageFilterOption";
+import { useFilterState } from "./lib/useFilterState";
+import { useRowActions } from "./lib/useRowActions";
+import { useRowSelection } from "./lib/useRowSelection";
 import { useStagedRowKeyboardNavigation } from "./lib/useStagedRowKeyboardNavigation";
 
 export function StagedView() {
