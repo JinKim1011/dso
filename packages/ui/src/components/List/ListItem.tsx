@@ -18,7 +18,7 @@ export interface ListItemProps extends Omit<
   onSelect?: () => void;
 }
 
-const buttonWrapperClasses = "flex w-full h-10 items-center cursor-pointer";
+const buttonWrapperClasses = "flex w-full h-8 items-center cursor-pointer";
 
 const textWrapperClasses =
   "flex w-full h-full items-center gap-miniPlus transition-[color] ease-outExpo duration-regularTransition will-change-transform";
@@ -47,7 +47,7 @@ const subTextVariant = cva("", {
   },
 });
 
-const actionsVariant = cva("absolute right-0 -translate-y-8", {
+const actionsVariant = cva("absolute right-0 -translate-y-7", {
   variants: {
     selected: {
       true: "opacity-100",
