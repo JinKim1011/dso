@@ -20,8 +20,8 @@ export function Footer() {
   return (
     <div className="px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between">
       <div className="gap-mini flex">
-        <Button variant="void" size="sm" label="GitHub" />
-        <Button variant="void" size="sm" label="Docs" />
+        <Button variant="void" size="sm" label="GITHUB" />
+        <Button variant="void" size="sm" label="DOCS" />
       </div>
       <SegmentedControl
         options={themeOptions}
