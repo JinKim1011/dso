@@ -201,7 +201,7 @@ export function TokenValueDetail({
   const title = `${tokenTypeText}-${displayIndex}`;
 
   return (
-    <div className="px-mini pb-small gap-miniPlus pt-mini flex w-85 flex-col select-none">
+    <div className="px-mini pb-small gap-miniPlus pt-mini flex w-80 flex-col select-none">
       <div className="flex items-center justify-between">
         <div className="grow basis-0"></div>
         <Text
