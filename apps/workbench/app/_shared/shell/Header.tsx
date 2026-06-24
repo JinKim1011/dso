@@ -6,8 +6,12 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useStagedManifest } from "../context/StagedManifestContext";
 
 export function Header() {
-  const { changedRowCount, addedManifestLineCount, deletedManifestLineCount } =
-    useStagedManifest();
+  const {
+    resetDraft,
+    changedRowCount,
+    addedManifestLineCount,
+    deletedManifestLineCount,
+  } = useStagedManifest();
   const path = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -52,7 +56,16 @@ export function Header() {
           overrideTextColorClass={overrideLinkButtonTextClass}
         />
       </div>
-      <div className="gap-small flex">WIP</div>
+      <div className="gap-mini flex">
+        <Button
+          size="sm"
+          label="DISCARD ALL"
+          variant="void"
+          onClick={resetDraft}
+          overrideBgClass="bg-transparent hover:bg-surface-error active:bg-surface-error"
+          overrideTextColorClass="text-content-error hover:text-content-error active:text-content-error"
+        />
+      </div>
     </div>
   ) : (
     <div className={wrapperClasses}>
