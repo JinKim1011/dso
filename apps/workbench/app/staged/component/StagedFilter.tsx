@@ -1,29 +1,18 @@
 "use client";
 
 import { Button } from "@repo/ui";
-
-const FILTER_OPTIONS = [
-  "All",
-  "COLOR",
-  "TYPOGRAPHY",
-  "SPACING",
-  "RADIUS",
-  "SHADOW",
-  "MOTION",
-] as const;
-
-export type StagedFilterOption = (typeof FILTER_OPTIONS)[number];
+import type { StagedFilterOption } from "../lib/StageFilterOption";
 
 type StagedFilterProps = {
   activeFilter: StagedFilterOption;
   onChange: (filter: StagedFilterOption) => void;
-  availableOptions?: readonly StagedFilterOption[];
+  availableOptions: readonly StagedFilterOption[];
 };
 
 export function StagedFilter({
   activeFilter,
   onChange,
-  availableOptions = FILTER_OPTIONS,
+  availableOptions,
 }: StagedFilterProps) {
   return (
     <div className="gap-microPlus p-mini border-stroke-primary scrollbar-none-all flex overflow-x-scroll border-b-[0.5px]">
