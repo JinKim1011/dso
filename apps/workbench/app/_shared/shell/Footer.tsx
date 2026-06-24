@@ -1,7 +1,7 @@
 "use client";
 
 import { LaptopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
-import { SegmentedControl, useTheme, type ThemeMode } from "@repo/ui";
+import { Button, SegmentedControl, useTheme, type ThemeMode } from "@repo/ui";
 
 const themeOptions = [
   { value: "light", iconName: SunIcon, ariaLabel: "Light mode" },
@@ -19,6 +19,10 @@ export function Footer() {
 
   return (
     <div className="px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between">
+      <div className="gap-mini flex">
+        <Button variant="void" size="sm" label="GITHUB" />
+        <Button variant="void" size="sm" label="DOCS" />
+      </div>
       <SegmentedControl
         options={themeOptions}
         size="sm"
