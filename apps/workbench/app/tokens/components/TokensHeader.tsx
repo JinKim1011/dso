@@ -37,8 +37,8 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
         <Text variant="label-xxs" as="span" className="text-content-tertiary/30">
           |
         </Text>
-        <Text variant="label-xxs" as="span" className="text-content-tertiary/50">
-          Design Token Manager
+        <Text variant="label-xxs" as="span" className="text-content-tertiary/70">
+          DESIGN TOKEN MANAGER
         </Text>
       </div>
       <div className="gap-small flex">
