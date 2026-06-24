@@ -5,6 +5,7 @@ import { Button, List, Text } from "@repo/ui";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 import { StagedFilter } from "./component/StagedFilter";
+import { StagedRowActions } from "./component/StagedRowActions";
 import { StagedRowDetail } from "./component/StagedRowDetail";
 import FILTER_OPTIONS, { type StagedFilterOption } from "./lib/StageFilterOption";
 import { useStagedRowKeyboardNavigation } from "./lib/useStagedRowKeyboardNavigation";
@@ -77,34 +78,12 @@ export function StagedView() {
     subText: row.tokenType,
     selected: selectedRowId === row.rowId,
     children: (
-      <div className="gap-microPlus px-mini flex w-fit">
-        <Button
-          size="sm"
-          iconOnly={true}
-          overrideBgClass="bg-surface-tertiary hover:bg-surface-warn active:bg-surface-warn"
-          overrideTextColorClass="text-content-tertiary hover:text-content-warn active:text-content-warn"
-          aria-label="discard-row"
-          leftIcon={ResetIcon}
-          onClick={(event) => {
-            event.stopPropagation();
-            discardRow(row.rowId);
-          }}
-          disabled={isApplying}
-        />
-        <Button
-          size="sm"
-          iconOnly={true}
-          overrideBgClass="bg-surface-tertiary hover:bg-surface-success active:bg-surface-success"
-          overrideTextColorClass="text-content-tertiary hover:text-content-success active:text-content-success"
-          aria-label="apply-row"
-          leftIcon={CheckIcon}
-          onClick={(event) => {
-            event.stopPropagation();
-            handleRowApply(row.rowId);
-          }}
-          disabled={isApplying}
-        />
-      </div>
+      <StagedRowActions
+        rowId={row.rowId}
+        isApplying={isApplying}
+        onDiscard={handleRowDiscard}
+        onApply={handleRowApply}
+      />
     ),
     onSelect: () => setSelectedRowId(selectedRowId === row.rowId ? null : row.rowId),
   }));
