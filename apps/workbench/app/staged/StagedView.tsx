@@ -143,16 +143,16 @@ export function StagedView() {
               />
               <List listItems={listItems} className="w-full max-w-md" />
             </div>
-            {selected && (
+            {selectedRow && (
               <StagedRowDetail
-                id={selected.rowId}
-                beforeName={selected.nameBefore}
-                afterName={selected.nameAfter}
-                before={selected.before}
-                after={selected.after}
+                id={selectedRow.rowId}
+                beforeName={selectedRow.nameBefore}
+                afterName={selectedRow.nameAfter}
+                before={selectedRow.before}
+                after={selectedRow.after}
               />
             )}
-            {!selected && (
+            {!selectedRow && (
               <div className="px-small bg-dot-pattern flex h-full w-full justify-center overflow-hidden">
                 <Text
                   variant="meta-xs"
