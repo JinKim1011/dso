@@ -1,8 +1,7 @@
 "use client";
 
-import { CheckIcon, ResetIcon } from "@radix-ui/react-icons";
-import { Button, List, Text } from "@repo/ui";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { List, Text } from "@repo/ui";
+import { useEffect, useMemo, useRef } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 import { StagedFilter } from "./component/StagedFilter";
 import { StagedRowActions } from "./component/StagedRowActions";
