@@ -72,25 +72,28 @@ export function Header() {
           overrideTextColorClass={overrideLinkButtonTextClass}
         />
       </div>
-      <div className="gap-mini flex">
-        <Button
-          size="sm"
-          label="DISCARD ALL"
-          variant="void"
-          onClick={resetDraft}
-          overrideBgClass="bg-transparent hover:bg-surface-error active:bg-surface-error"
-          overrideTextColorClass="text-content-error hover:text-content-error active:text-content-error"
-        />
-        <Button
-          size="sm"
-          disabled={isApplying}
-          label={isApplying ? "PUSHING..." : "PUSH ALL"}
-          variant="void"
-          onClick={handleBulkApply}
-          overrideBgClass="bg-transparent hover:bg-surface-success active:bg-surface-success"
-          overrideTextColorClass="text-content-success hover:text-content-success active:text-content-success"
-        />
-      </div>
+
+      {changedRowCount != null && changedRowCount > 1 ? (
+        <div className="gap-mini flex">
+          <Button
+            size="sm"
+            label="DISCARD ALL"
+            variant="void"
+            onClick={resetDraft}
+            overrideBgClass="bg-transparent hover:bg-surface-error active:bg-surface-error"
+            overrideTextColorClass="text-content-error hover:text-content-error active:text-content-error"
+          />
+          <Button
+            size="sm"
+            disabled={isApplying}
+            label={isApplying ? "PUSHING..." : "PUSH ALL"}
+            variant="void"
+            onClick={handleBulkApply}
+            overrideBgClass="bg-transparent hover:bg-surface-success active:bg-surface-success"
+            overrideTextColorClass="text-content-success hover:text-content-success active:text-content-success"
+          />
+        </div>
+      ) : null}
     </div>
   ) : (
     <div className={wrapperClasses}>
