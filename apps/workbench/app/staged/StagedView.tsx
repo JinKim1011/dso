@@ -5,7 +5,7 @@ import { Button, List, Text } from "@repo/ui";
 import { useEffect, useRef, useState } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 import { StagedRowDetail } from "./component/StagedRowDetail";
-import { StagedViewHeader } from "./component/StagedViewHeader";
+import { StagedViewFilter } from "./component/StagedViewFilter";
 import { UseStagedRowKeyboardNavigation } from "./lib/useStagedRowKeyboardNavigation";
 
 export function StagedView() {
@@ -115,7 +115,7 @@ export function StagedView() {
       )}
       {rowsLength !== 0 && (
         <div ref={containerRef} className="m-auto h-full w-full">
-          <StagedViewHeader guidedText={!!selected}>
+          <StagedViewFilter guidedText={!!selected}>
             <Button
               variant="outlined"
               size="lg"
@@ -130,7 +130,7 @@ export function StagedView() {
               disabled={isApplying}
               label={isApplying ? "Pushing..." : "Push all"}
             />
-          </StagedViewHeader>
+          </StagedViewFilter>
           <div className="flex h-full">
             <List listItems={listItems} className="w-full max-w-md" />
             {selected && (
