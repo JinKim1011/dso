@@ -37,8 +37,11 @@ export function Header() {
   const overrideLinkButtonTextClass =
     "text-content-primary hover:text-content-accent active:text-content-accentStrong";
 
+  const wrapperClasses =
+    "px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between";
+
   return (
-    <div className="px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between">
+    <div className={wrapperClasses}>
       <div className="gap-mini inline-flex">
         {path === "/staged" ? (
           <>
