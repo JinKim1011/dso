@@ -12,9 +12,29 @@ import { useStagedRowKeyboardNavigation } from "./lib/useStagedRowKeyboardNaviga
 
 export function StagedView() {
   const { changedRows, discardRow, applyRow } = useStagedManifest();
-  const [isApplying, setIsApplying] = useState(false);
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState<StagedFilterOption>("All");
+  const { activeFilter, setActiveFilter, filteredCategories } = useFilterState({
+    changedRows,
+  });
+  const { selectedRowId, toggleRowSelection } = useRowSelection({
+    resetTrigger: activeFilter,
+  });
+  const { isApplying, handleRowApply, handleRowDiscard } = useRowActions({
+    applyRow,
+    discardRow,
+  });
+
+  const filteredRows = useMemo(() => {
+    return changedRows.filter(
+      (row) => activeFilter === "All" || row.category.toUpperCase() === activeFilter,
+    );
+  }, [changedRows, activeFilter]);
+
+  const selectedRow = useMemo(() => {
+    return filteredRows.find((row) => row.rowId === selectedRowId) ?? null;
+  }, [filteredRows, selectedRowId]);
+
+  const rowsLength = filteredRows.length;
+
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
