@@ -23,7 +23,9 @@ export function StagedView() {
       if (!container) return;
 
       if (event.target instanceof Node && !container.contains(event.target)) {
-        setSelectedRowId(null);
+        if (selectedRowId) {
+          toggleRowSelection(selectedRowId);
+        }
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -85,13 +87,17 @@ export function StagedView() {
         onApply={handleRowApply}
       />
     ),
-    onSelect: () => setSelectedRowId(selectedRowId === row.rowId ? null : row.rowId),
+    onSelect: () => toggleRowSelection(row.rowId),
   }));
 
   useStagedRowKeyboardNavigation({
     rows: filteredRows,
     selectedRowId,
-    onSelectRow: (rowId) => setSelectedRowId(rowId),
+    onSelectRow: (rowId) => {
+      if (selectedRowId !== rowId) {
+        toggleRowSelection(rowId);
+      }
+    },
   });
 
   return (
