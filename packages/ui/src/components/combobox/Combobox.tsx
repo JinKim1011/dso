@@ -57,6 +57,8 @@ export function Combobox({
   });
 
   useEffect(() => {
+    if (!open) return;
+
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target as Node | null;
 
@@ -73,7 +75,7 @@ export function Combobox({
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown, true);
     };
-  }, []);
+  }, [isOpen]);
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (disabled) return;
