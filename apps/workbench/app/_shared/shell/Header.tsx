@@ -39,10 +39,7 @@ export function Header() {
     "text-content-primary hover:text-content-accent active:text-content-accentStrong";
 
   return (
-    <div
-      className="px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between"
-      style={{ backgroundImage: "var(--header-gradient)" }}
-    >
+    <div className="px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between">
       <div className="gap-mini inline-flex">
         {path === "/staged" ? (
           <>
