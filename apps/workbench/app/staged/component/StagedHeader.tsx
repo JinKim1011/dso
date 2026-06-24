@@ -47,7 +47,7 @@ export function StagedHeader({ onBack }: StagedHeaderProps) {
         />
       </div>
 
-      {changedRowCount != null && changedRowCount > 1 ? (
+      {changedRowCount > 0 ? (
         <div className="gap-mini flex">
           <Button
             size="sm"
