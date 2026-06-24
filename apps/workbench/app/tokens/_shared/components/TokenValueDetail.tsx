@@ -1,5 +1,6 @@
 "use client";
 
+import { Cross2Icon } from "@radix-ui/react-icons";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
 import { TokenColorDraft, TokenColorForm } from "../../color/components/TokenColorForm";
@@ -209,38 +210,38 @@ export function TokenValueDetail({
         >
           {title ? title : rowId}
         </Text>
-        {!isDirty && (
-          <div className="flex grow basis-0 justify-end">
-            <Button
-              variant="void"
-              size="sm"
-              label="CLOSE"
-              disabled={false}
-              onClick={() => onClose?.()}
-            />
-          </div>
-        )}
-        {isDirty && (
-          <div className="flex grow basis-0 justify-end">
-            <Button
-              variant="void"
-              size="sm"
-              label="UNDO"
-              disabled={!isDirty}
-              onClick={handleCancel}
-            />
-            <Button
-              variant="void"
-              size="sm"
-              label="SAVE"
-              overrideTextColorClass="text-content-accentStrong hover:text-content-accent active:text-content-accentStrong"
-              disabled={!isDirty}
-              onClick={handleSave}
-            />
-          </div>
-        )}
+
+        <div className="flex grow basis-0 justify-end">
+          <Button
+            variant="void"
+            size="sm"
+            label="close"
+            iconOnly={true}
+            leftIcon={Cross2Icon}
+            disabled={false}
+            onClick={() => onClose?.()}
+          />
+        </div>
       </div>
       <TokenValuePreview category={category} kind={kind} value={value} />
+      {isDirty && (
+        <div className="gap-microPlus flex grow basis-0 justify-end">
+          <Button
+            variant="void"
+            label="UNDO"
+            disabled={!isDirty}
+            onClick={handleCancel}
+          />
+          <Button
+            variant="fill"
+            label="SAVE"
+            overrideBgClass="bg-surface-accentStrong hover:bg-surface-accentStrong active:bg-surface-accentStrong"
+            overrideTextColorClass="text-content-primary hover:text-content-tertiary active:text-content-quaternary"
+            disabled={!isDirty}
+            onClick={handleSave}
+          />
+        </div>
+      )}
       {renderEditor()}
     </div>
   );

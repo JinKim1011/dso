@@ -2,19 +2,21 @@
 
 import { motion } from "framer-motion";
 import { HTMLAttributes, useCallback, useEffect, useRef, useState } from "react";
+import { cn } from "../../lib/utils";
 import { createMotionTransition } from "../../types/motion";
 import { ListItem, type ListItemProps } from "./ListItem";
 
 export interface ListProps extends Omit<HTMLAttributes<HTMLUListElement>, "className"> {
   listItems: ListItemProps[];
+  className?: string;
 }
 
-export const List = ({ listItems, ...props }: ListProps) => {
+export const List = ({ listItems, className, ...props }: ListProps) => {
   const ulRef = useRef<HTMLUListElement | null>(null);
   const [dotY, setDotY] = useState<number | null>(null);
 
   const dotClass = [
-    "w-[0.25rem] h-[0.25rem] absolute -left-3.5",
+    "w-[0.25rem] h-[0.25rem] absolute left-2",
     "bg-surface-accentStrong",
   ].join(" ");
 
@@ -54,7 +56,7 @@ export const List = ({ listItems, ...props }: ListProps) => {
   }, [updateDot]);
 
   return (
-    <ul {...props} ref={ulRef} className="relative flex h-full flex-col">
+    <ul {...props} ref={ulRef} className={cn("relative flex h-full flex-col", className)}>
       <motion.li
         className={dotClass}
         initial={false}

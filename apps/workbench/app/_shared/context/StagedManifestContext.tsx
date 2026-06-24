@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import { diffLines } from "diff";
 import {
   buildManifestFromGraph,
   TokenGraphModel,
@@ -23,6 +24,8 @@ type StagedContextType = {
   draftModel: TokenGraphModel;
   changedRows: ChangedRow[];
   changedRowCount: number;
+  addedManifestLineCount: number;
+  deletedManifestLineCount: number;
   updateRow: (rowId: string, update: Partial<any>) => void;
   resetDraft: () => void;
   applyDraft: () => Promise<Response>;
@@ -89,6 +92,41 @@ function buildChangedRows(
     }
   }
   return changedRows;
+}
+
+type ManifestLineChangeStats = {
+  addedLines: number;
+  deletedLines: number;
+};
+
+function getManifestLineChangeStats(
+  baseModel: TokenGraphModel,
+  draftModel: TokenGraphModel,
+): ManifestLineChangeStats {
+  const baseManifest = buildManifestFromGraph(baseModel);
+  const draftManifest = buildManifestFromGraph(draftModel);
+
+  const baseContent = JSON.stringify(baseManifest, null, 2);
+  const draftContent = JSON.stringify(draftManifest, null, 2);
+
+  const diff = diffLines(baseContent, draftContent);
+  let addedLines = 0;
+  let deletedLines = 0;
+
+  for (const part of diff) {
+    if (part.added) {
+      addedLines += part.count ?? 0;
+    }
+
+    if (part.removed) {
+      deletedLines += part.count ?? 0;
+    }
+  }
+
+  return {
+    addedLines,
+    deletedLines,
+  };
 }
 
 function findRowById(
@@ -165,6 +203,13 @@ export function StagedManifestProvider({
     [baseModel, draftModel],
   );
 
+  const manifestLineChangeStats = useMemo(
+    () => getManifestLineChangeStats(baseModel, draftModel),
+    [baseModel, draftModel],
+  );
+
+  const { addedLines, deletedLines } = manifestLineChangeStats;
+
   const discardRow = (rowId: string) => {
     const baseRow = findRowById(baseModel, rowId);
     if (!baseRow) return;
@@ -200,13 +245,15 @@ export function StagedManifestProvider({
       draftModel,
       changedRows,
       changedRowCount: changedRows.length,
+      addedManifestLineCount: addedLines,
+      deletedManifestLineCount: deletedLines,
       updateRow,
       resetDraft,
       applyDraft,
       discardRow,
       applyRow,
     }),
-    [baseModel, draftModel, changedRows],
+    [baseModel, draftModel, changedRows, addedLines, deletedLines],
   );
 
   return (

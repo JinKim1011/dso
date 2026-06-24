@@ -1,7 +1,9 @@
 "use client";
 
 import { cva } from "class-variance-authority";
+import { motion } from "framer-motion";
 import { ButtonHTMLAttributes, ReactNode } from "react";
+import { createMotionTransition } from "../../types/motion";
 import { Text } from "../Text";
 
 export interface ListItemProps extends Omit<
@@ -85,14 +87,23 @@ export const ListItem = ({
           onSelect?.();
         }}
       >
-        <div className={textWrapperClasses}>
+        <motion.div
+          initial={false}
+          animate={
+            selected
+              ? { paddingLeft: "var(--spacing-smallPlus)" }
+              : { paddingLeft: "var(--spacing-mini)" }
+          }
+          transition={createMotionTransition("regular", "inOutExpo")}
+          className={textWrapperClasses}
+        >
           <Text variant="meta-sm" className={titleVariant({ selected })} as="span">
             {text}
           </Text>
           <Text variant="meta-xs" className={subTextVariant({ selected })} as="span">
             {subText}
           </Text>
-        </div>
+        </motion.div>
       </button>
       <div className={actionsVariant({ selected })}>{children}</div>
     </li>

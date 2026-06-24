@@ -2,16 +2,8 @@
 
 @source "./**/*.{ts,tsx}" "../../../packages/ui/src/**/*.{ts,tsx}";
 
-:root {
-  --header-gradient: linear-gradient(
-    to bottom,
-    var(--color-surface-secondary) 0%,
-    transparent 100%
-  );
-}
-
 body {
-  background-color: var(--color-surface-secondary);
+  background-color: var(--color-surface-primary);
 }
 .react-flow__node {
   overflow: visible;
@@ -31,8 +23,9 @@ body {
 .bg-dot-pattern {
   background-image: radial-gradient(
     circle,
-    var(--color-surface-quaternary) 0.5px,
+    var(--color-surface-tertiary) 0.5px,
     transparent 1px
   );
   background-size: 4px 4px;
+  background-color: var(--color-surface-secondary);
 }

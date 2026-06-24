@@ -1,57 +1,87 @@
 "use client";
 
-import { LaptopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
-import { Button, SegmentedControl, Text, useTheme, type ThemeMode } from "@repo/ui";
+import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
+import { Button, Text } from "@repo/ui";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useStagedManifest } from "../context/StagedManifestContext";
 
-type HeaderProps = {
-  currentBranch?: string;
-  userName?: string;
-};
+export function Header() {
+  const { changedRowCount, addedManifestLineCount, deletedManifestLineCount } =
+    useStagedManifest();
+  const path = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const displayLabel =
+    changedRowCount != null && changedRowCount > 1
+      ? `${String(changedRowCount)} TOKENS CHANGED`
+      : changedRowCount === 1
+        ? "1 TOKEN CHANGED"
+        : "NO TOKENS CHANGED";
+  const returnTo = searchParams.get("from");
+  const stagedHref =
+    path === "/staged"
+      ? `/staged?from=${encodeURIComponent(returnTo ?? "/tokens/color")}`
+      : `/staged?from=${encodeURIComponent(path)}`;
 
-const themeOptions = [
-  { value: "light", iconName: SunIcon, ariaLabel: "Light mode" },
-  { value: "dark", iconName: MoonIcon, ariaLabel: "Dark mode" },
-  { value: "system", iconName: LaptopIcon, ariaLabel: "System mode" },
-];
-
-export function Header({ currentBranch, userName }: HeaderProps) {
-  const { theme, setTheme } = useTheme();
-  const handleThemeChange = (selected: string) => {
-    if (selected === "light" || selected === "dark" || selected === "system") {
-      setTheme(selected as ThemeMode);
+  const handleBack = () => {
+    if (returnTo && returnTo.startsWith("/") && returnTo !== "/staged") {
+      router.push(returnTo);
+      return;
     }
+
+    router.back();
   };
 
+  const overrideLinkButtonBGClass =
+    "bg-transparent hover:bg-transparent active:bg-transparent";
+  const overrideLinkButtonTextClass =
+    "text-content-primary hover:text-content-accent active:text-content-accentStrong";
+
   return (
-    <div
-      className="px-mini py-mini text-content-primary fixed top-0 z-10 flex w-full items-center justify-between backdrop-blur-[3px]"
-      style={{ backgroundImage: "var(--header-gradient)" }}
-    >
+    <div className="px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between">
       <div className="gap-mini inline-flex">
-        <Text variant="label-sm" as="span">
-          DS0
-        </Text>
-        <Button variant="void" size="sm" label="GitHub" />
-        <Button variant="void" size="sm" label="Docs" />
+        {path === "/staged" ? (
+          <>
+            <Button
+              size="sm"
+              label="BACK"
+              variant="void"
+              leftIcon={ChevronLeftIcon}
+              onClick={handleBack}
+              overrideBgClass={overrideLinkButtonBGClass}
+              overrideTextColorClass={overrideLinkButtonTextClass}
+            />
+          </>
+        ) : (
+          <>
+            <Text variant="label-sm" as="span">
+              DS0
+            </Text>
+            <Button variant="void" size="sm" label="GitHub" />
+            <Button variant="void" size="sm" label="Docs" />
+          </>
+        )}
       </div>
-      <div className="gap-miniPlus inline-flex w-fit">
-        <div className="gap-micro inline-flex items-center">
-          <Text variant="label-xs" as="span">
-            {userName ? userName : "no user"}
+      <div className="gap-small flex">
+        {addedManifestLineCount > 0 ? (
+          <Text variant="label-xs" className="text-content-success">
+            +{String(addedManifestLineCount)}
           </Text>
-          <Text variant="label-xs" as="span">
-            ·
+        ) : null}
+        {deletedManifestLineCount > 0 ? (
+          <Text variant="label-xs" className="text-content-error">
+            -{String(deletedManifestLineCount)}
           </Text>
-          <Text variant="label-xs" as="span">
-            {currentBranch ? currentBranch : "no current branch"}
-          </Text>
-        </div>
-        <SegmentedControl
-          options={themeOptions}
+        ) : null}
+        <Button
           size="sm"
-          iconOnly={true}
-          onChange={handleThemeChange}
-          value={theme}
+          label={displayLabel}
+          variant="void"
+          rightIcon={ChevronRightIcon}
+          onClick={() => router.push(stagedHref)}
+          overrideBgClass={overrideLinkButtonBGClass}
+          overrideTextColorClass={overrideLinkButtonTextClass}
+          aria-label="staged"
         />
       </div>
     </div>

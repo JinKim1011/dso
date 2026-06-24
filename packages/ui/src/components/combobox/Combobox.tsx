@@ -2,8 +2,15 @@
 
 import { autoUpdate, flip, size, useFloating } from "@floating-ui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
-import { AnimatePresence, motion } from "framer-motion";
-import { type FocusEventHandler, type KeyboardEventHandler, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  type FocusEventHandler,
+  type KeyboardEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { createPortal } from "react-dom";
 import { InputBase } from "../input/InputBase";
 import { Listbox, type ListboxItem } from "./Listbox";
 
@@ -25,17 +32,22 @@ export function Combobox({
   onChange,
 }: ComboboxProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const referenceRef = useRef<HTMLDivElement | null>(null);
+  const floatingRef = useRef<HTMLDivElement | null>(null);
   const selectedOption = options.find((option) => option.value === value);
   const inputValue = selectedOption ? selectedOption.label : "";
   const [maxHeight, setMaxHeight] = useState(500);
 
   const { floatingStyles, refs } = useFloating({
     open: isOpen,
+    strategy: "fixed",
+    transform: false,
     placement: "bottom-start",
     middleware: [
       flip(),
       size({
-        apply({ availableHeight }) {
+        apply({ rects, availableHeight, elements }) {
+          elements.floating.style.width = `${rects.reference.width}px`;
           const calc = Math.min(500, availableHeight - 16);
           setMaxHeight(calc);
         },
@@ -43,6 +55,27 @@ export function Combobox({
     ],
     whileElementsMounted: autoUpdate,
   });
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+
+      if (!target) return;
+
+      if (referenceRef.current?.contains(target)) return;
+      if (floatingRef.current?.contains(target)) return;
+
+      setIsOpen(false);
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown, true);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown, true);
+    };
+  }, [isOpen]);
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (disabled) return;
@@ -58,8 +91,12 @@ export function Combobox({
 
   const handleBlur: FocusEventHandler<HTMLDivElement> = (event) => {
     const nextFocusedElement = event.relatedTarget as Node | null;
+    const floatingElement = floatingRef.current;
 
-    if (!event.currentTarget.contains(nextFocusedElement)) {
+    if (
+      !event.currentTarget.contains(nextFocusedElement) &&
+      !floatingElement?.contains(nextFocusedElement)
+    ) {
       setIsOpen(false);
     }
   };
@@ -95,7 +132,14 @@ export function Combobox({
   const listboxId = `${id}-listbox`;
 
   return (
-    <div ref={refs.setReference} className="relative w-full" onBlur={handleBlur}>
+    <div
+      ref={(node) => {
+        referenceRef.current = node;
+        refs.setReference(node);
+      }}
+      className="relative w-full"
+      onBlur={handleBlur}
+    >
       <InputBase
         id={id}
         readOnly
@@ -109,28 +153,29 @@ export function Combobox({
         aria-expanded={isOpen}
         aria-controls={isOpen ? listboxId : undefined}
       />
-      <AnimatePresence>
-        {isOpen ? (
-          <motion.div
-            ref={refs.setFloating}
-            key="dropdown"
-            initial="closed"
-            animate="open"
-            exit="closed"
-            className="w-full"
-            style={{ ...floatingStyles, zIndex: 100, top: 32 }}
-            variants={dropdownVariants}
-          >
-            <Listbox
-              id={listboxId}
-              options={options}
-              selectedValue={value ?? ""}
-              onSelect={handleSelect}
-              maxHeight={maxHeight}
-            ></Listbox>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+      {isOpen
+        ? createPortal(
+            <motion.div
+              ref={(node) => {
+                floatingRef.current = node;
+                refs.setFloating(node);
+              }}
+              initial="closed"
+              animate="open"
+              style={{ ...floatingStyles, zIndex: 100 }}
+              variants={dropdownVariants}
+            >
+              <Listbox
+                id={listboxId}
+                options={options}
+                selectedValue={value ?? ""}
+                onSelect={handleSelect}
+                maxHeight={maxHeight}
+              ></Listbox>
+            </motion.div>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }
