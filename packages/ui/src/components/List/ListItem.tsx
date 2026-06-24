@@ -52,7 +52,7 @@ const actionsVariant = cva("absolute right-0 -translate-y-10", {
   variants: {
     selected: {
       true: "opacity-100",
-      false: "opacity-0 group-hover:opacity-100",
+      false: "opacity-0",
     },
   },
   defaultVariants: {
