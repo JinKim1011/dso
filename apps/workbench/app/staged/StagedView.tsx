@@ -94,13 +94,13 @@ export function StagedView() {
       {rowsLength !== 0 && (
         <div ref={containerRef} className="m-auto h-full w-full">
           <div className="flex h-full">
-            <div className="bg-surface-secondary border-stroke-primary flex w-full max-w-100 flex-col border-r-[0.5]">
+            <div className="bg-surface-secondary border-stroke-primary flex w-full max-w-sm flex-col border-r-[0.5]">
               <StagedFilter
                 activeFilter={activeFilter}
                 onChange={setActiveFilter}
                 availableOptions={filteredCategories}
               />
-              <List listItems={listItems} className="w-full max-w-md" />
+              <List listItems={listItems} className="py-microPlus w-full" />
             </div>
             {selectedRow && (
               <StagedRowDetail
