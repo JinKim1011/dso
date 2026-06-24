@@ -36,34 +36,32 @@ export function Header() {
     "bg-transparent hover:bg-transparent active:bg-transparent";
   const overrideLinkButtonTextClass =
     "text-content-primary hover:text-content-accent active:text-content-accentStrong";
-
   const wrapperClasses =
     "px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between";
 
-  return (
+  return path === "/staged" ? (
     <div className={wrapperClasses}>
       <div className="gap-mini inline-flex">
-        {path === "/staged" ? (
-          <>
-            <Button
-              size="sm"
-              label="BACK"
-              variant="void"
-              leftIcon={ChevronLeftIcon}
-              onClick={handleBack}
-              overrideBgClass={overrideLinkButtonBGClass}
-              overrideTextColorClass={overrideLinkButtonTextClass}
-            />
-          </>
-        ) : (
-          <>
-            <Text variant="label-sm" as="span">
-              DS0
-            </Text>
-            <Button variant="void" size="sm" label="GitHub" />
-            <Button variant="void" size="sm" label="Docs" />
-          </>
-        )}
+        <Button
+          size="sm"
+          label="BACK"
+          variant="void"
+          leftIcon={ChevronLeftIcon}
+          onClick={handleBack}
+          overrideBgClass={overrideLinkButtonBGClass}
+          overrideTextColorClass={overrideLinkButtonTextClass}
+        />
+      </div>
+      <div className="gap-small flex">WIP</div>
+    </div>
+  ) : (
+    <div className={wrapperClasses}>
+      <div className="gap-mini inline-flex">
+        <Text variant="label-sm" as="span">
+          DS0
+        </Text>
+        <Button variant="void" size="sm" label="GitHub" />
+        <Button variant="void" size="sm" label="Docs" />
       </div>
       <div className="gap-small flex">
         {addedManifestLineCount > 0 ? (
