@@ -66,12 +66,12 @@ export function Header() {
       <div className="gap-small flex">
         {addedManifestLineCount > 0 ? (
           <Text variant="label-xs" className="text-content-success">
-            `+ ${String(addedManifestLineCount)}`
+            +{String(addedManifestLineCount)}
           </Text>
         ) : null}
         {deletedManifestLineCount > 0 ? (
           <Text variant="label-xs" className="text-content-error">
-            `- ${String(deletedManifestLineCount)}`
+            -{String(deletedManifestLineCount)}
           </Text>
         ) : null}
         <Link key="staged" href={stagedHref} aria-label="staged">
