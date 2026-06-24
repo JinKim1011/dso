@@ -48,21 +48,21 @@ export function Navigation() {
   const dragControl = useDragControls();
 
   return (
-    <motion.div
-      drag
-      dragControls={dragControl}
-      dragListener={false}
-      dragElastic={0.04}
-      dragMomentum={false}
-      dragConstraints={{
-        top: 0,
-        left: -500,
-        right: 500,
-        bottom: 0,
-      }}
-      className="gap-microPlus fixed bottom-16 left-1/2 z-10 flex -translate-x-1/2 items-end"
-    >
-      {path.startsWith("/tokens") && (
+    path.startsWith("/tokens") && (
+      <motion.div
+        drag
+        dragControls={dragControl}
+        dragListener={false}
+        dragElastic={0.04}
+        dragMomentum={false}
+        dragConstraints={{
+          top: 0,
+          left: -500,
+          right: 500,
+          bottom: 0,
+        }}
+        className="gap-microPlus fixed bottom-16 left-1/2 z-10 flex -translate-x-1/2 items-end"
+      >
         <nav aria-label="navigation" className={navWrapperStyles}>
           <motion.div
             animate={{ height: slotHeight }}
@@ -125,7 +125,7 @@ export function Navigation() {
             })}
           </div>
         </nav>
-      )}
-    </motion.div>
+      </motion.div>
+    )
   );
 }
