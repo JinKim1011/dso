@@ -27,7 +27,7 @@ export function StagedHeader({ onBack }: StagedHeaderProps) {
   };
 
   const wrapperClasses =
-    "px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between";
+    "pr-mini py-mini text-content-primary flex h-10 w-full items-center justify-between";
   const overrideLinkButtonBGClass =
     "bg-transparent hover:bg-transparent active:bg-transparent";
   const overrideLinkButtonTextClass =
