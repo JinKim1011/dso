@@ -75,7 +75,7 @@ export function Navigation() {
                   ref={elementRef}
                   className="relative"
                   key="navigationSlot"
-                  animate={{ opacity: 1, width: 340 }}
+                  animate={{ opacity: 1, width: 320 }}
                   initial={{ opacity: 0, width: 230 }}
                   exit={{ opacity: 0, width: 230 }}
                   transition={{ type: "tween", ease: [0.16, 1, 0.3, 1], duration: 0.3 }}
