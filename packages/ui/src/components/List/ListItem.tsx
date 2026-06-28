@@ -50,8 +50,8 @@ const subTextVariant = cva("", {
 const actionsVariant = cva("absolute right-0 -translate-y-7", {
   variants: {
     selected: {
-      true: "opacity-100",
-      false: "opacity-0",
+      true: "opacity-100 pointer-events-auto",
+      false: "opacity-0 pointer-events-none",
     },
   },
   defaultVariants: {
