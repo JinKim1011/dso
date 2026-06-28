@@ -41,7 +41,7 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
           DESIGN TOKEN MANAGER
         </Text>
       </div>
-      <div className="gap-small flex">
+      <div className="gap-microPlus flex">
         {addedManifestLineCount > 0 ? (
           <Text variant="label-xs" className="text-content-success">
             +{String(addedManifestLineCount)}
@@ -61,6 +61,7 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
           overrideBgClass={overrideLinkButtonBGClass}
           overrideTextColorClass={overrideLinkButtonTextClass}
           aria-label="staged"
+          className="ml-mini"
         />
       </div>
     </div>
