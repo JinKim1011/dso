@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import FILTER_OPTIONS, { type StagedFilterOption } from "./StageFilterOption";
+import FILTER_OPTIONS, { type StagedFilterOption } from "./StagedFilterOption";
 
 type UseFilterStateProps = {
   changedRows: Array<{ category: string }>;
