@@ -1,5 +1,5 @@
 export const FILTER_OPTIONS = [
-  "All",
+  "ALL",
   "COLOR",
   "TYPOGRAPHY",
   "SPACING",
