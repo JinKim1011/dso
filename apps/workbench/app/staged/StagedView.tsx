@@ -1,18 +1,41 @@
 "use client";
 
-import { CheckIcon, ResetIcon } from "@radix-ui/react-icons";
-import { Button, List, Text } from "@repo/ui";
-import { useEffect, useRef, useState } from "react";
+import { List, Text } from "@repo/ui";
+import { useEffect, useMemo, useRef } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
+import { StagedFilter } from "./component/StagedFilter";
+import { StagedRowActions } from "./component/StagedRowActions";
 import { StagedRowDetail } from "./component/StagedRowDetail";
-import { StagedViewHeader } from "./component/StagedViewHeader";
-import { UseStagedRowKeyboardNavigation } from "./lib/useStagedRowKeyboardNavigation";
+import { useFilterState } from "./lib/useFilterState";
+import { useRowActions } from "./lib/useRowActions";
+import { useRowSelection } from "./lib/useRowSelection";
+import { useStagedRowKeyboardNavigation } from "./lib/useStagedRowKeyboardNavigation";
 
 export function StagedView() {
-  const { changedRows, resetDraft, applyDraft, discardRow, applyRow } =
-    useStagedManifest();
-  const [isApplying, setIsApplying] = useState(false);
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const { changedRows, discardRow, applyRow } = useStagedManifest();
+  const { activeFilter, setActiveFilter, filteredCategories } = useFilterState({
+    changedRows,
+  });
+  const { selectedRowId, toggleRowSelection } = useRowSelection({
+    resetTrigger: activeFilter,
+  });
+  const { isApplying, handleRowApply, handleRowDiscard } = useRowActions({
+    applyRow,
+    discardRow,
+  });
+
+  const filteredRows = useMemo(() => {
+    return changedRows.filter(
+      (row) => activeFilter === "ALL" || row.category.toUpperCase() === activeFilter,
+    );
+  }, [changedRows, activeFilter]);
+
+  const selectedRow = useMemo(() => {
+    return filteredRows.find((row) => row.rowId === selectedRowId) ?? null;
+  }, [filteredRows, selectedRowId]);
+
+  const rowsLength = filteredRows.length;
+
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -21,84 +44,39 @@ export function StagedView() {
       if (!container) return;
 
       if (event.target instanceof Node && !container.contains(event.target)) {
-        setSelectedRowId(null);
+        if (selectedRowId) {
+          toggleRowSelection(selectedRowId);
+        }
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [selectedRowId, toggleRowSelection]);
 
-  const handleBulkApply = async () => {
-    setIsApplying(true);
-
-    try {
-      const response = await applyDraft();
-      if (!response.ok) {
-        console.error("Failed to apply manifest(bulk)");
-      }
-    } finally {
-      setIsApplying(false);
-    }
-  };
-
-  const handleRowApply = async (rowId: string) => {
-    setIsApplying(true);
-
-    try {
-      const response = await applyRow(rowId);
-      if (!response.ok) {
-        console.error("Failed to apply manifest(row)");
-      }
-    } finally {
-      setIsApplying(false);
-    }
-  };
-
-  const selected = changedRows.find((row) => row.rowId === selectedRowId) ?? null;
-  const rowsLength = changedRows.length;
-
-  const listItems = changedRows.map((row) => ({
+  const listItems = filteredRows.map((row) => ({
     id: row.rowId,
     text: row.nameAfter,
-    subText: `${row.category} > ${row.tokenType}`,
+    subText: row.tokenType,
     selected: selectedRowId === row.rowId,
     children: (
-      <div className="gap-microPlus px-mini flex w-fit">
-        <Button
-          size="sm"
-          iconOnly={true}
-          overrideBgClass="bg-surface-tertiary hover:bg-surface-warn active:bg-surface-warn"
-          overrideTextColorClass="text-content-tertiary hover:text-content-warn active:text-content-warn"
-          aria-label="discard-row"
-          leftIcon={ResetIcon}
-          onClick={(event) => {
-            event.stopPropagation();
-            discardRow(row.rowId);
-          }}
-          disabled={isApplying}
-        />
-        <Button
-          size="sm"
-          iconOnly={true}
-          overrideBgClass="bg-surface-tertiary hover:bg-surface-success active:bg-surface-success"
-          overrideTextColorClass="text-content-tertiary hover:text-content-success active:text-content-success"
-          aria-label="apply-row"
-          leftIcon={CheckIcon}
-          onClick={(event) => {
-            event.stopPropagation();
-            handleRowApply(row.rowId);
-          }}
-          disabled={isApplying}
-        />
-      </div>
+      <StagedRowActions
+        rowId={row.rowId}
+        isApplying={isApplying}
+        onDiscard={handleRowDiscard}
+        onApply={handleRowApply}
+      />
     ),
-    onSelect: () => setSelectedRowId(selectedRowId === row.rowId ? null : row.rowId),
+    onSelect: () => toggleRowSelection(row.rowId),
   }));
 
-  UseStagedRowKeyboardNavigation({
-    rows: changedRows,
+  useStagedRowKeyboardNavigation({
+    rows: filteredRows,
     selectedRowId,
-    onSelectRow: (rowId) => setSelectedRowId(rowId),
+    onSelectRow: (rowId) => {
+      if (selectedRowId !== rowId) {
+        toggleRowSelection(rowId);
+      }
+    },
   });
 
   return (
@@ -115,34 +93,25 @@ export function StagedView() {
       )}
       {rowsLength !== 0 && (
         <div ref={containerRef} className="m-auto h-full w-full">
-          <StagedViewHeader guidedText={!!selected}>
-            <Button
-              variant="outlined"
-              size="lg"
-              onClick={resetDraft}
-              disabled={isApplying}
-              label="Discard all"
-            />
-            <Button
-              variant="outlined"
-              size="lg"
-              onClick={handleBulkApply}
-              disabled={isApplying}
-              label={isApplying ? "Pushing..." : "Push all"}
-            />
-          </StagedViewHeader>
           <div className="flex h-full">
-            <List listItems={listItems} className="w-full max-w-md" />
-            {selected && (
+            <div className="bg-surface-secondary border-stroke-primary flex w-full max-w-sm flex-col border-r-[0.5px]">
+              <StagedFilter
+                activeFilter={activeFilter}
+                onChange={setActiveFilter}
+                availableOptions={filteredCategories}
+              />
+              <List listItems={listItems} className="py-microPlus w-full" />
+            </div>
+            {selectedRow && (
               <StagedRowDetail
-                id={selected.rowId}
-                beforeName={selected.nameBefore}
-                afterName={selected.nameAfter}
-                before={selected.before}
-                after={selected.after}
+                id={selectedRow.rowId}
+                beforeName={selectedRow.nameBefore}
+                afterName={selectedRow.nameAfter}
+                before={selectedRow.before}
+                after={selectedRow.after}
               />
             )}
-            {!selected && (
+            {!selectedRow && (
               <div className="px-small bg-dot-pattern flex h-full w-full justify-center overflow-hidden">
                 <Text
                   variant="meta-xs"

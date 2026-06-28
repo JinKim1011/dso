@@ -27,5 +27,13 @@ body {
     transparent 1px
   );
   background-size: 4px 4px;
-  background-color: var(--color-surface-secondary);
+  background-color: var(--color-surface-primary);
+}
+
+.scrollbar-none-all {
+  scrollbar-width: none;
+}
+
+.scrollbar-none-all::-webkit-scrollbar {
+  display: none;
 }

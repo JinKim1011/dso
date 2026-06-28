@@ -25,7 +25,7 @@ export function SegmentedControl({
   iconOnly = false,
 }: SegmentedControlProps) {
   return (
-    <div className="gap-micro bg-surface-primary inline-flex w-fit">
+    <div className="gap-micro inline-flex w-fit bg-transparent">
       {options.map((option) => {
         const isActive = option.value === value;
 

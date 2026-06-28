@@ -6,7 +6,7 @@ type useStagedRowKeyboardNavigationParams = {
   onSelectRow: (rowId: string) => void;
 };
 
-export function UseStagedRowKeyboardNavigation({
+export function useStagedRowKeyboardNavigation({
   rows,
   selectedRowId,
   onSelectRow,

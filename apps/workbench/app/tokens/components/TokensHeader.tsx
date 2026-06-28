@@ -30,7 +30,7 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
 
   return (
     <div className={wrapperClasses}>
-      <div className="gap-mini inline-flex items-center">
+      <div className="gap-mini pointer-events-none inline-flex items-center">
         <Text variant="label-sm" as="span">
           DS0
         </Text>
@@ -41,14 +41,14 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
           DESIGN TOKEN MANAGER
         </Text>
       </div>
-      <div className="gap-small flex">
+      <div className="gap-microPlus flex">
         {addedManifestLineCount > 0 ? (
-          <Text variant="label-xs" className="text-content-success">
+          <Text variant="label-xs" className="text-content-success pointer-events-none">
             +{String(addedManifestLineCount)}
           </Text>
         ) : null}
         {deletedManifestLineCount > 0 ? (
-          <Text variant="label-xs" className="text-content-error">
+          <Text variant="label-xs" className="text-content-error pointer-events-none">
             -{String(deletedManifestLineCount)}
           </Text>
         ) : null}
@@ -61,6 +61,7 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
           overrideBgClass={overrideLinkButtonBGClass}
           overrideTextColorClass={overrideLinkButtonTextClass}
           aria-label="staged"
+          className="ml-mini"
         />
       </div>
     </div>
