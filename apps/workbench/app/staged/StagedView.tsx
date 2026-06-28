@@ -26,7 +26,7 @@ export function StagedView() {
 
   const filteredRows = useMemo(() => {
     return changedRows.filter(
-      (row) => activeFilter === "All" || row.category.toUpperCase() === activeFilter,
+      (row) => activeFilter === "ALL" || row.category.toUpperCase() === activeFilter,
     );
   }, [changedRows, activeFilter]);
 
