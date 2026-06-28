@@ -6,21 +6,21 @@ type UseFilterStateProps = {
 };
 
 export function useFilterState({ changedRows }: UseFilterStateProps) {
-  const [activeFilter, setActiveFilter] = useState<StagedFilterOption>("All");
+  const [activeFilter, setActiveFilter] = useState<StagedFilterOption>("ALL");
 
   const filteredCategories = useMemo(() => {
     const options = FILTER_OPTIONS.filter(
       (option) =>
-        option === "All" ||
+        option === "ALL" ||
         changedRows.some((row) => row.category.toUpperCase() === option),
     );
     return options;
   }, [changedRows]);
 
   useEffect(() => {
-    if (activeFilter === "All") return;
+    if (activeFilter === "ALL") return;
     if (!filteredCategories.includes(activeFilter)) {
-      setActiveFilter("All");
+      setActiveFilter("ALL");
     }
   }, [activeFilter, filteredCategories]);
 
