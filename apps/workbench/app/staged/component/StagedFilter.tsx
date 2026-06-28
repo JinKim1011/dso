@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@repo/ui";
-import type { StagedFilterOption } from "../lib/StageFilterOption";
+import type { StagedFilterOption } from "../lib/StagedFilterOption";
 
 type StagedFilterProps = {
   activeFilter: StagedFilterOption;
