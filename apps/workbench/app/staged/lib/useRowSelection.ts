@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 type UseRowSelectionProps = {
-  resetTrigger?: any;
+  resetTrigger?: unknown;
 };
 
 export function useRowSelection({ resetTrigger }: UseRowSelectionProps = {}) {
