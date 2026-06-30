@@ -26,13 +26,14 @@ export function FlowControls({
   showRowNavigation,
 }: FlowControlsProps) {
   return (
-    <div className="p-microPlus border-stroke-secondary flex justify-between border-b-[0.5]">
+    <div className="p-microPlus border-stroke-secondary flex justify-between border-b-[0.5px]">
       {showRowNavigation ? (
         <div className="gap-micro flex">
           <Button
             variant="void"
             size="sm"
             iconOnly={true}
+            aria-label="prev row"
             leftIcon={ChevronUpIcon}
             disabled={!hasPreviousRow}
             onClick={onPreviousRow}
@@ -41,6 +42,7 @@ export function FlowControls({
             variant="void"
             size="sm"
             iconOnly={true}
+            aria-label="next row"
             leftIcon={ChevronDownIcon}
             disabled={!hasNextRow}
             onClick={onNextRow}
@@ -54,6 +56,7 @@ export function FlowControls({
           variant="void"
           size="sm"
           iconOnly={true}
+          aria-label="zoom out"
           leftIcon={ZoomOutIcon}
           disabled={false}
           onClick={() => instance?.zoomOut()}
@@ -62,6 +65,7 @@ export function FlowControls({
           variant="void"
           size="sm"
           iconOnly={true}
+          aria-label="zoom in"
           leftIcon={ZoomInIcon}
           disabled={false}
           onClick={() => instance?.zoomIn()}
@@ -74,6 +78,7 @@ export function FlowControls({
           variant="void"
           size="sm"
           iconOnly={true}
+          aria-label="fit view"
           leftIcon={EnterFullScreenIcon}
           disabled={false}
           onClick={() => instance?.fitView()}
