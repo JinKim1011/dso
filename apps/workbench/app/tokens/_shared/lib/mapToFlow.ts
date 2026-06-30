@@ -1,8 +1,6 @@
 import type { BuiltInEdge, Node } from "@xyflow/react";
 import type { TokenGraphModel } from "./manifestAdapter";
 
-export type FlowNodeKind = "category" | "tokenType";
-
 export type CategoryNodeData = {
   label: string;
 };
