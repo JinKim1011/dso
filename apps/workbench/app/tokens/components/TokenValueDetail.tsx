@@ -3,13 +3,13 @@
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
-import { TokenColorDraft, TokenColorForm } from "../../color/components/TokenColorForm";
+import { TokenColorDraft, TokenColorForm } from "../color/components/TokenColorForm";
+import { TokenTypeValueItem } from "../lib/manifestAdapter";
 import {
   TokenTypographyDraft,
   TokenTypographyForm,
   TokenTypographyOptions,
-} from "../../typography/components/TokenTypographyForm";
-import { TokenTypeValueItem } from "../lib/manifestAdapter";
+} from "../typography/components/TokenTypographyForm";
 import { TokenSingleValueDraft, TokenSingleValueForm } from "./TokenSingleValueForm";
 import { TokenValuePreview } from "./TokenValuePreview";
 
