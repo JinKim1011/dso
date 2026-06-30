@@ -1,4 +1,4 @@
-import { TokenFieldInput } from "../../_shared/components/TokenFieldInput";
+import { TokenFieldInput } from "../../components/TokenFieldInput";
 
 export type TokenColorDraft = {
   name: string;
