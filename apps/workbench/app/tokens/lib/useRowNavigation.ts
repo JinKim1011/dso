@@ -43,7 +43,6 @@ export function useRowNavigation({
   }, [rows, selectedRowIndex, onSelectRow]);
 
   return {
-    selectedRowIndex,
     hasPreviousRow,
     hasNextRow,
     selectPreviousRow,
