@@ -1,8 +1,12 @@
 "use client";
 
-import { ReactFlow, type Node as FlowNode, type NodeTypes } from "@xyflow/react";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { NavigationSlotActionsContext } from "../_shared/context/NavigationSlotContext";
+import {
+  ReactFlow,
+  type Node as FlowNode,
+  type NodeTypes,
+  type ReactFlowInstance,
+} from "@xyflow/react";
+import { useCallback, useMemo, useState } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 import { useRowSelection } from "../_shared/lib/useRowSelection";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
