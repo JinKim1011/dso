@@ -16,21 +16,10 @@ import {
   TokenValueDetail,
   type TokenValueDetailUpdate,
 } from "./components/TokenValueDetail";
-import type { TokenGraphModel } from "./lib/manifestAdapter";
 import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
 import { useRowNavigation } from "./lib/useRowNavigation";
 import { useTypographyOptions } from "./lib/useTypographyOptions";
-
-type TokenRow = {
-  id: string;
-  name: string;
-  cssVar?: string;
-  meta?: string;
-  preview?: TokenGraphModel["tokenTypes"][number]["values"][number]["preview"];
-  category: string;
-  kind: string;
-  value: TokenGraphModel["tokenTypes"][number]["values"][number];
-};
+import { TokenRow } from "./lib/types";
 
 type InteractiveTokenTypeData = TokenTypeNodeData & {
   selectedRowId: string | null;
@@ -53,11 +42,9 @@ export function TokensView({ category }: TokensViewProps) {
       tokenTypes: draftModel.tokenTypes.filter((t) => t.category === category),
     };
   }, [draftModel, category]);
-
   const flowBase = useMemo(() => {
     return mapTokenGraphToFlow(filteredModel);
   }, [filteredModel]);
-
   const rows = useMemo<TokenRow[]>(() => {
     return filteredModel.tokenTypes.flatMap((tokenType) =>
       tokenType.values.map((valueItem) => ({
@@ -72,14 +59,12 @@ export function TokensView({ category }: TokensViewProps) {
       })),
     );
   }, [filteredModel]);
-
   const typographyOptions = useTypographyOptions({ draftModel });
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
 
   const { selectedRowId, toggleRowSelection, clearSelection } = useRowSelection({
     resetTrigger: category,
   });
-
   const { hasPreviousRow, hasNextRow, selectPreviousRow, selectNextRow } =
     useRowNavigation({
       rows,
@@ -96,7 +81,6 @@ export function TokensView({ category }: TokensViewProps) {
     },
     [updateRow, clearSelection],
   );
-
   const selectedRow = useMemo(
     () => (selectedRowId === null ? null : (rowById.get(selectedRowId) ?? null)),
     [rowById, selectedRowId],
@@ -109,7 +93,6 @@ export function TokensView({ category }: TokensViewProps) {
     }),
     [],
   );
-
   const nodes = useMemo<FlowNode[]>(() => {
     return flowBase.nodes.map((node) => {
       if (node.type !== "tokenType") return node;
