@@ -4,7 +4,7 @@ type RowLike = {
   id: string;
 };
 
-type useRowNavigationProps = {
+type UseRowNavigationProps = {
   rows: RowLike[];
   selectedRowId: string | null;
   onSelectRow: (rowId: string) => void;
@@ -14,7 +14,7 @@ export function useRowNavigation({
   rows,
   selectedRowId,
   onSelectRow,
-}: useRowNavigationProps) {
+}: UseRowNavigationProps) {
   const selectedRowIndex = useMemo(() => {
     if (selectedRowId === null) return -1;
 
