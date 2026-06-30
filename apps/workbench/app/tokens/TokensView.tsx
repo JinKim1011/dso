@@ -190,8 +190,8 @@ export function TokensView({ category }: TokensViewProps) {
         nodes={nodes}
         edges={flowBase.edges}
         nodeTypes={nodeTypes}
-        minZoom={0.2}
-        maxZoom={2}
+        minZoom={0.5}
+        maxZoom={1}
         zoomOnScroll={false}
         zoomOnPinch={true}
         zoomOnDoubleClick={false}
