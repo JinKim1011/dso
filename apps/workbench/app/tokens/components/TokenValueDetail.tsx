@@ -137,7 +137,6 @@ export function TokenValueDetail({
   kind,
   value,
   typographyOptions,
-  onClose,
   onSave,
 }: TokenValueDetailProps) {
   const initialDraft = useMemo(
