@@ -1,7 +1,7 @@
 import type { BuiltInEdge, Node } from "@xyflow/react";
 import type { TokenGraphModel } from "./manifestAdapter";
 
-export type CategoryNodeData = {
+type CategoryNodeData = {
   label: string;
 };
 
@@ -15,7 +15,7 @@ export type FlowNode =
   | Node<CategoryNodeData, "category">
   | Node<TokenTypeNodeData, "tokenType">;
 
-export type FlowGraph = {
+type FlowGraph = {
   nodes: FlowNode[];
   edges: BuiltInEdge[];
 };
