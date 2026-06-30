@@ -200,11 +200,11 @@ export function TokenValueDetail({
   const title = `${tokenTypeText}-${displayIndex}`;
 
   return (
-    <div className="px-mini pb-small gap-miniPlus pt-mini flex w-80 flex-col select-none">
+    <div className="px-mini py-miniPlus gap-miniPlus flex w-96 flex-col select-none">
       <div className="flex items-center justify-between">
         <Text
           variant="label-xxs"
-          className="text-content-primary grow-2 basis-0 truncate text-center"
+          className="text-content-primary grow-2 basis-0 truncate"
         >
           {title ? title : rowId}
         </Text>
