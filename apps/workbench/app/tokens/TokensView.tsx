@@ -17,9 +17,9 @@ import {
   type TokenValueDetailUpdate,
 } from "./components/TokenValueDetail";
 import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
+import { TokenRow } from "./lib/types";
 import { useRowNavigation } from "./lib/useRowNavigation";
 import { useTypographyOptions } from "./lib/useTypographyOptions";
-import { TokenRow } from "./lib/types";
 
 type InteractiveTokenTypeData = TokenTypeNodeData & {
   selectedRowId: string | null;
@@ -130,7 +130,7 @@ export function TokensView({ category }: TokensViewProps) {
         fitView
       />
       <aside className="p-mini absolute right-0">
-        <div className="bg-surface-primary rounded-mini border-stroke-primary border-[0.5]">
+        <div className="bg-surface-primary rounded-mini border-stroke-primary border-[0.5px]">
           <FlowControls
             instance={flowInstance}
             hasPreviousRow={hasPreviousRow}
