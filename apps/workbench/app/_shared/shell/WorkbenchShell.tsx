@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { type ReactNode } from "react";
-import { buildTokenGraphModel } from "../../tokens/_shared/lib/manifestAdapter";
+import { buildTokenGraphModel } from "../../tokens/lib/manifestAdapter";
 import NavigationSlotProvider from "../context/NavigationSlotContext";
 import { StagedManifestProvider } from "../context/StagedManifestContext";
 import { Footer } from "./Footer";
