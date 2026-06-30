@@ -68,7 +68,7 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
         id: tokenType.id,
         type: "tokenType",
         position: {
-          x: tokenXStart + tokenIndex * tokenXGap,
+          x: tokenXStart + tokenIndex * (tokenNodeWidth + tokenXGap),
           y: tokenY,
         },
         data: {
