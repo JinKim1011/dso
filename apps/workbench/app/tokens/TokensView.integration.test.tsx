@@ -6,8 +6,8 @@ import NavigationSlotProvider, {
   NavigationSlotDetailContext,
 } from "../_shared/context/NavigationSlotContext";
 import { StagedManifestProvider } from "../_shared/context/StagedManifestContext";
-import happyManifest from "./_shared/lib/manifest/fixtures/happy-manifest.json";
-import { buildTokenGraphModel } from "./_shared/lib/manifestAdapter";
+import happyManifest from "./lib/manifest/fixtures/happy-manifest.json";
+import { buildTokenGraphModel } from "./lib/manifestAdapter";
 import { TokensView } from "./TokensView";
 
 const result = buildTokenGraphModel(happyManifest);
