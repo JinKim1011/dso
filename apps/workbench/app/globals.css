@@ -27,7 +27,7 @@ body {
     transparent 1px
   );
   background-size: 4px 4px;
-  background-color: var(--color-surface-primary);
+  background-color: var(--color-surface-secondary);
 }
 
 .scrollbar-none-all {
