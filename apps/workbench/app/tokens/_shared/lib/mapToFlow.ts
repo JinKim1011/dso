@@ -56,7 +56,8 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
     nodes.push({
       id: category.id,
       type: "category",
-      position: { x: categoryXStart, y: categoryPositionY + categoryY },
+      origin: [0.5, 0.5],
+      position: { x: categoryX, y: categoryPositionY + categoryY },
       data: { label: category.category },
     });
 
