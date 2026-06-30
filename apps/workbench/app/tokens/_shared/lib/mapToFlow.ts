@@ -5,6 +5,11 @@ type CategoryNodeData = {
   label: string;
 };
 
+type FlowGraph = {
+  nodes: FlowNode[];
+  edges: BuiltInEdge[];
+};
+
 export type TokenTypeNodeData = {
   label: string;
   kind: TokenGraphModel["tokenTypes"][number]["kind"];
@@ -14,11 +19,6 @@ export type TokenTypeNodeData = {
 export type FlowNode =
   | Node<CategoryNodeData, "category">
   | Node<TokenTypeNodeData, "tokenType">;
-
-type FlowGraph = {
-  nodes: FlowNode[];
-  edges: BuiltInEdge[];
-};
 
 export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
   const nodes: FlowNode[] = [];
