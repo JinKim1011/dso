@@ -167,7 +167,6 @@ export const CardItem = ({
         tabIndex={isInteractive ? 0 : -1}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
-        layout
       >
         <Text variant="label-xs" className={indexTextVariant({ selected })}>
           {index}
