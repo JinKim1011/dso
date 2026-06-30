@@ -33,11 +33,7 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
   const categoryY = 0;
   const tokenYGap = 180;
   const tokenNodeWidth = 320;
-  const tokenXGap = 340;
-
-  const estimateCategoryWidth = (label: string) => {
-    return Math.max(72, label.length * 8 + 24);
-  };
+  const tokenXGap = 20;
 
   for (const [categoryIndex, category] of model.categories.entries()) {
     const categoryPositionY = categoryIndex * categoryYGap;
