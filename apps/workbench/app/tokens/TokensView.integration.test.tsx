@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { StagedManifestProvider } from "../_shared/context/StagedManifestContext";
@@ -89,7 +89,7 @@ describe("Container-level behavior, TokensView", () => {
     await userEvent.clear(nameInput);
     await userEvent.type(nameInput, "primary-updated");
 
-    const saveButton = screen.getByRole("button", { name: "save" });
+    const saveButton = screen.getByRole("button", { name: /save/i });
     await userEvent.click(saveButton);
 
     expect(await screen.findByText("primary-updated")).toBeInTheDocument();
