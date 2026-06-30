@@ -99,9 +99,9 @@ describe("mapTokenGraphToFlow contract", () => {
         id: tokenType.id,
         type: "tokenType",
         data: {
-        label: tokenType.type,
-        kind: tokenType.kind,
-        values: tokenType.values,
+          label: tokenType.type,
+          kind: tokenType.kind,
+          values: tokenType.values,
         },
       });
     }
@@ -153,5 +153,3 @@ describe("mapTokenGraphToFlow contract", () => {
     expect(missingNode).toBeUndefined();
   });
 });
-
-// add later second describe block for auto-layout invariants (not exact coordinates)
