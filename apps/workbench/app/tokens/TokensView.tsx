@@ -14,7 +14,7 @@ import {
 import type { TokenGraphModel } from "./lib/manifestAdapter";
 import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
 import { useRowNavigation } from "./lib/useRowNavigation";
-import type { TokenTypographyOptions } from "./typography/components/TokenTypographyForm";
+import { useTypographyOptions } from "./lib/useTypographyOptions";
 
 type TokenRow = {
   id: string;
@@ -69,45 +69,7 @@ export function TokensView({ category }: TokensViewProps) {
     );
   }, [filteredModel]);
 
-  const typographyOptions = useMemo<TokenTypographyOptions>(() => {
-    const fontSize = new Set<string>();
-    const fontWeight = new Set<string>();
-    const lineHeight = new Set<string>();
-
-    draftModel.tokenTypes
-      .filter(
-        (tokenType) =>
-          tokenType.category === "typography" && tokenType.kind === "primitive",
-      )
-      .forEach((tokenType) => {
-        const typeName = tokenType.type.toLowerCase();
-
-        for (const valueItem of tokenType.values) {
-          if (!valueItem.name) continue;
-
-          if (typeName.includes("fontsize")) {
-            fontSize.add(valueItem.name);
-            continue;
-          }
-
-          if (typeName.includes("fontweight")) {
-            fontWeight.add(valueItem.name);
-            continue;
-          }
-
-          if (typeName.includes("lineheight")) {
-            lineHeight.add(valueItem.name);
-          }
-        }
-      });
-
-    return {
-      fontSize: [...fontSize].sort(),
-      fontWeight: [...fontWeight].sort(),
-      lineHeight: [...lineHeight].sort(),
-    };
-  }, [draftModel]);
-
+  const typographyOptions = useTypographyOptions({ draftModel });
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
 
   const { selectedRowId, toggleRowSelection, clearSelection } = useRowSelection({
