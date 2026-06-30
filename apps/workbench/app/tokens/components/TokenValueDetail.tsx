@@ -210,6 +210,7 @@ export function TokenValueDetail({
         </Text>
       </div>
       <TokenValuePreview category={category} kind={kind} value={value} />
+      {renderEditor()}
       {isDirty && (
         <div className="gap-microPlus flex grow basis-0 justify-end">
           <Button
