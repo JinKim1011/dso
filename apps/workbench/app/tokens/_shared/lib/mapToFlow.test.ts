@@ -58,14 +58,15 @@ function edgeKey(source: string, target: string): string {
 }
 
 describe("mapTokenGraphToFlow contract", () => {
-  it("maps expected node and edge counts", () => {
+  it("maps the renderable node and edge counts", () => {
     const model = makeModel();
     const flow = mapTokenGraphToFlow(model);
 
-    const expectedNodeCount = 1 + model.categories.length + model.tokenTypes.length;
-    const expectedEdgeCount =
-      model.categories.length +
-      model.categories.reduce((sum, category) => sum + category.tokenTypeIds.length, 0);
+    const expectedNodeCount = model.categories.length + model.tokenTypes.length;
+    const expectedEdgeCount = model.categories.reduce(
+      (sum, category) => sum + category.tokenTypeIds.length,
+      0,
+    );
 
     expect(flow.nodes).toHaveLength(expectedNodeCount);
     expect(flow.edges).toHaveLength(expectedEdgeCount);
