@@ -1,11 +1,7 @@
 import type { BuiltInEdge, Node } from "@xyflow/react";
 import type { TokenGraphModel } from "./manifestAdapter";
 
-export type FlowNodeKind = "root" | "category" | "tokenType";
-
-export type RootNodeData = {
-  label: string;
-};
+export type FlowNodeKind = "category" | "tokenType";
 
 export type CategoryNodeData = {
   label: string;
@@ -17,10 +13,9 @@ export type TokenTypeNodeData = {
   values: TokenGraphModel["tokenTypes"][number]["values"];
 };
 
-export type FlowNodeData = RootNodeData | CategoryNodeData | TokenTypeNodeData;
+export type FlowNodeData = CategoryNodeData | TokenTypeNodeData;
 
 export type FlowNode =
-  | Node<RootNodeData, "root">
   | Node<CategoryNodeData, "category">
   | Node<TokenTypeNodeData, "tokenType">;
 
@@ -41,13 +36,6 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
   const categoryY = 160;
   const tokenYStart = 320;
   const tokenYGap = 120;
-
-  nodes.push({
-    id: model.root.id,
-    type: "root",
-    position: { x: 0, y: 0 },
-    data: { label: model.root.label },
-  });
 
   for (const [categoryIndex, category] of model.categories.entries()) {
     const x = categoryIndex * categoryXGap;
