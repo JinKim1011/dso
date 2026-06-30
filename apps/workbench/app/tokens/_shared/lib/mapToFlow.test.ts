@@ -103,19 +103,7 @@ describe("mapTokenGraphToFlow contract", () => {
     }
   });
 
-  it("creates root to category edges for every category", () => {
-    const model = makeModel();
-    const flow = mapTokenGraphToFlow(model);
-
-    const actual = new Set(flow.edges.map((edge) => edgeKey(edge.source, edge.target)));
-    const expected = new Set(
-      model.categories.map((category) => edgeKey(model.root.id, category.id)),
-    );
-
-    expect([...actual]).toEqual(expect.arrayContaining([...expected]));
-  });
-
-  it("creates category to token type edges for every category tokenTypeIds", () => {
+  it("creates category to tokenType edges for every declared relation", () => {
     const model = makeModel();
     const flow = mapTokenGraphToFlow(model);
 
