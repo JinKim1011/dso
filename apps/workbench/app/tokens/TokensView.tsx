@@ -12,7 +12,6 @@ import {
 } from "./_shared/components/TokenValueDetail";
 import type { TokenGraphModel } from "./_shared/lib/manifestAdapter";
 import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./_shared/lib/mapToFlow";
-import { RootFlowNode } from "./components/RootFlowNode";
 import type { TokenTypographyOptions } from "./typography/components/TokenTypographyForm";
 
 type TokenRow = {
@@ -127,7 +126,6 @@ export function TokensView({ category }: TokensViewProps) {
 
   const nodeTypes = useMemo<NodeTypes>(
     () => ({
-      root: RootFlowNode,
       category: CategoryFlowNode,
       tokenType: TokenTypeFlowNode,
     }),
