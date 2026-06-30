@@ -1,14 +1,13 @@
 import type { BuiltInEdge, Node } from "@xyflow/react";
 import type { TokenGraphModel } from "./manifestAdapter";
 
-export type FlowNodeKind = "root" | "category" | "tokenType";
-
-export type RootNodeData = {
+type CategoryNodeData = {
   label: string;
 };
 
-export type CategoryNodeData = {
-  label: string;
+type FlowGraph = {
+  nodes: FlowNode[];
+  edges: BuiltInEdge[];
 };
 
 export type TokenTypeNodeData = {
@@ -17,17 +16,9 @@ export type TokenTypeNodeData = {
   values: TokenGraphModel["tokenTypes"][number]["values"];
 };
 
-export type FlowNodeData = RootNodeData | CategoryNodeData | TokenTypeNodeData;
-
 export type FlowNode =
-  | Node<RootNodeData, "root">
   | Node<CategoryNodeData, "category">
   | Node<TokenTypeNodeData, "tokenType">;
-
-export type FlowGraph = {
-  nodes: FlowNode[];
-  edges: BuiltInEdge[];
-};
 
 export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
   const nodes: FlowNode[] = [];
@@ -37,48 +28,44 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
     model.tokenTypes.map((tokenType) => [tokenType.id, tokenType]),
   );
 
-  const categoryXGap = 302;
-  const categoryY = 160;
-  const tokenYStart = 320;
-  const tokenYGap = 120;
-
-  nodes.push({
-    id: model.root.id,
-    type: "root",
-    position: { x: 0, y: 0 },
-    data: { label: model.root.label },
-  });
+  const categoryYGap = 480;
+  const categoryX = 0;
+  const categoryY = 0;
+  const tokenYGap = 180;
+  const tokenNodeWidth = 320;
+  const tokenXGap = 20;
 
   for (const [categoryIndex, category] of model.categories.entries()) {
-    const x = categoryIndex * categoryXGap;
+    const categoryPositionY = categoryIndex * categoryYGap;
+    const visibleTokenTypes = category.tokenTypeIds.flatMap((tokenTypeId) => {
+      const tokenType = tokenTypeById.get(tokenTypeId);
+
+      return tokenType ? [tokenType] : [];
+    });
+    const tokenRowWidth = visibleTokenTypes.length
+      ? visibleTokenTypes.length * tokenNodeWidth +
+        (visibleTokenTypes.length - 1) * tokenXGap
+      : 0;
+    const tokenXStart = -tokenRowWidth / 2;
 
     nodes.push({
       id: category.id,
       type: "category",
-      position: { x: x, y: categoryY },
+      origin: [0.5, 0.5],
+      position: { x: categoryX, y: categoryPositionY + categoryY },
       data: { label: category.category },
     });
 
-    edges.push({
-      id: `edge:${model.root.id}->${category.id}`,
-      source: model.root.id,
-      target: category.id,
-      type: "smoothstep",
-      pathOptions: {
-        offset: 0,
-        borderRadius: 20,
-        stepPosition: 0.7,
-      },
-    });
-
-    category.tokenTypeIds.forEach((tokenTypeId, tokenIndex) => {
-      const tokenType = tokenTypeById.get(tokenTypeId);
-      if (!tokenType) return;
+    visibleTokenTypes.forEach((tokenType, tokenIndex) => {
+      const tokenY = categoryPositionY + tokenYGap;
 
       nodes.push({
         id: tokenType.id,
         type: "tokenType",
-        position: { x: x, y: tokenYStart + tokenIndex * tokenYGap },
+        position: {
+          x: tokenXStart + tokenIndex * (tokenNodeWidth + tokenXGap),
+          y: tokenY,
+        },
         data: {
           label: tokenType.type,
           kind: tokenType.kind,
@@ -90,12 +77,7 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
         id: `edge:${category.id}->${tokenType.id}`,
         source: category.id,
         target: tokenType.id,
-        type: "smoothstep",
-        pathOptions: {
-          offset: 0,
-          borderRadius: 20,
-          stepPosition: 0.7,
-        },
+        type: "default",
       });
     });
   }

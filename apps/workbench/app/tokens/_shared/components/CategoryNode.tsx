@@ -13,7 +13,7 @@ export function CategoryNode({ testId, label, children }: CategoryNodeProps) {
   return (
     <section data-testid={testId}>
       <div className="bg-surface-accentStrong py-microPlus px-mini w-fit">
-        <Text as="h2" variant="control-md" className="text-content-accent">
+        <Text as="h2" variant="control-md" className="text-content-primary">
           {label}
         </Text>
       </div>

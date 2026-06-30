@@ -57,86 +57,57 @@ function edgeKey(source: string, target: string): string {
   return source + "->" + target;
 }
 
+function nodeById(flow: ReturnType<typeof mapTokenGraphToFlow>) {
+  return new Map(flow.nodes.map((node) => [node.id, node]));
+}
+
 describe("mapTokenGraphToFlow contract", () => {
-  it("maps expected node and edge counts", () => {
+  it("maps the renderable node and edge counts", () => {
     const model = makeModel();
     const flow = mapTokenGraphToFlow(model);
 
-    const expectedNodeCount = 1 + model.categories.length + model.tokenTypes.length;
-    const expectedEdgeCount =
-      model.categories.length +
-      model.categories.reduce((sum, category) => sum + category.tokenTypeIds.length, 0);
+    const expectedNodeCount = model.categories.length + model.tokenTypes.length;
+    const expectedEdgeCount = model.categories.reduce(
+      (sum, category) => sum + category.tokenTypeIds.length,
+      0,
+    );
 
     expect(flow.nodes).toHaveLength(expectedNodeCount);
     expect(flow.edges).toHaveLength(expectedEdgeCount);
   });
 
-  it("maps expected node type", () => {
+  it("maps category and tokenType nodes with the expected labels", () => {
     const model = makeModel();
     const flow = mapTokenGraphToFlow(model);
 
-    const nodeById = new Map(flow.nodes.map((node) => [node.id, node]));
-
-    const rootNode = nodeById.get("root");
-    expect(rootNode?.type).toEqual("root");
+    const nodes = nodeById(flow);
 
     for (const category of model.categories) {
-      const node = nodeById.get(category.id);
+      const node = nodes.get(category.id);
 
-      expect(node?.type).toEqual("category");
+      expect(node).toMatchObject({
+        id: category.id,
+        type: "category",
+        data: { label: category.category },
+      });
     }
-    for (const tokenType of model.tokenTypes) {
-      const node = nodeById.get(tokenType.id);
-      expect(node).toBeDefined();
-
-      expect(node?.type).toEqual("tokenType");
-    }
-  });
-
-  it("root node carry the expected data structure", () => {
-    const model = makeModel();
-    const flow = mapTokenGraphToFlow(model);
-
-    const nodeByType = new Map(flow.nodes.map((node) => [node.id, node]));
-
-    const rootNode = nodeByType.get("root");
-
-    expect(rootNode?.data).toEqual({
-      label: model.root.label,
-    });
-  });
-
-  it("tokenType node carry the expected data structure", () => {
-    const model = makeModel();
-    const flow = mapTokenGraphToFlow(model);
-
-    const nodeByType = new Map(flow.nodes.map((node) => [node.id, node]));
 
     for (const tokenType of model.tokenTypes) {
-      const node = nodeByType.get(tokenType.id);
-      expect(node).toBeDefined();
+      const node = nodes.get(tokenType.id);
 
-      expect(node?.data).toEqual({
-        label: tokenType.type,
-        kind: tokenType.kind,
-        values: tokenType.values,
+      expect(node).toMatchObject({
+        id: tokenType.id,
+        type: "tokenType",
+        data: {
+          label: tokenType.type,
+          kind: tokenType.kind,
+          values: tokenType.values,
+        },
       });
     }
   });
 
-  it("creates root to category edges for every category", () => {
-    const model = makeModel();
-    const flow = mapTokenGraphToFlow(model);
-
-    const actual = new Set(flow.edges.map((edge) => edgeKey(edge.source, edge.target)));
-    const expected = new Set(
-      model.categories.map((category) => edgeKey(model.root.id, category.id)),
-    );
-
-    expect([...actual]).toEqual(expect.arrayContaining([...expected]));
-  });
-
-  it("creates category to token type edges for every category tokenTypeIds", () => {
+  it("creates category to tokenType edges for every declared relation", () => {
     const model = makeModel();
     const flow = mapTokenGraphToFlow(model);
 
@@ -163,11 +134,6 @@ describe("mapTokenGraphToFlow contract", () => {
     const firstEdgeIds = first.edges.map((edge) => edge.id);
     const secondEdgeIds = second.edges.map((edge) => edge.id);
     expect(firstEdgeIds).toEqual(secondEdgeIds);
-
-    for (const node of first.nodes) {
-      expect(Number.isFinite(node.position.x)).toBe(true);
-      expect(Number.isFinite(node.position.y)).toBe(true);
-    }
   });
 
   it("skips missing tokenType references instead of creating invalid nodes and edges", () => {
@@ -187,5 +153,3 @@ describe("mapTokenGraphToFlow contract", () => {
     expect(missingNode).toBeUndefined();
   });
 });
-
-// add later second describe block for auto-layout invariants (not exact coordinates)

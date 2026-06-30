@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  ReactFlow,
-  ReactFlowInstance,
-  type BuiltInEdge,
-  type Node as FlowNode,
-  type NodeTypes,
-} from "@xyflow/react";
+import { ReactFlow, type Node as FlowNode, type NodeTypes } from "@xyflow/react";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { NavigationSlotActionsContext } from "../_shared/context/NavigationSlotContext";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
@@ -18,7 +12,6 @@ import {
 } from "./_shared/components/TokenValueDetail";
 import type { TokenGraphModel } from "./_shared/lib/manifestAdapter";
 import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./_shared/lib/mapToFlow";
-import { RootFlowNode } from "./components/RootFlowNode";
 import type { TokenTypographyOptions } from "./typography/components/TokenTypographyForm";
 
 type TokenRow = {
@@ -133,7 +126,6 @@ export function TokensView({ category }: TokensViewProps) {
 
   const nodeTypes = useMemo<NodeTypes>(
     () => ({
-      root: RootFlowNode,
       category: CategoryFlowNode,
       tokenType: TokenTypeFlowNode,
     }),
@@ -189,46 +181,15 @@ export function TokensView({ category }: TokensViewProps) {
     });
   }, [flowBase.nodes, selectedRowId, handleSelectRow]);
 
-  const rootNodeId = useMemo(() => {
-    const categoryNodeId =
-      flowBase.nodes.find((node) => {
-        if (!category) return true;
-        if (node.type !== "category") return false;
-
-        return (node.data as { label?: string } | undefined)?.label === category;
-      })?.id ?? null;
-
-    if (category && categoryNodeId) return categoryNodeId;
-
-    return (
-      flowBase.nodes.find((node) => node.type === "root")?.id ?? categoryNodeId ?? null
-    );
-  }, [flowBase.nodes, category]);
-
-  const handleInit = useCallback(
-    (reactflow: ReactFlowInstance<FlowNode, BuiltInEdge>) => {
-      if (!rootNodeId) return;
-
-      reactflow.fitView({
-        nodes: [{ id: rootNodeId }],
-        padding: 0.5,
-        minZoom: 1,
-        maxZoom: 1,
-      });
-    },
-    [rootNodeId],
-  );
-
   return (
     <div className="bg-dot-pattern relative h-dvh w-full overflow-hidden">
       <ReactFlow
-        onInit={handleInit}
         className="h-full w-full"
         nodes={nodes}
         edges={flowBase.edges}
         nodeTypes={nodeTypes}
-        minZoom={0.2}
-        maxZoom={2}
+        minZoom={0.5}
+        maxZoom={1}
         zoomOnScroll={false}
         zoomOnPinch={true}
         zoomOnDoubleClick={false}
@@ -238,6 +199,7 @@ export function TokensView({ category }: TokensViewProps) {
         nodesConnectable={false}
         elementsSelectable={true}
         onPaneClick={() => setSelectedRowId(null)}
+        fitView
       />
     </div>
   );
