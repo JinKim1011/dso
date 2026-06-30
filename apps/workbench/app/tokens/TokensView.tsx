@@ -4,6 +4,7 @@ import { ReactFlow, type Node as FlowNode, type NodeTypes } from "@xyflow/react"
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { NavigationSlotActionsContext } from "../_shared/context/NavigationSlotContext";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
+import { useRowSelection } from "../_shared/lib/useRowSelection";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
 import {
@@ -108,17 +109,16 @@ export function TokensView({ category }: TokensViewProps) {
   }, [draftModel]);
 
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
-  const handleSelectRow = useCallback((rowId: string) => {
-    setSelectedRowId((current) => (current === rowId ? null : rowId));
-  }, []);
+  const { selectedRowId, toggleRowSelection, clearSelection } = useRowSelection({
+    resetTrigger: category,
+  });
 
   const { hasPreviousRow, hasNextRow, selectPreviousRow, selectNextRow } =
     useRowNavigation({
       rows,
       selectedRowId,
-      onSelectRow: handleSelectRow,
+      onSelectRow: toggleRowSelection,
     });
 
   const [flowInstance, setFlowInstance] = useState<ReactFlowInstance | null>(null);
@@ -126,11 +126,9 @@ export function TokensView({ category }: TokensViewProps) {
   const handleSaveRow = useCallback(
     (rowId: string, update: TokenValueDetailUpdate) => {
       updateRow(rowId, update);
-
-      setSelectedRowId(null);
-      shellActions?.clearNavigationDetail();
+      clearSelection();
     },
-    [updateRow, shellActions],
+    [updateRow, clearSelection],
   );
 
   const selectedRow = useMemo(
@@ -189,11 +187,11 @@ export function TokensView({ category }: TokensViewProps) {
         data: {
           ...(node.data as TokenTypeNodeData),
           selectedRowId,
-          onSelectRow: handleSelectRow,
+          onSelectRow: toggleRowSelection,
         } satisfies InteractiveTokenTypeData,
       };
     });
-  }, [flowBase.nodes, selectedRowId, handleSelectRow]);
+  }, [flowBase.nodes, selectedRowId, toggleRowSelection]);
 
   return (
     <div className="bg-dot-pattern relative h-dvh w-full overflow-hidden">
@@ -212,7 +210,8 @@ export function TokensView({ category }: TokensViewProps) {
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={true}
-        onPaneClick={() => setSelectedRowId(null)}
+        onInit={setFlowInstance}
+        onPaneClick={clearSelection}
         fitView
       />
     </div>
