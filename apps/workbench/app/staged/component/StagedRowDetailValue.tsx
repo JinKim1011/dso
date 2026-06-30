@@ -1,5 +1,5 @@
 import { Text } from "@repo/ui";
-import { TokenTypeValueItem } from "../../tokens/_shared/lib/manifestAdapter";
+import { TokenTypeValueItem } from "../../tokens/lib/manifestAdapter";
 
 type valueRow = {
   label: string;
