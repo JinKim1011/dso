@@ -62,12 +62,7 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
         id: `edge:${category.id}->${tokenType.id}`,
         source: category.id,
         target: tokenType.id,
-        type: "smoothstep",
-        pathOptions: {
-          offset: 0,
-          borderRadius: 20,
-          stepPosition: 0.7,
-        },
+        type: "default",
       });
     });
   }
