@@ -43,18 +43,6 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
       data: { label: category.category },
     });
 
-    edges.push({
-      id: `edge:${model.root.id}->${category.id}`,
-      source: model.root.id,
-      target: category.id,
-      type: "smoothstep",
-      pathOptions: {
-        offset: 0,
-        borderRadius: 20,
-        stepPosition: 0.7,
-      },
-    });
-
     category.tokenTypeIds.forEach((tokenTypeId, tokenIndex) => {
       const tokenType = tokenTypeById.get(tokenTypeId);
       if (!tokenType) return;
