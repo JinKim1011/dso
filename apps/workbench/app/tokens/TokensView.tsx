@@ -37,7 +37,6 @@ type TokensViewProps = {
 };
 
 export function TokensView({ category }: TokensViewProps) {
-  const shellActions = useContext(NavigationSlotActionsContext);
   const { draftModel, updateRow } = useStagedManifest();
 
   const filteredModel = useMemo(() => {
@@ -105,40 +104,6 @@ export function TokensView({ category }: TokensViewProps) {
     }),
     [],
   );
-
-  useEffect(() => {
-    if (!shellActions) return;
-
-    shellActions.setNavigationDetail(
-      selectedRow ? (
-        <TokenValueDetail
-          rowId={selectedRow.id}
-          name={selectedRow.name ?? ""}
-          cssVar={selectedRow.cssVar}
-          meta={selectedRow.meta}
-          category={selectedRow.category}
-          kind={selectedRow.kind}
-          value={selectedRow.value}
-          typographyOptions={typographyOptions}
-          onSave={handleSaveRow}
-          onClose={() => {
-            shellActions?.clearNavigationDetail();
-            setSelectedRowId(null);
-          }}
-        />
-      ) : null,
-    );
-  }, [handleSaveRow, selectedRow, shellActions, typographyOptions]);
-
-  useEffect(() => {
-    return () => {
-      shellActions?.clearNavigationDetail();
-    };
-  }, [shellActions]);
-
-  const handleSelectRow = useCallback((rowId: string) => {
-    setSelectedRowId((current) => (current === rowId ? null : rowId));
-  }, []);
 
   const nodes = useMemo<FlowNode[]>(() => {
     return flowBase.nodes.map((node) => {
