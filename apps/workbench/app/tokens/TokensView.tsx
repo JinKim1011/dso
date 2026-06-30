@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  ReactFlow,
-  ReactFlowInstance,
-  type BuiltInEdge,
-  type Node as FlowNode,
-  type NodeTypes,
-} from "@xyflow/react";
+import { ReactFlow, type Node as FlowNode, type NodeTypes } from "@xyflow/react";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { NavigationSlotActionsContext } from "../_shared/context/NavigationSlotContext";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
@@ -205,24 +199,9 @@ export function TokensView({ category }: TokensViewProps) {
     );
   }, [flowBase.nodes, category]);
 
-  const handleInit = useCallback(
-    (reactflow: ReactFlowInstance<FlowNode, BuiltInEdge>) => {
-      if (!rootNodeId) return;
-
-      reactflow.fitView({
-        nodes: [{ id: rootNodeId }],
-        padding: 0.5,
-        minZoom: 1,
-        maxZoom: 1,
-      });
-    },
-    [rootNodeId],
-  );
-
   return (
     <div className="bg-dot-pattern relative h-dvh w-full overflow-hidden">
       <ReactFlow
-        onInit={handleInit}
         className="h-full w-full"
         nodes={nodes}
         edges={flowBase.edges}
