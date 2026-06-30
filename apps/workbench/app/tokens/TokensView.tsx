@@ -12,6 +12,7 @@ import {
 } from "./components/TokenValueDetail";
 import type { TokenGraphModel } from "./lib/manifestAdapter";
 import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
+import { useRowNavigation } from "./lib/useRowNavigation";
 import type { TokenTypographyOptions } from "./typography/components/TokenTypographyForm";
 
 type TokenRow = {
@@ -108,6 +109,19 @@ export function TokensView({ category }: TokensViewProps) {
 
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+
+  const handleSelectRow = useCallback((rowId: string) => {
+    setSelectedRowId((current) => (current === rowId ? null : rowId));
+  }, []);
+
+  const { hasPreviousRow, hasNextRow, selectPreviousRow, selectNextRow } =
+    useRowNavigation({
+      rows,
+      selectedRowId,
+      onSelectRow: handleSelectRow,
+    });
+
+  const [flowInstance, setFlowInstance] = useState<ReactFlowInstance | null>(null);
 
   const handleSaveRow = useCallback(
     (rowId: string, update: TokenValueDetailUpdate) => {
