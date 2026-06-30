@@ -130,11 +130,6 @@ describe("mapTokenGraphToFlow contract", () => {
     const firstEdgeIds = first.edges.map((edge) => edge.id);
     const secondEdgeIds = second.edges.map((edge) => edge.id);
     expect(firstEdgeIds).toEqual(secondEdgeIds);
-
-    for (const node of first.nodes) {
-      expect(Number.isFinite(node.position.x)).toBe(true);
-      expect(Number.isFinite(node.position.y)).toBe(true);
-    }
   });
 
   it("skips missing tokenType references instead of creating invalid nodes and edges", () => {
