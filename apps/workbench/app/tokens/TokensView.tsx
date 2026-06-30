@@ -6,6 +6,7 @@ import { NavigationSlotActionsContext } from "../_shared/context/NavigationSlotC
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 import { useRowSelection } from "../_shared/lib/useRowSelection";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
+import { FlowControls } from "./components/FlowControls";
 import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
 import {
   TokenValueDetail,
@@ -141,6 +142,32 @@ export function TokensView({ category }: TokensViewProps) {
         onPaneClick={clearSelection}
         fitView
       />
+      <aside className="p-mini absolute right-0">
+        <div className="bg-surface-primary rounded-mini border-stroke-primary border-[0.5]">
+          <FlowControls
+            instance={flowInstance}
+            hasPreviousRow={hasPreviousRow}
+            hasNextRow={hasNextRow}
+            onPreviousRow={selectPreviousRow}
+            onNextRow={selectNextRow}
+            showRowNavigation={selectedRow !== null}
+          />
+          {selectedRow ? (
+            <TokenValueDetail
+              rowId={selectedRow.id}
+              name={selectedRow.name ?? ""}
+              cssVar={selectedRow.cssVar}
+              meta={selectedRow.meta}
+              category={selectedRow.category}
+              kind={selectedRow.kind}
+              value={selectedRow.value}
+              typographyOptions={typographyOptions}
+              onSave={handleSaveRow}
+              onClose={clearSelection}
+            />
+          ) : null}
+        </div>
+      </aside>
     </div>
   );
 }
