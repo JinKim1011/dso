@@ -28,29 +28,48 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
     model.tokenTypes.map((tokenType) => [tokenType.id, tokenType]),
   );
 
-  const categoryXGap = 302;
-  const categoryY = 160;
-  const tokenYStart = 320;
-  const tokenYGap = 120;
+  const categoryYGap = 480;
+  const categoryX = 0;
+  const categoryY = 0;
+  const tokenYGap = 180;
+  const tokenNodeWidth = 320;
+  const tokenXGap = 340;
+
+  const estimateCategoryWidth = (label: string) => {
+    return Math.max(72, label.length * 8 + 24);
+  };
 
   for (const [categoryIndex, category] of model.categories.entries()) {
-    const x = categoryIndex * categoryXGap;
+    const categoryPositionY = categoryIndex * categoryYGap;
+    const visibleTokenTypes = category.tokenTypeIds.flatMap((tokenTypeId) => {
+      const tokenType = tokenTypeById.get(tokenTypeId);
+
+      return tokenType ? [tokenType] : [];
+    });
+    const tokenRowWidth = visibleTokenTypes.length
+      ? tokenNodeWidth + (visibleTokenTypes.length - 1) * tokenXGap
+      : 0;
+    const tokenXStart = -tokenRowWidth / 2;
+    const categoryWidth = estimateCategoryWidth(category.category);
+    const categoryXStart = categoryX - categoryWidth / 2;
 
     nodes.push({
       id: category.id,
       type: "category",
-      position: { x: x, y: categoryY },
+      position: { x: categoryXStart, y: categoryPositionY + categoryY },
       data: { label: category.category },
     });
 
-    category.tokenTypeIds.forEach((tokenTypeId, tokenIndex) => {
-      const tokenType = tokenTypeById.get(tokenTypeId);
-      if (!tokenType) return;
+    visibleTokenTypes.forEach((tokenType, tokenIndex) => {
+      const tokenY = categoryPositionY + tokenYGap;
 
       nodes.push({
         id: tokenType.id,
         type: "tokenType",
-        position: { x: x, y: tokenYStart + tokenIndex * tokenYGap },
+        position: {
+          x: tokenXStart + tokenIndex * tokenXGap,
+          y: tokenY,
+        },
         data: {
           label: tokenType.type,
           kind: tokenType.kind,
