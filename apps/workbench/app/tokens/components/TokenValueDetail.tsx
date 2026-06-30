@@ -1,6 +1,5 @@
 "use client";
 
-import { Cross2Icon } from "@radix-ui/react-icons";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
 import { TokenColorDraft, TokenColorForm } from "../color/components/TokenColorForm";
@@ -210,18 +209,6 @@ export function TokenValueDetail({
         >
           {title ? title : rowId}
         </Text>
-
-        <div className="flex grow basis-0 justify-end">
-          <Button
-            variant="void"
-            size="sm"
-            label="close"
-            iconOnly={true}
-            leftIcon={Cross2Icon}
-            disabled={false}
-            onClick={() => onClose?.()}
-          />
-        </div>
       </div>
       <TokenValuePreview category={category} kind={kind} value={value} />
       {isDirty && (
