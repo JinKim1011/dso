@@ -4,8 +4,8 @@ import { ChevronRightIcon } from "@radix-ui/react-icons";
 import { Button, Text } from "@repo/ui";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { workbenchNavigation } from "../../_config/navigation";
 import { useStagedManifest } from "../../_shared/context/StagedManifestContext";
+import { tokenNavigationItems } from "../lib/navigation";
 
 type TokensHeaderProps = {
   stagedHref: string;
@@ -59,7 +59,7 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
         </Text>
       </div>
       <div className={centerWrapperClasses}>
-        {workbenchNavigation.map((menu) => {
+        {tokenNavigationItems.map((menu) => {
           const isActive = path === menu.href;
           const Icon = menu.icon;
           return (
