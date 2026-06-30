@@ -1,12 +1,12 @@
 "use client";
 
-import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 import { diffLines } from "diff";
+import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 import {
   buildManifestFromGraph,
   TokenGraphModel,
   TokenTypeValueItem,
-} from "../../tokens/_shared/lib/manifestAdapter";
+} from "../../tokens/lib/manifestAdapter";
 
 type ChangedRow = {
   rowId: string;
