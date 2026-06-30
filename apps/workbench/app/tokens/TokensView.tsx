@@ -199,6 +199,7 @@ export function TokensView({ category }: TokensViewProps) {
         nodesConnectable={false}
         elementsSelectable={true}
         onPaneClick={() => setSelectedRowId(null)}
+        fitView
       />
     </div>
   );
