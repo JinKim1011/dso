@@ -47,8 +47,6 @@ export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
         (visibleTokenTypes.length - 1) * tokenXGap
       : 0;
     const tokenXStart = -tokenRowWidth / 2;
-    const categoryWidth = estimateCategoryWidth(category.category);
-    const categoryXStart = categoryX - categoryWidth / 2;
 
     nodes.push({
       id: category.id,
