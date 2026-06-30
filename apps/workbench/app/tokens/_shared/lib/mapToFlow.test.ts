@@ -57,6 +57,10 @@ function edgeKey(source: string, target: string): string {
   return source + "->" + target;
 }
 
+function nodeById(flow: ReturnType<typeof mapTokenGraphToFlow>) {
+  return new Map(flow.nodes.map((node) => [node.id, node]));
+}
+
 describe("mapTokenGraphToFlow contract", () => {
   it("maps the renderable node and edge counts", () => {
     const model = makeModel();
