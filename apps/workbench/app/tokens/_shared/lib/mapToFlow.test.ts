@@ -72,55 +72,33 @@ describe("mapTokenGraphToFlow contract", () => {
     expect(flow.edges).toHaveLength(expectedEdgeCount);
   });
 
-  it("maps expected node type", () => {
+  it("maps category and tokenType nodes with the expected labels", () => {
     const model = makeModel();
     const flow = mapTokenGraphToFlow(model);
 
-    const nodeById = new Map(flow.nodes.map((node) => [node.id, node]));
-
-    const rootNode = nodeById.get("root");
-    expect(rootNode?.type).toEqual("root");
+    const nodes = nodeById(flow);
 
     for (const category of model.categories) {
-      const node = nodeById.get(category.id);
+      const node = nodes.get(category.id);
 
-      expect(node?.type).toEqual("category");
+      expect(node).toMatchObject({
+        id: category.id,
+        type: "category",
+        data: { label: category.category },
+      });
     }
-    for (const tokenType of model.tokenTypes) {
-      const node = nodeById.get(tokenType.id);
-      expect(node).toBeDefined();
-
-      expect(node?.type).toEqual("tokenType");
-    }
-  });
-
-  it("root node carry the expected data structure", () => {
-    const model = makeModel();
-    const flow = mapTokenGraphToFlow(model);
-
-    const nodeByType = new Map(flow.nodes.map((node) => [node.id, node]));
-
-    const rootNode = nodeByType.get("root");
-
-    expect(rootNode?.data).toEqual({
-      label: model.root.label,
-    });
-  });
-
-  it("tokenType node carry the expected data structure", () => {
-    const model = makeModel();
-    const flow = mapTokenGraphToFlow(model);
-
-    const nodeByType = new Map(flow.nodes.map((node) => [node.id, node]));
 
     for (const tokenType of model.tokenTypes) {
-      const node = nodeByType.get(tokenType.id);
-      expect(node).toBeDefined();
+      const node = nodes.get(tokenType.id);
 
-      expect(node?.data).toEqual({
+      expect(node).toMatchObject({
+        id: tokenType.id,
+        type: "tokenType",
+        data: {
         label: tokenType.type,
         kind: tokenType.kind,
         values: tokenType.values,
+        },
       });
     }
   });
