@@ -7,6 +7,7 @@ import {
   type NodeTypes,
   type ReactFlowInstance,
 } from "@xyflow/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
 import useMeasure from "react-use-measure";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
@@ -157,22 +158,32 @@ export function TokensView({ category }: TokensViewProps) {
             onNextRow={selectNextRow}
             showRowNavigation={selectedRow !== null}
           />
-          {selectedRow ? (
-            <TokenValueDetail
-              rowId={selectedRow.id}
-              name={selectedRow.name ?? ""}
-              cssVar={selectedRow.cssVar}
-              meta={selectedRow.meta}
-              category={selectedRow.category}
-              kind={selectedRow.kind}
-              value={selectedRow.value}
-              typographyOptions={typographyOptions}
-              onSave={handleSaveRow}
-              onClose={clearSelection}
-            />
-          ) : null}
+          <AnimatePresence>
+            {selectedRow ? (
+              <motion.div
+                className="overflow-hidden"
+                transition={panelTween}
+                initial={{ opacity: 0, x: 25, height: "auto" }}
+                animate={{ opacity: 1, x: 0, height: "auto" }}
+                exit={{ opacity: 0, x: 25, height: 0 }}
+              >
+                <TokenValueDetail
+                  rowId={selectedRow.id}
+                  name={selectedRow.name ?? ""}
+                  cssVar={selectedRow.cssVar}
+                  meta={selectedRow.meta}
+                  category={selectedRow.category}
+                  kind={selectedRow.kind}
+                  value={selectedRow.value}
+                  typographyOptions={typographyOptions}
+                  onSave={handleSaveRow}
+                  onClose={clearSelection}
+                />
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
         </div>
-      </aside>
+      </motion.aside>
     </div>
   );
 }
