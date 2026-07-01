@@ -65,6 +65,17 @@ function loadPersistDraftModel(): TokenGraphModel | null {
   }
 }
 
+function persistDraftModel(model: TokenGraphModel) {
+  if (typeof window === "undefined") return;
+
+  const payload: StagedDraftStoragePayload = {
+    version: STAGED_DRAFT_STORAGE_VERSION,
+    draftModel: model,
+  };
+
+  window.localStorage.setItem(STAGED_DRAFT_STORAGE_KEY, JSON.stringify(payload));
+}
+
 function buildRowIndex(model: TokenGraphModel) {
   const index = new Map<
     string,
