@@ -294,6 +294,11 @@ export function StagedManifestProvider({
 
     if (response.ok) {
       setBaseModel(nextBaseModel);
+
+      const hasPendingChanges = buildChangedRows(nextBaseModel, draftModel).length > 0;
+      if (!hasPendingChanges) {
+        clearPersistedDraftModel();
+      }
     }
 
     return response;
