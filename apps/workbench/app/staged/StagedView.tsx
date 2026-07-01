@@ -80,7 +80,7 @@ export function StagedView() {
   });
 
   return (
-    <section className="flex h-dvh w-full flex-col">
+    <section className="flex h-full w-full flex-col">
       {rowsLength === 0 && (
         <div className="bg-dot-pattern flex h-full w-full items-center justify-center overflow-hidden">
           <Text
