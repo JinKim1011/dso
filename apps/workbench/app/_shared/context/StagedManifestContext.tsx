@@ -8,20 +8,12 @@ import {
   useMemo,
   useState,
 } from "react";
-import {
-  buildManifestFromGraph,
-  TokenGraphModel,
-} from "../../tokens/lib/manifestAdapter";
-import {
-  clearPersistedDraftModel,
-  loadPersistedDraftModel,
-  persistDraftModel,
-} from "./stagedDraftStorage";
+import { TokenGraphModel } from "../../tokens/lib/manifestAdapter";
+import { useStagedManifestActions } from "../lib/useStagedManifestActions";
+import { loadPersistedDraftModel, persistDraftModel } from "./stagedDraftStorage";
 import {
   buildChangedRows,
-  findRowById,
   getManifestLineChangeStats,
-  replaceRowInModel,
   type ChangedRow,
 } from "./stagedManifestModel";
 
@@ -52,6 +44,14 @@ export function StagedManifestProvider({
   const [draftModel, setDraftModel] = useState<TokenGraphModel>(baseManifest);
   const [hasHydratedDraft, setHasHydratedDraft] = useState(false);
 
+  const { updateRow, applyDraft, discardRow, applyRow, resetDraft } =
+    useStagedManifestActions({
+      baseModel,
+      draftModel,
+      setBaseModel,
+      setDraftModel,
+    });
+
   useEffect(() => {
     const persistedDraft = loadPersistedDraftModel();
     if (persistedDraft) {
@@ -67,40 +67,6 @@ export function StagedManifestProvider({
     persistDraftModel(draftModel);
   }, [draftModel, hasHydratedDraft]);
 
-  const updateRow = (rowId: string, update: Partial<any>) => {
-    setDraftModel((current) => ({
-      ...current,
-      tokenTypes: current.tokenTypes.map((tokenType) => ({
-        ...tokenType,
-        values: tokenType.values.map((value) =>
-          value.id === rowId ? { ...value, ...update } : value,
-        ),
-      })),
-    }));
-  };
-
-  const resetDraft = () => {
-    setDraftModel(baseModel);
-  };
-
-  const applyDraft = async (): Promise<Response> => {
-    const manifest = buildManifestFromGraph(draftModel);
-
-    const response = await fetch("/api/design-tokens/manifest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ manifest: manifest }),
-    });
-
-    if (response.ok) {
-      setBaseModel(draftModel);
-      setDraftModel(draftModel);
-      clearPersistedDraftModel();
-    }
-
-    return response;
-  };
-
   const changedRows = useMemo(
     () => buildChangedRows(baseModel, draftModel),
     [baseModel, draftModel],
@@ -112,40 +78,6 @@ export function StagedManifestProvider({
   );
 
   const { addedLines, deletedLines } = manifestLineChangeStats;
-
-  const discardRow = (rowId: string) => {
-    const baseRow = findRowById(baseModel, rowId);
-    if (!baseRow) return;
-
-    setDraftModel((current) => replaceRowInModel(current, rowId, baseRow));
-  };
-
-  const applyRow = async (rowId: string): Promise<Response> => {
-    const draftRow = findRowById(draftModel, rowId);
-    if (!draftRow) {
-      return new Response("Row not found in draft model", { status: 404 });
-    }
-
-    const nextBaseModel = replaceRowInModel(baseModel, rowId, draftRow);
-    const manifest = buildManifestFromGraph(nextBaseModel);
-
-    const response = await fetch("/api/design-tokens/manifest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ manifest }),
-    });
-
-    if (response.ok) {
-      setBaseModel(nextBaseModel);
-
-      const hasPendingChanges = buildChangedRows(nextBaseModel, draftModel).length > 0;
-      if (!hasPendingChanges) {
-        clearPersistedDraftModel();
-      }
-    }
-
-    return response;
-  };
 
   const value = useMemo(
     () => ({
