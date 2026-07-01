@@ -52,16 +52,15 @@ const StagedManifestContext = createContext<StagedContextType | undefined>(undef
 function loadPersistedDraftModel(): TokenGraphModel | null {
   if (typeof window === "undefined") return null;
 
-  const raw = window.localStorage.getItem(STAGED_DRAFT_STORAGE_KEY);
-  if (!raw) return null;
-
   try {
+    const raw = window.localStorage.getItem(STAGED_DRAFT_STORAGE_KEY);
+    if (!raw) return null;
+
     const parsed = JSON.parse(raw) as Partial<StagedDraftStoragePayload>;
 
     if (parsed.version !== STAGED_DRAFT_STORAGE_VERSION) {
       return null;
     }
-
     if (!parsed.draftModel || typeof parsed.draftModel !== "object") {
       return null;
     }
@@ -75,17 +74,21 @@ function loadPersistedDraftModel(): TokenGraphModel | null {
 function persistDraftModel(model: TokenGraphModel) {
   if (typeof window === "undefined") return;
 
-  const payload: StagedDraftStoragePayload = {
-    version: STAGED_DRAFT_STORAGE_VERSION,
-    draftModel: model,
-  };
-
-  window.localStorage.setItem(STAGED_DRAFT_STORAGE_KEY, JSON.stringify(payload));
+  try {
+    const payload: StagedDraftStoragePayload = {
+      version: STAGED_DRAFT_STORAGE_VERSION,
+      draftModel: model,
+    };
+    window.localStorage.setItem(STAGED_DRAFT_STORAGE_KEY, JSON.stringify(payload));
+  } catch {}
 }
 
 function clearPersistedDraftModel() {
   if (typeof window === "undefined") return;
-  window.localStorage.removeItem(STAGED_DRAFT_STORAGE_KEY);
+
+  try {
+    window.localStorage.removeItem(STAGED_DRAFT_STORAGE_KEY);
+  } catch {}
 }
 
 function buildRowIndex(model: TokenGraphModel) {
