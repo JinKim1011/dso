@@ -67,9 +67,15 @@ function loadPersistedDraftModel(): TokenGraphModel | null {
     const parsed = JSON.parse(raw) as Partial<StagedDraftStoragePayload>;
 
     if (parsed.version !== STAGED_DRAFT_STORAGE_VERSION) {
+      clearPersistedDraftModel();
       return null;
     }
-    if (!parsed.draftModel || typeof parsed.draftModel !== "object") {
+    if (
+      !parsed.draftModel ||
+      typeof parsed.draftModel !== "object" ||
+      !Array.isArray(parsed.draftModel.tokenTypes)
+    ) {
+      clearPersistedDraftModel();
       return null;
     }
 
