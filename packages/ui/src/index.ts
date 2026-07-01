@@ -15,3 +15,7 @@ export type { ThemeMode } from "./hooks/useTheme";
 
 // lib
 export { cn } from "./lib/utils";
+
+// motion
+export { createMotionTransition, MotionSettings } from "./types/motion";
+export type { MotionEaseKey, MotionSpeedKey } from "./types/motion";
