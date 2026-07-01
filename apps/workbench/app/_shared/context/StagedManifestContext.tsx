@@ -226,13 +226,23 @@ export function StagedManifestProvider({
   children: ReactNode;
 }) {
   const [baseModel, setBaseModel] = useState<TokenGraphModel>(baseManifest);
-  const [draftModel, setDraftModel] = useState<TokenGraphModel>(
-    () => loadPersistedDraftModel() ?? baseManifest,
-  );
+  const [draftModel, setDraftModel] = useState<TokenGraphModel>(baseManifest);
+  const [hasHydratedDraft, setHasHydratedDraft] = useState(false);
 
   useEffect(() => {
+    const persistedDraft = loadPersistedDraftModel();
+    if (persistedDraft) {
+      setDraftModel(persistedDraft);
+    }
+
+    setHasHydratedDraft(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasHydratedDraft) return;
+
     persistDraftModel(draftModel);
-  }, [draftModel]);
+  }, [draftModel, hasHydratedDraft]);
 
   const updateRow = (rowId: string, update: Partial<any>) => {
     setDraftModel((current) => ({
