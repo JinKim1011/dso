@@ -98,7 +98,7 @@ export function TokensView({ category }: TokensViewProps) {
   }, [flowBase.nodes, selectedRowId, toggleRowSelection]);
 
   return (
-    <div className="bg-dot-pattern relative flex h-full w-full overflow-hidden">
+    <div className="bg-dot-pattern rounded-mini border-stroke-secondary relative flex h-full w-full overflow-hidden border">
       <ReactFlow
         className="h-full w-full"
         nodes={nodes}
