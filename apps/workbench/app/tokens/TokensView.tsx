@@ -8,6 +8,7 @@ import {
   type ReactFlowInstance,
 } from "@xyflow/react";
 import { useCallback, useMemo, useState } from "react";
+import useMeasure from "react-use-measure";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 import { useRowSelection } from "../_shared/lib/useRowSelection";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
@@ -63,6 +64,7 @@ export function TokensView({ category }: TokensViewProps) {
   const typographyOptions = useTypographyOptions({ draftModel });
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
 
+  const [ref, bounds] = useMeasure();
   const { selectedRowId, toggleRowSelection, clearSelection } = useRowSelection({
     resetTrigger: category,
   });
@@ -135,8 +137,18 @@ export function TokensView({ category }: TokensViewProps) {
         onPaneClick={clearSelection}
         fitView
       />
-      <aside className="p-mini absolute right-0">
-        <div className="bg-surface-primary rounded-mini border-stroke-primary border-[0.5px]">
+      <motion.aside
+        className="p-mini absolute top-0 right-0 overflow-hidden"
+        animate={{ height: bounds.height + 16, width: selectedRow ? 385 + 16 : 110.2 }}
+        transition={{
+          height: panelTween,
+          width: panelTween,
+        }}
+      >
+        <div
+          ref={ref}
+          className="bg-surface-primary rounded-mini border-stroke-primary border-[0.5px]"
+        >
           <FlowControls
             instance={flowInstance}
             hasPreviousRow={hasPreviousRow}
