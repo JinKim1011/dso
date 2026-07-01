@@ -92,7 +92,7 @@ export function StagedView() {
         </div>
       )}
       {rowsLength !== 0 && (
-        <div ref={containerRef} className="m-auto h-full w-full">
+        <div className="m-auto h-full w-full">
           <div className="flex h-full">
             <div className="flex w-full max-w-90 flex-col">
               <StagedFilter
@@ -100,7 +100,9 @@ export function StagedView() {
                 onChange={setActiveFilter}
                 availableOptions={filteredCategories}
               />
-              <List listItems={listItems} className="py-microPlus w-full" />
+              <div ref={containerRef}>
+                <List listItems={listItems} className="py-microPlus w-full" />
+              </div>
             </div>
             {selectedRow && (
               <StagedRowDetail
