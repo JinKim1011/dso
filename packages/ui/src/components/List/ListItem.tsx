@@ -38,8 +38,9 @@ const titleVariant = cva("", {
 const subTextVariant = cva("", {
   variants: {
     selected: {
-      true: "text-content-accentStrong/50",
-      false: "text-content-secondary/30 group-hover:text-content-accentStrong/50",
+      true: "text-content-accentStrong/50 opacity-100",
+      false:
+        "text-content-secondary/30 group-hover:text-content-accentStrong/50 opacity-0 group-hover:opacity-100",
     },
   },
   defaultVariants: {
