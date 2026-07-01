@@ -1,20 +1,17 @@
 "use client";
 
-import { createMotionTransition } from "@repo/ui";
 import {
   ReactFlow,
   type Node as FlowNode,
   type NodeTypes,
   type ReactFlowInstance,
 } from "@xyflow/react";
-import { useCallback, useMemo, useState } from "react";
-import useMeasure from "react-use-measure";
+import { useMemo, useState } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
 import { useRowSelection } from "../_shared/lib/useRowSelection";
 import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { TokenPanel } from "./components/TokenPanel";
 import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
-import { type TokenValueDetailUpdate } from "./components/TokenValueDetail";
 import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
 import { TokenRow } from "./lib/types";
 import { useRowNavigation } from "./lib/useRowNavigation";
@@ -61,7 +58,6 @@ export function TokensView({ category }: TokensViewProps) {
   const typographyOptions = useTypographyOptions({ draftModel });
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
 
-  const [ref, bounds] = useMeasure();
   const { selectedRowId, toggleRowSelection, clearSelection } = useRowSelection({
     resetTrigger: category,
   });
@@ -74,13 +70,6 @@ export function TokensView({ category }: TokensViewProps) {
 
   const [flowInstance, setFlowInstance] = useState<ReactFlowInstance | null>(null);
 
-  const handleSaveRow = useCallback(
-    (rowId: string, update: TokenValueDetailUpdate) => {
-      updateRow(rowId, update);
-      clearSelection();
-    },
-    [updateRow, clearSelection],
-  );
   const selectedRow = useMemo(
     () => (selectedRowId === null ? null : (rowById.get(selectedRowId) ?? null)),
     [rowById, selectedRowId],
@@ -107,11 +96,6 @@ export function TokensView({ category }: TokensViewProps) {
       };
     });
   }, [flowBase.nodes, selectedRowId, toggleRowSelection]);
-
-  const panelTween = {
-    type: "tween" as const,
-    ...createMotionTransition("slow", "inOutCirc"),
-  };
 
   return (
     <div className="bg-dot-pattern relative flex h-full w-full overflow-hidden">
