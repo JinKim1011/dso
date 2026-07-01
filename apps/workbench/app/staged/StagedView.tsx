@@ -94,7 +94,7 @@ export function StagedView() {
       {rowsLength !== 0 && (
         <div ref={containerRef} className="m-auto h-full w-full">
           <div className="flex h-full">
-            <div className="bg-surface-secondary border-stroke-primary flex w-full max-w-sm flex-col border-r-[0.5px]">
+            <div className="flex w-full max-w-90 flex-col">
               <StagedFilter
                 activeFilter={activeFilter}
                 onChange={setActiveFilter}
