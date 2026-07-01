@@ -49,7 +49,7 @@ type StagedDraftStoragePayload = {
 
 const StagedManifestContext = createContext<StagedContextType | undefined>(undefined);
 
-function loadPersistDraftModel(): TokenGraphModel | null {
+function loadPersistedDraftModel(): TokenGraphModel | null {
   if (typeof window === "undefined") return null;
 
   const raw = window.localStorage.getItem(STAGED_DRAFT_STORAGE_KEY);
@@ -213,7 +213,7 @@ export function StagedManifestProvider({
 }) {
   const [baseModel, setBaseModel] = useState<TokenGraphModel>(baseManifest);
   const [draftModel, setDraftModel] = useState<TokenGraphModel>(
-    () => loadPersistDraftModel() ?? baseManifest,
+    () => loadPersistedDraftModel() ?? baseManifest,
   );
 
   useEffect(() => {
