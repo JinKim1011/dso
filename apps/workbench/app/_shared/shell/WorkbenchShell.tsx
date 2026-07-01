@@ -1,12 +1,10 @@
 import fs from "fs/promises";
 import path from "path";
 import { type ReactNode } from "react";
-import { buildTokenGraphModel } from "../../tokens/_shared/lib/manifestAdapter";
-import NavigationSlotProvider from "../context/NavigationSlotContext";
+import { buildTokenGraphModel } from "../../tokens/lib/manifestAdapter";
 import { StagedManifestProvider } from "../context/StagedManifestContext";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
-import { Navigation } from "./Navigation";
 
 type WorkbenchShellProps = {
   children: ReactNode;
@@ -35,17 +33,14 @@ export async function WorkbenchShell({ children }: WorkbenchShellProps) {
   const result = buildTokenGraphModel(manifest);
 
   return (
-    <NavigationSlotProvider>
-      <StagedManifestProvider baseManifest={result.model}>
-        <div className="flex h-screen flex-col">
-          <Header />
-          <Navigation />
-          <main className="mx-mini rounded-mini border-stroke-secondary flex-1 overflow-hidden border">
-            {children}
-          </main>
-          <Footer />
-        </div>
-      </StagedManifestProvider>
-    </NavigationSlotProvider>
+    <StagedManifestProvider baseManifest={result.model}>
+      <div className="flex h-screen flex-col">
+        <Header />
+        <main className="mx-mini rounded-mini border-stroke-secondary flex-1 overflow-hidden border">
+          {children}
+        </main>
+        <Footer />
+      </div>
+    </StagedManifestProvider>
   );
 }

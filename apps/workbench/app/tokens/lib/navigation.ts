@@ -12,14 +12,14 @@ type IconComponent = React.ElementType<{
   "aria-hidden"?: boolean;
 }>;
 
-export type WorkbenchNavigationItem = {
+export type TokenNavigationItem = {
   id: "color" | "typography" | "spacing" | "radius" | "shadow" | "motion";
   href: string;
   iconOnly: boolean;
   icon: IconComponent;
 };
 
-export const workbenchNavigation: WorkbenchNavigationItem[] = [
+export const tokenNavigationItems: TokenNavigationItem[] = [
   {
     id: "color",
     href: "/tokens/color",

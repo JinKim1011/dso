@@ -1,29 +1,21 @@
 "use client";
 
-import { ReactFlow, type Node as FlowNode, type NodeTypes } from "@xyflow/react";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { NavigationSlotActionsContext } from "../_shared/context/NavigationSlotContext";
-import { useStagedManifest } from "../_shared/context/StagedManifestContext";
-import { CategoryFlowNode } from "./_shared/components/CategoryFlowNode";
-import { TokenTypeFlowNode } from "./_shared/components/TokenTypeFlowNode";
 import {
-  TokenValueDetail,
-  type TokenValueDetailUpdate,
-} from "./_shared/components/TokenValueDetail";
-import type { TokenGraphModel } from "./_shared/lib/manifestAdapter";
-import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./_shared/lib/mapToFlow";
-import type { TokenTypographyOptions } from "./typography/components/TokenTypographyForm";
-
-type TokenRow = {
-  id: string;
-  name: string;
-  cssVar?: string;
-  meta?: string;
-  preview?: TokenGraphModel["tokenTypes"][number]["values"][number]["preview"];
-  category: string;
-  kind: string;
-  value: TokenGraphModel["tokenTypes"][number]["values"][number];
-};
+  ReactFlow,
+  type Node as FlowNode,
+  type NodeTypes,
+  type ReactFlowInstance,
+} from "@xyflow/react";
+import { useMemo, useState } from "react";
+import { useStagedManifest } from "../_shared/context/StagedManifestContext";
+import { useRowSelection } from "../_shared/lib/useRowSelection";
+import { CategoryFlowNode } from "./components/CategoryFlowNode";
+import { TokenPanel } from "./components/TokenPanel";
+import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
+import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
+import { TokenRow } from "./lib/types";
+import { useRowNavigation } from "./lib/useRowNavigation";
+import { useTypographyOptions } from "./lib/useTypographyOptions";
 
 type InteractiveTokenTypeData = TokenTypeNodeData & {
   selectedRowId: string | null;
@@ -35,7 +27,6 @@ type TokensViewProps = {
 };
 
 export function TokensView({ category }: TokensViewProps) {
-  const shellActions = useContext(NavigationSlotActionsContext);
   const { draftModel, updateRow } = useStagedManifest();
 
   const filteredModel = useMemo(() => {
@@ -47,11 +38,9 @@ export function TokensView({ category }: TokensViewProps) {
       tokenTypes: draftModel.tokenTypes.filter((t) => t.category === category),
     };
   }, [draftModel, category]);
-
   const flowBase = useMemo(() => {
     return mapTokenGraphToFlow(filteredModel);
   }, [filteredModel]);
-
   const rows = useMemo<TokenRow[]>(() => {
     return filteredModel.tokenTypes.flatMap((tokenType) =>
       tokenType.values.map((valueItem) => ({
@@ -66,58 +55,20 @@ export function TokensView({ category }: TokensViewProps) {
       })),
     );
   }, [filteredModel]);
-
-  const typographyOptions = useMemo<TokenTypographyOptions>(() => {
-    const fontSize = new Set<string>();
-    const fontWeight = new Set<string>();
-    const lineHeight = new Set<string>();
-
-    draftModel.tokenTypes
-      .filter(
-        (tokenType) =>
-          tokenType.category === "typography" && tokenType.kind === "primitive",
-      )
-      .forEach((tokenType) => {
-        const typeName = tokenType.type.toLowerCase();
-
-        for (const valueItem of tokenType.values) {
-          if (!valueItem.name) continue;
-
-          if (typeName.includes("fontsize")) {
-            fontSize.add(valueItem.name);
-            continue;
-          }
-
-          if (typeName.includes("fontweight")) {
-            fontWeight.add(valueItem.name);
-            continue;
-          }
-
-          if (typeName.includes("lineheight")) {
-            lineHeight.add(valueItem.name);
-          }
-        }
-      });
-
-    return {
-      fontSize: [...fontSize].sort(),
-      fontWeight: [...fontWeight].sort(),
-      lineHeight: [...lineHeight].sort(),
-    };
-  }, [draftModel]);
-
+  const typographyOptions = useTypographyOptions({ draftModel });
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
-  const handleSaveRow = useCallback(
-    (rowId: string, update: TokenValueDetailUpdate) => {
-      updateRow(rowId, update);
+  const { selectedRowId, toggleRowSelection, clearSelection } = useRowSelection({
+    resetTrigger: category,
+  });
+  const { hasPreviousRow, hasNextRow, selectPreviousRow, selectNextRow } =
+    useRowNavigation({
+      rows,
+      selectedRowId,
+      onSelectRow: toggleRowSelection,
+    });
 
-      setSelectedRowId(null);
-      shellActions?.clearNavigationDetail();
-    },
-    [updateRow, shellActions],
-  );
+  const [flowInstance, setFlowInstance] = useState<ReactFlowInstance | null>(null);
 
   const selectedRow = useMemo(
     () => (selectedRowId === null ? null : (rowById.get(selectedRowId) ?? null)),
@@ -131,41 +82,6 @@ export function TokensView({ category }: TokensViewProps) {
     }),
     [],
   );
-
-  useEffect(() => {
-    if (!shellActions) return;
-
-    shellActions.setNavigationDetail(
-      selectedRow ? (
-        <TokenValueDetail
-          rowId={selectedRow.id}
-          name={selectedRow.name ?? ""}
-          cssVar={selectedRow.cssVar}
-          meta={selectedRow.meta}
-          category={selectedRow.category}
-          kind={selectedRow.kind}
-          value={selectedRow.value}
-          typographyOptions={typographyOptions}
-          onSave={handleSaveRow}
-          onClose={() => {
-            shellActions?.clearNavigationDetail();
-            setSelectedRowId(null);
-          }}
-        />
-      ) : null,
-    );
-  }, [handleSaveRow, selectedRow, shellActions, typographyOptions]);
-
-  useEffect(() => {
-    return () => {
-      shellActions?.clearNavigationDetail();
-    };
-  }, [shellActions]);
-
-  const handleSelectRow = useCallback((rowId: string) => {
-    setSelectedRowId((current) => (current === rowId ? null : rowId));
-  }, []);
-
   const nodes = useMemo<FlowNode[]>(() => {
     return flowBase.nodes.map((node) => {
       if (node.type !== "tokenType") return node;
@@ -175,14 +91,14 @@ export function TokensView({ category }: TokensViewProps) {
         data: {
           ...(node.data as TokenTypeNodeData),
           selectedRowId,
-          onSelectRow: handleSelectRow,
+          onSelectRow: toggleRowSelection,
         } satisfies InteractiveTokenTypeData,
       };
     });
-  }, [flowBase.nodes, selectedRowId, handleSelectRow]);
+  }, [flowBase.nodes, selectedRowId, toggleRowSelection]);
 
   return (
-    <div className="bg-dot-pattern relative h-dvh w-full overflow-hidden">
+    <div className="bg-dot-pattern relative flex h-full w-full overflow-hidden">
       <ReactFlow
         className="h-full w-full"
         nodes={nodes}
@@ -198,8 +114,23 @@ export function TokensView({ category }: TokensViewProps) {
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={true}
-        onPaneClick={() => setSelectedRowId(null)}
+        onInit={setFlowInstance}
+        onPaneClick={clearSelection}
         fitView
+      />
+      <TokenPanel
+        selectedRow={selectedRow}
+        hasNextRow={hasNextRow}
+        hasPreviousRow={hasPreviousRow}
+        flowInstance={flowInstance}
+        typographyOptions={typographyOptions}
+        selectPreviousRow={selectPreviousRow}
+        selectNextRow={selectNextRow}
+        handleSaveRow={(rowId, update) => {
+          updateRow(rowId, update);
+          clearSelection();
+        }}
+        clearSelection={clearSelection}
       />
     </div>
   );

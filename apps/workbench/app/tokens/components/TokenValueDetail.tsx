@@ -1,15 +1,14 @@
 "use client";
 
-import { Cross2Icon } from "@radix-ui/react-icons";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
-import { TokenColorDraft, TokenColorForm } from "../../color/components/TokenColorForm";
+import { TokenColorDraft, TokenColorForm } from "../color/components/TokenColorForm";
+import { TokenTypeValueItem } from "../lib/manifestAdapter";
 import {
   TokenTypographyDraft,
   TokenTypographyForm,
   TokenTypographyOptions,
-} from "../../typography/components/TokenTypographyForm";
-import { TokenTypeValueItem } from "../lib/manifestAdapter";
+} from "../typography/components/TokenTypographyForm";
 import { TokenSingleValueDraft, TokenSingleValueForm } from "./TokenSingleValueForm";
 import { TokenValuePreview } from "./TokenValuePreview";
 
@@ -138,7 +137,6 @@ export function TokenValueDetail({
   kind,
   value,
   typographyOptions,
-  onClose,
   onSave,
 }: TokenValueDetailProps) {
   const initialDraft = useMemo(
@@ -201,29 +199,17 @@ export function TokenValueDetail({
   const title = `${tokenTypeText}-${displayIndex}`;
 
   return (
-    <div className="px-mini pb-small gap-miniPlus pt-mini flex w-80 flex-col select-none">
+    <div className="px-mini py-miniPlus gap-miniPlus flex w-96 flex-col select-none">
       <div className="flex items-center justify-between">
-        <div className="grow basis-0"></div>
         <Text
           variant="label-xxs"
-          className="text-content-primary grow-2 basis-0 truncate text-center"
+          className="text-content-primary grow-2 basis-0 truncate"
         >
           {title ? title : rowId}
         </Text>
-
-        <div className="flex grow basis-0 justify-end">
-          <Button
-            variant="void"
-            size="sm"
-            label="close"
-            iconOnly={true}
-            leftIcon={Cross2Icon}
-            disabled={false}
-            onClick={() => onClose?.()}
-          />
-        </div>
       </div>
       <TokenValuePreview category={category} kind={kind} value={value} />
+      {renderEditor()}
       {isDirty && (
         <div className="gap-microPlus flex grow basis-0 justify-end">
           <Button
@@ -242,7 +228,6 @@ export function TokenValueDetail({
           />
         </div>
       )}
-      {renderEditor()}
     </div>
   );
 }

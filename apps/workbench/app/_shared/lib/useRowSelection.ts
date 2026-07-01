@@ -15,8 +15,13 @@ export function useRowSelection({ resetTrigger }: UseRowSelectionProps = {}) {
     setSelectedRowId((current) => (current === rowId ? null : rowId));
   };
 
+  const clearSelection = () => {
+    setSelectedRowId(null);
+  };
+
   return {
     selectedRowId,
     toggleRowSelection,
+    clearSelection,
   };
 }

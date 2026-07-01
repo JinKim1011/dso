@@ -3,12 +3,12 @@
 import { List, Text } from "@repo/ui";
 import { useEffect, useMemo, useRef } from "react";
 import { useStagedManifest } from "../_shared/context/StagedManifestContext";
+import { useRowSelection } from "../_shared/lib/useRowSelection";
 import { StagedFilter } from "./component/StagedFilter";
 import { StagedRowActions } from "./component/StagedRowActions";
 import { StagedRowDetail } from "./component/StagedRowDetail";
 import { useFilterState } from "./lib/useFilterState";
 import { useRowActions } from "./lib/useRowActions";
-import { useRowSelection } from "./lib/useRowSelection";
 import { useStagedRowKeyboardNavigation } from "./lib/useStagedRowKeyboardNavigation";
 
 export function StagedView() {
