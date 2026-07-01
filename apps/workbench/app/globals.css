@@ -23,7 +23,7 @@ body {
 .bg-dot-pattern {
   background-image: radial-gradient(
     circle,
-    var(--color-surface-primary) 0.5px,
+    var(--color-surface-tertiary) 0.5px,
     transparent 1px
   );
   background-size: 4px 4px;
