@@ -49,6 +49,14 @@ type StagedDraftStoragePayload = {
 
 const StagedManifestContext = createContext<StagedContextType | undefined>(undefined);
 
+function clearPersistedDraftModel() {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.removeItem(STAGED_DRAFT_STORAGE_KEY);
+  } catch {}
+}
+
 function loadPersistedDraftModel(): TokenGraphModel | null {
   if (typeof window === "undefined") return null;
 
@@ -80,14 +88,6 @@ function persistDraftModel(model: TokenGraphModel) {
       draftModel: model,
     };
     window.localStorage.setItem(STAGED_DRAFT_STORAGE_KEY, JSON.stringify(payload));
-  } catch {}
-}
-
-function clearPersistedDraftModel() {
-  if (typeof window === "undefined") return;
-
-  try {
-    window.localStorage.removeItem(STAGED_DRAFT_STORAGE_KEY);
   } catch {}
 }
 
