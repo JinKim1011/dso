@@ -20,8 +20,8 @@ export function StagedRowDetail({
 }: StagedRowDetailProps) {
   const wrapperStyle = [
     "w-full flex flex-col h-full",
-    "py-largePlus px-large gap-regular",
-    "bg-dot-pattern overflow-hidden",
+    "py-largePlus px-large gap-regular rounded-mini border-[0.5px]",
+    "bg-dot-pattern overflow-hidden border-stroke-secondary",
   ].join(" ");
 
   return (
