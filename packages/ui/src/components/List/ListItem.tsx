@@ -89,9 +89,7 @@ export const ListItem = ({
         <motion.div
           initial={false}
           animate={
-            selected
-              ? { paddingLeft: "var(--spacing-smallPlus)" }
-              : { paddingLeft: "var(--spacing-mini)" }
+            selected ? { paddingLeft: "var(--spacing-mini)" } : { paddingLeft: "0" }
           }
           transition={createMotionTransition("regular", "inOutExpo")}
           className={textWrapperClasses}
