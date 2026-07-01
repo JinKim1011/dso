@@ -15,7 +15,7 @@ export function StagedFilter({
   availableOptions,
 }: StagedFilterProps) {
   return (
-    <div className="gap-microPlus p-mini border-stroke-primary scrollbar-none-all flex overflow-x-scroll border-b-[0.5px]">
+    <div className="gap-microPlus py-mini scrollbar-none-all flex overflow-x-scroll">
       {availableOptions.map((option) => (
         <Button
           key={option}
