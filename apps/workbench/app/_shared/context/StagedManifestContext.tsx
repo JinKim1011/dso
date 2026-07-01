@@ -33,7 +33,37 @@ type StagedContextType = {
   applyRow: (rowId: string) => Promise<Response>;
 };
 
+const STAGED_DRAFT_STORAGE_VERSION = 1;
+const STAGED_DRAFT_STORAGE_KEY = "dso-workbench-staged-draft";
+type StagedDraftStoragePayload = {
+  version: number;
+  draftModel: TokenGraphModel;
+};
+
 const StagedManifestContext = createContext<StagedContextType | undefined>(undefined);
+
+function loadPersistDraftModel(): TokenGraphModel | null {
+  if (typeof window === "undefined") return null;
+
+  const raw = window.localStorage.getItem(STAGED_DRAFT_STORAGE_KEY);
+  if (!raw) return null;
+
+  try {
+    const parsed = JSON.parse(raw) as Partial<StagedDraftStoragePayload>;
+
+    if (parsed.version !== STAGED_DRAFT_STORAGE_VERSION) {
+      return null;
+    }
+
+    if (!parsed.draftModel || typeof parsed.draftModel !== "object") {
+      return null;
+    }
+
+    return parsed.draftModel as TokenGraphModel;
+  } catch {
+    return null;
+  }
+}
 
 function buildRowIndex(model: TokenGraphModel) {
   const index = new Map<
@@ -164,7 +194,9 @@ export function StagedManifestProvider({
   children: ReactNode;
 }) {
   const [baseModel, setBaseModel] = useState<TokenGraphModel>(baseManifest);
-  const [draftModel, setDraftModel] = useState<TokenGraphModel>(baseManifest);
+  const [draftModel, setDraftModel] = useState<TokenGraphModel>(
+    () => loadPersistDraftModel() ?? baseManifest,
+  );
 
   const updateRow = (rowId: string, update: Partial<any>) => {
     setDraftModel((current) => ({
