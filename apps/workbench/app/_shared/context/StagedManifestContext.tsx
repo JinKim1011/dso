@@ -83,6 +83,11 @@ function persistDraftModel(model: TokenGraphModel) {
   window.localStorage.setItem(STAGED_DRAFT_STORAGE_KEY, JSON.stringify(payload));
 }
 
+function clearPersistedDraftModel() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(STAGED_DRAFT_STORAGE_KEY);
+}
+
 function buildRowIndex(model: TokenGraphModel) {
   const index = new Map<
     string,
@@ -247,6 +252,7 @@ export function StagedManifestProvider({
 
     if (response.ok) {
       setBaseModel(draftModel);
+      clearPersistedDraftModel();
     }
 
     return response;
