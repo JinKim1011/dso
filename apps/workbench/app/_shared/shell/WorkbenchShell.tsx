@@ -36,9 +36,7 @@ export async function WorkbenchShell({ children }: WorkbenchShellProps) {
     <StagedManifestProvider baseManifest={result.model}>
       <div className="flex h-screen flex-col">
         <Header />
-        <main className="mx-mini rounded-mini border-stroke-secondary flex-1 overflow-hidden border">
-          {children}
-        </main>
+        <main className="mx-mini flex-1 overflow-hidden">{children}</main>
         <Footer />
       </div>
     </StagedManifestProvider>
