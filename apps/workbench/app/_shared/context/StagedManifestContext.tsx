@@ -271,6 +271,7 @@ export function StagedManifestProvider({
 
     if (response.ok) {
       setBaseModel(draftModel);
+      setDraftModel(draftModel);
       clearPersistedDraftModel();
     }
 
