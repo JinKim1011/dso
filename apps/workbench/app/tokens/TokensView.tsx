@@ -1,5 +1,6 @@
 "use client";
 
+import { createMotionTransition } from "@repo/ui";
 import {
   ReactFlow,
   type Node as FlowNode,
@@ -107,6 +108,11 @@ export function TokensView({ category }: TokensViewProps) {
       };
     });
   }, [flowBase.nodes, selectedRowId, toggleRowSelection]);
+
+  const panelTween = {
+    type: "tween" as const,
+    ...createMotionTransition("slow", "inOutCirc"),
+  };
 
   return (
     <div className="bg-dot-pattern relative flex h-full w-full overflow-hidden">
