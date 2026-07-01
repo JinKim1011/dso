@@ -1,7 +1,14 @@
 "use client";
 
 import { diffLines } from "diff";
-import { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   buildManifestFromGraph,
   TokenGraphModel,
@@ -208,6 +215,10 @@ export function StagedManifestProvider({
   const [draftModel, setDraftModel] = useState<TokenGraphModel>(
     () => loadPersistDraftModel() ?? baseManifest,
   );
+
+  useEffect(() => {
+    persistDraftModel(draftModel);
+  }, [draftModel]);
 
   const updateRow = (rowId: string, update: Partial<any>) => {
     setDraftModel((current) => ({
