@@ -16,7 +16,7 @@ export const List = ({ listItems, className, ...props }: ListProps) => {
   const [dotY, setDotY] = useState<number | null>(null);
 
   const dotClass = [
-    "w-[0.25rem] h-[0.25rem] absolute left-2",
+    "w-[0.25rem] h-[0.25rem] absolute left-0",
     "bg-surface-accentStrong",
   ].join(" ");
 
