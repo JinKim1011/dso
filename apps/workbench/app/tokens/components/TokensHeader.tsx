@@ -34,8 +34,8 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
     "inline-flex items-center justify-center",
     "p-mini rounded-mini",
     "bg-transparent text-content-quaternary",
-    "transition-colors duration-highlightFadeIn ease-outCubic hover:bg-surface-tertiary hover:text-content-primary",
-    "aria-[current=page]:bg-surface-quaternary aria-[current=page]:text-content-primary",
+    "transition-colors duration-highlightFadeIn ease-outCubic hover:bg-surface-secondary hover:text-content-primary",
+    "aria-[current=page]:bg-surface-tertiary aria-[current=page]:text-content-primary",
   ].join(" ");
 
   const displayLabel =
