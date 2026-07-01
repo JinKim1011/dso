@@ -101,7 +101,7 @@ export function StagedView() {
                 availableOptions={filteredCategories}
               />
               <div ref={containerRef}>
-                <List listItems={listItems} className="py-microPlus w-full" />
+                <List listItems={listItems} className="py-micro w-full" />
               </div>
             </div>
             {selectedRow && (
