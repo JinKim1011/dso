@@ -82,7 +82,7 @@ export function StagedView() {
   return (
     <section className="flex h-full w-full flex-col">
       {rowsLength === 0 && (
-        <div className="bg-dot-pattern rounded-mini border-stroke-secondary flex h-full w-full items-center justify-center overflow-hidden border-[0.5px]">
+        <div className="bg-dot-pattern rounded-mini border-stroke-secondary flex h-full w-full items-center justify-center overflow-hidden border">
           <Text
             variant="meta-xs"
             className="text-content-accentStrong w-full text-center"
@@ -112,7 +112,7 @@ export function StagedView() {
               />
             )}
             {!selectedRow && (
-              <div className="px-small bg-dot-pattern rounded-mini border-stroke-secondary flex h-full w-full items-center justify-center overflow-hidden border-[0.5px]">
+              <div className="px-small bg-dot-pattern rounded-mini border-stroke-secondary flex h-full w-full items-center justify-center overflow-hidden border">
                 <Text
                   variant="meta-xs"
                   className="text-content-accentStrong w-full text-center"
