@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useCallback } from "react";
 import {
   TokenGraphModel,
+  TokenTypeValueItem,
   buildManifestFromGraph,
 } from "../../tokens/lib/manifestAdapter";
 import { clearPersistedDraftModel } from "../context/stagedDraftStorage";
@@ -24,7 +25,7 @@ export function useStagedManifestActions({
   setDraftModel,
 }: UseStagedManifestActionsProps) {
   const updateRow = useCallback(
-    (rowId: string, update: Partial<any>) => {
+    (rowId: string, update: Partial<TokenTypeValueItem>) => {
       setDraftModel((current) => ({
         ...current,
         tokenTypes: current.tokenTypes.map((tokenType) => ({
