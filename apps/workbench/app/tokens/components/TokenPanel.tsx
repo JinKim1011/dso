@@ -36,7 +36,7 @@ export function TokenPanel({
 
   const panelTween = {
     type: "tween" as const,
-    ...createMotionTransition("slow", "inOutCirc"),
+    ...createMotionTransition("regular", "inOutCirc"),
   };
 
   return (
