@@ -10,7 +10,11 @@ import {
 } from "react";
 import { TokenGraphModel } from "../../tokens/lib/manifestAdapter";
 import { useStagedManifestActions } from "../lib/useStagedManifestActions";
-import { loadPersistedDraftModel, persistDraftModel } from "./stagedDraftStorage";
+import {
+  clearPersistedDraftModel,
+  loadPersistedDraftModel,
+  persistDraftModel,
+} from "./stagedDraftStorage";
 import {
   buildChangedRows,
   getManifestLineChangeStats,
@@ -64,8 +68,14 @@ export function StagedManifestProvider({
   useEffect(() => {
     if (!hasHydratedDraft) return;
 
+    const hasPendingChanges = buildChangedRows(baseModel, draftModel).length > 0;
+    if (!hasPendingChanges) {
+      clearPersistedDraftModel();
+      return;
+    }
+
     persistDraftModel(draftModel);
-  }, [draftModel, hasHydratedDraft]);
+  }, [draftModel, hasHydratedDraft, baseModel]);
 
   const changedRows = useMemo(
     () => buildChangedRows(baseModel, draftModel),
