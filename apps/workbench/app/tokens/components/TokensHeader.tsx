@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRightIcon } from "@radix-ui/react-icons";
-import { Button, Text } from "@repo/ui";
+import { Button, Text, Tooltip } from "@repo/ui";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useStagedManifest } from "../../_shared/context/StagedManifestContext";
@@ -63,15 +63,16 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
           const isActive = path === menu.href;
           const Icon = menu.icon;
           return (
-            <Link
-              key={menu.href}
-              href={menu.href}
-              aria-label={menu.id}
-              aria-current={isActive ? "page" : undefined}
-              className={menuItemStyles}
-            >
-              {Icon ? <Icon aria-hidden className="size-3.5 shrink-0" /> : null}
-            </Link>
+            <Tooltip key={menu.href} content={menu.id} placement="bottom">
+              <Link
+                href={menu.href}
+                aria-label={menu.id}
+                aria-current={isActive ? "page" : undefined}
+                className={menuItemStyles}
+              >
+                {Icon ? <Icon aria-hidden className="size-3.5 shrink-0" /> : null}
+              </Link>
+            </Tooltip>
           );
         })}
       </div>

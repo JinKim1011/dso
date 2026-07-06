@@ -8,6 +8,7 @@ export { List } from "./components/List/List";
 export { ListItem } from "./components/List/ListItem";
 export { SegmentedControl } from "./components/SegmentedControl";
 export { Text } from "./components/Text";
+export { Tooltip } from "./components/Tooltip";
 
 // Hooks
 export { useTheme } from "./hooks/useTheme";
