@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
-import { Button } from "@repo/ui";
+import { Button, Tooltip } from "@repo/ui";
 import { useState } from "react";
 import { useStagedManifest } from "../../_shared/context/StagedManifestContext";
 
@@ -49,23 +49,27 @@ export function StagedHeader({ onBack }: StagedHeaderProps) {
 
       {changedRowCount > 0 ? (
         <div className="gap-mini flex">
-          <Button
-            size="sm"
-            label="DISCARD ALL"
-            variant="void"
-            onClick={resetDraft}
-            overrideBgClass="bg-transparent hover:bg-surface-error active:bg-surface-error"
-            overrideTextColorClass="text-content-error hover:text-content-error active:text-content-error"
-          />
-          <Button
-            size="sm"
-            disabled={isApplying}
-            label={isApplying ? "PUSHING..." : "PUSH ALL"}
-            variant="void"
-            onClick={handleBulkApply}
-            overrideBgClass="bg-transparent hover:bg-surface-success active:bg-surface-success"
-            overrideTextColorClass="text-content-success hover:text-content-success active:text-content-success"
-          />
+          <Tooltip content={`${changedRowCount} CHANGES`}>
+            <Button
+              size="sm"
+              label="DISCARD ALL"
+              variant="void"
+              onClick={resetDraft}
+              overrideBgClass="bg-transparent hover:bg-surface-error active:bg-surface-error"
+              overrideTextColorClass="text-content-error hover:text-content-error active:text-content-error"
+            />
+          </Tooltip>
+          <Tooltip content={`${changedRowCount} CHANGES`}>
+            <Button
+              size="sm"
+              disabled={isApplying}
+              label={isApplying ? "PUSHING..." : "PUSH ALL"}
+              variant="void"
+              onClick={handleBulkApply}
+              overrideBgClass="bg-transparent hover:bg-surface-success active:bg-surface-success"
+              overrideTextColorClass="text-content-success hover:text-content-success active:text-content-success"
+            />
+          </Tooltip>
         </div>
       ) : null}
     </div>
