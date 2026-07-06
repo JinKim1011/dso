@@ -49,7 +49,9 @@ export function StagedHeader({ onBack }: StagedHeaderProps) {
 
       {changedRowCount > 0 ? (
         <div className="gap-mini flex">
-          <Tooltip content={`${changedRowCount} CHANGES`}>
+          <Tooltip
+            content={`${changedRowCount} ${changedRowCount === 1 ? "CHANGE" : "CHANGES"}`}
+          >
             <Button
               size="sm"
               label="DISCARD ALL"
@@ -59,7 +61,9 @@ export function StagedHeader({ onBack }: StagedHeaderProps) {
               overrideTextColorClass="text-content-error hover:text-content-error active:text-content-error"
             />
           </Tooltip>
-          <Tooltip content={`${changedRowCount} CHANGES`}>
+          <Tooltip
+            content={`${changedRowCount} ${changedRowCount === 1 ? "CHANGE" : "CHANGES"}`}
+          >
             <Button
               size="sm"
               disabled={isApplying}
