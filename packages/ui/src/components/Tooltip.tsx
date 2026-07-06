@@ -14,7 +14,7 @@ import {
   useRole,
   type Placement,
 } from "@floating-ui/react";
-import { Text } from "@repo/ui";
+import { Text } from "./Text";
 
 import { useState, type ReactNode } from "react";
 
