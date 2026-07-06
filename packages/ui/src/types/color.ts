@@ -26,6 +26,8 @@ export type StrokeVariant =
   | "accent"
   | "accentStrong";
 
+export type TooltipClass = "bg-tooltip-surface" | "text-tooltip-content";
+
 export type OverrideBGClass =
   | BgClass
   | HoverBgClass
