@@ -1,7 +1,7 @@
 import type {
-  CategoryModel,
+  CategoryViewModel,
   SupportedKind,
-  TokenTypeModel,
+  TokenTypeViewModel,
 } from "@/tokens/lib/manifest/types";
 
 export type TokenGraphViewModel = {
@@ -10,8 +10,8 @@ export type TokenGraphViewModel = {
     id: "root";
     label: "Design Tokens";
   };
-  categories: CategoryModel[];
-  tokenTypes: TokenTypeModel[];
+  categories: CategoryViewModel[];
+  tokenTypes: TokenTypeViewModel[];
 };
 
 export type TokenTypeValueItem = {

@@ -5,13 +5,13 @@ import type {
 import { isSupportedKind, toId } from "./guards";
 import { extractRows, normalizeEntry } from "./normalize";
 import {
-  type CategoryModel,
+  type CategoryViewModel,
   DEFAULT_CATEGORY_ORDER,
   type ManifestAdapterOptions,
   type ManifestViewModelResult,
   type NormalizedManifestEntry,
   type SupportedKind,
-  type TokenTypeModel,
+  type TokenTypeViewModel,
 } from "./types";
 
 const DEFAULT_SCHEMA_VERSION = 1;
@@ -126,7 +126,7 @@ function isSupportedEntry(
   return isSupportedKind(entry.kind);
 }
 
-function createTokenType(entry: SupportedEntry): TokenTypeModel {
+function createTokenType(entry: SupportedEntry): TokenTypeViewModel {
   const tokenTypeId = toId("token-type", `${entry.category}-${entry.type}-${entry.kind}`);
 
   return {
@@ -139,7 +139,7 @@ function createTokenType(entry: SupportedEntry): TokenTypeModel {
 }
 
 function addCategoryLink(
-  categoriesByName: Map<string, CategoryModel>,
+  categoriesByName: Map<string, CategoryViewModel>,
   categoryName: string,
   tokenTypeId: string,
 ): void {
@@ -163,8 +163,8 @@ export function buildTokenGraphViewModel(
   const schemaVersion = options.schemaVersion ?? DEFAULT_SCHEMA_VERSION;
 
   const rows = extractRows(manifestInput);
-  const tokenTypes: TokenTypeModel[] = [];
-  const categoriesByName = new Map<string, CategoryModel>();
+  const tokenTypes: TokenTypeViewModel[] = [];
+  const categoriesByName = new Map<string, CategoryViewModel>();
   let skippedCount = 0;
 
   for (const row of rows) {
@@ -201,7 +201,7 @@ export function buildTokenGraphViewModel(
 
   const categories = orderedCategories
     .map((categoryName) => categoriesByName.get(categoryName))
-    .filter((category): category is CategoryModel => Boolean(category))
+    .filter((category): category is CategoryViewModel => Boolean(category))
     .map((category) => ({
       ...category,
       tokenTypeIds: [...category.tokenTypeIds].sort(),

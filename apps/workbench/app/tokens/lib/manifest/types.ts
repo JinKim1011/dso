@@ -43,13 +43,13 @@ export type NormalizedManifestEntry = {
   semanticMap?: ManifestSemanticRecord[];
 };
 
-export type CategoryModel = {
+export type CategoryViewModel = {
   id: string;
   category: string;
   tokenTypeIds: string[];
 };
 
-export type TokenTypeModel = {
+export type TokenTypeViewModel = {
   id: string;
   category: string;
   type: string;
