@@ -1,6 +1,6 @@
 import type { TokenGraphModel } from "./manifest/types";
 
-export type TokenRow = {
+export type TokenRowViewModel = {
   id: string;
   name: string;
   cssVar?: string;

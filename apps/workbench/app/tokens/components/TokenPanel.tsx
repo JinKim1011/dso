@@ -4,13 +4,13 @@ import { createMotionTransition } from "@repo/ui";
 import { type ReactFlowInstance } from "@xyflow/react";
 import { AnimatePresence, motion } from "framer-motion";
 import useMeasure from "react-use-measure";
-import { TokenRow } from "../lib/types";
+import { TokenRowViewModel } from "../lib/types";
 import type { TokenTypographyOptions } from "../typography/components/TokenTypographyForm";
 import { FlowControls } from "./FlowControls";
 import { TokenValueDetail, type TokenValueDetailUpdate } from "./TokenValueDetail";
 
 type TokenPanelProps = {
-  selectedRow: TokenRow | null;
+  selectedRow: TokenRowViewModel | null;
   hasNextRow: boolean;
   hasPreviousRow: boolean;
   flowInstance: ReactFlowInstance | null;
