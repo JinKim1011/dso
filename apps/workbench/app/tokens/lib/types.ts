@@ -1,4 +1,4 @@
-import type { TokenTypeValueItem } from "./manifestAdapter";
+import type { TokenTypeValueItem } from "@/_shared/models/tokenGraph";
 
 export type TokenRowViewModel = {
   id: string;

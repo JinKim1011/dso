@@ -1,9 +1,9 @@
-import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
-import { diffLines } from "diff";
-import {
+import type {
+  TokenGraphViewModel,
   TokenTypeValueItem,
-  buildManifestFromGraph,
-} from "../../tokens/lib/manifestAdapter";
+} from "@/_shared/models/tokenGraph";
+import { diffLines } from "diff";
+import { buildManifestFromGraph } from "../../tokens/lib/manifestAdapter";
 
 export type ChangedRow = {
   rowId: string;

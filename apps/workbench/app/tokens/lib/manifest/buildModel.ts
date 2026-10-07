@@ -1,4 +1,7 @@
-import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
+import type {
+  TokenGraphViewModel,
+  TokenTypeValueItem,
+} from "@/_shared/models/tokenGraph";
 import { isSupportedKind, toId } from "./guards";
 import { extractRows, normalizeEntry } from "./normalize";
 import {
@@ -9,7 +12,6 @@ import {
   type NormalizedManifestEntry,
   type SupportedKind,
   type TokenTypeModel,
-  type TokenTypeValueItem,
 } from "./types";
 
 const DEFAULT_SCHEMA_VERSION = 1;

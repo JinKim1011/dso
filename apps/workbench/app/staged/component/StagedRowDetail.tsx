@@ -1,5 +1,5 @@
+import type { TokenTypeValueItem } from "@/_shared/models/tokenGraph";
 import { RowSpacingIcon } from "@radix-ui/react-icons";
-import { TokenTypeValueItem } from "../../tokens/lib/manifestAdapter";
 import { StagedRowDetailTag } from "./StagedRowDetailTag";
 import { StagedRowDetailValue } from "./StagedRowDetailValue";
 
