@@ -28,10 +28,11 @@ export type Token = {
   value: TokenValue;
 };
 
-type TokenValue =
+export type TokenValue =
   | { kind: "scalar"; value: string }
   | { kind: "modes"; light?: string; dark?: string }
-  | { kind: "typography"; fontSize: string; fontWeight: string; lineHeight: string };
+  | { kind: "typography"; fontSize: string; fontWeight: string; lineHeight: string }
+  | { kind: "unresolved" };
 
 export type TokenReference = {
   referencingTokenId: string;
