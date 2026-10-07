@@ -1,8 +1,4 @@
-import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
-
 export const SUPPORTED_KINDS = ["primitive", "semantic"] as const;
-
-export type SupportedKind = (typeof SUPPORTED_KINDS)[number];
 
 export type ManifestTokenRecord = {
   name: string;
