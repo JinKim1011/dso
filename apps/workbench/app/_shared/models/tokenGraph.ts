@@ -1,8 +1,6 @@
-import type {
-  CategoryViewModel,
-  SupportedKind,
-  TokenTypeViewModel,
-} from "@/tokens/lib/manifest/types";
+import type { CategoryViewModel, TokenTypeViewModel } from "@/tokens/lib/manifest/types";
+
+export type SupportedViewKind = "primitive" | "semantic";
 
 export type TokenGraphViewModel = {
   schemaVersion: number;
@@ -22,7 +20,7 @@ export type TokenTypeValueItem = {
   meta?: string;
   preview?: TokenValuePreviewData;
   category?: string;
-  kind?: SupportedKind;
+  kind?: SupportedViewKind;
   value?: string | { light?: string; dark?: string };
 };
 
