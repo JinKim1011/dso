@@ -16,6 +16,15 @@ import {
 
 const DEFAULT_SCHEMA_VERSION = 1;
 
+export const DEFAULT_CATEGORY_ORDER = [
+  "typography",
+  "spacing",
+  "color",
+  "motion",
+  "radius",
+  "shadow",
+] as const;
+
 function createValueItems(
   entry: SupportedEntry,
   tokenTypeId: string,
