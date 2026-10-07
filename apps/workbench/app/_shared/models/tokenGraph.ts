@@ -1,4 +1,4 @@
-export type SupportedViewKind = "primitive" | "semantic";
+import type { SupportedViewKind } from "@/_shared/models/tokenKinds";
 
 export type CategoryViewModel = {
   id: string;
