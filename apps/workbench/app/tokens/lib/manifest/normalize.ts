@@ -108,3 +108,25 @@ export function normalizeEntry(raw: unknown): NormalizedManifestEntry | null {
     semanticMap,
   };
 }
+
+export function normalizeManifest(input: unknown): ManifestNormalizationResult {
+  const rows = extractRows(input);
+  const entries: NormalizedManifestEntry[] = [];
+  let rejectedCount = 0;
+
+  for (const row of rows) {
+    const entry = normalizeEntry(row);
+
+    if (!entry) {
+      rejectedCount += 1;
+      continue;
+    }
+
+    entries.push(entry);
+  }
+
+  return {
+    entries,
+    rejectedCount,
+  };
+}
