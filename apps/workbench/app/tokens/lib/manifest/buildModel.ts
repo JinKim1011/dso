@@ -1,17 +1,17 @@
 import type {
+  CategoryViewModel,
   SupportedViewKind,
   TokenGraphViewModel,
   TokenTypeValueItem,
+  TokenTypeViewModel,
 } from "@/_shared/models/tokenGraph";
 import { isSupportedKind, toId } from "./guards";
 import { extractRows, normalizeEntry } from "./normalize";
 import {
-  type CategoryViewModel,
   DEFAULT_CATEGORY_ORDER,
   type ManifestAdapterOptions,
   type ManifestViewModelResult,
   type NormalizedManifestEntry,
-  type TokenTypeViewModel,
 } from "./types";
 
 const DEFAULT_SCHEMA_VERSION = 1;
