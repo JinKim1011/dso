@@ -31,9 +31,10 @@ export type NormalizedManifestEntry = {
   semanticMap?: ManifestSemanticRecord[];
 };
 
-export type ManifestViewModelResult = {
-  viewModel: TokenGraphViewModel;
-  skippedCount: number;
+export type ManifestAdapterOptions = {
+  categoryOrder?: readonly string[];
+  mapper?: ManifestMapper;
+  schemaVersion?: number;
 };
 
 type ManifestMapper = {

@@ -13,6 +13,11 @@ import type {
 import { isSupportedKind, toId } from "./guards";
 import { extractRows, normalizeEntry } from "./normalize";
 
+type ManifestViewModelResult = {
+  viewModel: TokenGraphViewModel;
+  skippedCount: number;
+};
+
 const DEFAULT_SCHEMA_VERSION = 1;
 
 export const DEFAULT_CATEGORY_ORDER = [
