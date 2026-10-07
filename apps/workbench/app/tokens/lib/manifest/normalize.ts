@@ -1,12 +1,14 @@
-import { asString, asStringArray, isObjectLike } from "./guards";
 import {
+  ManifestNormalizationResult,
   ManifestSemanticRecord,
   ManifestTokenRecord,
   NormalizedManifestEntry,
-} from "./types";
+} from "@/tokens/lib/manifest/types";
+import { asString, asStringArray, isObjectLike } from "./guards";
 
 export function extractRows(input: unknown): unknown[] {
   if (Array.isArray(input)) return input;
+
   if (isObjectLike(input) && Array.isArray(input.entries)) {
     return input.entries;
   }
