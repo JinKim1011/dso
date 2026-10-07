@@ -27,6 +27,11 @@ export type NormalizedManifestEntry = {
   semanticMap?: ManifestSemanticRecord[];
 };
 
+export type ManifestNormalizationResult = {
+  entries: NormalizedManifestEntry[];
+  rejectedCount: number;
+};
+
 export type ManifestAdapterOptions = {
   categoryOrder?: readonly string[];
   mapper?: ManifestMapper;
