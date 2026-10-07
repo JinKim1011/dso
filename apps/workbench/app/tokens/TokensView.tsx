@@ -51,10 +51,7 @@ export function TokensView({ category }: TokensViewProps) {
         preview: valueItem.preview,
         category: tokenType.category,
         kind: tokenType.kind,
-        value: {
-          name: valueItem.name,
-          rawValue: valueItem.value,
-        },
+        value: valueItem,
       })),
     );
   }, [filteredModel]);
