@@ -5,14 +5,13 @@ import type {
   TokenTypeValueItem,
   TokenTypeViewModel,
 } from "@/_shared/models/tokenGraph";
+import type {
+  ManifestAdapterOptions,
+  ManifestViewModelResult,
+  NormalizedManifestEntry,
+} from "@/tokens/lib/manifest/types";
 import { isSupportedKind, toId } from "./guards";
 import { extractRows, normalizeEntry } from "./normalize";
-import {
-  DEFAULT_CATEGORY_ORDER,
-  type ManifestAdapterOptions,
-  type ManifestViewModelResult,
-  type NormalizedManifestEntry,
-} from "./types";
 
 const DEFAULT_SCHEMA_VERSION = 1;
 
