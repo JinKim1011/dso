@@ -1,14 +1,5 @@
 import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
 
-export const DEFAULT_CATEGORY_ORDER = [
-  "typography",
-  "spacing",
-  "color",
-  "motion",
-  "radius",
-  "shadow",
-] as const;
-
 export const SUPPORTED_KINDS = ["primitive", "semantic"] as const;
 
 export type SupportedKind = (typeof SUPPORTED_KINDS)[number];
