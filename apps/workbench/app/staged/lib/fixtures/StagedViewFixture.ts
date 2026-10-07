@@ -1,6 +1,6 @@
-import type { TokenGraphModel } from "../../../tokens/lib/manifestAdapter";
+import type { TokenGraphViewModel } from "../../../tokens/lib/manifestAdapter";
 
-export function makeStagedViewFixture(): TokenGraphModel {
+export function makeStagedViewFixture(): TokenGraphViewModel {
   return {
     schemaVersion: 1,
     root: { id: "root", label: "Design Tokens" },

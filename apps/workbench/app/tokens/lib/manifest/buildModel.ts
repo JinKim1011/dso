@@ -7,7 +7,7 @@ import {
   type ManifestAdapterResult,
   type NormalizedManifestEntry,
   type SupportedKind,
-  TokenGraphModel,
+  TokenGraphViewModel,
   type TokenTypeModel,
   type TokenTypeValueItem,
 } from "./types";
@@ -220,7 +220,7 @@ export function buildTokenGraphModel(
 }
 
 export function buildManifestFromGraph(
-  model: TokenGraphModel,
+  model: TokenGraphViewModel,
 ): NormalizedManifestEntry[] {
   const entries: NormalizedManifestEntry[] = [];
 

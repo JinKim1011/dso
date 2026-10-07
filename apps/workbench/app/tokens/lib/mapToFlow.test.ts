@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import type { TokenGraphModel } from "./manifestAdapter";
+import type { TokenGraphViewModel } from "./manifestAdapter";
 import { mapTokenGraphToFlow } from "./mapToFlow";
 
-function makeModel(): TokenGraphModel {
+function makeModel(): TokenGraphViewModel {
   return {
     schemaVersion: 1,
     root: {

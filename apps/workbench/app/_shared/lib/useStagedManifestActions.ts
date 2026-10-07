@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback } from "react";
 import {
-  TokenGraphModel,
+  TokenGraphViewModel,
   TokenTypeValueItem,
   buildManifestFromGraph,
 } from "../../tokens/lib/manifestAdapter";
@@ -12,10 +12,10 @@ import {
 } from "../context/stagedManifestModel";
 
 type UseStagedManifestActionsProps = {
-  baseModel: TokenGraphModel;
-  draftModel: TokenGraphModel;
-  setBaseModel: Dispatch<SetStateAction<TokenGraphModel>>;
-  setDraftModel: Dispatch<SetStateAction<TokenGraphModel>>;
+  baseModel: TokenGraphViewModel;
+  draftModel: TokenGraphViewModel;
+  setBaseModel: Dispatch<SetStateAction<TokenGraphViewModel>>;
+  setDraftModel: Dispatch<SetStateAction<TokenGraphViewModel>>;
 };
 
 export function useStagedManifestActions({

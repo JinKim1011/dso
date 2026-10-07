@@ -22,7 +22,7 @@ DSO remains a single monorepo. PostgreSQL runs as a separate runtime service, wh
   - published release
   - generated document
   - generated styles
-- Define domain types separately from the exisiting `TokenGraphModel`
+- Define domain types separately from the exisiting `TokenGraphViewModel`
 - Confirm repository boundaries
   - `apps/workbench`
   - `apps/cli`

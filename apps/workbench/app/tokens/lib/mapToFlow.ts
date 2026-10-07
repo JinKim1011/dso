@@ -1,5 +1,5 @@
 import type { BuiltInEdge, Node } from "@xyflow/react";
-import type { TokenGraphModel } from "./manifestAdapter";
+import type { TokenGraphViewModel } from "./manifestAdapter";
 
 type CategoryNodeData = {
   label: string;
@@ -12,15 +12,15 @@ type FlowGraph = {
 
 export type TokenTypeNodeData = {
   label: string;
-  kind: TokenGraphModel["tokenTypes"][number]["kind"];
-  values: TokenGraphModel["tokenTypes"][number]["values"];
+  kind: TokenGraphViewModel["tokenTypes"][number]["kind"];
+  values: TokenGraphViewModel["tokenTypes"][number]["values"];
 };
 
 export type FlowNode =
   | Node<CategoryNodeData, "category">
   | Node<TokenTypeNodeData, "tokenType">;
 
-export function mapTokenGraphToFlow(model: TokenGraphModel): FlowGraph {
+export function mapTokenGraphToFlow(model: TokenGraphViewModel): FlowGraph {
   const nodes: FlowNode[] = [];
   const edges: BuiltInEdge[] = [];
 

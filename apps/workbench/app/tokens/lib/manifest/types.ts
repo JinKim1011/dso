@@ -83,7 +83,7 @@ export type TokenTypeModel = {
   values: TokenTypeValueItem[];
 };
 
-export type TokenGraphModel = {
+export type TokenGraphViewModel = {
   schemaVersion: number;
   root: {
     id: "root";
@@ -94,7 +94,7 @@ export type TokenGraphModel = {
 };
 
 export type ManifestAdapterResult = {
-  model: TokenGraphModel;
+  model: TokenGraphViewModel;
   skippedCount: number;
 };
 
