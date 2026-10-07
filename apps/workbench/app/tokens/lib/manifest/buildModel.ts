@@ -7,7 +7,6 @@ import type {
 } from "@/_shared/models/tokenGraph";
 import type {
   ManifestAdapterOptions,
-  ManifestViewModelResult,
   NormalizedManifestEntry,
 } from "@/tokens/lib/manifest/types";
 import { isSupportedKind, toId } from "./guards";
