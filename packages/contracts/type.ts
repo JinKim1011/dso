@@ -1,16 +1,16 @@
-type Project = {
+export type Project = {
   id: string;
   name: string;
 };
 
-type Release = {
+export type Release = {
   id: string;
   projectId: string;
   version: string;
   status: "draft" | "published";
 };
 
-type TokenType = {
+export type TokenType = {
   id: string;
   projectId: string;
   category: string;
@@ -19,7 +19,7 @@ type TokenType = {
   parentTypeId: string | null;
 };
 
-type Token = {
+export type Token = {
   id: string;
   projectId: string;
   tokenTypeId: string;
@@ -33,7 +33,7 @@ type TokenValue =
   | { kind: "modes"; light?: string; dark?: string }
   | { kind: "typography"; fontSize: string; fontWeight: string; lineHeight: string };
 
-type TokenReference = {
+export type TokenReference = {
   referencingTokenId: string;
   referencedTokenId: string;
 };
