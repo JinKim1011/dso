@@ -1,7 +1,4 @@
-import type {
-  TokenGraphViewModel,
-  TokenTypeValueItem,
-} from "@/_shared/models/tokenGraph";
+import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
 
 export const DEFAULT_CATEGORY_ORDER = [
   "typography",
@@ -41,20 +38,6 @@ export type NormalizedManifestEntry = {
   value: string[];
   tokens?: ManifestTokenRecord[];
   semanticMap?: ManifestSemanticRecord[];
-};
-
-export type CategoryViewModel = {
-  id: string;
-  category: string;
-  tokenTypeIds: string[];
-};
-
-export type TokenTypeViewModel = {
-  id: string;
-  category: string;
-  type: string;
-  kind: SupportedKind;
-  values: TokenTypeValueItem[];
 };
 
 export type ManifestViewModelResult = {
