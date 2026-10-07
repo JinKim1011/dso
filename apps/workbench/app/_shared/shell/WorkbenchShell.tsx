@@ -33,7 +33,7 @@ export async function WorkbenchShell({ children }: WorkbenchShellProps) {
   const result = buildTokenGraphViewModel(manifest);
 
   return (
-    <StagedManifestProvider baseManifest={result.model}>
+    <StagedManifestProvider baseManifest={result.viewModel}>
       <div className="flex h-screen flex-col">
         <Header />
         <main className="mx-mini flex-1 overflow-hidden">{children}</main>
