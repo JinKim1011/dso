@@ -1,12 +1,34 @@
-import type { TokenGraphModel } from "./manifest/types";
-
 export type TokenRowViewModel = {
   id: string;
   name: string;
   cssVar?: string;
   meta?: string;
-  preview?: TokenGraphModel["tokenTypes"][number]["values"][number]["preview"];
+  preview?: TokenRowPreview;
   category: string;
   kind: string;
-  value: TokenGraphModel["tokenTypes"][number]["values"][number];
+  value: TokenRowValue;
 };
+
+type TokenRowValue = {
+  name: string;
+  rawValue?: string | { light?: string; dark?: string };
+};
+
+type TokenRowPreview =
+  | {
+      kind: "typography";
+      typography: {
+        fontSize: string;
+        fontWeight: string;
+        lineHeight: string;
+      };
+    }
+  | {
+      kind: "color";
+      light?: string;
+      dark?: string;
+    }
+  | {
+      kind: "spacing";
+      value: string;
+    };
