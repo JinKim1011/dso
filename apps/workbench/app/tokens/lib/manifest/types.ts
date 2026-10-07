@@ -38,9 +38,3 @@ type ManifestMapper = {
   mapKind?: (kind: string) => string;
   includeEntry?: (entry: NormalizedManifestEntry) => boolean;
 };
-
-export type ManifestAdapterOptions = {
-  categoryOrder?: readonly string[];
-  mapper?: ManifestMapper;
-  schemaVersion?: number;
-};
