@@ -11,11 +11,11 @@ const result = buildTokenGraphViewModel(happyManifest);
 describe("Container-level behavior, TokensView", () => {
   it("renders root heading/container", async () => {
     render(
-      <StagedManifestProvider baseManifest={result.model}>
+      <StagedManifestProvider baseManifest={result.viewModel}>
         <TokensView />
       </StagedManifestProvider>,
     );
-    const root = result.model.root;
+    const root = result.viewModel.root;
 
     // query by text not by role, since root label is rendered inside a custom node
     const rootLabel = await screen.findByText(root.label);
@@ -24,11 +24,11 @@ describe("Container-level behavior, TokensView", () => {
 
   it("renders categories", async () => {
     render(
-      <StagedManifestProvider baseManifest={result.model}>
+      <StagedManifestProvider baseManifest={result.viewModel}>
         <TokensView />
       </StagedManifestProvider>,
     );
-    const categories = result.model.categories;
+    const categories = result.viewModel.categories;
 
     for (const category of categories) {
       const categoryLabel = await screen.findByText(category.category);
@@ -38,11 +38,11 @@ describe("Container-level behavior, TokensView", () => {
 
   it("does not duplicate token type groups across categories", async () => {
     render(
-      <StagedManifestProvider baseManifest={result.model}>
+      <StagedManifestProvider baseManifest={result.viewModel}>
         <TokensView />
       </StagedManifestProvider>,
     );
-    const allTokenTypes = result.model.tokenTypes;
+    const allTokenTypes = result.viewModel.tokenTypes;
 
     for (const tokenType of allTokenTypes) {
       const tokenTypeLabel = await screen.findAllByText(tokenType.type);
@@ -51,11 +51,11 @@ describe("Container-level behavior, TokensView", () => {
   });
 
   it("clicking one row updates detail panel", async () => {
-    const group = result.model.tokenTypes.at(0);
+    const group = result.viewModel.tokenTypes.at(0);
     if (!group) throw new Error("Expected background token type in happy fixture");
 
     render(
-      <StagedManifestProvider baseManifest={result.model}>
+      <StagedManifestProvider baseManifest={result.viewModel}>
         <TokensView />
       </StagedManifestProvider>,
     );
@@ -70,11 +70,11 @@ describe("Container-level behavior, TokensView", () => {
   });
 
   it("saving edited name updates row label", async () => {
-    const group = result.model.tokenTypes.at(0);
+    const group = result.viewModel.tokenTypes.at(0);
     if (!group) throw new Error("Expected at least one token type in fixture");
 
     render(
-      <StagedManifestProvider baseManifest={result.model}>
+      <StagedManifestProvider baseManifest={result.viewModel}>
         <TokensView />
       </StagedManifestProvider>,
     );
