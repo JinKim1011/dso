@@ -1,3 +1,8 @@
+import type {
+  TokenGraphViewModel,
+  TokenTypeValueItem,
+} from "@/_shared/models/tokenGraph";
+
 export const DEFAULT_CATEGORY_ORDER = [
   "typography",
   "spacing",
@@ -8,7 +13,7 @@ export const DEFAULT_CATEGORY_ORDER = [
 ] as const;
 
 export const SUPPORTED_KINDS = ["primitive", "semantic"] as const;
-// limit v1 to primitive and semantic, excluding class-union kind
+
 export type SupportedKind = (typeof SUPPORTED_KINDS)[number];
 
 export type ManifestTokenRecord = {
@@ -38,37 +43,6 @@ export type NormalizedManifestEntry = {
   semanticMap?: ManifestSemanticRecord[];
 };
 
-type TokenValuePreviewData =
-  | {
-      kind: "typography";
-      typography: {
-        fontSize: string;
-        fontWeight: string;
-        lineHeight: string;
-      };
-    }
-  | {
-      kind: "color";
-      light?: string;
-      dark?: string;
-    }
-  | {
-      kind: "spacing";
-      value: string;
-    };
-
-export type TokenTypeValueItem = {
-  id: string;
-  name: string;
-  cssVar?: string;
-  status?: string;
-  meta?: string;
-  preview?: TokenValuePreviewData;
-  category?: string;
-  kind?: SupportedKind;
-  value?: string | { light?: string; dark?: string };
-};
-
 export type CategoryModel = {
   id: string;
   category: string;
@@ -83,22 +57,12 @@ export type TokenTypeModel = {
   values: TokenTypeValueItem[];
 };
 
-export type TokenGraphViewModel = {
-  schemaVersion: number;
-  root: {
-    id: "root";
-    label: "Design Tokens";
-  };
-  categories: CategoryModel[];
-  tokenTypes: TokenTypeModel[];
-};
-
 export type ManifestViewModelResult = {
   viewModel: TokenGraphViewModel;
   skippedCount: number;
 };
 
-export type ManifestMapper = {
+type ManifestMapper = {
   mapCategory?: (category: string) => string;
   mapKind?: (kind: string) => string;
   includeEntry?: (entry: NormalizedManifestEntry) => boolean;
