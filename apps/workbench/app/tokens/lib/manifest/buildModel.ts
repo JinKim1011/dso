@@ -206,7 +206,7 @@ export function buildTokenGraphViewModel(
     }));
 
   return {
-    model: {
+    viewModel: {
       schemaVersion,
       root: {
         id: "root",
