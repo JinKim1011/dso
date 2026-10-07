@@ -4,7 +4,7 @@ import {
   type CategoryModel,
   DEFAULT_CATEGORY_ORDER,
   type ManifestAdapterOptions,
-  type ManifestAdapterResult,
+  type ManifestViewModelResult,
   type NormalizedManifestEntry,
   type SupportedKind,
   TokenGraphViewModel,
@@ -155,7 +155,7 @@ function addCategoryLink(
 export function buildTokenGraphViewModel(
   manifestInput: unknown,
   options: ManifestAdapterOptions = {},
-): ManifestAdapterResult {
+): ManifestViewModelResult {
   const mapper = options.mapper;
   const categoryOrder = options.categoryOrder ?? DEFAULT_CATEGORY_ORDER;
   const schemaVersion = options.schemaVersion ?? DEFAULT_SCHEMA_VERSION;

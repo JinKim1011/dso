@@ -93,7 +93,7 @@ export type TokenGraphViewModel = {
   tokenTypes: TokenTypeModel[];
 };
 
-export type ManifestAdapterResult = {
+export type ManifestViewModelResult = {
   model: TokenGraphViewModel;
   skippedCount: number;
 };
