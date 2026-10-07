@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { buildTokenGraphViewModel } from "./buildModel";
+import { buildTokenGraphViewModel, DEFAULT_CATEGORY_ORDER } from "./buildModel";
 import edgeInvalidManifest from "./fixtures/edge-invalid-manifest.json";
 import happyManifest from "./fixtures/happy-manifest.json";
 import semanticTypographyManifest from "./fixtures/semantic-typography-manifest.json";
-import { DEFAULT_CATEGORY_ORDER } from "./types";
 
 describe("buildModel.buildTokenGraphViewModel", () => {
   const happyResult = buildTokenGraphViewModel(happyManifest);
