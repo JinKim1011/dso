@@ -1,10 +1,10 @@
 import type {
   CategoryViewModel,
-  SupportedViewKind,
   TokenGraphViewModel,
   TokenTypeValueItem,
   TokenTypeViewModel,
 } from "@/_shared/models/tokenGraph";
+import type { SupportedViewKind } from "@/_shared/models/tokenKinds";
 import type {
   ManifestAdapterOptions,
   NormalizedManifestEntry,
