@@ -1,6 +1,6 @@
+import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
 import { diffLines } from "diff";
 import {
-  TokenGraphViewModel,
   TokenTypeValueItem,
   buildManifestFromGraph,
 } from "../../tokens/lib/manifestAdapter";

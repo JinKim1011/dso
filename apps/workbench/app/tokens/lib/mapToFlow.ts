@@ -1,5 +1,5 @@
+import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
 import type { BuiltInEdge, Node } from "@xyflow/react";
-import type { TokenGraphViewModel } from "./manifestAdapter";
 
 type CategoryNodeData = {
   label: string;

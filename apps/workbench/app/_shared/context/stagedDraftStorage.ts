@@ -1,4 +1,4 @@
-import { TokenGraphViewModel } from "../../tokens/lib/manifestAdapter";
+import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
 
 const STAGED_DRAFT_STORAGE_VERSION = 1;
 const STAGED_DRAFT_STORAGE_KEY = "dso-workbench-staged-draft";

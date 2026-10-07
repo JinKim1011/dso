@@ -1,3 +1,4 @@
+import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
 import { isSupportedKind, toId } from "./guards";
 import { extractRows, normalizeEntry } from "./normalize";
 import {
@@ -7,7 +8,6 @@ import {
   type ManifestViewModelResult,
   type NormalizedManifestEntry,
   type SupportedKind,
-  TokenGraphViewModel,
   type TokenTypeModel,
   type TokenTypeValueItem,
 } from "./types";

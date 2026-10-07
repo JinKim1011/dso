@@ -1,5 +1,6 @@
 "use client";
 
+import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
 import {
   createContext,
   ReactNode,
@@ -8,7 +9,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { TokenGraphViewModel } from "../../tokens/lib/manifestAdapter";
 import { useStagedManifestActions } from "../lib/useStagedManifestActions";
 import {
   clearPersistedDraftModel,

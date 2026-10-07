@@ -1,5 +1,5 @@
+import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
 import { describe, expect, it } from "vitest";
-import type { TokenGraphViewModel } from "./manifestAdapter";
 import { mapTokenGraphToFlow } from "./mapToFlow";
 
 function makeModel(): TokenGraphViewModel {
