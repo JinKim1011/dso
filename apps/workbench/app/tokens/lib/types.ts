@@ -1,3 +1,5 @@
+import type { TokenTypeValueItem } from "./manifestAdapter";
+
 export type TokenRowViewModel = {
   id: string;
   name: string;
@@ -6,12 +8,7 @@ export type TokenRowViewModel = {
   preview?: TokenRowPreview;
   category: string;
   kind: string;
-  value: TokenRowValue;
-};
-
-type TokenRowValue = {
-  name: string;
-  rawValue?: string | { light?: string; dark?: string };
+  value: TokenTypeValueItem;
 };
 
 type TokenRowPreview =
