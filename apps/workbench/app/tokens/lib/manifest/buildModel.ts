@@ -5,12 +5,12 @@ import type {
   TokenTypeViewModel,
 } from "@/_shared/models/tokenGraph";
 import type { SupportedViewKind } from "@/_shared/models/tokenKinds";
+import { normalizeManifest } from "@/tokens/lib/manifest/normalize";
 import type {
   ManifestAdapterOptions,
   NormalizedManifestEntry,
 } from "@/tokens/lib/manifest/types";
 import { isSupportedKind, toId } from "./guards";
-import { extractRows, normalizeEntry } from "./normalize";
 
 type ManifestViewModelResult = {
   viewModel: TokenGraphViewModel;
@@ -174,24 +174,13 @@ export function buildTokenGraphViewModel(
   const categoryOrder = options.categoryOrder ?? DEFAULT_CATEGORY_ORDER;
   const schemaVersion = options.schemaVersion ?? DEFAULT_SCHEMA_VERSION;
 
-  const rows = extractRows(manifestInput);
-
-  const normalizedEntries = rows
-    .map(normalizeEntry)
-    .filter((entry): entry is NormalizedManifestEntry => entry !== null);
+  const { entries, rejectedCount } = normalizeManifest(manifestInput);
 
   const tokenTypes: TokenTypeViewModel[] = [];
   const categoriesByName = new Map<string, CategoryViewModel>();
-  let skippedCount = 0;
+  let skippedCount = rejectedCount;
 
-  for (const row of normalizedEntries) {
-    const normalized = normalizeEntry(row);
-
-    if (!normalized) {
-      skippedCount += 1;
-      continue;
-    }
-
+  for (const normalized of entries) {
     const entry = mapEntry(normalized, mapper);
 
     if (!isSupportedEntry(entry, mapper)) {
