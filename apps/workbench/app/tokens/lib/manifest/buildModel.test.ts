@@ -11,24 +11,24 @@ describe("buildModel.buildTokenGraphViewModel", () => {
   const semanticResult = buildTokenGraphViewModel(semanticTypographyManifest);
 
   it("creates root with expected id and label", () => {
-    expect(happyResult.model.root.id).toBe("root");
-    expect(happyResult.model.root.label).toBe("Design Tokens");
+    expect(happyResult.viewModel.root.id).toBe("root");
+    expect(happyResult.viewModel.root.label).toBe("Design Tokens");
   });
 
   it("creates non-empty categories and tokenTypes", () => {
-    expect(happyResult.model.categories.length).toBeGreaterThan(0);
-    expect(happyResult.model.tokenTypes.length).toBeGreaterThan(0);
+    expect(happyResult.viewModel.categories.length).toBeGreaterThan(0);
+    expect(happyResult.viewModel.tokenTypes.length).toBeGreaterThan(0);
 
-    expect(happyResult.model.categories.length).toEqual(2);
-    expect(happyResult.model.tokenTypes.length).toEqual(2);
+    expect(happyResult.viewModel.categories.length).toEqual(2);
+    expect(happyResult.viewModel.tokenTypes.length).toEqual(2);
   });
 
   it("links category tokenTypeIds to tokenTypes in the same category", () => {
     const tokenTypesById = new Map(
-      happyResult.model.tokenTypes.map((tokenType) => [tokenType.id, tokenType]),
+      happyResult.viewModel.tokenTypes.map((tokenType) => [tokenType.id, tokenType]),
     );
 
-    for (const category of happyResult.model.categories) {
+    for (const category of happyResult.viewModel.categories) {
       for (const tokenTypeId of category.tokenTypeIds) {
         const tokenType = tokenTypesById.get(tokenTypeId);
 
@@ -39,17 +39,17 @@ describe("buildModel.buildTokenGraphViewModel", () => {
   });
 
   it("keeps values inside tokenType.values", () => {
-    expect(happyResult.model.tokenTypes).toBeInstanceOf(Array);
-    expect(happyResult.model.tokenTypes.length).toBe(2);
+    expect(happyResult.viewModel.tokenTypes).toBeInstanceOf(Array);
+    expect(happyResult.viewModel.tokenTypes.length).toBe(2);
 
-    for (const tokenType of happyResult.model.tokenTypes) {
+    for (const tokenType of happyResult.viewModel.tokenTypes) {
       expect(tokenType.values).toBeInstanceOf(Array);
       expect(tokenType.values.length).toBeGreaterThan(0);
     }
   });
 
   it("creates valid token value preview data", () => {
-    const backgroudType = happyResult.model.tokenTypes.find(
+    const backgroudType = happyResult.viewModel.tokenTypes.find(
       (tokenType) => tokenType.category === "color" && tokenType.type === "background",
     );
     const primaryColor = backgroudType?.values.find((value) => value.name === "primary");
@@ -62,7 +62,7 @@ describe("buildModel.buildTokenGraphViewModel", () => {
       dark: "oklch(0.132 0.036 276.6)",
     });
 
-    const stepType = happyResult.model.tokenTypes.find(
+    const stepType = happyResult.viewModel.tokenTypes.find(
       (tokenType) => tokenType.category === "spacing" && tokenType.type === "step",
     );
     const microStep = stepType?.values.find((value) => value.name === "micro");
@@ -74,7 +74,7 @@ describe("buildModel.buildTokenGraphViewModel", () => {
       value: "0.125rem",
     });
 
-    const semanticKind = semanticResult.model.tokenTypes.find(
+    const semanticKind = semanticResult.viewModel.tokenTypes.find(
       (tokenType) => tokenType.kind === "semantic",
     );
     const bodyM = semanticKind?.values.find((value) => (value.name = "body-md"));
@@ -92,9 +92,9 @@ describe("buildModel.buildTokenGraphViewModel", () => {
 
   it("skips invalid rows and keeps the valid row", () => {
     expect(edgeResult.skippedCount).toBe(2);
-    expect(edgeResult.model.tokenTypes.length).toBe(1);
+    expect(edgeResult.viewModel.tokenTypes.length).toBe(1);
 
-    for (const tokenType of edgeResult.model.tokenTypes) {
+    for (const tokenType of edgeResult.viewModel.tokenTypes) {
       expect(tokenType.category).toBe("spacing");
       expect(tokenType.type).toBe("step");
       expect(tokenType.kind).toBe("primitive");
@@ -102,7 +102,9 @@ describe("buildModel.buildTokenGraphViewModel", () => {
   });
 
   it("orders categories by DEFAULT_CATEGORY_ORDER", () => {
-    const actualOrder = happyResult.model.categories.map((category) => category.category);
+    const actualOrder = happyResult.viewModel.categories.map(
+      (category) => category.category,
+    );
     const expectedOrder = DEFAULT_CATEGORY_ORDER.filter((name) =>
       actualOrder.includes(name),
     );
@@ -115,10 +117,10 @@ describe("buildModel.buildTokenGraphViewModel", () => {
     const shuffledInput = [...happyManifest].reverse();
     const shuffled = buildTokenGraphViewModel(shuffledInput);
 
-    const originalOrder = original.model.tokenTypes.map((tokenType) =>
+    const originalOrder = original.viewModel.tokenTypes.map((tokenType) =>
       [tokenType.category, tokenType.type, tokenType.kind].join("|"),
     );
-    const shuffledOrder = shuffled.model.tokenTypes.map((tokenType) =>
+    const shuffledOrder = shuffled.viewModel.tokenTypes.map((tokenType) =>
       [tokenType.category, tokenType.type, tokenType.kind].join("|"),
     );
 
