@@ -3,10 +3,10 @@ import userEvent from "@testing-library/user-event";
 import { createElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 import happyManifest from "../lib/manifest/fixtures/happy-manifest.json";
-import { buildTokenGraphModel } from "../lib/manifestAdapter";
+import { buildTokenGraphViewModel } from "../lib/manifestAdapter";
 import { TokenTypeNode } from "./TokenTypeNode";
 
-const result = buildTokenGraphModel(happyManifest);
+const result = buildTokenGraphViewModel(happyManifest);
 
 describe("Node-level behavior, TokenTypeNode", () => {
   const group = result.model.tokenTypes.at(0);

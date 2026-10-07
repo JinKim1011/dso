@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { type ReactNode } from "react";
-import { buildTokenGraphModel } from "../../tokens/lib/manifestAdapter";
+import { buildTokenGraphViewModel } from "../../tokens/lib/manifestAdapter";
 import { StagedManifestProvider } from "../context/StagedManifestContext";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
@@ -30,7 +30,7 @@ export async function WorkbenchShell({ children }: WorkbenchShellProps) {
     );
   }
 
-  const result = buildTokenGraphModel(manifest);
+  const result = buildTokenGraphViewModel(manifest);
 
   return (
     <StagedManifestProvider baseManifest={result.model}>

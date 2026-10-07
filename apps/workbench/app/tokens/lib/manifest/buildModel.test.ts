@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { buildTokenGraphModel } from "./buildModel";
+import { buildTokenGraphViewModel } from "./buildModel";
 import edgeInvalidManifest from "./fixtures/edge-invalid-manifest.json";
 import happyManifest from "./fixtures/happy-manifest.json";
 import semanticTypographyManifest from "./fixtures/semantic-typography-manifest.json";
 import { DEFAULT_CATEGORY_ORDER } from "./types";
 
-describe("buildModel.buildTokenGraphModel", () => {
-  const happyResult = buildTokenGraphModel(happyManifest);
-  const edgeResult = buildTokenGraphModel(edgeInvalidManifest);
-  const semanticResult = buildTokenGraphModel(semanticTypographyManifest);
+describe("buildModel.buildTokenGraphViewModel", () => {
+  const happyResult = buildTokenGraphViewModel(happyManifest);
+  const edgeResult = buildTokenGraphViewModel(edgeInvalidManifest);
+  const semanticResult = buildTokenGraphViewModel(semanticTypographyManifest);
 
   it("creates root with expected id and label", () => {
     expect(happyResult.model.root.id).toBe("root");
@@ -111,9 +111,9 @@ describe("buildModel.buildTokenGraphModel", () => {
   });
 
   it("deterministic tokenType sorting", () => {
-    const original = buildTokenGraphModel(happyManifest);
+    const original = buildTokenGraphViewModel(happyManifest);
     const shuffledInput = [...happyManifest].reverse();
-    const shuffled = buildTokenGraphModel(shuffledInput);
+    const shuffled = buildTokenGraphViewModel(shuffledInput);
 
     const originalOrder = original.model.tokenTypes.map((tokenType) =>
       [tokenType.category, tokenType.type, tokenType.kind].join("|"),

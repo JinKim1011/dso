@@ -13,7 +13,7 @@
 
 ## 3. Non-goal
 
-- Update `buildTokenGraphModel`: this already groups types into `categories` (with `tokenTypeIds`) and includes `tokenTypes`, so per-category pages can be implemented in the view layer.
+- Update `buildTokenGraphViewModel`: this already groups types into `categories` (with `tokenTypeIds`) and includes `tokenTypes`, so per-category pages can be implemented in the view layer.
 
 ## 4. Scope
 
@@ -25,7 +25,7 @@
 ## 5. Approach
 
 - Treat category as the route boundary, not as a new model layer.
-- Reuse the existing `buildTokenGraphModel` output and filter by category in view layer.
+- Reuse the existing `buildTokenGraphViewModel` output and filter by category in view layer.
 - Keep `mapTokenGraphToFlow(model)` as-is for now; add optional mapper params only if category-specific layout divergence appears.
 - Keep the shared graph topology stable first
 - Avoid a new API endpoint until there is a real need to fetch category-specific data separately.

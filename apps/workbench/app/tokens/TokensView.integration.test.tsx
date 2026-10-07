@@ -3,10 +3,10 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { StagedManifestProvider } from "../_shared/context/StagedManifestContext";
 import happyManifest from "./lib/manifest/fixtures/happy-manifest.json";
-import { buildTokenGraphModel } from "./lib/manifestAdapter";
+import { buildTokenGraphViewModel } from "./lib/manifestAdapter";
 import { TokensView } from "./TokensView";
 
-const result = buildTokenGraphModel(happyManifest);
+const result = buildTokenGraphViewModel(happyManifest);
 
 describe("Container-level behavior, TokensView", () => {
   it("renders root heading/container", async () => {

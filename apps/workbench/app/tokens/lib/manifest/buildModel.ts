@@ -152,7 +152,7 @@ function addCategoryLink(
   categoriesByName.get(categoryName)?.tokenTypeIds.push(tokenTypeId);
 }
 
-export function buildTokenGraphModel(
+export function buildTokenGraphViewModel(
   manifestInput: unknown,
   options: ManifestAdapterOptions = {},
 ): ManifestAdapterResult {
