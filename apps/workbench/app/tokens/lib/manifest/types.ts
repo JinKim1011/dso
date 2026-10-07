@@ -94,7 +94,7 @@ export type TokenGraphViewModel = {
 };
 
 export type ManifestViewModelResult = {
-  model: TokenGraphViewModel;
+  viewModel: TokenGraphViewModel;
   skippedCount: number;
 };
 
