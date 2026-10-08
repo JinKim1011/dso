@@ -32,3 +32,9 @@ export function toId(prefix: string, value: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")}`;
 }
+
+export function domainId(prefix: string, parts: string[]): string {
+  const encodeIdParts = parts.map((part) => `${part.length}:${part}`).join("");
+
+  return `${prefix}:${encodeIdParts}`;
+}
