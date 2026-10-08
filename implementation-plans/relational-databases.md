@@ -13,13 +13,16 @@ DSO remains a single monorepo. PostgreSQL runs as a separate runtime service, wh
 #### Tasks
 
 - Define the baseline use cases and terminology.
-  - token contract
+  - token
+  - token type
+  - token type hierachy
+  - token referecne
   - component registration
   - per-component document template
   - published release
   - generated document
   - generated styles
-- Define domain types separately from the exisiting `TokenGraphModel`
+- Define domain types separately from the exisiting `TokenGraphViewModel`
 - Confirm repository boundaries
   - `apps/workbench`
   - `apps/cli`
@@ -31,6 +34,20 @@ DSO remains a single monorepo. PostgreSQL runs as a separate runtime service, wh
   - `apps/docs`
 - Draft the API response for a published release.
 - Create the first ER-model draft
+
+#### Scope decision
+
+DSO does not claim to know which tokens are used by component source code. Component-token usage analysis is out of scope for the first release.
+
+DSO models relationships within the token domain:
+
+- token types form a single-parent hierarchy
+- tokens can reference other tokens
+- token references support reverse dependency queries
+
+A token type can have zero or one parent. The hierarchy is represented with `parent_type_id`; a separate token-type relationship table is not required.
+
+Source-code scanning and automatic component-token discovery remain future work.
 
 #### Requirment evidence
 
@@ -47,12 +64,14 @@ Use cases, terminology, architecture, and first ER model are documented
 - Create migrations for
   - `projects`
   - `releases`
-  - `token-types`
+  - `token_types(parent_type_id)`
   - `tokens`
   - `token_references`
+    - `referencing_token_id`
+    - `referenced_token_id`
+    - `relationship_type`, if needed
   - `components`
   - `document-templates`
-  - `component-tokens`
 - Add
   - primary keys
   - foreign keys
@@ -60,7 +79,16 @@ Use cases, terminology, architecture, and first ER model are documented
   - check constraints where useful
   - indexes
   - release relationships
-  - many-to-many `component-tokens` relationship
+- Constraints
+  - A token type has zero or one parent.
+  - A root token type has a null `parent_type_id`.
+  - A token type cannot be its own parent.
+  - A parent token type must belong to the same project.
+  - Cyclic token-type hierarchies are rejected.
+  - A token cannot reference itself.
+  - Duplicate token references are rejected.
+  - Referenced tokens must belong to the same project.
+  - Referencing and referenced tokens must exist.
 
 #### Requirement evidence
 
@@ -74,9 +102,10 @@ The complete schema can be created from an empty PostgreSQL database.
 
 #### Tasks
 
-- import `design-tokens-manifest.json` as seed input.
+- Import token definitions from `design-tokens-manifest.json` as seed input.
+- Add token types and their parent-child hierarchy.
+- Add token-to-token references.
 - Add realistic components and Markdown templates.
-- Add component-token relationships.
 - Record row counts and data-generation method.
 - Implement basic SQL
   - insert
@@ -85,9 +114,12 @@ The complete schema can be created from an empty PostgreSQL database.
   - ordering
 - Implement advanced SQL
   - joins
-  - many-to-many queries
+  - self-joins
+  - token-reference queries
+  - reverse token-reference queries
+  - token-type hierarchy queries
   - aggregates
-  - unused-token query
+  - unreferenced-token analysis
   - complete release query
   - upsert
 
@@ -109,8 +141,10 @@ The database contains inspectable, non-trival data and documented queries
 - Implement operation such as
   - `getPublishedRelease`
   - `listTokensByType`
-  - `getComponentTokens`
-  - `getComponentUsingToken`
+  - `getReferencedTokens`
+  - `getReferencingTokens`
+  - `getTokenTypeChildren`
+  - `getTokenTypeAncestors`
   - `getTemplateForComponent`
   - `saveStagedTokenChanges`
 - Add tests for
@@ -119,7 +153,13 @@ The database contains inspectable, non-trival data and documented queries
   - Joins
   - Foreign key failures
   - Uniquness failures
-  - Many-to-many queries
+  - Token-reference joins
+  - Reverse token-reference queries
+  - Token-type hierarchy queries
+  - Cross-project reference failures
+  - Self-reference failures
+  - Duplicate-reference failures
+  - Transaction rollback after a failed relationship update
 
 #### Requirement evidence
 
@@ -140,9 +180,10 @@ All application database operations use tested repositories.
 - Add simple API-key authentication.
 - Support
   - token editing
+  - token-reference editing
+  - token-type hierarchy editing
   - component registration
   - template assignment
-  - component-token association
   - release publishing
 
 #### Requirement evidence
@@ -160,6 +201,8 @@ Normal workbench usage no longer reads or write `design-toekns-manifest.json`
 - Save staged changes inside a transaction.
 - Demonstarte rollback when one update fails.
 - Add an authenticated published-release API.
+- Include token definitions, token references, token-type hierarchy data, components, and templates in the published release.
+- Ensure the release snapshot does not claim to contain source-code component-token usage.
 - Create `apps/cli` with:
   - `dso pull`
   - `dso generate`
@@ -185,7 +228,9 @@ Workbench publish -> API -> CLI pull -> local generation works end to end
 - Verifiy indexes for
   - project/release token lookup
   - token-type lookup
-  - component-token reverse lookup
+  - token-reference lookup
+  - reverse token-reference lookup
+  - token-type hierarchy lookup
 - Document
   - connection pooling
   - caching
@@ -214,6 +259,9 @@ Performance measurements and design explanations are ready for the report.
   - ER model with keys, cardinality, constraints, and indexes
   - Data-volume and seed-generation explanation
   - SQL examples
+  - Token-type hierarchy and token-reference explanation
+  - Reverse token-reference query examples
+  - Source-code scanning scope limitation
   - Transaction and rollback explanation
   - Indexing and `EXPLAIN ANALYZE` results
   - Normalization explanation
@@ -226,7 +274,7 @@ Performance measurements and design explanations are ready for the report.
   5.  Edit and publish resources
   6.  Run `dso pull`
   7.  Run `dso generate`
-  8.  Inspect Markdown, JSON, and CSS output
+  8.  Inspect Markdown, JSON, CSS, token references, and token-type hierarchy data
   9.  Run repository tests, workbench tests, typecheck, lint, and smoke tests
 
 ## Requirement Coverage
@@ -240,7 +288,7 @@ Performance measurements and design explanations are ready for the report.
 - Data access: packages/db used by the API and workbench.
 - ORM understanding: documented comparison and design rationale.
 - Practical project: workbench, API, CLI, and generators.
-- Non-trivial model: multiple entities and component_tokens.
+- Non-trivial model: multiple entities, token-type hierarchy, and token-reference relationships.
 - Hand-in requirements: README, use cases, ER model, setup instructions, and data explanation.
 
 ## Deliberate Exclusions
@@ -252,6 +300,6 @@ Keep these as strech goals.
 - Multiple database engines
 - Cloud scaling
 - Advanced release branching
-- Automatic component scanning
+- Automatic source-code scanning and component-token discovery
 - Full production deployment
 - Maintaining both a raw SQL and ORM implementation

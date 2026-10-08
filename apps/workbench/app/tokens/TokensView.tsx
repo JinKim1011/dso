@@ -13,7 +13,7 @@ import { CategoryFlowNode } from "./components/CategoryFlowNode";
 import { TokenPanel } from "./components/TokenPanel";
 import { TokenTypeFlowNode } from "./components/TokenTypeFlowNode";
 import { mapTokenGraphToFlow, type TokenTypeNodeData } from "./lib/mapToFlow";
-import { TokenRow } from "./lib/types";
+import { TokenRowViewModel } from "./lib/types";
 import { useRowNavigation } from "./lib/useRowNavigation";
 import { useTypographyOptions } from "./lib/useTypographyOptions";
 
@@ -41,7 +41,7 @@ export function TokensView({ category }: TokensViewProps) {
   const flowBase = useMemo(() => {
     return mapTokenGraphToFlow(filteredModel);
   }, [filteredModel]);
-  const rows = useMemo<TokenRow[]>(() => {
+  const rows = useMemo<TokenRowViewModel[]>(() => {
     return filteredModel.tokenTypes.flatMap((tokenType) =>
       tokenType.values.map((valueItem) => ({
         id: valueItem.id,

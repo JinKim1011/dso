@@ -1,11 +1,11 @@
-import { TokenGraphModel } from "../../tokens/lib/manifestAdapter";
+import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
 
 const STAGED_DRAFT_STORAGE_VERSION = 1;
 const STAGED_DRAFT_STORAGE_KEY = "dso-workbench-staged-draft";
 
 type StagedDraftStoragePayload = {
   version: number;
-  draftModel: TokenGraphModel;
+  draftModel: TokenGraphViewModel;
 };
 
 export function clearPersistedDraftModel() {
@@ -16,7 +16,7 @@ export function clearPersistedDraftModel() {
   } catch {}
 }
 
-export function loadPersistedDraftModel(): TokenGraphModel | null {
+export function loadPersistedDraftModel(): TokenGraphViewModel | null {
   if (typeof window === "undefined") return null;
 
   try {
@@ -38,13 +38,13 @@ export function loadPersistedDraftModel(): TokenGraphModel | null {
       return null;
     }
 
-    return parsed.draftModel as TokenGraphModel;
+    return parsed.draftModel as TokenGraphViewModel;
   } catch {
     return null;
   }
 }
 
-export function persistDraftModel(model: TokenGraphModel) {
+export function persistDraftModel(model: TokenGraphViewModel) {
   if (typeof window === "undefined") return;
 
   try {

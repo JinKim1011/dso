@@ -1,8 +1,8 @@
+import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
 import { describe, expect, it } from "vitest";
-import type { TokenGraphModel } from "./manifestAdapter";
 import { mapTokenGraphToFlow } from "./mapToFlow";
 
-function makeModel(): TokenGraphModel {
+function makeModel(): TokenGraphViewModel {
   return {
     schemaVersion: 1,
     root: {

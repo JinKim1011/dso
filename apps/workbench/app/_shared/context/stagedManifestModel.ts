@@ -1,9 +1,9 @@
-import { diffLines } from "diff";
-import {
-  TokenGraphModel,
+import type {
+  TokenGraphViewModel,
   TokenTypeValueItem,
-  buildManifestFromGraph,
-} from "../../tokens/lib/manifestAdapter";
+} from "@/_shared/models/tokenGraph";
+import { diffLines } from "diff";
+import { buildManifestFromGraph } from "../../tokens/lib/manifestAdapter";
 
 export type ChangedRow = {
   rowId: string;
@@ -21,7 +21,7 @@ type ManifestLineChangeStats = {
   deletedLines: number;
 };
 
-function buildRowIndex(model: TokenGraphModel) {
+function buildRowIndex(model: TokenGraphViewModel) {
   const index = new Map<
     string,
     { category: string; kind: string; value: TokenTypeValueItem }
@@ -50,8 +50,8 @@ function isRowChanged(
 }
 
 export function buildChangedRows(
-  baseModel: TokenGraphModel,
-  draftModel: TokenGraphModel,
+  baseModel: TokenGraphViewModel,
+  draftModel: TokenGraphViewModel,
 ): ChangedRow[] {
   const baseIndex = buildRowIndex(baseModel);
   const changedRows: ChangedRow[] = [];
@@ -81,7 +81,7 @@ export function buildChangedRows(
 }
 
 export function findRowById(
-  model: TokenGraphModel,
+  model: TokenGraphViewModel,
   rowId: string,
 ): TokenTypeValueItem | undefined {
   for (const tokenType of model.tokenTypes) {
@@ -94,10 +94,10 @@ export function findRowById(
 }
 
 export function replaceRowInModel(
-  model: TokenGraphModel,
+  model: TokenGraphViewModel,
   rowId: string,
   replacement: TokenTypeValueItem,
-): TokenGraphModel {
+): TokenGraphViewModel {
   return {
     ...model,
     tokenTypes: model.tokenTypes.map((tokenType) => ({
@@ -108,8 +108,8 @@ export function replaceRowInModel(
 }
 
 export function getManifestLineChangeStats(
-  baseModel: TokenGraphModel,
-  draftModel: TokenGraphModel,
+  baseModel: TokenGraphViewModel,
+  draftModel: TokenGraphViewModel,
 ): ManifestLineChangeStats {
   const baseManifest = buildManifestFromGraph(baseModel);
   const draftManifest = buildManifestFromGraph(draftModel);

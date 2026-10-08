@@ -1,9 +1,9 @@
 "use client";
 
+import type { TokenTypeValueItem } from "@/_shared/models/tokenGraph";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
 import { TokenColorDraft, TokenColorForm } from "../color/components/TokenColorForm";
-import { TokenTypeValueItem } from "../lib/manifestAdapter";
 import {
   TokenTypographyDraft,
   TokenTypographyForm,

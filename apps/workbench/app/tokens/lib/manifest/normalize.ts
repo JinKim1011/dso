@@ -1,12 +1,14 @@
-import { asString, asStringArray, isObjectLike } from "./guards";
 import {
+  ManifestNormalizationResult,
   ManifestSemanticRecord,
   ManifestTokenRecord,
   NormalizedManifestEntry,
-} from "./types";
+} from "@/tokens/lib/manifest/types";
+import { asString, asStringArray, isObjectLike } from "./guards";
 
 export function extractRows(input: unknown): unknown[] {
   if (Array.isArray(input)) return input;
+
   if (isObjectLike(input) && Array.isArray(input.entries)) {
     return input.entries;
   }
@@ -106,5 +108,27 @@ export function normalizeEntry(raw: unknown): NormalizedManifestEntry | null {
     value,
     tokens,
     semanticMap,
+  };
+}
+
+export function normalizeManifest(input: unknown): ManifestNormalizationResult {
+  const rows = extractRows(input);
+  const entries: NormalizedManifestEntry[] = [];
+  let rejectedCount = 0;
+
+  for (const row of rows) {
+    const entry = normalizeEntry(row);
+
+    if (!entry) {
+      rejectedCount += 1;
+      continue;
+    }
+
+    entries.push(entry);
+  }
+
+  return {
+    entries,
+    rejectedCount,
   };
 }

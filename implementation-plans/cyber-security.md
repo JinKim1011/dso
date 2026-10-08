@@ -90,6 +90,17 @@ Align with W1 in `relational-databases.md`.
 
 Every important asset and entry point has a threat, mitigation, and planned test.
 
+### Token relationship scope
+
+DSO does not ingest application source code or claim to know which tokens are used by components.
+
+The protected token relationships are:
+
+- token-type parent-child relationships
+- token-to-token references
+
+Component-token usage discovery is excluded from the first release.
+
 ## W2: Security Schema and Migrations
 
 Align with W2 in `relational-databases.md`.
@@ -139,12 +150,18 @@ Align with W3 in `relational-databases.md`.
 - Add fake users, projects, memberships, components, and releases to `database/seed`.
 - Add shared schemas and types to `packages/contracts` for:
   - Login
-  - Token writes
+  - Token and token-reference writes
+  - Token-type hierarchy writes
   - Component/template writes
   - Release publishing
   - API-key creation
   - Release downloads
-- Validate types, required fields, enum values, identifiers, relationships, and unknown fields.
+- Validate types, required fields, enum values, identifiers, token references, token-type hierarchy relationships, and unknown fields.
+  - Reject self-referencing tokens.
+  - Reject duplicate token references.
+  - Reject references across projects.
+  - Reject token-type parents from another project.
+  - Reject cyclic token-type hierarchies.
 - Enforce request-body, template, string, and collection-size limits.
 - Add web authentication:
   - Login with email and password
@@ -187,7 +204,10 @@ Align with W4 in `relational-databases.md`.
 - Implement repositories for:
   - `getPublishedRelease`
   - `listTokensByType`
-  - `getComponentTokens`
+  - `getReferencedTokens`
+  - `getReferencingTokens`
+  - `getTokenTypeChildren`
+  - `getTokenTypeAncestors`
   - `getTemplateForComponent`
   - `saveStagedTokenChanges`
   - `authorizeProjectMember`
@@ -203,7 +223,14 @@ Align with W4 in `relational-databases.md`.
 - Empty results
 - Parameterized SQL with injection payloads
 - Unauthorized project access
-- Many-to-many component-token queries
+- Token-reference joins
+- Reverse token-reference queries
+- Token-type hierarchy queries
+- Unauthorized cross-project token references
+- Invalid parent token types
+- Self-references
+- Duplicate references
+- Cyclic token-type hierarchies
 - Transaction rollback after a failed update
 - Foreign-key and uniqueness failures
 
@@ -219,23 +246,23 @@ Align with W5 in `relational-databases.md`.
 
 Implement these routes in `apps/workbench`:
 
-| Method | Route                                 | Auth            | Purpose                      |
-| ------ | ------------------------------------- | --------------- | ---------------------------- |
-| `POST` | `/api/auth/login`                     | None            | Create a session             |
-| `POST` | `/api/auth/logout`                    | Session         | Delete a session             |
-| `GET`  | `/api/auth/session`                   | Session         | Read current user            |
-| `GET`  | `/api/projects/:projectId`            | Session         | Read authorized project data |
-| `PUT`  | `/api/projects/:projectId/tokens`     | Editor          | Save token changes           |
-| `PUT`  | `/api/projects/:projectId/components` | Editor          | Save components/templates    |
-| `POST` | `/api/projects/:projectId/releases`   | Publisher       | Publish a release            |
-| `POST` | `/api/projects/:projectId/api-keys`   | Admin           | Create an API key            |
-| `POST` | `/api/api-keys/:keyId/revoke`         | Admin           | Revoke an API key            |
-| `GET`  | `/api/releases/:releaseId`            | Session/API key | Read a published release     |
+| Method | Route                                 | Auth            | Purpose                                                   |
+| ------ | ------------------------------------- | --------------- | --------------------------------------------------------- |
+| `POST` | `/api/auth/login`                     | None            | Create a session                                          |
+| `POST` | `/api/auth/logout`                    | Session         | Delete a session                                          |
+| `GET`  | `/api/auth/session`                   | Session         | Read current user                                         |
+| `GET`  | `/api/projects/:projectId`            | Session         | Read authorized project data                              |
+| `PUT`  | `/api/projects/:projectId/tokens`     | Editor          | Save tokens, references, and token-type hierarchy changes |
+| `PUT`  | `/api/projects/:projectId/components` | Editor          | Save components/templates                                 |
+| `POST` | `/api/projects/:projectId/releases`   | Publisher       | Publish a release                                         |
+| `POST` | `/api/projects/:projectId/api-keys`   | Admin           | Create an API key                                         |
+| `POST` | `/api/api-keys/:keyId/revoke`         | Admin           | Revoke an API key                                         |
+| `GET`  | `/api/releases/:releaseId`            | Session/API key | Read a published release                                  |
 
 - Replace filesystem persistence with database repositories.
 - Protect every route with authentication and project authorization.
 - Use this permission model:
-  - Editor: read and edit project resources
+  - Editor: read and edit project resources, including tokens, token references, token-type hierarchy data, components, and templates
   - Publisher: editor permissions plus release publishing
   - Admin: publisher permissions plus API-key management
   - CLI `release:read`: published-release download only
@@ -284,10 +311,12 @@ Align with W6 in `relational-databases.md`.
   3. Return release, signature, and key identifier.
   4. Verify the signature in the CLI.
   5. Stop generation when verification fails.
+- Include token definitions, token references, token-type hierarchy data, components, and templates in the canonical signed release JSON.
+- Do not include claims about tokens used by component source code.
 - Implement generation in `packages/generator` for:
   - `tokens.json`
   - `tokens.css`
-  - Component Markdown
+  - Component Markdown based on registered component metadata and templates
 - Resolve output paths inside an approved project root.
 - Reject traversal, unsafe absolute paths, and shell execution based on release data.
 
@@ -369,6 +398,13 @@ Align with W8 in `relational-databases.md`.
 - Path traversal fails.
 - A failed transaction rolls back.
 - Logs and generated files contain no secrets.
+- Cross-project token references are rejected.
+- Self-referencing tokens are rejected.
+- Duplicate token references are rejected.
+- Invalid token-type parents are rejected.
+- Cyclic token-type hierarchies are rejected.
+- Unauthorized users cannot modify token references or token-type hierarchy data.
+- Signed releases preserve token references and token-type hierarchy data.
 
 ### Hand-In Evidence
 
@@ -407,7 +443,8 @@ Prepare a five-minute walkthrough covering:
 4. CLI API-key creation, hashing, scope, and revocation.
 5. TLS, symmetric encryption, and asymmetric cryptography.
 6. Input validation, CSRF, and SQL injection mitigation.
-7. Release signing and CLI verification.
-8. Remaining risks and excluded features.
+7. Token-reference and token-type hierarchy integrity.
+8. Release signing and CLI verification.
+9. Remaining risks and excluded features.
 
 Be able to explain the CIA triad plus authenticity and non-repudiation, OAuth 2.0 and OpenID Connect at a conceptual level, and why those protocols are not implemented in this project.

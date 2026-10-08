@@ -1,5 +1,6 @@
 "use client";
 
+import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
 import {
   createContext,
   ReactNode,
@@ -8,7 +9,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { TokenGraphModel } from "../../tokens/lib/manifestAdapter";
 import { useStagedManifestActions } from "../lib/useStagedManifestActions";
 import {
   clearPersistedDraftModel,
@@ -22,8 +22,8 @@ import {
 } from "./stagedManifestModel";
 
 type StagedContextType = {
-  baseModel: TokenGraphModel;
-  draftModel: TokenGraphModel;
+  baseModel: TokenGraphViewModel;
+  draftModel: TokenGraphViewModel;
   changedRows: ChangedRow[];
   changedRowCount: number;
   addedManifestLineCount: number;
@@ -41,11 +41,11 @@ export function StagedManifestProvider({
   baseManifest,
   children,
 }: {
-  baseManifest: TokenGraphModel;
+  baseManifest: TokenGraphViewModel;
   children: ReactNode;
 }) {
-  const [baseModel, setBaseModel] = useState<TokenGraphModel>(baseManifest);
-  const [draftModel, setDraftModel] = useState<TokenGraphModel>(baseManifest);
+  const [baseModel, setBaseModel] = useState<TokenGraphViewModel>(baseManifest);
+  const [draftModel, setDraftModel] = useState<TokenGraphViewModel>(baseManifest);
   const [hasHydratedDraft, setHasHydratedDraft] = useState(false);
 
   const { updateRow, applyDraft, discardRow, applyRow, resetDraft } =

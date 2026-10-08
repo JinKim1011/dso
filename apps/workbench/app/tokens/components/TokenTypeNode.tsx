@@ -1,14 +1,14 @@
 "use client";
 
+import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
 import { DotsVerticalIcon, PlusCircledIcon } from "@radix-ui/react-icons";
 import { Button, Card, Text } from "@repo/ui";
-import type { TokenGraphModel } from "../lib/manifestAdapter";
 
 export type TokenTypeGroup = {
   id: string;
   type: string;
-  kind: TokenGraphModel["tokenTypes"][number]["kind"];
-  values: TokenGraphModel["tokenTypes"][number]["values"];
+  kind: TokenGraphViewModel["tokenTypes"][number]["kind"];
+  values: TokenGraphViewModel["tokenTypes"][number]["values"];
 };
 
 type TokenTypeNodeProps = {

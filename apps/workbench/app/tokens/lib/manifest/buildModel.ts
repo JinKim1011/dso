@@ -1,18 +1,32 @@
+import type {
+  CategoryViewModel,
+  TokenGraphViewModel,
+  TokenTypeValueItem,
+  TokenTypeViewModel,
+} from "@/_shared/models/tokenGraph";
+import type { SupportedViewKind } from "@/_shared/models/tokenKinds";
+import { normalizeManifest } from "@/tokens/lib/manifest/normalize";
+import type {
+  ManifestAdapterOptions,
+  NormalizedManifestEntry,
+} from "@/tokens/lib/manifest/types";
 import { isSupportedKind, toId } from "./guards";
-import { extractRows, normalizeEntry } from "./normalize";
-import {
-  type CategoryModel,
-  DEFAULT_CATEGORY_ORDER,
-  type ManifestAdapterOptions,
-  type ManifestAdapterResult,
-  type NormalizedManifestEntry,
-  type SupportedKind,
-  TokenGraphModel,
-  type TokenTypeModel,
-  type TokenTypeValueItem,
-} from "./types";
+
+type ManifestViewModelResult = {
+  viewModel: TokenGraphViewModel;
+  skippedCount: number;
+};
 
 const DEFAULT_SCHEMA_VERSION = 1;
+
+export const DEFAULT_CATEGORY_ORDER = [
+  "typography",
+  "spacing",
+  "color",
+  "motion",
+  "radius",
+  "shadow",
+] as const;
 
 function createValueItems(
   entry: SupportedEntry,
@@ -103,7 +117,7 @@ function sortCategoriesByOrder(
   });
 }
 
-type SupportedEntry = Omit<NormalizedManifestEntry, "kind"> & { kind: SupportedKind };
+type SupportedEntry = Omit<NormalizedManifestEntry, "kind"> & { kind: SupportedViewKind };
 
 function mapEntry(
   normalized: NormalizedManifestEntry,
@@ -124,7 +138,7 @@ function isSupportedEntry(
   return isSupportedKind(entry.kind);
 }
 
-function createTokenType(entry: SupportedEntry): TokenTypeModel {
+function createTokenType(entry: SupportedEntry): TokenTypeViewModel {
   const tokenTypeId = toId("token-type", `${entry.category}-${entry.type}-${entry.kind}`);
 
   return {
@@ -137,7 +151,7 @@ function createTokenType(entry: SupportedEntry): TokenTypeModel {
 }
 
 function addCategoryLink(
-  categoriesByName: Map<string, CategoryModel>,
+  categoriesByName: Map<string, CategoryViewModel>,
   categoryName: string,
   tokenTypeId: string,
 ): void {
@@ -152,27 +166,21 @@ function addCategoryLink(
   categoriesByName.get(categoryName)?.tokenTypeIds.push(tokenTypeId);
 }
 
-export function buildTokenGraphModel(
+export function buildTokenGraphViewModel(
   manifestInput: unknown,
   options: ManifestAdapterOptions = {},
-): ManifestAdapterResult {
+): ManifestViewModelResult {
   const mapper = options.mapper;
   const categoryOrder = options.categoryOrder ?? DEFAULT_CATEGORY_ORDER;
   const schemaVersion = options.schemaVersion ?? DEFAULT_SCHEMA_VERSION;
 
-  const rows = extractRows(manifestInput);
-  const tokenTypes: TokenTypeModel[] = [];
-  const categoriesByName = new Map<string, CategoryModel>();
-  let skippedCount = 0;
+  const { entries, rejectedCount } = normalizeManifest(manifestInput);
 
-  for (const row of rows) {
-    const normalized = normalizeEntry(row);
+  const tokenTypes: TokenTypeViewModel[] = [];
+  const categoriesByName = new Map<string, CategoryViewModel>();
+  let skippedCount = rejectedCount;
 
-    if (!normalized) {
-      skippedCount += 1;
-      continue;
-    }
-
+  for (const normalized of entries) {
     const entry = mapEntry(normalized, mapper);
 
     if (!isSupportedEntry(entry, mapper)) {
@@ -199,14 +207,14 @@ export function buildTokenGraphModel(
 
   const categories = orderedCategories
     .map((categoryName) => categoriesByName.get(categoryName))
-    .filter((category): category is CategoryModel => Boolean(category))
+    .filter((category): category is CategoryViewModel => Boolean(category))
     .map((category) => ({
       ...category,
       tokenTypeIds: [...category.tokenTypeIds].sort(),
     }));
 
   return {
-    model: {
+    viewModel: {
       schemaVersion,
       root: {
         id: "root",
@@ -220,7 +228,7 @@ export function buildTokenGraphModel(
 }
 
 export function buildManifestFromGraph(
-  model: TokenGraphModel,
+  model: TokenGraphViewModel,
 ): NormalizedManifestEntry[] {
   const entries: NormalizedManifestEntry[] = [];
 

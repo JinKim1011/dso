@@ -1,15 +1,4 @@
-export const DEFAULT_CATEGORY_ORDER = [
-  "typography",
-  "spacing",
-  "color",
-  "motion",
-  "radius",
-  "shadow",
-] as const;
-
 export const SUPPORTED_KINDS = ["primitive", "semantic"] as const;
-// limit v1 to primitive and semantic, excluding class-union kind
-export type SupportedKind = (typeof SUPPORTED_KINDS)[number];
 
 export type ManifestTokenRecord = {
   name: string;
@@ -38,74 +27,19 @@ export type NormalizedManifestEntry = {
   semanticMap?: ManifestSemanticRecord[];
 };
 
-type TokenValuePreviewData =
-  | {
-      kind: "typography";
-      typography: {
-        fontSize: string;
-        fontWeight: string;
-        lineHeight: string;
-      };
-    }
-  | {
-      kind: "color";
-      light?: string;
-      dark?: string;
-    }
-  | {
-      kind: "spacing";
-      value: string;
-    };
-
-export type TokenTypeValueItem = {
-  id: string;
-  name: string;
-  cssVar?: string;
-  status?: string;
-  meta?: string;
-  preview?: TokenValuePreviewData;
-  category?: string;
-  kind?: SupportedKind;
-  value?: string | { light?: string; dark?: string };
-};
-
-export type CategoryModel = {
-  id: string;
-  category: string;
-  tokenTypeIds: string[];
-};
-
-export type TokenTypeModel = {
-  id: string;
-  category: string;
-  type: string;
-  kind: SupportedKind;
-  values: TokenTypeValueItem[];
-};
-
-export type TokenGraphModel = {
-  schemaVersion: number;
-  root: {
-    id: "root";
-    label: "Design Tokens";
-  };
-  categories: CategoryModel[];
-  tokenTypes: TokenTypeModel[];
-};
-
-export type ManifestAdapterResult = {
-  model: TokenGraphModel;
-  skippedCount: number;
-};
-
-export type ManifestMapper = {
-  mapCategory?: (category: string) => string;
-  mapKind?: (kind: string) => string;
-  includeEntry?: (entry: NormalizedManifestEntry) => boolean;
+export type ManifestNormalizationResult = {
+  entries: NormalizedManifestEntry[];
+  rejectedCount: number;
 };
 
 export type ManifestAdapterOptions = {
   categoryOrder?: readonly string[];
   mapper?: ManifestMapper;
   schemaVersion?: number;
+};
+
+type ManifestMapper = {
+  mapCategory?: (category: string) => string;
+  mapKind?: (kind: string) => string;
+  includeEntry?: (entry: NormalizedManifestEntry) => boolean;
 };

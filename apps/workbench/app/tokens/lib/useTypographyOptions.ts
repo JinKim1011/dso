@@ -1,9 +1,9 @@
+import type { TokenGraphViewModel } from "@/_shared/models/tokenGraph";
 import { useMemo } from "react";
 import type { TokenTypographyOptions } from "../typography/components/TokenTypographyForm";
-import type { TokenGraphModel } from "./manifestAdapter";
 
 type UseTypographyOptionsProps = {
-  draftModel: TokenGraphModel;
+  draftModel: TokenGraphViewModel;
 };
 
 export function useTypographyOptions({

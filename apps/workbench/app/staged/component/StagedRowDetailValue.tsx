@@ -1,5 +1,5 @@
+import type { TokenTypeValueItem } from "@/_shared/models/tokenGraph";
 import { Text } from "@repo/ui";
-import { TokenTypeValueItem } from "../../tokens/lib/manifestAdapter";
 
 type valueRow = {
   label: string;

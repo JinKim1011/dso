@@ -1,4 +1,4 @@
-import { SUPPORTED_KINDS, SupportedKind } from "./types";
+import { SUPPORTED_KINDS, type SupportedViewKind } from "@/_shared/models/tokenKinds";
 
 type ObjectLike = Record<string, unknown>;
 
@@ -22,8 +22,8 @@ export function asStringArray(value: unknown): string[] | undefined {
   return normalized.length ? normalized : undefined;
 }
 
-export function isSupportedKind(kind: string): kind is SupportedKind {
-  return (SUPPORTED_KINDS as readonly string[]).includes(kind);
+export function isSupportedKind(kind: string): kind is SupportedViewKind {
+  return SUPPORTED_KINDS.includes(kind as SupportedViewKind);
 }
 
 export function toId(prefix: string, value: string): string {
@@ -31,4 +31,10 @@ export function toId(prefix: string, value: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")}`;
+}
+
+export function domainId(prefix: string, parts: string[]): string {
+  const encodeIdParts = parts.map((part) => `${part.length}:${part}`).join("");
+
+  return `${prefix}:${encodeIdParts}`;
 }
