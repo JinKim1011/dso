@@ -43,6 +43,7 @@ DSO models relationships within the token domain:
 
 - token types form a single-parent hierarchy
 - tokens can reference other tokens
+- mode-aware token references identify which value mode is being referenced
 - token references support reverse dependency queries
 
 A token type can have zero or one parent. The hierarchy is represented with `parent_type_id`; a separate token-type relationship table is not required.
@@ -69,7 +70,7 @@ Use cases, terminology, architecture, and first ER model are documented
   - `token_references`
     - `referencing_token_id`
     - `referenced_token_id`
-    - `relationship_type`, if needed
+    - `mode`
   - `components`
   - `document-templates`
 - Add
@@ -86,7 +87,8 @@ Use cases, terminology, architecture, and first ER model are documented
   - A parent token type must belong to the same project.
   - Cyclic token-type hierarchies are rejected.
   - A token cannot reference itself.
-  - Duplicate token references are rejected.
+  - Duplicate token references are rejected for the same referencing token, referenced token, and mode.
+  - A mode-aware reference must identify a mode supported by the referencing token value.
   - Referenced tokens must belong to the same project.
   - Referencing and referenced tokens must exist.
 
@@ -102,9 +104,10 @@ The complete schema can be created from an empty PostgreSQL database.
 
 #### Tasks
 
-- Import token definitions from `design-tokens-manifest.json` as seed input.
+- Import the supported token definitions from `design-tokens-manifest.json` as seed input.
+- Treat legacy `class-union` and `unknown` kinds as deprecated input; they are not part of the published domain contract and are excluded or rejected during seed normalization.
 - Add token types and their parent-child hierarchy.
-- Add token-to-token references.
+- Add token-to-token references, including the referenced mode where a token uses mode-specific values.
 - Add realistic components and Markdown templates.
 - Record row counts and data-generation method.
 - Implement basic SQL
@@ -143,6 +146,7 @@ The database contains inspectable, non-trival data and documented queries
   - `listTokensByType`
   - `getReferencedTokens`
   - `getReferencingTokens`
+  - `getReferencingTokensByMode`
   - `getTokenTypeChildren`
   - `getTokenTypeAncestors`
   - `getTemplateForComponent`
@@ -159,6 +163,7 @@ The database contains inspectable, non-trival data and documented queries
   - Cross-project reference failures
   - Self-reference failures
   - Duplicate-reference failures
+  - Invalid mode-reference failures
   - Transaction rollback after a failed relationship update
 
 #### Requirement evidence
