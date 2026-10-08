@@ -1,17 +1,19 @@
 # Published Release API Contract
 
+What complete, stable snapshot does a CLI need in order
+to generate local resources?
+
 ## Purpose
 
-A published release is the versioned snapshot tha the workbench makes avilable to the CLI. The response must represent the resources:
+A published release is the versioned snapshot that the workbench makes
+available to the CLI. The response must represent:
 
-- toekn definitions
+- token definitions
 - token-type hierarchy
-- token reference
-- registred components
+- token references
+- registered components
 - component document templates
 - release metadata
-
-In the end it needs to answer to “What complete, stable snapshot does a CLI need in order to generate local resources?”
 
 ## Endpoint
 
@@ -19,24 +21,33 @@ In the end it needs to answer to “What complete, stable snapshot does a CLI ne
 GET /api/releases/:releaseId
 ```
 
-The flow is look like this
+The response is consumed by different clients:
 
 ```text
 Published release API response
         |
-        v
-Workbench adapter
+        +--> CLI cache -> generator -> local files
         |
-        v
-TokenGraphViewModel
-        |
-        v
-Workbench UI
+        +--> Workbench adapter -> TokenGraphViewModel -> Workbench UI
 ```
 
 ## Authentication
 
-Explain whether the endpoint requires a session, API key, or both.
+The endpoint accepts either:
+
+- an authenticated workbench session for authorized project members; or
+- a project-scoped CLI API key with the `release:read` scope.
+
+The CLI uses the API-key flow and never connects directly to PostgreSQL. The
+API checks that the release exists, belongs to the project associated with the
+credential, and has `status: "published"` before returning it. Unpublished
+releases are not downloadable.
+
+The CLI sends the key using:
+
+```http
+Authorization: Bearer <api-key>
+```
 
 ## Success response
 
@@ -218,6 +229,14 @@ Show one realistic JSON example.
       "name": "Button documentation",
       "format": "markdown",
       "content": "# Button\n\n## Purpose\n\n{{description}}\n\n## Usage\n\nUse Button for an action that requires an explicit user interaction.\n\n## Variants\n\nDocument the supported Button variants here.\n\n## States\n\nDocument the supported Button states here.\n"
+    },
+    {
+      "id": "template_modal",
+      "projectId": "project_001",
+      "componentId": "component_modal",
+      "name": "Modal documentation",
+      "format": "markdown",
+      "content": "# Modal\n\n## Purpose\n\n{{description}}\n\n## Usage\n\nUse Modal for a focused task that requires the user's attention.\n\n## Anatomy\n\nDocument the Modal regions and slots here.\n\n## States\n\nDocument the supported Modal states here.\n"
     }
   ]
 }
@@ -225,7 +244,73 @@ Show one realistic JSON example.
 
 ## Response fields
 
-Describe each top-level field and its meaning.
+### `schemaVersion`
+
+The version of the published-release response schema. It changes when the
+meaning or structure of the response changes in a way that may require a
+consumer update.
+
+### `release`
+
+Metadata for the immutable published snapshot:
+
+- `id`: stable release identifier
+- `projectId`: project that owns the release
+- `version`: project-facing release version
+- `status`: must be `"published"` in a successful response
+- `publishedAt`: ISO 8601 timestamp for publication
+
+The release metadata identifies the snapshot; it does not describe the current
+mutable project state.
+
+### `tokenTypes`
+
+The token-type hierarchy. Each item contains:
+
+- `id`: stable token-type identifier
+- `projectId`: owning project
+- `category`: value category such as `color`, `typography`, `spacing`, `radius`, `motion`, or `shadow`
+- `name`: human-readable type name
+- `kind`: `"primitive"` or `"semantic"`
+- `parentTypeId`: parent type identifier, or `null` for a root type
+
+### `tokens`
+
+The token definitions in the release. Each token points to a token type through
+`tokenTypeId`.
+
+- `name` is the token name within its type.
+- `cssVar` is the generated CSS custom-property name, when one exists.
+- `value` uses the domain value union. Its `kind` is independent of the token
+  type's `kind`.
+
+For example, a primitive token can have a scalar value, and a semantic token
+can have mode-specific values.
+
+### `tokenReferences`
+
+Token-to-token dependency edges. Each edge contains the referencing token,
+referenced token, and the mode of the referencing value when the value is
+mode-specific.
+
+### `components`
+
+Registered components included in the release. Each component contains its
+portable `documentPath`, which is relative to the output root selected by the
+CLI or consuming repository.
+
+The path identifies the generated document location. It does not identify
+component source files and does not claim that DSO has discovered token usage
+from source code.
+
+### `documentTemplates`
+
+Per-component Markdown templates. Each template is linked to a component by
+`componentId` and contains the content used by the generator.
+
+The template content may use documented generator placeholders such as
+`{{description}}`. The placeholder syntax and supported variables are part of
+the generator contract and must be validated before publication.
 
 ## Resource relationships
 
@@ -284,7 +369,31 @@ the published domain contract; seed normalization will exclude or reject them.
 
 ## Errors
 
-Define not-found, unauthorized, and invalid-release behavior.
+The endpoint returns JSON errors with a stable error code:
+
+```json
+{
+  "error": {
+    "code": "RELEASE_NOT_FOUND",
+    "message": "Published release was not found."
+  }
+}
+```
+
+Expected cases:
+
+| Status | Code                    | Meaning                                                                   |
+| ------ | ----------------------- | ------------------------------------------------------------------------- |
+| `401`  | `UNAUTHENTICATED`       | No session or API key was provided.                                       |
+| `403`  | `FORBIDDEN`             | The credential cannot read the requested project or lacks `release:read`. |
+| `404`  | `RELEASE_NOT_FOUND`     | The release does not exist or is not visible to the caller.               |
+| `409`  | `RELEASE_NOT_PUBLISHED` | The release exists but is not downloadable.                               |
+| `422`  | `RELEASE_INVALID`       | The stored release cannot satisfy the published contract.                 |
+| `429`  | `RATE_LIMITED`          | The caller exceeded the release-download limit.                           |
+
+The API must not expose whether an inaccessible release exists. Depending on
+the authorization policy, an unauthorized release may therefore be returned as
+`404` rather than `403`.
 
 ## Compatibility
 
@@ -294,11 +403,18 @@ Define not-found, unauthorized, and invalid-release behavior.
 - The API response's `value.kind` is part of the domain contract. The
   workbench view model may adapt mode values to its existing view-oriented
   shape.
+- The CLI stores the downloaded response with its `schemaVersion` and must
+  reject unsupported schema versions rather than silently guessing.
+- Adding optional fields is backward-compatible. Removing fields, changing
+  field meanings, or changing required value shapes requires a new schema
+  version or an explicitly compatible migration.
+- `documentPath` remains relative to the CLI-selected output root. A release
+  must never encode an absolute machine-specific output directory.
 
 ## Open decisions
 
 - Should `release.version` be semantic versioning or an arbitrary project version?
-- Should component templates be keyed by component ID or template ID?
-- Should token values preserve unresolved references or contain resolved values?
-- Should `mode` be a closed set such as `light` and `dark`, or should projects
-  be allowed to define additional mode names?
+- Should projects be allowed to define additional mode names beyond `light` and `dark`?
+- Should an unresolved token value be publishable, or should publication reject it?
+- Which placeholder variables should the first generator contract support?
+- Should one component have exactly one document template in the first release?
