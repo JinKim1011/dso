@@ -72,7 +72,19 @@ Use cases, terminology, architecture, and first ER model are documented
     - `referenced_token_id`
     - `mode`
   - `components`
+    - `id`
+    - `project_id`
+    - `name`
+    - `slug`
+    - `description`
+    - `document_path`
   - `document-templates`
+    - `id`
+    - `project_id`
+    - `component_id`
+    - `name`
+    - `format`
+    - `content`
 - Add
   - primary keys
   - foreign keys
@@ -91,6 +103,9 @@ Use cases, terminology, architecture, and first ER model are documented
   - A mode-aware reference must identify a mode supported by the referencing token value.
   - Referenced tokens must belong to the same project.
   - Referencing and referenced tokens must exist.
+  - A component document path is relative to the CLI output root.
+  - Component document paths use `/` separators and cannot be absolute or contain `..` path segments.
+  - A document template belongs to a component in the same project.
 
 #### Requirement evidence
 
@@ -212,6 +227,11 @@ Normal workbench usage no longer reads or write `design-toekns-manifest.json`
   - `dso pull`
   - `dso generate`
 - Store downloaded resources udner `dso`
+- Let the CLI or consuming repository define the local output root, through a
+  command-line option or checked-in project configuration.
+- Treat each component's `document_path` as a portable path relative to that
+  local output root; the published release must not contain an absolute
+  machine-specific directory.
 - Generate
   - `tokens.json`
   - `tokens.css`
