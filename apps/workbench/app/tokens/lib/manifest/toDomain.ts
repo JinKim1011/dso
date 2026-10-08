@@ -1,4 +1,4 @@
-import { toId } from "@/tokens/lib/manifest/guards";
+import { domainId } from "@/tokens/lib/manifest/guards";
 import type {
   ManifestSemanticRecord,
   ManifestTokenRecord,
@@ -27,10 +27,12 @@ export function manifestToDomain(
       throw new Error(`Unsupported token kind: ${entry.kind}`);
     }
 
-    const tokenTypeId = toId(
-      "token-type",
-      `${context.projectId}-${entry.category}-${entry.type}-${entry.kind}`,
-    );
+    const tokenTypeId = domainId("token-type", [
+      context.projectId,
+      entry.category,
+      entry.type,
+      entry.kind,
+    ]);
 
     if (tokenTypeIds.has(tokenTypeId)) {
       throw new Error(
@@ -56,7 +58,7 @@ export function manifestToDomain(
 
       tokenNames.add(token.name);
       tokens.push({
-        id: toId("token", `${tokenTypeId}-${token.name}`),
+        id: domainId("token", [tokenTypeId, token.name]),
         projectId: context.projectId,
         tokenTypeId,
         name: token.name,
