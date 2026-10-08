@@ -106,7 +106,7 @@ function getTokenRecords(entry: NormalizedManifestEntry): DomainTokenRecord[] {
 }
 
 function toTokenValue(token: ManifestTokenRecord): Token["value"] {
-  if (token.values) {
+  if (token.values?.light || token.values?.dark) {
     return {
       kind: "modes",
       light: token.values.light,
