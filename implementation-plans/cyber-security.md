@@ -40,6 +40,8 @@ Document but do not build:
 - The CLI communicates with the API only. It never connects directly to PostgreSQL.
 - Published releases are signed with Ed25519 and verified by the CLI before generation.
 - PostgreSQL is private; only the web/API service is exposed.
+- Published component document paths are portable relative paths. The CLI or
+  consuming repository supplies the local output root.
 
 ## W1: Security Design and Threat Model
 
@@ -317,8 +319,14 @@ Align with W6 in `relational-databases.md`.
   - `tokens.json`
   - `tokens.css`
   - Component Markdown based on registered component metadata and templates
-- Resolve output paths inside an approved project root.
-- Reject traversal, unsafe absolute paths, and shell execution based on release data.
+- Accept the local output root from a CLI option or checked-in project
+  configuration, with a documented default.
+- Resolve each component's portable relative document path inside that approved
+  output root.
+- Reject absolute paths, `..` traversal, unsafe separators, and shell
+  execution based on release data.
+- Do not treat release data as component source-file locations or as evidence of
+  component-token usage.
 
 ### Tests
 
@@ -327,7 +335,9 @@ Align with W6 in `relational-databases.md`.
 - HTTPS is required outside local development.
 - Invalid release signatures stop generation.
 - Generated output never contains credentials.
-- Traversal and unsafe output paths fail.
+- Absolute, traversal, and unsafe output paths fail.
+- A valid release can be generated under different local output roots without
+  changing the release payload.
 - Expected generated files are deterministic.
 
 ### Done When
