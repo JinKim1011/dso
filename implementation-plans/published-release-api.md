@@ -227,7 +227,6 @@ Show one realistic JSON example.
       "projectId": "project_001",
       "componentId": "component_button",
       "name": "Button documentation",
-      "format": "markdown",
       "content": "# Button\n\n## Purpose\n\n{{description}}\n\n## Usage\n\nUse Button for an action that requires an explicit user interaction.\n\n## Variants\n\nDocument the supported Button variants here.\n\n## States\n\nDocument the supported Button states here.\n"
     },
     {
@@ -235,7 +234,6 @@ Show one realistic JSON example.
       "projectId": "project_001",
       "componentId": "component_modal",
       "name": "Modal documentation",
-      "format": "markdown",
       "content": "# Modal\n\n## Purpose\n\n{{description}}\n\n## Usage\n\nUse Modal for a focused task that requires the user's attention.\n\n## Anatomy\n\nDocument the Modal regions and slots here.\n\n## States\n\nDocument the supported Modal states here.\n"
     }
   ]
@@ -305,8 +303,10 @@ from source code.
 
 ### `documentTemplates`
 
-Per-component Markdown templates. Each template is linked to a component by
-`componentId` and contains the content used by the generator.
+Per-component Markdown templates. The first release supports Markdown only, so
+the template format is defined by the contract rather than stored as a
+per-row field. Each template is linked to a component by `componentId` and
+contains the content used by the generator.
 
 The template content may use documented generator placeholders such as
 `{{description}}`. The placeholder syntax and supported variables are part of
