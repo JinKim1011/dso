@@ -83,7 +83,6 @@ Use cases, terminology, architecture, and first ER model are documented
     - `project_id`
     - `component_id`
     - `name`
-    - `format`
     - `content`
 - Add
   - primary keys
@@ -106,6 +105,7 @@ Use cases, terminology, architecture, and first ER model are documented
   - A component document path is relative to the CLI output root.
   - Component document paths use `/` separators and cannot be absolute or contain `..` path segments.
   - A document template belongs to a component in the same project.
+  - Document templates are Markdown in the first release.
 
 #### Requirement evidence
 
