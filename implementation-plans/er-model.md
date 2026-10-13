@@ -1,4 +1,6 @@
-# DSO ERD draft
+# DSO ER model
+
+## ERD
 
 ```mermaid
 erDiagram
@@ -114,3 +116,13 @@ erDiagram
 | User is authorized to modify the project                     |                               No |                    Yes | This is an application authorization rule                       |
 | Published releases contain valid complete data               |                               No |                    Yes | Validate before publishing                                      |
 | Request body has valid shape and size                        |                               No |                    Yes | Enforce through API schemas and request limits                  |
+
+## Planned indexes
+
+- `releases(project_id)` for project release lookup
+- `token_types(project_id)` for project token-type lookup
+- `tokens(project_id, token_type_id)` for token lookup by project and type
+- `token_references(referencing_token_id)` for forward references
+- `token_references(referenced_token_id)` for reverse references
+- `components(project_id)` for project component lookup
+- `document_templates(component_id)` for component template lookup
