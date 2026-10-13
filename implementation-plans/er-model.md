@@ -125,4 +125,4 @@ erDiagram
 - `token_references(referencing_token_id)` for forward references
 - `token_references(referenced_token_id)` for reverse references
 - `components(project_id)` for project component lookup
-- `document_templates(component_id)` for component template lookup
+- `document_templates(project_id, component_id)` for component template lookup
