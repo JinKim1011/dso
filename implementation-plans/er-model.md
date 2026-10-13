@@ -119,10 +119,10 @@ erDiagram
 
 ## Planned indexes
 
-- `releases(project_id)` for project release lookup
-- `token_types(project_id)` for project token-type lookup
-- `tokens(project_id, token_type_id)` for token lookup by project and type
-- `token_references(referencing_token_id)` for forward references
-- `token_references(referenced_token_id)` for reverse references
-- `components(project_id)` for project component lookup
-- `document_templates(project_id, component_id)` for component template lookup
+- `releases(project_id)` list releases for a project
+- `token_types(project_id)` list token types for a project
+- `token_types(parent_type_id)` find child token types
+- `tokens(project_id, token_type_id)` list tokens by project and type
+- `token_references(referenced_token_id)` find tokens that reference a token
+- `components(project_id)` list components for a project
+- `document_templates(component_id)` find templates belonging to a component
