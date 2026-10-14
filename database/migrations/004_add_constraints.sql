@@ -20,6 +20,11 @@ ALTER TABLE token_types ADD CONSTRAINT token_types_not_own_parent_check CHECK (
   OR parent_type_id <> id
 );
 
-ALTER TABLE token_types ADD CONSTRAINT token_types_parent_same_project_fk FOREIGN KEY (project_id, parent_type_id) REFERENCES token_types (project_id, id);
+ALTER TABLE token_types
+ADD CONSTRAINT token_types_parent_same_project_fk FOREIGN KEY (project_id, parent_type_id) REFERENCES token_types (project_id, id);
 
-ALTER TABLE token_types ADD CONSTRAINT token_types_project_id_unique UNIQUE (project_id, id);
+ALTER TABLE tokens
+ADD CONSTRAINT tokens_token_type_same_project_fk FOREIGN KEY (project_id, token_type_id) REFERENCES token_types (project_id, id);
+
+ALTER TABLE document_templates
+ADD CONSTRAINT document_templates_component_same_project_fk FOREIGN KEY (project_id, component_id) REFERENCES components (project_id, id);
