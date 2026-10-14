@@ -15,7 +15,14 @@ ALTER TABLE releases ADD CONSTRAINT releases_publication_timestamp_check CHECK (
   )
 );
 
-ALTER TABLE token_types ADD CONSTRAINT token_types_not_own_parent_check CHECK (
+ALTER TABLE token_types
+ADD CONSTRAINT token_types_project_and_id_unique UNIQUE (project_id, id);
+
+ALTER TABLE components
+ADD CONSTRAINT components_project_and_id_unique UNIQUE (project_id, id);
+
+ALTER TABLE token_types
+ADD CONSTRAINT token_types_not_own_parent_check CHECK (
   parent_type_id IS NULL
   OR parent_type_id <> id
 );
