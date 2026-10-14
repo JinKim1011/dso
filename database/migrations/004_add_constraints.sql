@@ -1,10 +1,14 @@
-ALTER TABLE projects ADD CONSTRAINT projects_name_unique UNIQUE (name);
+ALTER TABLE projects
+ADD CONSTRAINT projects_name_unique UNIQUE (name);
 
-ALTER TABLE releases ADD CONSTRAINT releases_project_version_unique UNIQUE (project_id, version);
+ALTER TABLE releases
+ADD CONSTRAINT releases_project_version_unique UNIQUE (project_id, version);
 
-ALTER TABLE releases ADD CONSTRAINT releases_status_check CHECK (status IN ('draft', 'published', 'archived'));
+ALTER TABLE releases
+ADD CONSTRAINT releases_status_check CHECK (status IN ('draft', 'published', 'archived'));
 
-ALTER TABLE releases ADD CONSTRAINT releases_publication_timestamp_check CHECK (
+ALTER TABLE releases
+ADD CONSTRAINT releases_publication_timestamp_check CHECK (
   (
     status = 'draft'
     AND published_at IS NULL
