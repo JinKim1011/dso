@@ -1,6 +1,9 @@
 ALTER TABLE projects
 ADD CONSTRAINT projects_name_unique UNIQUE (name);
 
+ALTER TABLE projects
+ADD CONSTRAINT projects_slug_unique UNIQUE (slug);
+
 ALTER TABLE releases
 ADD CONSTRAINT releases_project_version_unique UNIQUE (project_id, version);
 

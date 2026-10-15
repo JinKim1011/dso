@@ -1,7 +1,8 @@
 CREATE TABLE projects (
   id UUID PRIMARY KEY,
   name TEXT NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW ()
+  slug TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE releases (
