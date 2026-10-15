@@ -28,6 +28,9 @@ ADD CONSTRAINT token_types_project_and_id_unique UNIQUE (project_id, id);
 ALTER TABLE components
 ADD CONSTRAINT components_project_and_id_unique UNIQUE (project_id, id);
 
+ALTER TABLE tokens
+ADD CONSTRAINT tokens_project_and_id_unique UNIQUE (project_id, id);
+
 ALTER TABLE token_types
 ADD CONSTRAINT token_types_not_own_parent_check CHECK (
   parent_type_id IS NULL
@@ -45,6 +48,12 @@ ADD CONSTRAINT document_templates_component_same_project_fk FOREIGN KEY (project
 
 ALTER TABLE token_references
 ADD CONSTRAINT token_references_mode_check CHECK (mode IN ('light', 'dark', 'default'));
+
+ALTER TABLE token_references
+ADD CONSTRAINT token_referenced_same_project_fk FOREIGN KEY (project_id, referenced_token_id) REFERENCES tokens (project_id, id);
+
+ALTER TABLE token_references
+ADD CONSTRAINT token_referencing_same_project_fk FOREIGN KEY (project_id, referencing_token_id) REFERENCES tokens (project_id, id);
 
 ALTER TABLE token_references
 ADD CONSTRAINT token_references_referencing_token_fk FOREIGN KEY (referencing_token_id) REFERENCES tokens (id);
