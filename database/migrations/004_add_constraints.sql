@@ -8,7 +8,7 @@ ALTER TABLE releases
 ADD CONSTRAINT releases_project_version_unique UNIQUE (project_id, version);
 
 ALTER TABLE releases
-ADD CONSTRAINT releases_status_check CHECK (status IN ('draft', 'published', 'archived'));
+ADD CONSTRAINT releases_status_check CHECK (status IN ('draft', 'published'));
 
 ALTER TABLE releases
 ADD CONSTRAINT releases_publication_timestamp_check CHECK (
@@ -17,7 +17,7 @@ ADD CONSTRAINT releases_publication_timestamp_check CHECK (
     AND published_at IS NULL
   )
   OR (
-    status IN ('published', 'archived')
+    status IN ('published')
     AND published_at IS NOT NULL
   )
 );
