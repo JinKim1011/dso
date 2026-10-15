@@ -39,3 +39,15 @@ ADD CONSTRAINT tokens_token_type_same_project_fk FOREIGN KEY (project_id, token_
 
 ALTER TABLE document_templates
 ADD CONSTRAINT document_templates_component_same_project_fk FOREIGN KEY (project_id, component_id) REFERENCES components (project_id, id);
+
+ALTER TABLE token_references
+ADD CONSTRAINT token_references_mode_check CHECK (mode IN ('light', 'dark', 'default'));
+
+ALTER TABLE token_references
+ADD CONSTRAINT token_references_referencing_token_fk FOREIGN KEY (referencing_token_id) REFERENCES tokens (id);
+
+ALTER TABLE token_references
+ADD CONSTRAINT token_references_referenced_token_fk FOREIGN KEY (referenced_token_id) REFERENCES tokens (id);
+
+ALTER TABLE token_references
+ADD CONSTRAINT token_reference_not_own_token_check CHECK (referenced_token_id <> referencing_token_id);
