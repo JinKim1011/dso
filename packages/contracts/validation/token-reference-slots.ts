@@ -1,8 +1,15 @@
 import type { Token, TokenReferenceSlot, TokenType } from "@repo/contracts/type";
 
-export function supportedSlotsForCategory(
-  category: string,
-): readonly TokenReferenceSlot[] {
+export const tokenReferenceSlots: readonly TokenReferenceSlot[] = [
+  "value",
+  "light",
+  "dark",
+  "fontSize",
+  "fontWeight",
+  "lineHeight",
+];
+
+function supportedSlotsForCategory(category: string): readonly TokenReferenceSlot[] {
   switch (category) {
     case "color":
     case "shadow":
