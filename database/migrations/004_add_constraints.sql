@@ -34,6 +34,9 @@ ADD CONSTRAINT component_project_and_slug_unique UNIQUE (project_id, slug);
 ALTER TABLE tokens
 ADD CONSTRAINT tokens_project_and_id_unique UNIQUE (project_id, id);
 
+ALTER table token_references
+ADD CONSTRAINT referencing_token_and_slog_unique UNIQUE (referencing_token_id, slot);
+
 ALTER TABLE token_types
 ADD CONSTRAINT token_types_not_own_parent_check CHECK (
   parent_type_id IS NULL
