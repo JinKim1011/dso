@@ -1,9 +1,10 @@
-import {
+import type {
   Token,
   TokenReference,
   TokenReferenceSlot,
   TokenType,
 } from "@repo/contracts/type";
+import { supportsTokenReferenceSlot } from "@repo/contracts/validation/token-reference-slots";
 
 export type TokenReferenceValidationError = {
   code:
@@ -16,60 +17,6 @@ export type TokenReferenceValidationError = {
     | "missing-referencing-token-type";
   message: string;
 };
-
-function supportedSlotsForCategory(category: string): readonly TokenReferenceSlot[] {
-  switch (category) {
-    case "color":
-    case "shadow":
-      return ["light", "dark"];
-
-    case "typography":
-      return ["fontSize", "fontWeight", "lineHeight"];
-
-    case "spacing":
-    case "radius":
-    case "motion":
-      return ["value"];
-
-    default:
-      return [];
-  }
-}
-
-function isTypographySlot(
-  slot: TokenReferenceSlot,
-): slot is "fontSize" | "fontWeight" | "lineHeight" {
-  return ["fontSize", "fontWeight", "lineHeight"].includes(slot);
-}
-
-function supportsSlot(
-  token: Token,
-  tokenType: TokenType,
-  slot: TokenReferenceSlot,
-): boolean {
-  const categorySlots = supportedSlotsForCategory(tokenType.category);
-
-  if (!categorySlots.includes(slot as TokenReferenceSlot)) {
-    return false;
-  }
-
-  if (tokenType.category === "color") {
-    return (
-      token.value.kind === "modes" &&
-      typeof token.value[slot as "light" | "dark"] === "string"
-    );
-  }
-
-  if (tokenType.category === "typography") {
-    return (
-      token.value.kind === "typography" &&
-      isTypographySlot(slot) &&
-      typeof token.value[slot] === "string"
-    );
-  }
-
-  return token.value.kind === "scalar";
-}
 
 export function validateTokenReference(
   reference: TokenReference,
@@ -153,7 +100,7 @@ export function validateTokenReference(
     return errors;
   }
 
-  if (!supportsSlot(referencingToken, referencingTokenType, slot)) {
+  if (!supportsTokenReferenceSlot(referencingToken, referencingTokenType, slot)) {
     errors.push({
       code: "unsupported-slot",
       message: `The "${referencingTokenType.category}" token does not support the "${slot}" slot.`,
