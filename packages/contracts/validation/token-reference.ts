@@ -11,12 +11,39 @@ export type TokenReferenceValidationError = {
   message: string;
 };
 
-function supportsMode(value: TokenValue, mode: string): boolean {
-  if (mode === "default") {
-    return value.kind !== "modes";
-  }
+function supportedSlotsForCategory(category: string): readonly TokenReferenceSlot[] {
+  switch (category) {
+    case "color":
+    case "shadow":
+      return ["light", "dark"];
 
-  if (value.kind !== "modes") {
+    case "typography":
+      return ["fontSize", "fontWeight", "lineHeight"];
+
+    case "spacing":
+    case "radius":
+    case "motion":
+      return ["value"];
+
+    default:
+      return [];
+  }
+}
+
+function isTypographySlot(
+  slot: TokenReferenceSlot,
+): slot is "fontSize" | "fontWeight" | "lineHeight" {
+  return ["fontSize", "fontWeight", "lineHeight"].includes(slot);
+}
+
+function supportsSlot(
+  token: Token,
+  tokenType: TokenType,
+  slot: TokenReferenceSlot,
+): boolean {
+  const categorySlots = supportedSlotsForCategory(tokenType.category);
+
+  if (!categorySlots.includes(slot as TokenReferenceSlot)) {
     return false;
   }
 
