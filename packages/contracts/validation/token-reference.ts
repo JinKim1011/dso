@@ -68,6 +68,7 @@ function supportsSlot(
 export function validateTokenReference(
   reference: TokenReference,
   tokens: readonly Token[],
+  tokenTypes: readonly TokenType[],
   projectId: string,
 ): TokenReferenceValidationError[] {
   const errors: TokenReferenceValidationError[] = [];
@@ -93,6 +94,19 @@ export function validateTokenReference(
   }
 
   if (!referencedToken || !referencingToken) {
+    return errors;
+  }
+
+  const tokenTypeById = new Map(tokenTypes.map((tokenType) => [tokenType.id, tokenType]));
+
+  const referencingTokenType = tokenTypeById.get(referencingToken.tokenTypeId);
+
+  if (!referencingTokenType) {
+    errors.push({
+      code: "missing-referencing-token-type",
+      message: `Token type "${referencingToken.tokenTypeId}" does not exist.`,
+    });
+
     return errors;
   }
 
