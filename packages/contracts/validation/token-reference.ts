@@ -1,10 +1,9 @@
-import type {
-  Token,
-  TokenReference,
-  TokenReferenceSlot,
-  TokenType,
-} from "@repo/contracts/type";
-import { supportsTokenReferenceSlot } from "@repo/contracts/validation/token-reference-slots";
+import type { Token, TokenReference, TokenType } from "@repo/contracts/type";
+import { isCompatibleReferencedType } from "@repo/contracts/validation/token-reference-compatibility";
+import {
+  supportsTokenReferenceSlot,
+  tokenReferenceSlots,
+} from "@repo/contracts/validation/token-reference-slots";
 
 export type TokenReferenceValidationError = {
   code:
@@ -119,6 +118,20 @@ export function validateTokenReference(
     errors.push({
       code: "unsupported-slot",
       message: `The "${referencingTokenType.category}" token does not support the "${slot}" slot.`,
+    });
+  }
+
+  if (
+    !isCompatibleReferencedType(
+      referencedToken,
+      referencedTokenType,
+      referencingTokenType,
+      slot,
+    )
+  ) {
+    errors.push({
+      code: "incompatible-referenced-token-type",
+      message: `The referenced token is not compatible with the "${slot}" slot.`,
     });
   }
 
