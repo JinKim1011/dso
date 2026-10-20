@@ -33,7 +33,7 @@ export function validateTokenReference(
   if (!referencedToken) {
     errors.push({
       code: "missing-referenced-token",
-      message: `Referenced token "${reference.referencedTokenId}" deos not exist.`,
+      message: `Referenced token "${reference.referencedTokenId}" does not exist.`,
     });
   }
 
