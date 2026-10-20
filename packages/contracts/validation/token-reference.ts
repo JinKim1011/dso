@@ -127,12 +127,21 @@ export function validateTokenReference(
     });
   }
 
-  const mode = reference.mode ?? "default";
+  const validSlots: readonly TokenReferenceSlot[] = [
+    "value",
+    "light",
+    "dark",
+    "fontSize",
+    "fontWeight",
+    "lineHeight",
+  ];
 
-  if (!["default", "light", "dark"].includes(mode)) {
+  const slot = reference.slot ?? "value";
+
+  if (!validSlots.includes(slot)) {
     errors.push({
-      code: "invalid-mode",
-      message: `Reference mode "${mode}" is not supported.`,
+      code: "invalid-slot",
+      message: `Reference slot "${slot}" is not supported.`,
     });
 
     return errors;
