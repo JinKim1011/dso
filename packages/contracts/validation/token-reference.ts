@@ -47,7 +47,22 @@ function supportsSlot(
     return false;
   }
 
-  return typeof value[mode as "light" | "dark"] === "string";
+  if (tokenType.category === "color") {
+    return (
+      token.value.kind === "modes" &&
+      typeof token.value[slot as "light" | "dark"] === "string"
+    );
+  }
+
+  if (tokenType.category === "typography") {
+    return (
+      token.value.kind === "typography" &&
+      isTypographySlot(slot) &&
+      typeof token.value[slot] === "string"
+    );
+  }
+
+  return token.value.kind === "scalar";
 }
 
 export function validateTokenReference(
