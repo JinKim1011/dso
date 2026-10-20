@@ -34,11 +34,11 @@ export type TokenValue =
   | { kind: "typography"; fontSize: string; fontWeight: string; lineHeight: string }
   | { kind: "unresolved" };
 
+export type TokenReferenceSlot =
+  "value" | "light" | "dark" | "fontSize" | "fontWeight" | "lineHeight";
+
 export type TokenReference = {
   referencingTokenId: string;
   referencedTokenId: string;
   slot: TokenReferenceSlot;
 };
-
-export type TokenReferenceSlot =
-  "value" | "light" | "dark" | "fontSize" | "fontWeight" | "lineHeight";
