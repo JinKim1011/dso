@@ -21,6 +21,7 @@ erDiagram
     PROJECTS {
         uuid id PK
         text name
+        text slug UK
     }
 
     RELEASES {
@@ -52,7 +53,8 @@ erDiagram
     TOKEN_REFERENCES {
         uuid referencing_token_id PK, FK
         uuid referenced_token_id PK, FK
-        text mode PK
+        uuid project_id FK
+        text slot PK
     }
 
     COMPONENTS {
