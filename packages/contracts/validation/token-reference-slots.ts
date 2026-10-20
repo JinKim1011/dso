@@ -21,7 +21,7 @@ export function supportedSlotsForCategory(
   }
 }
 
-export function isTypographySlot(
+function isTypographySlot(
   slot: TokenReferenceSlot,
 ): slot is "fontSize" | "fontWeight" | "lineHeight" {
   return ["fontSize", "fontWeight", "lineHeight"].includes(slot);
