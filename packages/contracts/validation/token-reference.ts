@@ -1,4 +1,9 @@
-import { Token, TokenReference, TokenValue } from "@repo/contracts/type";
+import {
+  Token,
+  TokenReference,
+  TokenReferenceSlot,
+  TokenType,
+} from "@repo/contracts/type";
 
 export type TokenReferenceValidationError = {
   code:
