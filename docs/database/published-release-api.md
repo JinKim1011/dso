@@ -175,32 +175,32 @@ Show one realistic JSON example.
     {
       "referencingTokenId": "token_color_surface_default",
       "referencedTokenId": "token_color_base_neutral_0",
-      "mode": "light"
+      "slot": "light"
     },
     {
       "referencingTokenId": "token_color_surface_default",
       "referencedTokenId": "token_color_base_neutral_900",
-      "mode": "dark"
+      "slot": "dark"
     },
     {
       "referencingTokenId": "token_color_surface_muted",
       "referencedTokenId": "token_color_base_neutral_50",
-      "mode": "light"
+      "slot": "light"
     },
     {
       "referencingTokenId": "token_color_surface_muted",
       "referencedTokenId": "token_color_base_neutral_850",
-      "mode": "dark"
+      "slot": "dark"
     },
     {
       "referencingTokenId": "token_color_surface_interactive_hoverWeak",
       "referencedTokenId": "token_color_base_neutral_50",
-      "mode": "light"
+      "slot": "light"
     },
     {
       "referencingTokenId": "token_color_surface_interactive_hoverWeak",
       "referencedTokenId": "token_color_base_neutral_850",
-      "mode": "dark"
+      "slot": "dark"
     }
   ],
   "components": [
@@ -288,7 +288,7 @@ can have mode-specific values.
 ### `tokenReferences`
 
 Token-to-token dependency edges. Each edge contains the referencing token,
-referenced token, and the mode of the referencing value when the value is
+referenced token, and the slot of the referencing value when the value is
 mode-specific.
 
 ### `components`
@@ -330,19 +330,21 @@ The relationships are represented by IDs in normalized arrays for these reasons:
     {
       "referencingTokenId": "",
       "referencedTokenId": "",
-      "mode": "light"
+      "slot": "light"
     }
   ]
 }
 ```
 
-`tokenReferences` identifies the exact value mode when the referencing token has
-mode-specific values. For example, the `light` value of
+`tokenReferences` identifies the exact value slot when the referencing token has
+mode-specific values. For example, the `light` slot of
 `token_color_surface_default` references `token_color_base_neutral_0`, while
 the `dark` value references `token_color_base_neutral_900`.
 
-The same referencing token, referenced token, and mode combination may appear
-only once. A reference mode must be supported by the referencing token's value.
+The same referencing token, referenced token, and slot combination may appear
+only once. The database also allows only one target for each referencing token
+and slot. A reference slot must be supported by the referencing token's value
+and token type.
 The API does not include a separate reverse-reference collection; consumers can
 derive reverse dependencies by indexing `tokenReferences`.
 
