@@ -37,5 +37,5 @@ export type TokenValue =
 export type TokenReference = {
   referencingTokenId: string;
   referencedTokenId: string;
-  mode?: string;
+  slot?: string;
 };
