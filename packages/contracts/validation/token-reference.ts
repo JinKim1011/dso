@@ -6,8 +6,9 @@ export type TokenReferenceValidationError = {
     | "missing-referenced-token"
     | "wrong-project"
     | "self-reference"
-    | "invalid-mode"
-    | "unsupported-mode";
+    | "invalid-slot"
+    | "unsupported-slot"
+    | "missing-referencing-token-type";
   message: string;
 };
 
@@ -147,10 +148,10 @@ export function validateTokenReference(
     return errors;
   }
 
-  if (!supportsMode(referencingToken.value, mode)) {
+  if (!supportsSlot(referencingToken, referencingTokenType, slot)) {
     errors.push({
-      code: "unsupported-mode",
-      message: `The referencing token does not support the "${mode}" mode.`,
+      code: "unsupported-slot",
+      message: `The "${referencingTokenType.category}" token does not support the "${slot}" slot.`,
     });
   }
 
