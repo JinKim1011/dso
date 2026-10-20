@@ -94,18 +94,9 @@ export function validateTokenReference(
     });
   }
 
-  const validSlots: readonly TokenReferenceSlot[] = [
-    "value",
-    "light",
-    "dark",
-    "fontSize",
-    "fontWeight",
-    "lineHeight",
-  ];
+  const slot = reference.slot;
 
-  const slot = reference.slot ?? "value";
-
-  if (!validSlots.includes(slot)) {
+  if (!tokenReferenceSlots.includes(slot)) {
     errors.push({
       code: "invalid-slot",
       message: `Reference slot "${slot}" is not supported.`,
