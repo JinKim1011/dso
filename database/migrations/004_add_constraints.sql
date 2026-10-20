@@ -28,6 +28,9 @@ ADD CONSTRAINT token_types_project_and_id_unique UNIQUE (project_id, id);
 ALTER TABLE components
 ADD CONSTRAINT components_project_and_id_unique UNIQUE (project_id, id);
 
+ALTER TABLE components
+ADD CONSTRAINT component_project_and_slug_unique UNIQUE (project_id, slug);
+
 ALTER TABLE tokens
 ADD CONSTRAINT tokens_project_and_id_unique UNIQUE (project_id, id);
 
