@@ -50,7 +50,16 @@ ALTER TABLE document_templates
 ADD CONSTRAINT document_templates_component_same_project_fk FOREIGN KEY (project_id, component_id) REFERENCES components (project_id, id);
 
 ALTER TABLE token_references
-ADD CONSTRAINT token_references_mode_check CHECK (slot IN ('light', 'dark', 'default'));
+ADD CONSTRAINT token_references_mode_check CHECK (
+  slot IN (
+    'light',
+    'dark',
+    'value',
+    'fontSize',
+    'fontWeight',
+    'lineHeight'
+  )
+);
 
 ALTER TABLE token_references
 ADD CONSTRAINT token_referenced_same_project_fk FOREIGN KEY (project_id, referenced_token_id) REFERENCES tokens (project_id, id);
