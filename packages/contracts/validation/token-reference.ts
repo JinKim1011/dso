@@ -14,7 +14,9 @@ export type TokenReferenceValidationError = {
     | "self-reference"
     | "invalid-slot"
     | "unsupported-slot"
-    | "missing-referencing-token-type";
+    | "missing-referencing-token-type"
+    | "missing-referenced-token-type"
+    | "incompatible-referenced-token-type";
   message: string;
 };
 
@@ -63,13 +65,26 @@ export function validateTokenReference(
     return errors;
   }
 
+  const referencedTokenType = tokenTypeById.get(referencedToken.tokenTypeId);
+
+  if (!referencedTokenType) {
+    errors.push({
+      code: "missing-referenced-token-type",
+      message: `Token type "${referencedToken.tokenTypeId}" does not exist.`,
+    });
+
+    return errors;
+  }
+
   if (
+    referencingToken.projectId !== projectId ||
     referencedToken.projectId !== projectId ||
-    referencingToken.projectId !== projectId
+    referencingTokenType.projectId !== projectId ||
+    referencedTokenType.projectId !== projectId
   ) {
     errors.push({
       code: "wrong-project",
-      message: "Both tokens must belong to the requested project.",
+      message: "Tokens and token types must belong to the requested project.",
     });
   }
 
