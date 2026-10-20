@@ -38,7 +38,7 @@ export function supportsTokenReferenceSlot(
     return false;
   }
 
-  if (tokenType.category === "color") {
+  if (tokenType.category === "color" || tokenType.category === "shadow") {
     return (
       token.value.kind === "modes" &&
       typeof token.value[slot as "light" | "dark"] === "string"
