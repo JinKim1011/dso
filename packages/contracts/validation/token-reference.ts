@@ -115,8 +115,8 @@ export function validateTokenReference(
   if (
     !isCompatibleReferencedType(
       referencedToken,
-      referencedTokenType,
       referencingTokenType,
+      referencedTokenType,
       slot,
     )
   ) {
