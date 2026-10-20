@@ -43,7 +43,7 @@ DSO models relationships within the token domain:
 
 - token types form a single-parent hierarchy
 - tokens can reference other tokens
-- mode-aware token references identify which value mode is being referenced
+- token-reference slots identify which value slot is being referenced
 - token references support reverse dependency queries
 
 A token type can have zero or one parent. The hierarchy is represented with `parent_type_id`; a separate token-type relationship table is not required.
@@ -70,7 +70,8 @@ Use cases, terminology, architecture, and first ER model are documented
   - `token_references`
     - `referencing_token_id`
     - `referenced_token_id`
-    - `mode`
+    - `project_id`
+    - `slot`
   - `components`
     - `id`
     - `project_id`
@@ -78,7 +79,7 @@ Use cases, terminology, architecture, and first ER model are documented
     - `slug`
     - `description`
     - `document_path`
-  - `document-templates`
+  - `document_templates`
     - `id`
     - `project_id`
     - `component_id`
@@ -98,8 +99,8 @@ Use cases, terminology, architecture, and first ER model are documented
   - A parent token type must belong to the same project.
   - Cyclic token-type hierarchies are rejected.
   - A token cannot reference itself.
-  - Duplicate token references are rejected for the same referencing token, referenced token, and mode.
-  - A mode-aware reference must identify a mode supported by the referencing token value.
+  - Duplicate token references are rejected for the same referencing token, referenced token, and slot.
+  - A token reference slot must be supported by the referencing token value and type.
   - Referenced tokens must belong to the same project.
   - Referencing and referenced tokens must exist.
   - A component document path is relative to the CLI output root.
@@ -109,7 +110,14 @@ Use cases, terminology, architecture, and first ER model are documented
 
 #### Requirement evidence
 
-Tables, rows, columns, keys, and relationships are implemented
+Tables, columns, keys, relationships, constraints, and indexes are implemented.
+
+- [ER model](../../docs/database/er-model.md)
+- [Migrations](../../database/migrations/001_create_base_schema.sql)
+- [Migration verification](../../docs/database/migration-verification.md)
+- [Token hierarchy validator](../../packages/contracts/validation/token-type-hierarchy.ts)
+- [Token reference validator](../../packages/contracts/validation/token-reference.ts)
+- [Document path validator](../../packages/contracts/validation/document-path.ts)
 
 #### Done when
 
@@ -122,7 +130,7 @@ The complete schema can be created from an empty PostgreSQL database.
 - Import the supported token definitions from `design-tokens-manifest.json` as seed input.
 - Treat legacy `class-union` and `unknown` kinds as deprecated input; they are not part of the published domain contract and are excluded or rejected during seed normalization.
 - Add token types and their parent-child hierarchy.
-- Add token-to-token references, including the referenced mode where a token uses mode-specific values.
+  - Add token-to-token references, including the referenced slot where a token uses mode-specific values.
 - Add realistic components and Markdown templates.
 - Record row counts and data-generation method.
 - Implement basic SQL
@@ -161,7 +169,7 @@ The database contains inspectable, non-trival data and documented queries
   - `listTokensByType`
   - `getReferencedTokens`
   - `getReferencingTokens`
-  - `getReferencingTokensByMode`
+  - `getReferencingTokensBySlot`
   - `getTokenTypeChildren`
   - `getTokenTypeAncestors`
   - `getTemplateForComponent`
@@ -178,7 +186,7 @@ The database contains inspectable, non-trival data and documented queries
   - Cross-project reference failures
   - Self-reference failures
   - Duplicate-reference failures
-  - Invalid mode-reference failures
+  - Invalid token-reference slot failures
   - Transaction rollback after a failed relationship update
 
 #### Requirement evidence
