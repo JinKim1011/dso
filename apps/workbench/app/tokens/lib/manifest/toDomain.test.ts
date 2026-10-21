@@ -3,7 +3,7 @@ import { manifestToDomain } from "./toDomain";
 import { NormalizedManifestEntry } from "./types";
 
 describe("manifestToDomain", () => {
-  it("converts a scalar token", () => {
+  it("converts a single token", () => {
     const entries: NormalizedManifestEntry[] = [
       {
         category: "spacing",
@@ -27,7 +27,7 @@ describe("manifestToDomain", () => {
 
     expect(result.tokens).toHaveLength(1);
     expect(result.tokens[0]?.value).toEqual({
-      kind: "scalar",
+      kind: "signle",
       value: "0.5rem",
     });
   });

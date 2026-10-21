@@ -4,7 +4,7 @@ import type {
   ManifestTokenRecord,
   NormalizedManifestEntry,
 } from "@/tokens/lib/manifest/types";
-import type { Token, TokenReference, TokenType } from "@contracts/type";
+import type { Token, TokenReference, TokenType } from "@repo/contracts/type";
 
 export type ManifestDomainData = {
   projectId: string;
@@ -116,7 +116,7 @@ function toTokenValue(token: ManifestTokenRecord): Token["value"] {
 
   if (token.value) {
     return {
-      kind: "scalar",
+      kind: "single",
       value: token.value,
     };
   }

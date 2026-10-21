@@ -97,7 +97,7 @@ Show one realistic JSON example.
       "name": "neutral-0",
       "cssVar": "--base-neutral-0",
       "value": {
-        "kind": "scalar",
+        "kind": "single",
         "value": "oklch(98.5% 0 0)"
       }
     },
@@ -108,7 +108,7 @@ Show one realistic JSON example.
       "name": "neutral-50",
       "cssVar": "--base-neutral-50",
       "value": {
-        "kind": "scalar",
+        "kind": "single",
         "value": "oklch(97% 0 0)"
       }
     },
@@ -119,7 +119,7 @@ Show one realistic JSON example.
       "name": "neutral-850",
       "cssVar": "--base-neutral-850",
       "value": {
-        "kind": "scalar",
+        "kind": "single",
         "value": "oklch(20.5% 0 0)"
       }
     },
@@ -130,7 +130,7 @@ Show one realistic JSON example.
       "name": "neutral-900",
       "cssVar": "--base-neutral-900",
       "value": {
-        "kind": "scalar",
+        "kind": "single",
         "value": "oklch(14.5% 0 0)"
       }
     },
@@ -175,32 +175,32 @@ Show one realistic JSON example.
     {
       "referencingTokenId": "token_color_surface_default",
       "referencedTokenId": "token_color_base_neutral_0",
-      "mode": "light"
+      "slot": "light"
     },
     {
       "referencingTokenId": "token_color_surface_default",
       "referencedTokenId": "token_color_base_neutral_900",
-      "mode": "dark"
+      "slot": "dark"
     },
     {
       "referencingTokenId": "token_color_surface_muted",
       "referencedTokenId": "token_color_base_neutral_50",
-      "mode": "light"
+      "slot": "light"
     },
     {
       "referencingTokenId": "token_color_surface_muted",
       "referencedTokenId": "token_color_base_neutral_850",
-      "mode": "dark"
+      "slot": "dark"
     },
     {
       "referencingTokenId": "token_color_surface_interactive_hoverWeak",
       "referencedTokenId": "token_color_base_neutral_50",
-      "mode": "light"
+      "slot": "light"
     },
     {
       "referencingTokenId": "token_color_surface_interactive_hoverWeak",
       "referencedTokenId": "token_color_base_neutral_850",
-      "mode": "dark"
+      "slot": "dark"
     }
   ],
   "components": [
@@ -268,7 +268,8 @@ The token-type hierarchy. Each item contains:
 - `id`: stable token-type identifier
 - `projectId`: owning project
 - `category`: value category such as `color`, `typography`, `spacing`, `radius`, `motion`, or `shadow`
-- `name`: human-readable type name
+- `name`: token-type name. Typography primitive types use the canonical names
+  `font-size`, `font-weight`, and `line-height`.
 - `kind`: `"primitive"` or `"semantic"`
 - `parentTypeId`: parent type identifier, or `null` for a root type
 
@@ -279,17 +280,29 @@ The token definitions in the release. Each token points to a token type through
 
 - `name` is the token name within its type.
 - `cssVar` is the generated CSS custom-property name, when one exists.
-- `value` uses the domain value union. Its `kind` is independent of the token
-  type's `kind`.
-
-For example, a primitive token can have a scalar value, and a semantic token
-can have mode-specific values.
+- `value` uses the domain value union.
+- For `color` and `shadow` tokens:
+  - a `primitive` token uses `kind: "single"` with one direct string value;
+  - a `semantic` token uses `kind: "modes"` with `light` and `dark` values.
+- For `typography` tokens:
+  - a primitive `font-size`, `font-weight`, or `line-height` token uses
+    `kind: "single"` with one direct string value;
+  - a semantic typography token such as `body-md` uses `kind: "typography"`
+    with `fontSize`, `fontWeight`, and `lineHeight` fields.
+- Other token categories use their category-specific value shape.
 
 ### `tokenReferences`
 
 Token-to-token dependency edges. Each edge contains the referencing token,
-referenced token, and the mode of the referencing value when the value is
-mode-specific.
+referenced token, and the slot of the referencing semantic value.
+
+Color and shadow semantic tokens use `light` and `dark` slots to reference
+same-category primitive tokens. The referenced primitive token supplies one
+`single` value for whichever mode slot points to it.
+
+Typography semantic tokens use `fontSize`, `fontWeight`, and `lineHeight`
+slots to reference the corresponding primitive typography types:
+`font-size`, `font-weight`, and `line-height`.
 
 ### `components`
 
@@ -330,19 +343,21 @@ The relationships are represented by IDs in normalized arrays for these reasons:
     {
       "referencingTokenId": "",
       "referencedTokenId": "",
-      "mode": "light"
+      "slot": "light"
     }
   ]
 }
 ```
 
-`tokenReferences` identifies the exact value mode when the referencing token has
-mode-specific values. For example, the `light` value of
+`tokenReferences` identifies the exact value slot when the referencing token has
+mode-specific values. For example, the `light` slot of
 `token_color_surface_default` references `token_color_base_neutral_0`, while
 the `dark` value references `token_color_base_neutral_900`.
 
-The same referencing token, referenced token, and mode combination may appear
-only once. A reference mode must be supported by the referencing token's value.
+The same referencing token, referenced token, and slot combination may appear
+only once. The database also allows only one target for each referencing token
+and slot. A reference slot must be supported by the referencing token's value
+and token type.
 The API does not include a separate reverse-reference collection; consumers can
 derive reverse dependencies by indexing `tokenReferences`.
 

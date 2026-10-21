@@ -1,5 +1,13 @@
 {
-  "plugins": ["prettier-plugin-tailwindcss"],
+  "plugins": ["prettier-plugin-tailwindcss", "prettier-plugin-sql"],
+  "overrides": [
+    {
+      "files": "*.sql",
+      "options": {
+        "language": "postgresql"
+      }
+    }
+  ],
   "printWidth": 90,
   "singleQuote": false,
   "semi": true,
