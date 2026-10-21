@@ -98,9 +98,14 @@ Use cases, terminology, architecture, and first ER model are documented
   - A token type cannot be its own parent.
   - A parent token type must belong to the same project.
   - Cyclic token-type hierarchies are rejected.
+  - Primitive color and shadow tokens use a `single` value.
+  - Semantic color and shadow tokens use a `modes` value with `light` and `dark` entries.
   - A token cannot reference itself.
   - Duplicate token references are rejected for the same referencing token, referenced token, and slot.
   - A token reference slot must be supported by the referencing token value and type.
+  - A semantic color or shadow token may reference only a primitive token of the same category.
+  - A referenced primitive color or shadow token must provide a `single` value.
+  - Primitive color and shadow references resolve their `single` value for the selected `light` or `dark` slot.
   - Referenced tokens must belong to the same project.
   - Referencing and referenced tokens must exist.
   - A component document path is relative to the CLI output root.
