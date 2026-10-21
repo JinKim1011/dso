@@ -21,7 +21,7 @@ function tokenType(
   };
 }
 
-function scalarToken(
+function singleToken(
   id: string,
   tokenTypeId: string,
   currentProjectId = projectId,
@@ -95,8 +95,8 @@ describe("validateTokenReference", () => {
     ];
 
     const tokens = [
-      scalarToken("space-token", "space"),
-      scalarToken("space-primitive-token", "space-primitive"),
+      singleToken("space-token", "space"),
+      singleToken("space-primitive-token", "space-primitive"),
     ];
 
     const errors = validateTokenReference(
@@ -153,7 +153,7 @@ describe("validateTokenReference", () => {
 
   it("rejects an unsupported slot", () => {
     const types = [tokenType("space", "spacing", "semantic")];
-    const tokens = [scalarToken("space-token", "space")];
+    const tokens = [singleToken("space-token", "space")];
 
     const errors = validateTokenReference(
       reference("space-token", "space-token", "light"),
@@ -173,7 +173,7 @@ describe("validateTokenReference", () => {
 
     const tokens = [
       modeToken("surface-token", "surface"),
-      scalarToken("space-token", "space"),
+      singleToken("space-token", "space"),
     ];
 
     const errors = validateTokenReference(
