@@ -72,7 +72,7 @@ Browser
 - Failure behavior
   - reject invalid requests
   - return generic errors
-  - do not persist partial changeså
+  - do not persist partial changes
 
 ### Workbench API -> PostgreSQL
 
@@ -221,6 +221,204 @@ CLI
   - Use transactions for multi-step updates.
   - Redact credentials and authorization headers from logs.
   - Apply request and rate limits.
+
+## Security layers
+
+DSO uses defense in depth. Each layer provides independent protection so that the failure of one control does not automatically expose the entire system.
+
+### Physical security
+
+DSO does not implement provider-managed physical security.
+
+### Network security
+
+Network security controls which systems can communicate with each other. A
+network compromise must not by itself bypass application authentication and
+project authorization.
+
+- PostgreSQL remains on a private network.
+- Only the Workbench/API service can connect to PostgreSQL.
+- PostgreSQL is not exposed directly to the public internet.
+- Firewall or security-group rules restrict database access.
+- The CLI communicates with the API and never connects directly to PostgreSQL.
+- API and database access should be separated by environment where practical.
+
+### Transport security
+
+Protects data while it moves between systems. Transport encryption protects credentials and data in transit but does not replace authentication or authorization.
+
+- Browser-to-API traffic uses HTTPS/TLS.
+- CLI-to-API traffic uses HTTPS/TLS outside local development.
+- The CLI rejects non-HTTPS API URLs outside local development.
+- Sessions, API keys, release data, and signatures are not sent over plain HTTP.
+- TLS configuration and certificate handling are deployment responsibilities.
+
+### Application security
+
+Protects the behavior and interfaces of Workbench, API, CLI, and generator.
+
+- Email/password authentication with hashed passwords.
+- opaque, database-backed sessions.
+- Project membership and role-based authorization.
+- Scoped, expiring, revocable CLI API keys.
+- Server-side request validation and size limits.
+- Parameterized SQL through the data-access layer.
+- CSRF protection for cookie-based mutations.
+- Security headers and generic production errors.
+- Release-signature verification before CLI generation.
+- Output-path validation and path-traversal prevention.
+- No shell execution based on release data.
+
+### Database and data security
+
+Protects stored information, data integrity, and relationships between entities.
+
+- Least-privilege database credentials.
+- Private PostgreSQL access.
+- Parameterized queries.
+- Foreign key, check, unique, and not-null constraints.
+- Project-isolation checks before protected reads and writes.
+- Transaction rollback for failed multi-step updates.
+- Validation of token-type hierarchies and token references.
+- Passwords and API-key secrets are never stored in plaintext.
+- Database errors do not expose credentials, SQL, schema details, or stack traces.
+- Logs do not contain passwords, API keys, authorization headers, or signing keys.
+- Published release data is validated before it is signed and returned.
+
+### Development and operations security
+
+Protects the system throughout its lifecycle, including development, deployment, monitoring, maintenance, and incident response. Some development and operational controls are planned rather than implemented in the application. Their implementation status must be verified separately during deployment and final security testing.
+
+- Typecheck, lint, unit, integration, and security tests.
+- Dependency vulnerability scanning.
+- Secret scanning before changes are merged.
+- Keeping credentials and signing keys out of source control.
+- Injecting secrets through deployment configuration.
+- Session expiration and credential rotation.
+- API-key and signing-key revocation or rotation procedures.
+- Request, login, mutation, and release-download rate limits.
+- Redacted logs and operational error review.
+- Database backups and restore procedures.
+- Migration verification and deployment checks.
+- Documented incident-response limitations and recovery procedures.
+
+## Security-layer verification evidence
+
+The following are planned tests and verification activities for the security
+layers described above. They are evidence requirements, not claims that every
+control has already been implemented or verified. Automated tests cover
+application behavior and data integrity. Deployment and operational controls
+require configuration inspection, environment checks, or documented provider
+evidence.
+
+Verification status:
+
+- **Planned:** defined here but not yet executed or recorded.
+- **Completed:** execution evidence has been recorded in this document or a
+  linked verification record.
+- **Provider responsibility:** supplied by the hosting or infrastructure
+  provider and documented as an assumption.
+
+### Physical security verification
+
+Physical security is provided by the hosting or infrastructure provider and is
+not implemented by DSO application code. Verification evidence:
+
+- **Provider responsibility:** Confirm that facility access, hardware,
+  database storage, and backups are protected by the hosting provider.
+- **Planned:** Document responsibility for hardware disposal and unauthorized
+  console access.
+- **Planned:** Confirm that production credentials, API keys, and signing keys
+  are not stored in repository files or local seed data.
+
+### Network security verification
+
+- **Planned:** Confirm that PostgreSQL is bound to a private network or
+  internal interface.
+- **Planned:** Confirm that PostgreSQL is not reachable from the public
+  internet.
+- **Planned:** Confirm that only the Workbench/API service can connect to
+  PostgreSQL.
+- **Planned:** Confirm that firewall or security-group rules deny unauthorized
+  database connections.
+- **Planned:** Confirm that the CLI uses the Published-release API and has no
+  PostgreSQL connection configuration or database dependency.
+- **Planned:** Confirm that development, migration, and production database
+  access are separated where required.
+- **Planned:** Verify that a network-level connection attempt from an
+  unauthorized host is rejected.
+
+### Transport security verification
+
+- **Planned:** Confirm that browser-to-API traffic uses HTTPS in deployed
+  environments.
+- **Planned:** Confirm that CLI-to-API traffic requires HTTPS outside local
+  development.
+- **Planned:** Confirm that the CLI rejects non-HTTPS API URLs outside local
+  development.
+- **Planned:** Confirm that sessions, API keys, release data, and signatures
+  are never sent over plain HTTP.
+- **Planned:** Verify that deployed TLS certificates are valid and not expired.
+- **Planned:** Verify that HTTP requests are redirected or rejected according
+  to the deployment policy.
+- **Planned:** Confirm that authorization headers and session cookies are
+  protected by the configured transport security.
+
+### Application and database security verification
+
+The application and database checks are specified in the dedicated planned
+security-test sections below. Those tests provide evidence for:
+
+- Authentication, authorization, API-key, request-validation, CSRF, XSS, and
+  security-header controls.
+- Release-signature verification, safe generation, path validation, and secret
+  handling.
+- SQL-injection resistance, project isolation, data constraints, relationship
+  validation, transaction rollback, safe database errors, and log redaction.
+
+**Planned:** Execute and record these application and database tests. Migration
+verification currently confirms the expected domain tables, constraints, and
+indexes; valid-row and invalid-row test evidence remains pending or is
+recorded separately in `migration-verification.md`.
+
+### Development and operations verification
+
+- **Planned:** Typecheck, lint, unit, integration, and security tests run
+  successfully.
+- **Planned:** Dependency vulnerability scanning runs in CI.
+- **Planned:** Secret scanning runs before changes are merged.
+- **Planned:** Repository history and seed data contain no production
+  credentials, API keys, passwords, or signing keys.
+- **Planned:** Deployment configuration injects secrets without committing them
+  to source control.
+- **Planned:** Session expiration and API-key revocation are verified.
+- **Planned:** Signing-key rotation and trust of signing-key identifiers are
+  documented and tested.
+- **Planned:** Login, mutation, API-key, and release-download rate limits are
+  configured and verified.
+- **Planned:** Logs are checked to confirm that credentials, authorization
+  headers, and sensitive payloads are redacted.
+- **Planned:** Database backup and restore procedures are documented and
+  tested.
+- **Planned:** Migration and deployment checks are recorded as release
+  evidence.
+- **Planned:** Incident-response limitations and recovery responsibilities are
+  documented.
+
+## Cross-document follow-up decisions
+
+The following items are intentionally recorded for later architecture and
+implementation work. They are not treated as completed Week 1 evidence:
+
+- Define the published-release response fields for the Ed25519 signature and
+  signing-key identifier.
+- Decide how immutable release contents are represented and associated with a
+  release in the data model.
+- Add the security schema for users, sessions, project membership, API keys,
+  and audit events to the ER model and migration verification when the W2
+  security migrations are implemented.
+- Confirm whether token references require a unique constraint on
+  `(referencing_token_id, slot)` in addition to the reference identity key.
 
 ## Planned security tests
 
