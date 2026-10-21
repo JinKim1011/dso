@@ -268,7 +268,8 @@ The token-type hierarchy. Each item contains:
 - `id`: stable token-type identifier
 - `projectId`: owning project
 - `category`: value category such as `color`, `typography`, `spacing`, `radius`, `motion`, or `shadow`
-- `name`: human-readable type name
+- `name`: token-type name. Typography primitive types use the canonical names
+  `font-size`, `font-weight`, and `line-height`.
 - `kind`: `"primitive"` or `"semantic"`
 - `parentTypeId`: parent type identifier, or `null` for a root type
 
@@ -280,19 +281,28 @@ The token definitions in the release. Each token points to a token type through
 - `name` is the token name within its type.
 - `cssVar` is the generated CSS custom-property name, when one exists.
 - `value` uses the domain value union.
-- For `color` and `shadow` tokens, the token type kind determines the value
-  shape:
+- For `color` and `shadow` tokens:
   - a `primitive` token uses `kind: "single"` with one direct string value;
   - a `semantic` token uses `kind: "modes"` with `light` and `dark` values.
+- For `typography` tokens:
+  - a primitive `font-size`, `font-weight`, or `line-height` token uses
+    `kind: "single"` with one direct string value;
+  - a semantic typography token such as `body-md` uses `kind: "typography"`
+    with `fontSize`, `fontWeight`, and `lineHeight` fields.
 - Other token categories use their category-specific value shape.
 
 ### `tokenReferences`
 
 Token-to-token dependency edges. Each edge contains the referencing token,
-referenced token, and the slot of the referencing semantic value. Color and
-shadow semantic tokens use `light` and `dark` slots to reference primitive
-color or shadow tokens. The referenced primitive token supplies one `single`
-value for whichever mode slot points to it.
+referenced token, and the slot of the referencing semantic value.
+
+Color and shadow semantic tokens use `light` and `dark` slots to reference
+same-category primitive tokens. The referenced primitive token supplies one
+`single` value for whichever mode slot points to it.
+
+Typography semantic tokens use `fontSize`, `fontWeight`, and `lineHeight`
+slots to reference the corresponding primitive typography types:
+`font-size`, `font-weight`, and `line-height`.
 
 ### `components`
 
