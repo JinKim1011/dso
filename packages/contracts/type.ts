@@ -29,7 +29,7 @@ export type Token = {
 };
 
 export type TokenValue =
-  | { kind: "scalar"; value: string }
+  | { kind: "single"; value: string }
   | { kind: "modes"; light?: string; dark?: string }
   | { kind: "typography"; fontSize: string; fontWeight: string; lineHeight: string }
   | { kind: "unresolved" };
