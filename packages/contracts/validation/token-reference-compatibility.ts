@@ -1,11 +1,7 @@
 import type { Token, TokenReferenceSlot, TokenType } from "@repo/contracts/type";
 
-function supportsModeValue(token: Token, slot: TokenReferenceSlot): boolean {
-  return (
-    token.value.kind === "modes" &&
-    (slot === "light" || slot === "dark") &&
-    typeof token.value[slot] === "string"
-  );
+function isModeSlot(slot: TokenReferenceSlot): slot is "light" | "dark" {
+  return slot === "light" || slot === "dark";
 }
 
 function supportsSingleValue(token: Token): boolean {
