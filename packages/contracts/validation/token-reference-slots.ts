@@ -60,5 +60,5 @@ export function supportsTokenReferenceSlot(
     );
   }
 
-  return token.value.kind === "scalar";
+  return token.value.kind === "single";
 }
