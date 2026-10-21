@@ -3,7 +3,7 @@ CREATE TABLE tokens (
   project_id UUID NOT NULL REFERENCES projects (id),
   token_type_id UUID NOT NULL,
   name TEXT NOT NULL,
-  css_var TEXT NOT NULL,
+  css_var TEXT,
   value JSONB NOT NULL
 );
 
