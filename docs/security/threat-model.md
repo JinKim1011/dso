@@ -222,6 +222,84 @@ CLI
   - Redact credentials and authorization headers from logs.
   - Apply request and rate limits.
 
+## Security layers
+
+DSO uses defense in depth. Each layer provides independent protection so that the failure of one control does not automatically expose the entire system.
+
+### Physical secuirty
+
+DSO does not implement provider-managed physical security.
+
+### Network security
+
+Network security contorls which system can communicate with each other. A network compromise must not by itself bypass application authentication and project authorization.
+
+- PostgreSQL remains on a private network.
+- Only the Workbench/API service can connect to PostgreSQL.
+- PostgreSQL is not exposed directly to the public internet.
+- Firewall or security-group rules restrict database access.
+- The CLI communicates with the API and never connects directly to PostgreSQL.
+- API and database access should be separated by environment where practical.
+
+### Transport security
+
+Protects data while it moves between systems. Transport encryption protects credentials and data in transit but does not replace authentication or authorization.
+
+- Browser-to-API traffic uses HTTPS/TLS.
+- CLI-to-API traffic uses HTTPS/TLS outside local development.
+- The CLI rejects non-HTTPS API URLs outside local development.
+- Sessions, API keys, release data, and signatures are not sent over plain HTTP.
+- TLS configuration and certificate handling are deployment responsibilities.
+
+### Application security
+
+Protects the behavior and interfaces of Workbench, API, CLI, and generator.
+
+- Email/password authentication with hashed passwords.
+- OPAQUE, database-backed sessions.
+- Project membership and role-based authorization.
+- Scoped, expiring, revocable CLI API keys.
+- Server-side request validation and size limits.
+- Parameterized SQL through the data-access layer.
+- CSRF protection for cookie-based mutations.
+- Security headers and generic production errors.
+- Release-signature verification before CLI generation.
+- Output-path validation and path-traversal prevention.
+- No shell execution based on release data.
+
+### Database and data security
+
+Protects stored information, data integrity, and relationships between entities.
+
+- Least-privilage database credentials.
+- Private PostgreSQL access.
+- Parameterized queries.
+- Foreign key, check, unique, and not-null constraints.
+- Project-isolation checks before protected reads and writes.
+- Transaction rollback for failed multi-step updates.
+- Validation of token-type hierarchies and token references.
+- Passwords and API-key secerets are never stored in plaintext.
+- Database errors do not expose credentials, SQL, schema details, or stack traces.
+- Logs do not contain passwords, API keys, authorization headers, or signing keys.
+- Published release data is validated before it is signed and returned.
+
+### Development and operation security
+
+Protects the system throughout its lifecycle, including development, deployment, monitoring, maintenance, and incident response. Some development and operational controls are planned rather than implemented in the application. Their implementation status must be verified separately during deployment and final security testing.
+
+- Typecheck, lint, unit, integration, and security tests.
+- Dependency vulnerability scanning.
+- Secret scanning before changes are merged.
+- Keeping credentials and signing keys out of source control.
+- Injecting secrets through deployment configuration.
+- Session expiration and credential rotation.
+- API-key and signing-key revocation or rotation procedures.
+- Request, login, mutation, and release-download rate limits.
+- Redacted logs and operational error review.
+- Database backups and restore procedures.
+- Migration verification and deployment checks.
+- Documented incident-response limitations and recovery procedures.
+
 ## Planned security tests
 
 ### Authentication and authorization
