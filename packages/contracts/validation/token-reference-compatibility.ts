@@ -8,8 +8,8 @@ function supportsModeValue(token: Token, slot: TokenReferenceSlot): boolean {
   );
 }
 
-function supportsScalarValue(token: Token): boolean {
-  return token.value.kind === "scalar";
+function supportsSingleValue(token: Token): boolean {
+  return token.value.kind === "single";
 }
 
 export function isCompatibleReferencedType(
