@@ -72,7 +72,7 @@ Browser
 - Failure behavior
   - reject invalid requests
   - return generic errors
-  - do not persist partial changeså
+  - do not persist partial changes
 
 ### Workbench API -> PostgreSQL
 
