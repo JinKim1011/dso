@@ -279,17 +279,20 @@ The token definitions in the release. Each token points to a token type through
 
 - `name` is the token name within its type.
 - `cssVar` is the generated CSS custom-property name, when one exists.
-- `value` uses the domain value union. Its `kind` is independent of the token
-  type's `kind`.
-
-For example, a primitive token can have a single value, and a semantic token
-can have mode-specific values.
+- `value` uses the domain value union.
+- For `color` and `shadow` tokens, the token type kind determines the value
+  shape:
+  - a `primitive` token uses `kind: "single"` with one direct string value;
+  - a `semantic` token uses `kind: "modes"` with `light` and `dark` values.
+- Other token categories use their category-specific value shape.
 
 ### `tokenReferences`
 
 Token-to-token dependency edges. Each edge contains the referencing token,
-referenced token, and the slot of the referencing value when the value is
-mode-specific.
+referenced token, and the slot of the referencing semantic value. Color and
+shadow semantic tokens use `light` and `dark` slots to reference primitive
+color or shadow tokens. The referenced primitive token supplies one `single`
+value for whichever mode slot points to it.
 
 ### `components`
 
