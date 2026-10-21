@@ -116,7 +116,7 @@ function toTokenValue(token: ManifestTokenRecord): Token["value"] {
 
   if (token.value) {
     return {
-      kind: "scalar",
+      kind: "single",
       value: token.value,
     };
   }
