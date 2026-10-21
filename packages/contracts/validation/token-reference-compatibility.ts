@@ -8,6 +8,18 @@ function supportsSingleValue(token: Token): boolean {
   return token.value.kind === "single";
 }
 
+const typographyPrimitiveNameBySlot = {
+  fontSize: "font-size",
+  fontWeight: "font-weight",
+  lineHeight: "line-height",
+} as const;
+
+type TypographySlot = keyof typeof typographyPrimitiveNameBySlot;
+
+function isTypographySlot(slot: TokenReferenceSlot): slot is TypographySlot {
+  return slot === "fontSize" || slot === "fontWeight" || slot === "lineHeight";
+}
+
 export function isCompatibleReferencedType(
   referencedToken: Token,
   referencingType: TokenType,
@@ -56,29 +68,17 @@ export function isCompatibleReferencedType(
   }
 
   if (referencingType.category === "typography") {
-    if (slot === "fontSize") {
-      return (
-        referencedType.category === "typography" &&
-        referencedType.name === "fontSize" &&
-        supportsSingleValue(referencedToken)
-      );
+    if (!isTypographySlot(slot)) {
+      return false;
     }
 
-    if (slot === "fontWeight") {
-      return (
-        referencedType.category === "typography" &&
-        referencedType.name === "fontWeight" &&
-        supportsSingleValue(referencedToken)
-      );
-    }
+    const expectedName = typographyPrimitiveNameBySlot[slot];
 
-    if (slot === "lineHeight") {
-      return (
-        referencedType.category === "typography" &&
-        referencedType.name === "lineHeight" &&
-        supportsSingleValue(referencedToken)
-      );
-    }
+    return (
+      referencedType.category === "typography" &&
+      referencedType.name === expectedName && // intended to be the stable type identifier, not a user-editable display label.
+      supportsSingleValue(referencedToken)
+    );
   }
 
   return false;
