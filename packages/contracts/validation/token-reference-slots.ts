@@ -47,6 +47,7 @@ export function supportsTokenReferenceSlot(
 
   if (tokenType.category === "color" || tokenType.category === "shadow") {
     return (
+      tokenType.kind === "semantic" &&
       token.value.kind === "modes" &&
       typeof token.value[slot as "light" | "dark"] === "string"
     );
