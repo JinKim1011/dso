@@ -33,7 +33,7 @@ function singleToken(
     name: id,
     cssVar: `--${id}`,
     value: {
-      kind: "scalar",
+      kind: "single",
       value: "1rem",
     },
   };
