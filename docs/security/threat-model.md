@@ -226,13 +226,13 @@ CLI
 
 DSO uses defense in depth. Each layer provides independent protection so that the failure of one control does not automatically expose the entire system.
 
-### Physical secuirty
+### Physical security
 
 DSO does not implement provider-managed physical security.
 
 ### Network security
 
-Network security contorls which system can communicate with each other. A network compromise must not by itself bypass application authentication and project authorization.
+Network security controls which system can communicate with each other. A network compromise must not by itself bypass application authentication and project authorization.
 
 - PostgreSQL remains on a private network.
 - Only the Workbench/API service can connect to PostgreSQL.
@@ -256,7 +256,7 @@ Protects data while it moves between systems. Transport encryption protects cred
 Protects the behavior and interfaces of Workbench, API, CLI, and generator.
 
 - Email/password authentication with hashed passwords.
-- OPAQUE, database-backed sessions.
+- opaque, database-backed sessions.
 - Project membership and role-based authorization.
 - Scoped, expiring, revocable CLI API keys.
 - Server-side request validation and size limits.
@@ -271,19 +271,19 @@ Protects the behavior and interfaces of Workbench, API, CLI, and generator.
 
 Protects stored information, data integrity, and relationships between entities.
 
-- Least-privilage database credentials.
+- Least-privilege database credentials.
 - Private PostgreSQL access.
 - Parameterized queries.
 - Foreign key, check, unique, and not-null constraints.
 - Project-isolation checks before protected reads and writes.
 - Transaction rollback for failed multi-step updates.
 - Validation of token-type hierarchies and token references.
-- Passwords and API-key secerets are never stored in plaintext.
+- Passwords and API-key secrets are never stored in plaintext.
 - Database errors do not expose credentials, SQL, schema details, or stack traces.
 - Logs do not contain passwords, API keys, authorization headers, or signing keys.
 - Published release data is validated before it is signed and returned.
 
-### Development and operation security
+### Development and operations security
 
 Protects the system throughout its lifecycle, including development, deployment, monitoring, maintenance, and incident response. Some development and operational controls are planned rather than implemented in the application. Their implementation status must be verified separately during deployment and final security testing.
 
