@@ -97,7 +97,7 @@ Show one realistic JSON example.
       "name": "neutral-0",
       "cssVar": "--base-neutral-0",
       "value": {
-        "kind": "scalar",
+        "kind": "single",
         "value": "oklch(98.5% 0 0)"
       }
     },
@@ -108,7 +108,7 @@ Show one realistic JSON example.
       "name": "neutral-50",
       "cssVar": "--base-neutral-50",
       "value": {
-        "kind": "scalar",
+        "kind": "single",
         "value": "oklch(97% 0 0)"
       }
     },
@@ -119,7 +119,7 @@ Show one realistic JSON example.
       "name": "neutral-850",
       "cssVar": "--base-neutral-850",
       "value": {
-        "kind": "scalar",
+        "kind": "single",
         "value": "oklch(20.5% 0 0)"
       }
     },
@@ -130,7 +130,7 @@ Show one realistic JSON example.
       "name": "neutral-900",
       "cssVar": "--base-neutral-900",
       "value": {
-        "kind": "scalar",
+        "kind": "single",
         "value": "oklch(14.5% 0 0)"
       }
     },
@@ -282,7 +282,7 @@ The token definitions in the release. Each token points to a token type through
 - `value` uses the domain value union. Its `kind` is independent of the token
   type's `kind`.
 
-For example, a primitive token can have a scalar value, and a semantic token
+For example, a primitive token can have a single value, and a semantic token
 can have mode-specific values.
 
 ### `tokenReferences`
