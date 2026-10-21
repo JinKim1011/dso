@@ -20,12 +20,16 @@ export function isCompatibleReferencedType(
 
   if (referencingType.category === "color") {
     return (
-      referencedType.category === "color" && supportsModeValue(referencedToken, slot)
+      isModeSlot(slot) &&
+      referencedType.category === "color" &&
+      supportsSingleValue(referencedToken)
     );
   }
   if (referencingType.category === "shadow") {
     return (
-      referencedType.category === "shadow" && supportsModeValue(referencedToken, slot)
+      isModeSlot(slot) &&
+      referencedType.category === "shadow" &&
+      supportsSingleValue(referencedToken)
     );
   }
   if (referencingType.category === "spacing") {
