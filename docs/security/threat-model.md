@@ -232,7 +232,9 @@ DSO does not implement provider-managed physical security.
 
 ### Network security
 
-Network security controls which system can communicate with each other. A network compromise must not by itself bypass application authentication and project authorization.
+Network security controls which systems can communicate with each other. A
+network compromise must not by itself bypass application authentication and
+project authorization.
 
 - PostgreSQL remains on a private network.
 - Only the Workbench/API service can connect to PostgreSQL.
@@ -302,79 +304,121 @@ Protects the system throughout its lifecycle, including development, deployment,
 
 ## Security-layer verification evidence
 
-The following tests and verification activities provide evidence for the security layers described above. Automated tests cover application behavior and data integrity. Deployment and operational controls require configuration, or inspection.
+The following are planned tests and verification activities for the security
+layers described above. They are evidence requirements, not claims that every
+control has already been implemented or verified. Automated tests cover
+application behavior and data integrity. Deployment and operational controls
+require configuration inspection, environment checks, or documented provider
+evidence.
+
+Verification status:
+
+- **Planned:** defined here but not yet executed or recorded.
+- **Completed:** execution evidence has been recorded in this document or a
+  linked verification record.
+- **Provider responsibility:** supplied by the hosting or infrastructure
+  provider and documented as an assumption.
 
 ### Physical security verification
 
-Physical security is provided by the hosting or infrastructure provider and is not implemented by DSO application code. Verification evidence:
+Physical security is provided by the hosting or infrastructure provider and is
+not implemented by DSO application code. Verification evidence:
 
-- Confirm that database storage and backups are protected by the provider.
-- Do not store production credentials, API keys, or signing keys in repository
-  files or local seed data.
+- **Provider responsibility:** Confirm that facility access, hardware,
+  database storage, and backups are protected by the hosting provider.
+- **Planned:** Document responsibility for hardware disposal and unauthorized
+  console access.
+- **Planned:** Confirm that production credentials, API keys, and signing keys
+  are not stored in repository files or local seed data.
 
 ### Network security verification
 
-- Confirm that PostgreSQL is bound to a private network or internal interface.
-- Confirm that PostgreSQL is not reachable from the public internet.
-- Confirm that only the Workbench/API service can connect to PostgreSQL.
-- Confirm that firewall or security-group rules deny unauthorized database connections.
-- Confirm that the CLI uses the Published-release API and has no PostgreSQL connection configuration or database dependency.
-- Confirm that development, migration, and production database access are separated where required.
-- Verify that a network-level connection attempt from an unauthorized host is rejected.
+- **Planned:** Confirm that PostgreSQL is bound to a private network or
+  internal interface.
+- **Planned:** Confirm that PostgreSQL is not reachable from the public
+  internet.
+- **Planned:** Confirm that only the Workbench/API service can connect to
+  PostgreSQL.
+- **Planned:** Confirm that firewall or security-group rules deny unauthorized
+  database connections.
+- **Planned:** Confirm that the CLI uses the Published-release API and has no
+  PostgreSQL connection configuration or database dependency.
+- **Planned:** Confirm that development, migration, and production database
+  access are separated where required.
+- **Planned:** Verify that a network-level connection attempt from an
+  unauthorized host is rejected.
 
 ### Transport security verification
 
-- Confirm that browser-to-API traffic uses HTTPS in deployed environments.
-- Confirm that CLI-to-API traffic requires HTTPS outside local development.
-- Confirm that the CLI rejects non-HTTPS API URLs outside local development.
-- Confirm that sessions, API keys, release data, and signatures are never sent over plain HTTP.
-- Verify that deployed TLS certificates are valid and not expired.
-- Verify that HTTP requests are redirected or rejected according to the deployment policy.
-- Confirm that authorization headers and session cookies are protected by the configured transport security.
+- **Planned:** Confirm that browser-to-API traffic uses HTTPS in deployed
+  environments.
+- **Planned:** Confirm that CLI-to-API traffic requires HTTPS outside local
+  development.
+- **Planned:** Confirm that the CLI rejects non-HTTPS API URLs outside local
+  development.
+- **Planned:** Confirm that sessions, API keys, release data, and signatures
+  are never sent over plain HTTP.
+- **Planned:** Verify that deployed TLS certificates are valid and not expired.
+- **Planned:** Verify that HTTP requests are redirected or rejected according
+  to the deployment policy.
+- **Planned:** Confirm that authorization headers and session cookies are
+  protected by the configured transport security.
 
-### Application security verification
+### Application and database security verification
 
-The planned authentication, authorization, browser, release-signing, and CLI tests provide application-security evidence:
+The application and database checks are specified in the dedicated planned
+security-test sections below. Those tests provide evidence for:
 
-- Authentication and session tests pass.
-- Project and role authorization tests pass.
-- API-key scope, expiration, revocation, and project-isolation tests pass.
-- Request validation rejects malformed, unknown, invalid, and oversized input.
-- CSRF protection rejects unsafe cookie-based mutations.
-- User-controlled content cannot execute unintended browser scripts.
-- Security headers are present.
-- Production errors do not expose stack traces, SQL, credentials, or paths.
-- Release signatures are verified before generation.
-- Invalid release data and unsafe output paths stop generation before writing.
-- Release data cannot cause shell commands to execute.
-- Generated output is deterministic and contains no secrets.
+- Authentication, authorization, API-key, request-validation, CSRF, XSS, and
+  security-header controls.
+- Release-signature verification, safe generation, path validation, and secret
+  handling.
+- SQL-injection resistance, project isolation, data constraints, relationship
+  validation, transaction rollback, safe database errors, and log redaction.
 
-### Database and data security verification
-
-- Parameterized-query tests reject SQL injection payloads without changing query behavior.
-- Foreign-key, check, unique, and not-null constraints reject invalid data.
-- Cross-project access and cross-project token references are rejected.
-- Invalid token-type parents, self-references, duplicate references, invalid slots, and cyclic hierarchies are rejected.
-- Failed multi-step updates roll back all changes.
-- The runtime database role has only the permissions required by the application.
-- Database outage and constraint failures return safe application errors.
-- Database errors and logs do not expose SQL, credentials, schema details, authorization headers, or sensitive payloads.
-- Migration verification confirms that the expected tables, constraints, and indexes exist.
+**Planned:** Execute and record these application and database tests. Migration
+verification currently confirms the expected domain tables, constraints, and
+indexes; valid-row and invalid-row test evidence remains pending or is
+recorded separately in `migration-verification.md`.
 
 ### Development and operations verification
 
-- Typecheck, lint, unit, integration, and security tests run successfully.
-- Dependency vulnerability scanning runs in CI.
-- Secret scanning runs before changes are merged.
-- Repository history and seed data contain no production credentials, API keys, passwords, or signing keys.
-- Deployment configuration injects secrets without committing them to source control.
-- Session expiration and API-key revocation are verified.
-- Signing-key rotation and trust of signing-key identifiers are documented and tested.
-- Login, mutation, API-key, and release-download rate limits are configured and verified.
-- Logs are checked to confirm that credentials, authorization headers, and sensitive payloads are redacted.
-- Database backup and restore procedures are documented and tested.
-- Migration and deployment checks are recorded as release evidence.
-- Incident-response limitations and recovery responsibilities are documented.
+- **Planned:** Typecheck, lint, unit, integration, and security tests run
+  successfully.
+- **Planned:** Dependency vulnerability scanning runs in CI.
+- **Planned:** Secret scanning runs before changes are merged.
+- **Planned:** Repository history and seed data contain no production
+  credentials, API keys, passwords, or signing keys.
+- **Planned:** Deployment configuration injects secrets without committing them
+  to source control.
+- **Planned:** Session expiration and API-key revocation are verified.
+- **Planned:** Signing-key rotation and trust of signing-key identifiers are
+  documented and tested.
+- **Planned:** Login, mutation, API-key, and release-download rate limits are
+  configured and verified.
+- **Planned:** Logs are checked to confirm that credentials, authorization
+  headers, and sensitive payloads are redacted.
+- **Planned:** Database backup and restore procedures are documented and
+  tested.
+- **Planned:** Migration and deployment checks are recorded as release
+  evidence.
+- **Planned:** Incident-response limitations and recovery responsibilities are
+  documented.
+
+## Cross-document follow-up decisions
+
+The following items are intentionally recorded for later architecture and
+implementation work. They are not treated as completed Week 1 evidence:
+
+- Define the published-release response fields for the Ed25519 signature and
+  signing-key identifier.
+- Decide how immutable release contents are represented and associated with a
+  release in the data model.
+- Add the security schema for users, sessions, project membership, API keys,
+  and audit events to the ER model and migration verification when the W2
+  security migrations are implemented.
+- Confirm whether token references require a unique constraint on
+  `(referencing_token_id, slot)` in addition to the reference identity key.
 
 ## Planned security tests
 
