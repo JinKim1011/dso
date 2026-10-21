@@ -300,6 +300,82 @@ Protects the system throughout its lifecycle, including development, deployment,
 - Migration verification and deployment checks.
 - Documented incident-response limitations and recovery procedures.
 
+## Security-layer verification evidence
+
+The following tests and verification activities provide evidence for the security layers described above. Automated tests cover application behavior and data integrity. Deployment and operational controls require configuration, or inspection.
+
+### Physical security verification
+
+Physical security is provided by the hosting or infrastructure provider and is not implemented by DSO application code. Verification evidence:
+
+- Confirm that database storage and backups are protected by the provider.
+- Do not store production credentials, API keys, or signing keys in repository
+  files or local seed data.
+
+### Network security verification
+
+- Confirm that PostgreSQL is bound to a private network or internal interface.
+- Confirm that PostgreSQL is not reachable from the public internet.
+- Confirm that only the Workbench/API service can connect to PostgreSQL.
+- Confirm that firewall or security-group rules deny unauthorized database connections.
+- Confirm that the CLI uses the Published-release API and has no PostgreSQL connection configuration or database dependency.
+- Confirm that development, migration, and production database access are separated where required.
+- Verify that a network-level connection attempt from an unauthorized host is rejected.
+
+### Transport security verification
+
+- Confirm that browser-to-API traffic uses HTTPS in deployed environments.
+- Confirm that CLI-to-API traffic requires HTTPS outside local development.
+- Confirm that the CLI rejects non-HTTPS API URLs outside local development.
+- Confirm that sessions, API keys, release data, and signatures are never sent over plain HTTP.
+- Verify that deployed TLS certificates are valid and not expired.
+- Verify that HTTP requests are redirected or rejected according to the deployment policy.
+- Confirm that authorization headers and session cookies are protected by the configured transport security.
+
+### Application security verification
+
+The planned authentication, authorization, browser, release-signing, and CLI tests provide application-security evidence:
+
+- Authentication and session tests pass.
+- Project and role authorization tests pass.
+- API-key scope, expiration, revocation, and project-isolation tests pass.
+- Request validation rejects malformed, unknown, invalid, and oversized input.
+- CSRF protection rejects unsafe cookie-based mutations.
+- User-controlled content cannot execute unintended browser scripts.
+- Security headers are present.
+- Production errors do not expose stack traces, SQL, credentials, or paths.
+- Release signatures are verified before generation.
+- Invalid release data and unsafe output paths stop generation before writing.
+- Release data cannot cause shell commands to execute.
+- Generated output is deterministic and contains no secrets.
+
+### Database and data security verification
+
+- Parameterized-query tests reject SQL injection payloads without changing query behavior.
+- Foreign-key, check, unique, and not-null constraints reject invalid data.
+- Cross-project access and cross-project token references are rejected.
+- Invalid token-type parents, self-references, duplicate references, invalid slots, and cyclic hierarchies are rejected.
+- Failed multi-step updates roll back all changes.
+- The runtime database role has only the permissions required by the application.
+- Database outage and constraint failures return safe application errors.
+- Database errors and logs do not expose SQL, credentials, schema details, authorization headers, or sensitive payloads.
+- Migration verification confirms that the expected tables, constraints, and indexes exist.
+
+### Development and operations verification
+
+- Typecheck, lint, unit, integration, and security tests run successfully.
+- Dependency vulnerability scanning runs in CI.
+- Secret scanning runs before changes are merged.
+- Repository history and seed data contain no production credentials, API keys, passwords, or signing keys.
+- Deployment configuration injects secrets without committing them to source control.
+- Session expiration and API-key revocation are verified.
+- Signing-key rotation and trust of signing-key identifiers are documented and tested.
+- Login, mutation, API-key, and release-download rate limits are configured and verified.
+- Logs are checked to confirm that credentials, authorization headers, and sensitive payloads are redacted.
+- Database backup and restore procedures are documented and tested.
+- Migration and deployment checks are recorded as release evidence.
+- Incident-response limitations and recovery responsibilities are documented.
+
 ## Planned security tests
 
 ### Authentication and authorization
