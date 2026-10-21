@@ -32,14 +32,14 @@ export function isCompatibleReferencedType(
     return (
       slot === "value" &&
       referencedType.category === "spacing" &&
-      supportsScalarValue(referencedToken)
+      supportsSingleValue(referencedToken)
     );
   }
   if (referencingType.category === "radius") {
     return (
       slot === "value" &&
       referencedType.category === "radius" &&
-      supportsScalarValue(referencedToken)
+      supportsSingleValue(referencedToken)
     );
   }
 
@@ -47,7 +47,7 @@ export function isCompatibleReferencedType(
     return (
       slot === "value" &&
       referencedType.category === "motion" &&
-      supportsScalarValue(referencedToken)
+      supportsSingleValue(referencedToken)
     );
   }
 
@@ -56,7 +56,7 @@ export function isCompatibleReferencedType(
       return (
         referencedType.category === "typography" &&
         referencedType.name === "fontSize" &&
-        supportsScalarValue(referencedToken)
+        supportsSingleValue(referencedToken)
       );
     }
 
@@ -64,7 +64,7 @@ export function isCompatibleReferencedType(
       return (
         referencedType.category === "typography" &&
         referencedType.name === "fontWeight" &&
-        supportsScalarValue(referencedToken)
+        supportsSingleValue(referencedToken)
       );
     }
 
@@ -72,7 +72,7 @@ export function isCompatibleReferencedType(
       return (
         referencedType.category === "typography" &&
         referencedType.name === "lineHeight" &&
-        supportsScalarValue(referencedToken)
+        supportsSingleValue(referencedToken)
       );
     }
   }
