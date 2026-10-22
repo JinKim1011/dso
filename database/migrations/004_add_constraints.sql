@@ -1,3 +1,4 @@
+-- Projects and releases
 ALTER TABLE projects
 ADD CONSTRAINT projects_name_unique UNIQUE (name);
 
@@ -22,20 +23,9 @@ ADD CONSTRAINT releases_publication_timestamp_check CHECK (
   )
 );
 
+-- Token type hierarchy
 ALTER TABLE token_types
 ADD CONSTRAINT token_types_project_and_id_unique UNIQUE (project_id, id);
-
-ALTER TABLE components
-ADD CONSTRAINT components_project_and_id_unique UNIQUE (project_id, id);
-
-ALTER TABLE components
-ADD CONSTRAINT component_project_and_slug_unique UNIQUE (project_id, slug);
-
-ALTER TABLE tokens
-ADD CONSTRAINT tokens_project_and_id_unique UNIQUE (project_id, id);
-
-ALTER table token_references
-ADD CONSTRAINT referencing_token_and_slot_unique UNIQUE (referencing_token_id, slot);
 
 ALTER TABLE token_types
 ADD CONSTRAINT token_types_not_own_parent_check CHECK (
@@ -46,11 +36,16 @@ ADD CONSTRAINT token_types_not_own_parent_check CHECK (
 ALTER TABLE token_types
 ADD CONSTRAINT token_types_parent_same_project_fk FOREIGN KEY (project_id, parent_type_id) REFERENCES token_types (project_id, id);
 
+-- Token ownsership
+ALTER TABLE tokens
+ADD CONSTRAINT tokens_project_and_id_unique UNIQUE (project_id, id);
+
 ALTER TABLE tokens
 ADD CONSTRAINT tokens_token_type_same_project_fk FOREIGN KEY (project_id, token_type_id) REFERENCES token_types (project_id, id);
 
-ALTER TABLE document_templates
-ADD CONSTRAINT document_templates_component_same_project_fk FOREIGN KEY (project_id, component_id) REFERENCES components (project_id, id);
+-- Token references
+ALTER table token_references
+ADD CONSTRAINT referencing_token_and_slot_unique UNIQUE (referencing_token_id, slot);
 
 ALTER TABLE token_references
 ADD CONSTRAINT token_references_slot_check CHECK (
@@ -78,3 +73,13 @@ ADD CONSTRAINT token_references_referenced_token_fk FOREIGN KEY (referenced_toke
 
 ALTER TABLE token_references
 ADD CONSTRAINT token_reference_not_own_token_check CHECK (referenced_token_id <> referencing_token_id);
+
+-- Components and document templates
+ALTER TABLE components
+ADD CONSTRAINT components_project_and_id_unique UNIQUE (project_id, id);
+
+ALTER TABLE components
+ADD CONSTRAINT component_project_and_slug_unique UNIQUE (project_id, slug);
+
+ALTER TABLE document_templates
+ADD CONSTRAINT document_templates_component_same_project_fk FOREIGN KEY (project_id, component_id) REFERENCES components (project_id, id);
