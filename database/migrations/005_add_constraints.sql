@@ -83,3 +83,7 @@ ADD CONSTRAINT component_project_and_slug_unique UNIQUE (project_id, slug);
 
 ALTER TABLE document_templates
 ADD CONSTRAINT document_templates_component_same_project_fk FOREIGN KEY (project_id, component_id) REFERENCES components (project_id, id);
+
+-- Users
+ALTER table users
+ADD CONSTRAINT users_email_unique UNIQUE (email);
