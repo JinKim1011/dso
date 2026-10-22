@@ -20,7 +20,7 @@ CREATE TABLE api_keys (
   key_hash TEXT NOT NULL,
   scope TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  expires_at TIMESTAMPTZ,
+  expires_at TIMESTAMPTZ NOT NULL,
   revoked_at TIMESTAMPTZ
 );
 
