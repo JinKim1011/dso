@@ -87,3 +87,7 @@ ADD CONSTRAINT document_templates_component_same_project_fk FOREIGN KEY (project
 -- Users
 ALTER table users
 ADD CONSTRAINT users_email_unique UNIQUE (email);
+
+-- Project members
+ALTER TABLE project_members
+ADD CONSTRAINT project_members_role_check CHECK (role IN ('editor', 'publisher', 'admin'));
