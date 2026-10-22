@@ -91,3 +91,10 @@ ADD CONSTRAINT users_email_unique UNIQUE (email);
 -- Project members
 ALTER TABLE project_members
 ADD CONSTRAINT project_members_role_check CHECK (role IN ('editor', 'publisher', 'admin'));
+
+-- API keys
+ALTER TABLE api_keys
+ADD CONSTRAINT api_keys_identifier_unique UNIQUE (key_identifier);
+
+ALTER TABLE api_keys
+ADD CONSTRAINT api_keys_scope_check CHECK (scope IN ('release:read'));
