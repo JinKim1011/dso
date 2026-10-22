@@ -85,8 +85,12 @@ ALTER TABLE document_templates
 ADD CONSTRAINT document_templates_component_same_project_fk FOREIGN KEY (project_id, component_id) REFERENCES components (project_id, id);
 
 -- Users
-ALTER table users
+ALTER TABLE users
 ADD CONSTRAINT users_email_unique UNIQUE (email);
+
+-- Sessions
+ALTER TABLE sessions
+ADD CONSTRAINT session_time_stamp_check CHECK (expires_at > created_at);
 
 -- Project members
 ALTER TABLE project_members
@@ -98,3 +102,6 @@ ADD CONSTRAINT api_keys_identifier_unique UNIQUE (key_identifier);
 
 ALTER TABLE api_keys
 ADD CONSTRAINT api_keys_scope_check CHECK (scope IN ('release:read'));
+
+ALTER TABLE api_keys
+ADD CONSTRAINT api_keys_time_stamp_check CHECK (expires_at > created_at);
