@@ -36,7 +36,7 @@ ADD CONSTRAINT token_types_not_own_parent_check CHECK (
 ALTER TABLE token_types
 ADD CONSTRAINT token_types_parent_same_project_fk FOREIGN KEY (project_id, parent_type_id) REFERENCES token_types (project_id, id);
 
--- Token ownsership
+-- Token ownership
 ALTER TABLE tokens
 ADD CONSTRAINT tokens_project_and_id_unique UNIQUE (project_id, id);
 
