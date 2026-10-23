@@ -65,6 +65,11 @@ Use cases, terminology, architecture, and first ER model are documented
 - Create migrations for
   - `projects`
   - `releases`
+  - `users`
+  - `sessions`
+  - `project_members`
+  - `api_keys`
+  - `audit_events`
   - `token_types(parent_type_id)`
   - `tokens`
   - `token_references`
@@ -85,6 +90,10 @@ Use cases, terminology, architecture, and first ER model are documented
     - `component_id`
     - `name`
     - `content`
+- Infer project ownership and release-publishing permissions from
+  `project_members`. W2 does not add `projects.owner_id` or
+  `releases.published_by`; the application records the publishing user in
+  `audit_events`.
 - Add
   - primary keys
   - foreign keys
@@ -92,6 +101,18 @@ Use cases, terminology, architecture, and first ER model are documented
   - check constraints where useful
   - indexes
   - release relationships
+- Add security constraints for
+  - unique user email
+  - unique project membership
+  - valid project-member roles
+  - unique API-key identifiers
+  - valid API-key scopes
+  - session expiration after creation
+  - API-key expiration after creation
+- Add security indexes for
+  - session expiry
+  - project membership by user
+  - audit events by project and creation time
 - Constraints
   - A token type has zero or one parent.
   - A root token type has a null `parent_type_id`.
@@ -127,7 +148,8 @@ Use cases, terminology, architecture, and first ER model are documented
 Tables, columns, keys, relationships, constraints, and indexes are implemented.
 
 - [ER model](../../docs/database/er-model.md)
-- [Migrations](../../database/migrations/001_create_base_schema.sql)
+- [Migrations](../../database/migrations/001_create_base_schema.sql) through
+  `007_add_indexes.sql`
 - [Migration verification](../../docs/database/migration-verification.md)
 - [Token hierarchy validator](../../packages/contracts/validation/token-type-hierarchy.ts)
 - [Token reference validator](../../packages/contracts/validation/token-reference.ts)
@@ -135,7 +157,9 @@ Tables, columns, keys, relationships, constraints, and indexes are implemented.
 
 #### Done when
 
-The complete schema can be created from an empty PostgreSQL database.
+The complete domain and security schema can be created from an empty
+PostgreSQL database, and its structural constraints and indexes have been
+verified.
 
 ### W3: Seed data and SQL operations
 
