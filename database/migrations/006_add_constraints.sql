@@ -105,3 +105,20 @@ ADD CONSTRAINT api_keys_scope_check CHECK (scope IN ('release:read'));
 
 ALTER TABLE api_keys
 ADD CONSTRAINT api_keys_time_stamp_check CHECK (expires_at > created_at);
+
+-- Audit events
+ALTER TABLE audit_events
+ADD CONSTRAINT audit_events_scope_check CHECK (
+  (
+    action = "login.succeeded"
+    AND project_id IS NULL
+    AND resource_id IS NULL
+  )
+  OR (
+    action IN (
+      'release.published',
+      'api_key.created',
+      'api_key.revoked'
+    )
+  )
+)
