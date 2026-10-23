@@ -11,7 +11,7 @@ erDiagram
     PROJECTS ||--o{ DOCUMENT_TEMPLATES : owns
     PROJECTS ||--o{ PROJECT_MEMBERS : has
     PROJECTS ||--o{ API_KEYS : scopes
-    PROJECTS ||--o{ AUDIT_EVENTS : contains
+    PROJECTS o|--o{ AUDIT_EVENTS : contains
 
     TOKEN_TYPES o|--o{ TOKEN_TYPES : parent_of
     TOKEN_TYPES ||--o{ TOKENS : classifies
@@ -137,7 +137,9 @@ erDiagram
   per user.
 - A project can have zero or many project-scoped API keys.
 - A user can perform zero or many audit events.
-- A project can contain zero or many audit events.
+- A project can contain zero or many project-scoped audit events.
+- An audit event may belong to zero or one project.
+- An account-level audit event may have no project or resource.
 - A token type can have zero or one parent token type.
 - A token type can have zero or many child token types.
 - A token type can classify zero or many tokens.
@@ -155,6 +157,18 @@ erDiagram
 - `admin`: may edit project resources, publish releases, and manage API keys.
 
 Project ownership and release-publishing permission are inferred from `project_members`; the schema does not add `projects.owner_id` or `releases.published_by`. The application records the user who performs a publish action in `audit_events`.
+
+### Audit-event scope
+
+`audit_events.user_id` is required because the current audited actions are performed by an identified user. `project_id` and `resource_id` are optional to support account-level events such as login.
+
+Examples:
+
+- A successful login has a user, but no project or resource.
+- A published release has a user, project, and release resource.
+- API-key creation or revocation has a user, project, and API-key resource.
+
+For project-scoped actions, application validation must require the relevant project and resource identifiers. The database schema does not use `resource_id` as a foreign key because it can refer to different resource tables according to `resource_type`.
 
 ## Constraint enforcement
 
@@ -187,6 +201,7 @@ Project ownership and release-publishing permission are inferred from `project_m
 | API-key identifier is unique                                 | Yes                              |                    Yes | Use a unique constraint                                                                                                                         |
 | API-key scope is valid                                       | Yes                              |                    Yes | The first release allows `release:read`                                                                                                         |
 | Session and API-key expiry follow creation                   | Yes                              |                    Yes | Enforce `expires_at > created_at`                                                                                                               |
+| Account-level audit events can omit project and resource     | Yes                              |                    Yes | Allow null `project_id` and `resource_id` for login events; require them for project-scoped actions                                             |
 | User is authorized to modify the project                     | No                               |                    Yes | This is an application authorization rule                                                                                                       |
 | Published releases contain valid complete data               | No                               |                    Yes | Validate before publishing                                                                                                                      |
 | Request body has valid shape and size                        | No                               |                    Yes | Enforce through API schemas and request limits                                                                                                  |
