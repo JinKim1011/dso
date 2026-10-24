@@ -6,7 +6,7 @@
 - PostgreSQL client: `18.6`
 - PostgreSQL server: `16.15`
 - Starting state: empty database
-- Verification date: `2026-10-22`
+- Verification date: `2026-10-24`
 - Migration directory: `database/migrations`
 
 ## Migration Result (empty database)
@@ -123,6 +123,14 @@ The composite foreign keys enforce that the referenced tokens belong to the same
 - API-key identifier uniqueness
 - Valid API-key scopes:
   - `release:read`
+- API-key expiration after creation
+- Session expiration after creation
+- Account-level `login.succeeded` events require an account resource and no
+  project or resource ID
+- Project-scoped release events require a release resource, project ID, and
+  resource ID
+- Project-scoped API-key events require an API-key resource, project ID, and
+  resource ID
 
 ## Indexes Verified
 
@@ -159,10 +167,17 @@ A unique constraint may create the index used for API-key identifier lookup.
 - Missing project referenced by an API key: completed
 - Invalid release state: completed
 - Invalid token reference: completed
+- Project-scoped audit event without required identifiers: completed
+- Login event with project or resource: completed
+- Unknown audit action: completed
 
 ## Notes
 
 - Project ownership and release publishing permissions are inferred from `project_members`. The user who performs a publish action must be recorded through `audit_events`.
+- Valid audit-event rows were accepted for account-level `login.succeeded`,
+  project-scoped `release.published`, `api_key.created`, and
+  `api_key.revoked` events. All audit-event tests were executed inside
+  transactions and rolled back.
 - Release signatures, signing-key identifiers, immutable release contents, and application-level authorization tests are outside this migration verification record.
 - Runtime database roles and privileges will be managed through development/deployment database administration rather than application schema migrations.
   - A migration role with schema-definition privileges
