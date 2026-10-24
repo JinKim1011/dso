@@ -115,8 +115,10 @@ Align with W2 in `relational-databases.md`.
   - `project_members(project_id, user_id, role, created_at)`
   - `api_keys(id, project_id, key_identifier, key_hash, scope, expires_at, revoked_at, created_at)`
   - `audit_events(id, user_id, project_id, action, resource_type, resource_id, created_at)`
-- Extend `projects` and `releases` with ownership and publisher relationships.
-- Add foreign keys for users, projects, releases, and API keys.
+- Infer project ownership and release-publishing permissions from `project_members`; do not add `projects.owner_id` or `releases.published_by`in W2.
+- Record the user who performs a publish action in `audit_events`.
+- Allow `audit_events.project_id` and `audit_events.resource_id` to be null for account-level login events. Require them for project-scoped events through the audit-event constraint and application validation.
+- Add foreign keys for users, projects, and API keys.
 - Add constraints for:
   - Unique user email
   - Unique project membership
@@ -124,12 +126,16 @@ Align with W2 in `relational-databases.md`.
   - Valid API-key scopes
   - Unique API-key identifiers
   - Valid release states
+- Add audit-event checks for:
+  - `login.succeeded` account events without a project or resource
+  - `release.published` events with a release project and resource
+  - API-key creation and revocation events with a project and API-key resource
 - Add indexes for:
   - Session expiry
   - API-key identifier
   - Project membership
   - Project/release lookup
-- Create a least-privilege runtime database role.
+- Defer runtime-role provisioning to database/deployment administration; use separate migration and runtime credentials when the data-access and deployment layers are implemented.
 - Keep passwords, API-key secrets, and signing keys out of migrations and seed data.
 
 ### Tests
@@ -138,10 +144,12 @@ Align with W2 in `relational-databases.md`.
 - Verify foreign-key failures.
 - Verify uniqueness failures.
 - Verify invalid roles, scopes, and release states fail.
+- Verify valid account-level and project-scoped audit events.
+- Verify invalid audit-event scopes fail.
 
 ### Done When
 
-The security schema can be created from an empty PostgreSQL database and enforces its core invariants.
+The security schema can be created from an empty PostgreSQL database, and its structural constraints and indexes have been verified. Runtime-role provisioning is tracked under W7.
 
 ## W3: Seed Data, Contracts, and Authentication
 
