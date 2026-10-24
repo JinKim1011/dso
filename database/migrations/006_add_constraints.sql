@@ -111,14 +111,20 @@ ALTER TABLE audit_events
 ADD CONSTRAINT audit_events_scope_check CHECK (
   (
     action = "login.succeeded"
+    AND resource_type = 'account'
     AND project_id IS NULL
     AND resource_id IS NULL
   )
   OR (
-    action IN (
-      'release.published',
-      'api_key.created',
-      'api_key.revoked'
-    )
+    action = 'release.published'
+    AND resource_type = 'release'
+    AND project_id IS NOT NULL
+    AND resource_id IS NOT NULL
   )
-)
+  OR (
+    action IN ('api_key.created', 'api_key.revoked')
+    AND resource_type = 'api_key'
+    AND project_id IS NOT NULL
+    AND resource_id IS NOT NULL
+  )
+);
