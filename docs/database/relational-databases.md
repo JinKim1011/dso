@@ -113,6 +113,7 @@ Use cases, terminology, architecture, and first ER model are documented
   - session expiry
   - project membership by user
   - audit events by project and creation time
+- Allow account-level audit events without a project or resource, while requiring project and resource identifiers for project-scoped audit actions.
 - Constraints
   - A token type has zero or one parent.
   - A root token type has a null `parent_type_id`.
@@ -159,7 +160,7 @@ Tables, columns, keys, relationships, constraints, and indexes are implemented.
 
 The complete domain and security schema can be created from an empty
 PostgreSQL database, and its structural constraints and indexes have been
-verified.
+verified. Runtime database-role provisioning remains part of deployment and database administration rather than application schema migrations.
 
 ### W3: Seed data and SQL operations
 
