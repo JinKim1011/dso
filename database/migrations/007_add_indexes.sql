@@ -11,3 +11,9 @@ CREATE INDEX token_references_referenced_token_idx ON token_references (referenc
 CREATE INDEX components_project_id_idx ON components (project_id);
 
 CREATE INDEX document_templates_component_idx ON document_templates (component_id);
+
+CREATE INDEX sessions_expires_at_idx ON sessions (expires_at);
+
+CREATE INDEX project_members_user_id_idx ON project_members (user_id);
+
+CREATE INDEX audit_events_project_created_at_idx ON audit_events (project_id, created_at);

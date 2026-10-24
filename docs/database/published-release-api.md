@@ -43,6 +43,25 @@ API checks that the release exists, belongs to the project associated with the
 credential, and has `status: "published"` before returning it. Unpublished
 releases are not downloadable.
 
+### Authorization
+
+Workbench session access is authorized through `project_members`:
+
+- `editor` members may access project resources according to the route policy.
+- `publisher` members may publish releases.
+- `admin` members may publish releases and manage project API keys.
+
+CLI access is authorized through a project-scoped API key. The API key must:
+
+- belong to the release's project;
+- have the `release:read` scope;
+- not be revoked; and
+- not be expired.
+
+The API must verify the session membership or API-key project scope before assembling the release response.
+
+The response does not include a `publishedBy` field. The application records the user who performs a publish action in `audit_events`.
+
 The CLI sends the key using:
 
 ```http
