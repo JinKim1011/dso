@@ -110,7 +110,7 @@ ADD CONSTRAINT api_keys_time_stamp_check CHECK (expires_at > created_at);
 ALTER TABLE audit_events
 ADD CONSTRAINT audit_events_scope_check CHECK (
   (
-    action = "login.succeeded"
+    action = 'login.succeeded'
     AND resource_type = 'account'
     AND project_id IS NULL
     AND resource_id IS NULL
