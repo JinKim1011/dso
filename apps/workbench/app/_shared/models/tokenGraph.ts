@@ -1,4 +1,4 @@
-import type { SupportedViewKind } from "@/_shared/models/tokenKinds";
+import { type SupportedTokenKind } from "@repo/contracts/token-kind";
 
 export type CategoryViewModel = {
   id: string;
@@ -10,7 +10,7 @@ export type TokenTypeViewModel = {
   id: string;
   category: string;
   type: string;
-  kind: SupportedViewKind;
+  kind: SupportedTokenKind;
   values: TokenTypeValueItem[];
 };
 
@@ -32,7 +32,7 @@ export type TokenTypeValueItem = {
   meta?: string;
   preview?: TokenValuePreviewData;
   category?: string;
-  kind?: SupportedViewKind;
+  kind?: SupportedTokenKind;
   value?: string | { light?: string; dark?: string };
 };
 
