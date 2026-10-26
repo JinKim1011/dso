@@ -4,7 +4,7 @@ import {
   ManifestTokenRecord,
   NormalizedManifestEntry,
 } from "@/tokens/lib/manifest/types";
-import { asString, asStringArray, isObjectLike } from "./guards";
+import { isSupportedTokenKind } from "@repo/contracts/token-kind";
 
 export function extractRows(input: unknown): unknown[] {
   if (Array.isArray(input)) return input;
@@ -100,6 +100,10 @@ export function normalizeEntry(raw: unknown): NormalizedManifestEntry | null {
         .map((entry) => normalizeSemanticRecord(entry))
         .filter((entry): entry is ManifestSemanticRecord => entry !== null)
     : undefined;
+
+  if (!kind || !isSupportedTokenKind(kind)) {
+    return null;
+  }
 
   return {
     category,
