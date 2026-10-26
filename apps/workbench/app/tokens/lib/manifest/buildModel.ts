@@ -131,7 +131,6 @@ function mapEntry(
   return {
     ...normalized,
     category: mapper?.mapCategory?.(normalized.category) ?? normalized.category,
-    kind: mapper?.mapKind?.(normalized.kind) ?? normalized.kind,
   };
 }
 
