@@ -151,305 +151,163 @@ Align with W2 in `relational-databases.md`.
 
 The security schema can be created from an empty PostgreSQL database, and its structural constraints and indexes have been verified. Runtime-role provisioning is tracked under W7.
 
-## W3: Seed Data, Contracts, and Authentication
+## W3: Seed data, contracts, authentication, and database access
 
-Align with W3 in `relational-databases.md`.
+This week combines the original W3 and W4 work and establishes the foundation
+for every later integration.
 
 ### Build
 
-- Add fake users, projects, memberships, components, and releases to `database/seed`.
-- Add shared schemas and types to `packages/contracts` for:
-  - Login
-  - Token and token-reference writes
-  - Token-type hierarchy writes
-  - Component/template writes
-  - Release publishing
-  - API-key creation
-  - Release downloads
-- Validate types, required fields, enum values, identifiers, token references, token-type hierarchy relationships, and unknown fields.
-  - Reject self-referencing tokens.
-  - Reject duplicate token references.
-  - Reject references across projects.
-  - Reject token-type parents from another project.
-  - Reject cyclic token-type hierarchies.
-- Enforce request-body, template, string, and collection-size limits.
-- Add web authentication:
-  - Login with email and password
-  - Verify a password hash
-  - Create a database session
-  - Set an opaque session cookie
-  - Expire and delete sessions
-- Add environment configuration for:
-  - `DATABASE_URL`
-  - `SESSION_SECRET`
-  - `DSO_API_BASE_URL`
-  - `RELEASE_SIGNING_PRIVATE_KEY`
-  - `RELEASE_SIGNING_KEY_ID`
+- Normalize supported definitions from `design-tokens-manifest.json`.
+- Exclude or reject deprecated `class-union` and `unknown` kinds.
+- Seed realistic users, projects, memberships, components, templates, and
+  releases alongside the token data.
+- Add shared schemas and types to `packages/contracts` for login, resource
+  writes, hierarchy changes, publishing, API keys, and release downloads.
+- Validate required fields, enum values, identifiers, unknown fields, token
+  references, token-type relationships, and collection sizes.
+- Reject self-references, duplicate references, cross-project references,
+  invalid parents, and cyclic token-type hierarchies.
+- Implement password hashing, database-backed sessions, expiration, logout,
+  opaque cookies, and the environment configuration needed by the web/API.
+- Implement `packages/db` with a pool, parameterized repositories,
+  transaction helpers, membership authorization, API-key verification, and
+  audit-event insertion.
+- Require authorization context for protected repository functions and keep
+  credentials, authorization headers, and sensitive payloads out of logs.
 
 ### Tests
 
-- Valid login creates a session.
-- Invalid login does not create a session.
-- Expired sessions are rejected.
-- Invalid and oversized requests are rejected.
+- Valid login creates a session; invalid login and expired sessions fail.
+- Invalid and oversized requests are rejected before repository calls.
+- Parameterized SQL resists injection payloads.
+- Unauthorized projects, invalid relationships, foreign keys, uniqueness
+  constraints, and transaction rollback behave correctly.
 - Seed data contains no real secrets.
 
 ### Done When
 
-The workbench can authenticate a seeded user, and invalid input cannot reach repository functions.
+Authenticated and authorized repository operations work against PostgreSQL and
+all application database access goes through tested repositories.
 
-## W4: Secure Data-Access Layer
+## W4: Workbench integration and web security
 
-Align with W4 in `relational-databases.md`.
-
-### Build
-
-- Implement in `packages/db`:
-  - PostgreSQL pool
-  - Transaction helper
-  - Parameterized repositories
-  - Project-membership lookup
-  - API-key verification
-  - Audit-event insertion
-- Implement repositories for:
-  - `getPublishedRelease`
-  - `listTokensByType`
-  - `getReferencedTokens`
-  - `getReferencingTokens`
-  - `getTokenTypeChildren`
-  - `getTokenTypeAncestors`
-  - `getTemplateForComponent`
-  - `saveStagedTokenChanges`
-  - `authorizeProjectMember`
-  - `verifyApiKey`
-  - `recordAuditEvent`
-- Require user/project context in protected repository functions.
-- Check authorization before reads and mutations.
-- Keep credentials, authorization headers, and sensitive payloads out of logs.
-
-### Tests
-
-- Successful queries
-- Empty results
-- Parameterized SQL with injection payloads
-- Unauthorized project access
-- Token-reference joins
-- Reverse token-reference queries
-- Token-type hierarchy queries
-- Unauthorized cross-project token references
-- Invalid parent token types
-- Self-references
-- Duplicate references
-- Cyclic token-type hierarchies
-- Transaction rollback after a failed update
-- Foreign-key and uniqueness failures
-
-### Done When
-
-All application database operations use tested repositories and protected operations require authorization context.
-
-## W5: Workbench API and Web Security
-
-Align with W5 in `relational-databases.md`.
+This week replaces the current persistence path while preserving staged editing.
 
 ### Build
-
-Implement these routes in `apps/workbench`:
-
-| Method | Route                                 | Auth            | Purpose                                                   |
-| ------ | ------------------------------------- | --------------- | --------------------------------------------------------- |
-| `POST` | `/api/auth/login`                     | None            | Create a session                                          |
-| `POST` | `/api/auth/logout`                    | Session         | Delete a session                                          |
-| `GET`  | `/api/auth/session`                   | Session         | Read current user                                         |
-| `GET`  | `/api/projects/:projectId`            | Session         | Read authorized project data                              |
-| `PUT`  | `/api/projects/:projectId/tokens`     | Editor          | Save tokens, references, and token-type hierarchy changes |
-| `PUT`  | `/api/projects/:projectId/components` | Editor          | Save components/templates                                 |
-| `POST` | `/api/projects/:projectId/releases`   | Publisher       | Publish a release                                         |
-| `POST` | `/api/projects/:projectId/api-keys`   | Admin           | Create an API key                                         |
-| `POST` | `/api/api-keys/:keyId/revoke`         | Admin           | Revoke an API key                                         |
-| `GET`  | `/api/releases/:releaseId`            | Session/API key | Read a published release                                  |
 
 - Replace filesystem persistence with database repositories.
-- Protect every route with authentication and project authorization.
-- Use this permission model:
-  - Editor: read and edit project resources, including tokens, token references, token-type hierarchy data, components, and templates
+- Preserve `StagedManifestContext` and `useStagedManifestActions`.
+- Protect project reads, token/reference/hierarchy writes, component/template
+  writes, publishing, API-key creation/revocation, and release reads.
+- Enforce:
+  - Editor: read and edit project resources
   - Publisher: editor permissions plus release publishing
   - Admin: publisher permissions plus API-key management
   - CLI `release:read`: published-release download only
-- Add CSRF protection to cookie-based `POST`, `PUT`, and `DELETE` requests.
-- Add security headers.
-- Return generic production errors without stack traces or secrets.
-- Preserve staged editing in `StagedManifestContext`.
-- Create audit events for login, publish, API-key creation, and API-key revocation.
+- Add CSRF protection to cookie-based mutations and add security headers.
+- Return generic production errors without stacks or secrets.
+- Create audit events for login, publishing, API-key creation, and revocation.
 
 ### Tests
 
 - Unauthenticated requests return `401`.
-- Authenticated users cannot access another project.
-- Editors cannot publish or manage API keys.
-- Publishers can publish.
-- Admins can create and revoke API keys.
+- Cross-project access and insufficient roles fail.
 - CSRF-protected mutations reject invalid requests.
-- Security headers are present.
+- Security headers and audit events are present.
+- Staged editing remains functional and PostgreSQL is the source of truth.
 
 ### Done When
 
-An authenticated user can edit only authorized projects and cannot perform actions outside their role.
+An authenticated user can edit only authorized projects, role restrictions are
+enforced, and a user can publish through the workbench.
 
-## W6: CLI, API Keys, TLS, and Release Signing
+## W5: Release signing, CLI, and generation
 
-Align with W6 in `relational-databases.md`.
+This week delivers the complete publish-to-generation vertical slice.
 
 ### Build
 
-- Create `apps/cli` commands:
-  - `dso pull`
-  - `dso generate`
-- Create the CLI API-key flow:
-  1. Admin creates a key.
-  2. API returns the secret once.
-  3. Server stores only the key hash.
-  4. User configures the key outside Git.
-  5. CLI sends the key only to the API over HTTPS.
-  6. API checks identifier, hash, project, scope, expiration, and revocation.
-- Reject invalid, expired, revoked, wrong-scope, and wrong-project keys.
-- Require HTTPS outside local development.
-- Never print keys, write keys to generated files, or log authorization headers.
-- Add release signing:
-  1. Canonicalize the published release JSON.
-  2. Sign it with Ed25519.
-  3. Return release, signature, and key identifier.
-  4. Verify the signature in the CLI.
-  5. Stop generation when verification fails.
-- Include token definitions, token references, token-type hierarchy data, components, and templates in the canonical signed release JSON.
-- Do not include claims about tokens used by component source code.
-- Implement generation in `packages/generator` for:
-  - `tokens.json`
-  - `tokens.css`
-  - Component Markdown based on registered component metadata and templates
-- Accept the local output root from a CLI option or checked-in project
-  configuration, with a documented default.
-- Resolve each component's portable relative document path inside that approved
-  output root.
-- Reject absolute paths, `..` traversal, unsafe separators, and shell
-  execution based on release data.
-- Do not treat release data as component source-file locations or as evidence of
-  component-token usage.
+- Create a published-release API containing token definitions, references,
+  token-type hierarchy data, components, and templates.
+- Keep source-code component-token usage claims out of release data.
+- Canonicalize release JSON and sign it with Ed25519.
+- Create `apps/cli` with `dso pull` and `dso generate`.
+- Return API-key secrets only once and store only hashes.
+- Validate API-key identifier, hash, project, scope, expiration, and revocation.
+- Require HTTPS outside local development; the CLI must never connect to
+  PostgreSQL.
+- Verify signatures before generation and stop on failure.
+- Generate `tokens.json`, `tokens.css`, and component Markdown.
+- Resolve portable document paths below a configured output root and reject
+  absolute paths, `..` traversal, unsafe separators, and shell execution.
+- Make generated output deterministic and keep credentials out of output.
 
 ### Tests
 
-- CLI uses the API and never PostgreSQL.
-- Invalid and revoked keys fail.
-- HTTPS is required outside local development.
-- Invalid release signatures stop generation.
-- Generated output never contains credentials.
-- Absolute, traversal, and unsafe output paths fail.
-- A valid release can be generated under different local output roots without
-  changing the release payload.
-- Expected generated files are deterministic.
+- Invalid, expired, revoked, wrong-scope, and wrong-project keys fail.
+- Invalid signatures stop generation.
+- Valid releases work under different local output roots.
+- Unsafe paths fail, output is deterministic, and the CLI uses only the API.
 
 ### Done When
 
 This workflow succeeds:
 
 ```text
-Workbench publish -> API -> dso pull -> signature verification -> dso generate
+Workbench publish -> signed release API -> dso pull
+-> signature verification -> dso generate
 ```
 
-## W7: Deployment, Network Security, and Secure SDLC
+## W6: Performance, deployment security, documentation, and final verification
 
-Align with W7 in `relational-databases.md`.
+This week completes evidence, hardening, and the clean end-to-end run.
 
-### Build
+### Build and evidence
 
-- Deploy the web/API service behind HTTPS.
-- Keep PostgreSQL private and expose only the required API port.
-- Restrict database access to the application network.
-- Use separate development, migration, and runtime credentials.
-- Configure a least-privilege runtime database user.
-- Add request limits and basic rate limits for login, API-key verification, mutations, and release downloads.
-- Add CI checks for:
-  - Typecheck
-  - Lint
-  - Unit and integration tests
-  - Dependency vulnerabilities
-  - Accidentally committed secrets
-- Document physical-security assumptions and provider responsibilities.
-- Document secret injection, key rotation, session expiration, log redaction, backups, and incident-response limitations.
+- Run `EXPLAIN ANALYZE` on representative release, token-type,
+  token-reference, reverse-reference, hierarchy, and complete-release queries.
+- Document connection pooling, caching, read replicas, API statelessness,
+  larger releases, migration management, scaling limits, and raw SQL versus
+  ORM/data-mapper choices.
+- Document HTTPS, private PostgreSQL networking, separate migration/runtime
+  credentials, least privilege, request/rate limits, dependency scanning,
+  secret scanning, log redaction, key rotation, backups, and incident limits.
+- Complete the authentication, authorization, input-validation, TLS,
+  signing, key-management, web-threat, and secure-SDLC evidence.
+- Complete setup, CLI, use-case, threat-model, and implemented/open/excluded
+  risk documentation.
+- Run from an empty database: migrations, seed, login, editing, publishing,
+  API-key creation, CLI pull, signature verification, generation, output
+  inspection, tests, typecheck, lint, security scans, and smoke checks.
+
+### Required final security tests
+
+- Unpublished releases cannot be downloaded.
+- SQL injection, CSRF, path traversal, cross-project access, self-references,
+  duplicate references, invalid parents, cyclic hierarchies, and failed
+  transactions are rejected or rolled back.
+- Logs and generated files contain no secrets.
+- Signed releases preserve token references and hierarchy data.
 
 ### Done When
 
-The deployed service uses HTTPS, PostgreSQL is not directly exposed, and security checks run in CI.
-
-## W8: End-to-End Verification and Submission
-
-Align with W8 in `relational-databases.md`.
-
-### Final Workflow
-
-1. Start PostgreSQL.
-2. Run migrations.
-3. Seed fake data.
-4. Start the workbench/API.
-5. Log in.
-6. Edit tokens, components, and templates.
-7. Publish a release.
-8. Create and use a scoped CLI API key.
-9. Run `dso pull` over HTTPS.
-10. Verify the release signature.
-11. Run `dso generate`.
-12. Inspect JSON, CSS, and Markdown output.
-13. Run repository tests, workbench tests, CLI tests, typecheck, lint, security scans, and smoke tests.
-
-### Required Security Tests
-
-- Invalid login fails.
-- Unauthenticated routes fail.
-- Cross-project access fails.
-- Insufficient role or scope fails.
-- Malformed and oversized requests fail.
-- SQL injection payloads do not alter queries.
-- CSRF protection rejects unsafe requests.
-- Revoked keys fail.
-- Unpublished releases cannot be downloaded.
-- Invalid signatures stop generation.
-- Path traversal fails.
-- A failed transaction rolls back.
-- Logs and generated files contain no secrets.
-- Cross-project token references are rejected.
-- Self-referencing tokens are rejected.
-- Duplicate token references are rejected.
-- Invalid token-type parents are rejected.
-- Cyclic token-type hierarchies are rejected.
-- Unauthorized users cannot modify token references or token-type hierarchy data.
-- Signed releases preserve token references and token-type hierarchy data.
-
-### Hand-In Evidence
-
-- Threat model and data-flow diagram
-- List of implemented security measures
-- Test results
-- Authentication and authorization flow
-- Input-validation and SQL-injection controls
-- TLS and cryptography explanation
-- Digital-signature and key-management explanation
-- Web-threat mitigation table
-- Secure SDLC and operational-security checklist
-- Implemented, open, and excluded risks
+Performance measurements, deployment/security evidence, documentation, and the
+complete empty-database workflow are ready for the report and demonstration.
 
 ## Level 1 Requirement Mapping
 
-- Cybersecurity dimensions: W1 and W7
+- Cybersecurity dimensions: W1 and W6
 - Threat model analysis: W1
-- Physical, network, transport, application, and data threats: W1, W5, and W7
-- Authentication and authorization: W3 and W5
-- Validation: W3 and W5
-- Encryption and TLS: W6 and W7
-- Digital signing: W6
-- Key management: W2 and W6
-- Web application security: W5
-- Secure development and operation: W7 and W8
-- Documentation and oral presentation: W8
+- Physical, network, transport, application, and data threats: W1, W4, and W6
+- Authentication and authorization: W3 and W4
+- Validation: W3 and W4
+- Encryption and TLS: W5 and W6
+- Digital signing: W5
+- Key management: W2 and W5
+- Web application security: W4
+- Secure development and operation: W6
+- Documentation and oral presentation: W6
 
 ## Oral Examination Preparation
 
@@ -465,4 +323,6 @@ Prepare a five-minute walkthrough covering:
 8. Release signing and CLI verification.
 9. Remaining risks and excluded features.
 
-Be able to explain the CIA triad plus authenticity and non-repudiation, OAuth 2.0 and OpenID Connect at a conceptual level, and why those protocols are not implemented in this project.
+Be able to explain the CIA triad plus authenticity and non-repudiation, OAuth
+2.0 and OpenID Connect conceptually, and why those protocols are not
+implemented in this project.
