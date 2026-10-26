@@ -60,6 +60,7 @@ function reference(
   slot: TokenReference["slot"],
 ): TokenReference {
   return {
+    projectId,
     referencingTokenId,
     referencedTokenId,
     slot,
