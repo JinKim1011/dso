@@ -4,13 +4,16 @@ import type {
   TokenTypeValueItem,
   TokenTypeViewModel,
 } from "@/_shared/models/tokenGraph";
-import type { SupportedViewKind } from "@/_shared/models/tokenKinds";
+import { toId } from "@/tokens/lib/manifest/guards";
 import { normalizeManifest } from "@/tokens/lib/manifest/normalize";
 import type {
   ManifestAdapterOptions,
   NormalizedManifestEntry,
 } from "@/tokens/lib/manifest/types";
-import { isSupportedKind, toId } from "./guards";
+import {
+  isSupportedTokenKind,
+  type SupportedTokenKind,
+} from "@repo/contracts/token-kind";
 
 type ManifestViewModelResult = {
   viewModel: TokenGraphViewModel;
@@ -117,7 +120,9 @@ function sortCategoriesByOrder(
   });
 }
 
-type SupportedEntry = Omit<NormalizedManifestEntry, "kind"> & { kind: SupportedViewKind };
+type SupportedEntry = Omit<NormalizedManifestEntry, "kind"> & {
+  kind: SupportedTokenKind;
+};
 
 function mapEntry(
   normalized: NormalizedManifestEntry,
@@ -135,7 +140,7 @@ function isSupportedEntry(
   mapper?: ManifestAdapterOptions["mapper"],
 ): entry is SupportedEntry {
   if (mapper?.includeEntry && !mapper.includeEntry(entry)) return false;
-  return isSupportedKind(entry.kind);
+  return isSupportedTokenKind(entry.kind);
 }
 
 function createTokenType(entry: SupportedEntry): TokenTypeViewModel {
