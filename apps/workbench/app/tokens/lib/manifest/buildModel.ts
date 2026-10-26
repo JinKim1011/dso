@@ -32,7 +32,7 @@ export const DEFAULT_CATEGORY_ORDER = [
 ] as const;
 
 function createValueItems(
-  entry: SupportedEntry,
+  entry: NormalizedManifestEntry,
   tokenTypeId: string,
   category: string,
 ): TokenTypeValueItem[] {
@@ -142,7 +142,7 @@ function isSupportedEntry(
   return isSupportedTokenKind(entry.kind);
 }
 
-function createTokenType(entry: SupportedEntry): TokenTypeViewModel {
+function createTokenType(entry: NormalizedManifestEntry): TokenTypeViewModel {
   const tokenTypeId = toId("token-type", `${entry.category}-${entry.type}-${entry.kind}`);
 
   return {
