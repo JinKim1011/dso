@@ -90,6 +90,10 @@ export function normalizeEntry(raw: unknown): NormalizedManifestEntry | null {
 
   if (!category || !type || !kind || !value) return null;
 
+  if (!isSupportedTokenKind(kind)) {
+    return null;
+  }
+
   const tokens = Array.isArray(raw.tokens)
     ? raw.tokens
         .map((entry) => normalizeTokenRecord(entry))
@@ -101,10 +105,6 @@ export function normalizeEntry(raw: unknown): NormalizedManifestEntry | null {
         .map((entry) => normalizeSemanticRecord(entry))
         .filter((entry): entry is ManifestSemanticRecord => entry !== null)
     : undefined;
-
-  if (!kind || !isSupportedTokenKind(kind)) {
-    return null;
-  }
 
   return {
     category,
