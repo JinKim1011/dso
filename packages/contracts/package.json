@@ -11,6 +11,10 @@
     "./validation/*": {
       "types": "./validation/*.ts",
       "default": "./validation/*.ts"
+    },
+    "./token-kind": {
+      "types": "./token-kind.ts",
+      "default": "./token-kind.ts"
     }
   },
   "scripts": {
