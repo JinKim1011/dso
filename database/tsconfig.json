@@ -2,9 +2,7 @@
   "extends": "../packages/typescript-config/base.json",
   "compilerOptions": {
     "rootDir": ".",
-    "outDir": "dist",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "outDir": "dist"
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]
