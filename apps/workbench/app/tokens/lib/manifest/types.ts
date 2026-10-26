@@ -1,4 +1,4 @@
-export const SUPPORTED_KINDS = ["primitive", "semantic"] as const;
+import { type SupportedTokenKind } from "@repo/contracts/token-kind";
 
 export type ManifestTokenRecord = {
   name: string;
@@ -21,7 +21,7 @@ export type ManifestSemanticRecord = {
 export type NormalizedManifestEntry = {
   category: string;
   type: string;
-  kind: string;
+  kind: SupportedTokenKind;
   value: string[];
   tokens?: ManifestTokenRecord[];
   semanticMap?: ManifestSemanticRecord[];
