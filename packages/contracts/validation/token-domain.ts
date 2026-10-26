@@ -1,5 +1,5 @@
-import type { TokenType } from "@repo/contracts/type";
-import { isSupportedTokenKind } from "../token-kind.js";
+import { isSupportedTokenKind } from "@repo/contracts/token-kind";
+import type { Token, TokenType } from "@repo/contracts/type";
 
 export type TokenDomainValidationError = {
   code:
