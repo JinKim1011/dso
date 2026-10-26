@@ -1,3 +1,5 @@
+import type { SupportedTokenKind } from "@repo/contracts/token-kind";
+
 export type Project = {
   id: string;
   name: string;
@@ -13,10 +15,10 @@ export type Release = {
 export type TokenType = {
   id: string;
   projectId: string;
+  parentTypeId: string | null;
   category: string;
   name: string;
-  kind: "primitive" | "semantic";
-  parentTypeId: string | null;
+  kind: SupportedTokenKind;
 };
 
 export type Token = {
