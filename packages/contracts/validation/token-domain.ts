@@ -13,6 +13,7 @@ export type TokenDomainValidationError = {
 };
 
 export function validateTokenDomain(
+  tokens: readonly Token[],
   tokenTypes: readonly TokenType[],
   projectId: string,
 ): TokenDomainValidationError[] {
@@ -43,6 +44,36 @@ export function validateTokenDomain(
         code: "wrong-project",
         entityId: tokenType.id,
         message: `Token type "${tokenType.id}" belongs to another project.`,
+      });
+    }
+  }
+
+  const tokenIds = new Set<string>();
+
+  for (const token of tokens) {
+    if (tokenIds.has(token.id)) {
+      errors.push({
+        code: "duplicate-token",
+        entityId: token.id,
+        message: `Token "${token.id}" appears more than once.`,
+      });
+    }
+
+    tokenIds.add(token.id);
+
+    if (token.projectId !== projectId) {
+      errors.push({
+        code: "wrong-project",
+        entityId: token.id,
+        message: `Token "${token.id}" belongs to another project.`,
+      });
+    }
+
+    if (!tokenTypeById.has(token.tokenTypeId)) {
+      errors.push({
+        code: "missing-token-type",
+        entityId: token.id,
+        message: `Token type "${token.tokenTypeId}" does not exist.`,
       });
     }
   }
