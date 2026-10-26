@@ -134,12 +134,11 @@ function mapEntry(
   };
 }
 
-function isSupportedEntry(
+function shouldIncludeEntry(
   entry: NormalizedManifestEntry,
   mapper?: ManifestAdapterOptions["mapper"],
-): entry is SupportedEntry {
-  if (mapper?.includeEntry && !mapper.includeEntry(entry)) return false;
-  return isSupportedTokenKind(entry.kind);
+): boolean {
+  return mapper?.includeEntry?.(entry) ?? true;
 }
 
 function createTokenType(entry: NormalizedManifestEntry): TokenTypeViewModel {
@@ -187,7 +186,7 @@ export function buildTokenGraphViewModel(
   for (const normalized of entries) {
     const entry = mapEntry(normalized, mapper);
 
-    if (!isSupportedEntry(entry, mapper)) {
+    if (!shouldIncludeEntry(entry, mapper)) {
       skippedCount += 1;
       continue;
     }
