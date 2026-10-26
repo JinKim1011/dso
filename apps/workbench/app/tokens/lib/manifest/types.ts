@@ -40,6 +40,5 @@ export type ManifestAdapterOptions = {
 
 type ManifestMapper = {
   mapCategory?: (category: string) => string;
-  mapKind?: (kind: string) => string;
   includeEntry?: (entry: NormalizedManifestEntry) => boolean;
 };
