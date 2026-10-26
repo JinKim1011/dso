@@ -1,10 +1,10 @@
-# Cybersecurity Implementation Plan
+## Security Implementation Plan
 
 DSO is a web workbench backed by PostgreSQL. The workbench edits and publishes design-system resources. An authenticated CLI downloads published releases through the API and generates files locally.
 
 This plan implements the security work alongside `implementation-plans/relational-databases.md`.
 
-## Security Scope
+## Scope
 
 Implement these controls in the application:
 
@@ -43,11 +43,13 @@ Document but do not build:
 - Published component document paths are portable relative paths. The CLI or
   consuming repository supplies the local output root.
 
-## W1: Security Design and Threat Model
+## Weekly Plan
+
+### W1: Security Design and Threat Model
 
 Align with W1 in `relational-databases.md`.
 
-### Build
+#### Build
 
 - Create a data-flow diagram for:
   - Browser -> Workbench API
@@ -88,11 +90,11 @@ Align with W1 in `relational-databases.md`.
   - Database/data
   - Development/operations
 
-### Done When
+#### Done When
 
 Every important asset and entry point has a threat, mitigation, and planned test.
 
-### Token relationship scope
+#### Token relationship scope
 
 DSO does not ingest application source code or claim to know which tokens are used by components.
 
@@ -103,11 +105,11 @@ The protected token relationships are:
 
 Component-token usage discovery is excluded from the first release.
 
-## W2: Security Schema and Migrations
+### W2: Security Schema and Migrations
 
 Align with W2 in `relational-databases.md`.
 
-### Build
+#### Build
 
 - Add migrations for:
   - `users(id, email, password_hash, created_at)`
@@ -138,7 +140,7 @@ Align with W2 in `relational-databases.md`.
 - Defer runtime-role provisioning to database/deployment administration; use separate migration and runtime credentials when the data-access and deployment layers are implemented.
 - Keep passwords, API-key secrets, and signing keys out of migrations and seed data.
 
-### Tests
+#### Tests
 
 - Apply all migrations to an empty database.
 - Verify foreign-key failures.
@@ -147,16 +149,15 @@ Align with W2 in `relational-databases.md`.
 - Verify valid account-level and project-scoped audit events.
 - Verify invalid audit-event scopes fail.
 
-### Done When
+#### Done When
 
 The security schema can be created from an empty PostgreSQL database, and its structural constraints and indexes have been verified. Runtime-role provisioning is tracked under W7.
 
-## W3: Seed data, contracts, authentication, and database access
+### W3: Seed data, contracts, authentication, and database access
 
-This week combines the original W3 and W4 work and establishes the foundation
-for every later integration.
+This week establishes the foundation for every later integration.
 
-### Build
+#### Build
 
 - Normalize supported definitions from `design-tokens-manifest.json`.
 - Exclude or reject deprecated `class-union` and `unknown` kinds.
@@ -176,7 +177,7 @@ for every later integration.
 - Require authorization context for protected repository functions and keep
   credentials, authorization headers, and sensitive payloads out of logs.
 
-### Tests
+#### Tests
 
 - Valid login creates a session; invalid login and expired sessions fail.
 - Invalid and oversized requests are rejected before repository calls.
@@ -185,16 +186,16 @@ for every later integration.
   constraints, and transaction rollback behave correctly.
 - Seed data contains no real secrets.
 
-### Done When
+#### Done When
 
 Authenticated and authorized repository operations work against PostgreSQL and
 all application database access goes through tested repositories.
 
-## W4: Workbench integration and web security
+### W4: Workbench integration and web security
 
 This week replaces the current persistence path while preserving staged editing.
 
-### Build
+#### Build
 
 - Replace filesystem persistence with database repositories.
 - Preserve `StagedManifestContext` and `useStagedManifestActions`.
@@ -209,7 +210,7 @@ This week replaces the current persistence path while preserving staged editing.
 - Return generic production errors without stacks or secrets.
 - Create audit events for login, publishing, API-key creation, and revocation.
 
-### Tests
+#### Tests
 
 - Unauthenticated requests return `401`.
 - Cross-project access and insufficient roles fail.
@@ -217,16 +218,16 @@ This week replaces the current persistence path while preserving staged editing.
 - Security headers and audit events are present.
 - Staged editing remains functional and PostgreSQL is the source of truth.
 
-### Done When
+#### Done When
 
 An authenticated user can edit only authorized projects, role restrictions are
 enforced, and a user can publish through the workbench.
 
-## W5: Release signing, CLI, and generation
+### W5: Release signing, CLI, and generation
 
 This week delivers the complete publish-to-generation vertical slice.
 
-### Build
+#### Build
 
 - Create a published-release API containing token definitions, references,
   token-type hierarchy data, components, and templates.
@@ -243,14 +244,14 @@ This week delivers the complete publish-to-generation vertical slice.
   absolute paths, `..` traversal, unsafe separators, and shell execution.
 - Make generated output deterministic and keep credentials out of output.
 
-### Tests
+#### Tests
 
 - Invalid, expired, revoked, wrong-scope, and wrong-project keys fail.
 - Invalid signatures stop generation.
 - Valid releases work under different local output roots.
 - Unsafe paths fail, output is deterministic, and the CLI uses only the API.
 
-### Done When
+#### Done When
 
 This workflow succeeds:
 
@@ -259,11 +260,11 @@ Workbench publish -> signed release API -> dso pull
 -> signature verification -> dso generate
 ```
 
-## W6: Performance, deployment security, documentation, and final verification
+### W6: Performance, deployment security, documentation, and final verification
 
 This week completes evidence, hardening, and the clean end-to-end run.
 
-### Build and evidence
+#### Build and evidence
 
 - Run `EXPLAIN ANALYZE` on representative release, token-type,
   token-reference, reverse-reference, hierarchy, and complete-release queries.
@@ -281,7 +282,7 @@ This week completes evidence, hardening, and the clean end-to-end run.
   API-key creation, CLI pull, signature verification, generation, output
   inspection, tests, typecheck, lint, security scans, and smoke checks.
 
-### Required final security tests
+#### Required final security tests
 
 - Unpublished releases cannot be downloaded.
 - SQL injection, CSRF, path traversal, cross-project access, self-references,
@@ -290,12 +291,12 @@ This week completes evidence, hardening, and the clean end-to-end run.
 - Logs and generated files contain no secrets.
 - Signed releases preserve token references and hierarchy data.
 
-### Done When
+#### Done When
 
 Performance measurements, deployment/security evidence, documentation, and the
 complete empty-database workflow are ready for the report and demonstration.
 
-## Level 1 Requirement Mapping
+### Level 1 Requirement Mapping
 
 - Cybersecurity dimensions: W1 and W6
 - Threat model analysis: W1
@@ -309,7 +310,7 @@ complete empty-database workflow are ready for the report and demonstration.
 - Secure development and operation: W6
 - Documentation and oral presentation: W6
 
-## Oral Examination Preparation
+### Oral Examination Preparation
 
 Prepare a five-minute walkthrough covering:
 
