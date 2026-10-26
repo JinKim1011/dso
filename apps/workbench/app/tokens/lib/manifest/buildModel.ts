@@ -10,10 +10,6 @@ import type {
   ManifestAdapterOptions,
   NormalizedManifestEntry,
 } from "@/tokens/lib/manifest/types";
-import {
-  isSupportedTokenKind,
-  type SupportedTokenKind,
-} from "@repo/contracts/token-kind";
 
 type ManifestViewModelResult = {
   viewModel: TokenGraphViewModel;
@@ -119,10 +115,6 @@ function sortCategoriesByOrder(
     return a.localeCompare(b);
   });
 }
-
-type SupportedEntry = Omit<NormalizedManifestEntry, "kind"> & {
-  kind: SupportedTokenKind;
-};
 
 function mapEntry(
   normalized: NormalizedManifestEntry,
