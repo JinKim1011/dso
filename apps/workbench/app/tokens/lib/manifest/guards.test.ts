@@ -1,5 +1,6 @@
+import { isSupportedTokenKind } from "@repo/contracts/token-kind";
 import { describe, expect, it } from "vitest";
-import { asString, asStringArray, isSupportedKind, toId } from "./guards";
+import { asString, asStringArray, toId } from "./guards";
 
 describe("guards", () => {
   it("asString returns trimmed string for valid input", () => {
@@ -21,10 +22,10 @@ describe("guards", () => {
     ]);
   });
 
-  it("isSupportedKind accepts primitive/semantic and rejects class-union", () => {
-    expect(isSupportedKind("primitive")).toBe(true);
-    expect(isSupportedKind("semantic")).toBe(true);
-    expect(isSupportedKind("class-union")).toBe(false);
+  it("isSupportedTokenKind accepts primitive/semantic and rejects class-union", () => {
+    expect(isSupportedTokenKind("primitive")).toBe(true);
+    expect(isSupportedTokenKind("semantic")).toBe(true);
+    expect(isSupportedTokenKind("class-union")).toBe(false);
   });
 
   it("toId returns the same string with identical input", () => {
