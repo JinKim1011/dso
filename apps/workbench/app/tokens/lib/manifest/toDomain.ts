@@ -4,6 +4,7 @@ import type {
   ManifestTokenRecord,
   NormalizedManifestEntry,
 } from "@/tokens/lib/manifest/types";
+import { isSupportedTokenKind } from "@repo/contracts/token-kind";
 import type { Token, TokenReference, TokenType } from "@repo/contracts/type";
 
 export type ManifestDomainData = {
@@ -23,7 +24,7 @@ export function manifestToDomain(
   const tokenTypeIds = new Set<string>();
 
   for (const entry of entries) {
-    if (entry.kind !== "primitive" && entry.kind !== "semantic") {
+    if (!isSupportedTokenKind(entry.kind)) {
       throw new Error(`Unsupported token kind: ${entry.kind}`);
     }
 
