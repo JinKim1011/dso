@@ -1,6 +1,6 @@
-## New project direction
+## Project direction
 
-DSO is a database-backed workbench for authoring and publisihg agent-first design system resources. It stores token contracts, component registration, and markdown document templates. An authenticated CLI installs a published resource version into a team repository and locally generates agent-readable component decuments and design-token.json.
+DSO is a database-backed workbench for authoring and publisihg agent-first web design system resources. It stores token contracts, component registration, and markdown document templates. An authenticated CLI installs a published resource version into a team repository and locally generates agent-readable component decuments and design-token.json.
 
 ## Outline
 
@@ -37,18 +37,14 @@ DSO remains a single monorepo. PostgreSQL runs as a separate runtime service, wh
 
 #### Scope decision
 
-DSO does not claim to know which tokens are used by component source code. Component-token usage analysis is out of scope for the first release.
-
-DSO models relationships within the token domain:
-
-- token types form a single-parent hierarchy
-- tokens can reference other tokens
-- token-reference slots identify which value slot is being referenced
-- token references support reverse dependency queries
-
-A token type can have zero or one parent. The hierarchy is represented with `parent_type_id`; a separate token-type relationship table is not required.
-
-Source-code scanning and automatic component-token discovery remain future work.
+- DSO does not claim to know which tokens are used by component source code.
+- DSO models relationships within the token domain:
+  - token types form a single-parent hierarchy
+  - tokens can reference other tokens
+  - token-reference slots identify which value slot is being referenced
+  - token references support reverse dependency queries
+- A token type can have zero or one parent. The hierarchy is represented with `parent_type_id`. (a separate token-type relationship table is not required.)
+- Source-code scanning and automatic component-token discovery remain future work.
 
 #### Requirment evidence
 
@@ -66,10 +62,6 @@ Use cases, terminology, architecture, and first ER model are documented
   - `projects`
   - `releases`
   - `users`
-  - `sessions`
-  - `project_members`
-  - `api_keys`
-  - `audit_events`
   - `token_types(parent_type_id)`
   - `tokens`
   - `token_references`
@@ -90,10 +82,11 @@ Use cases, terminology, architecture, and first ER model are documented
     - `component_id`
     - `name`
     - `content`
-- Infer project ownership and release-publishing permissions from
-  `project_members`. W2 does not add `projects.owner_id` or
-  `releases.published_by`; the application records the publishing user in
-  `audit_events`.
+  - `sessions`
+  - `project_members`
+  - `api_keys`
+  - `audit_events`
+- Infer project ownership and release-publishing permissions from `project_members`. W2 does not add `projects.owner_id` or `releases.published_by`. The application records the publishing user in `audit_events`.
 - Add
   - primary keys
   - foreign keys
@@ -158,9 +151,7 @@ Tables, columns, keys, relationships, constraints, and indexes are implemented.
 
 #### Done when
 
-The complete domain and security schema can be created from an empty
-PostgreSQL database, and its structural constraints and indexes have been
-verified. Runtime database-role provisioning remains part of deployment and database administration rather than application schema migrations.
+The complete domain and security schema can be created from an empty PostgreSQL database, and its structural constraints and indexes have been verified. Runtime database-role provisioning remains part of deployment and database administration rather than application schema migrations.
 
 ### W3: Seed data, contracts, authentication, and database access
 
