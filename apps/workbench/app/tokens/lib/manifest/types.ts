@@ -1,4 +1,4 @@
-import { type SupportedTokenKind } from "@repo/contracts/token-kind";
+import type { TokenKind } from "@repo/contracts/validation/enum";
 
 export type ManifestTokenRecord = {
   name: string;
@@ -21,7 +21,7 @@ export type ManifestSemanticRecord = {
 export type NormalizedManifestEntry = {
   category: string;
   type: string;
-  kind: SupportedTokenKind;
+  kind: TokenKind;
   value: string[];
   tokens?: ManifestTokenRecord[];
   semanticMap?: ManifestSemanticRecord[];

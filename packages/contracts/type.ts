@@ -1,8 +1,8 @@
-import type { SupportedTokenKind } from "@repo/contracts/token-kind";
 import type {
   ApiKeyScope,
   ProjectMemberRole,
   ReleaseStatus,
+  TokenKind,
 } from "@repo/contracts/validation/enum";
 
 export type User = {
@@ -68,7 +68,7 @@ export type TokenType = {
   parentTypeId: string | null;
   category: string;
   name: string;
-  kind: SupportedTokenKind;
+  kind: TokenKind;
 };
 
 export type Token = {
