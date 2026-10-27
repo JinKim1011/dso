@@ -14,7 +14,9 @@ export type User = {
 
 export type Project = {
   id: string;
+  slug: string;
   name: string;
+  createdAt: string;
 };
 
 export type ProjectMember = {
