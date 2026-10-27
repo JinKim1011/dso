@@ -76,6 +76,7 @@ export function validateTokenReference(
   }
 
   if (
+    reference.projectId !== projectId ||
     referencingToken.projectId !== projectId ||
     referencedToken.projectId !== projectId ||
     referencingTokenType.projectId !== projectId ||
