@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
-import { type ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { buildTokenGraphViewModel } from "../../tokens/lib/manifestAdapter";
 import { StagedManifestProvider } from "../context/StagedManifestContext";
 import { Footer } from "./Footer";
@@ -35,7 +35,9 @@ export async function WorkbenchShell({ children }: WorkbenchShellProps) {
   return (
     <StagedManifestProvider baseManifest={result.viewModel}>
       <div className="flex h-screen flex-col">
-        <Header />
+        <Suspense fallback={null}>
+          <Header />
+        </Suspense>
         <main className="mx-mini flex-1 overflow-hidden">{children}</main>
         <Footer />
       </div>
