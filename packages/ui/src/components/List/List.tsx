@@ -36,7 +36,7 @@ export const List = ({ listItems, className, ...props }: ListProps) => {
 
     const centerY = btnRect.top - ulRect.top + btnRect.height / 2 - 2;
     setDotY(centerY);
-  }, [listItems]);
+  }, []);
 
   useEffect(() => {
     updateDot();
