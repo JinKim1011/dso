@@ -175,6 +175,11 @@ This week establishes the foundation for every later integration.
   audit-event insertion.
 - Require authorization context for protected repository functions and keep
   credentials, authorization headers, and sensitive payloads out of logs.
+- Keep the legacy manifest adapter tolerant for existing workbench
+  compatibility, but apply strict validation at the domain and persistence
+  boundaries. Database seed data must contain only supported token kinds and
+  must not contain real passwords, API-key secrets, signing keys, or other
+  credentials.
 
 #### Tests
 
