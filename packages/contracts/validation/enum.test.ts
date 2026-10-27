@@ -3,15 +3,37 @@ import {
   isSupportedProjectMemberRole,
   isSupportedReleaseStatus,
 } from "@repo/contracts/validation/enum";
+import { describe, expect, it } from "vitest";
 
-isSupportedProjectMemberRole("editor") === true;
-isSupportedProjectMemberRole("publisher") === true;
-isSupportedProjectMemberRole("admin") === true;
-isSupportedProjectMemberRole("owner") === false;
+describe("project member roles", () => {
+  it("accepts supported roles", () => {
+    expect(isSupportedProjectMemberRole("editor")).toBe(true);
+    expect(isSupportedProjectMemberRole("publisher")).toBe(true);
+    expect(isSupportedProjectMemberRole("admin")).toBe(true);
+  });
 
-isSupportedApiKeyScope("release:read") === true;
-isSupportedApiKeyScope("write") === false;
+  it("rejects unsupported roles", () => {
+    expect(isSupportedProjectMemberRole("owner")).toBe(false);
+  });
+});
 
-isSupportedReleaseStatus("draft") === true;
-isSupportedReleaseStatus("published") === true;
-isSupportedReleaseStatus("archived") === false;
+describe("API-key scopes", () => {
+  it("accepts the release read scope", () => {
+    expect(isSupportedApiKeyScope("release:read")).toBe(true);
+  });
+
+  it("rejects unsupported scopes", () => {
+    expect(isSupportedApiKeyScope("write")).toBe(false);
+  });
+});
+
+describe("release statuses", () => {
+  it("accepts supported statuses", () => {
+    expect(isSupportedReleaseStatus("draft")).toBe(true);
+    expect(isSupportedReleaseStatus("published")).toBe(true);
+  });
+
+  it("rejects unsupported statuses", () => {
+    expect(isSupportedReleaseStatus("archived")).toBe(false);
+  });
+});
