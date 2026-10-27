@@ -1,5 +1,5 @@
-import { isSupportedTokenKind } from "@repo/contracts/token-kind";
 import type { Token, TokenType } from "@repo/contracts/type";
+import { isSupportedTokenKind } from "@repo/contracts/validation/enum";
 
 export type TokenDomainValidationError = {
   code:

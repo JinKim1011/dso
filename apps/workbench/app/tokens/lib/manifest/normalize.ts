@@ -5,7 +5,7 @@ import {
   ManifestTokenRecord,
   NormalizedManifestEntry,
 } from "@/tokens/lib/manifest/types";
-import { isSupportedTokenKind } from "@repo/contracts/token-kind";
+import { isSupportedTokenKind } from "@repo/contracts/validation/enum";
 
 export function extractRows(input: unknown): unknown[] {
   if (Array.isArray(input)) return input;

@@ -4,8 +4,8 @@ import type {
   ManifestTokenRecord,
   NormalizedManifestEntry,
 } from "@/tokens/lib/manifest/types";
-import { isSupportedTokenKind } from "@repo/contracts/token-kind";
 import type { Token, TokenReference, TokenType } from "@repo/contracts/type";
+import { isSupportedTokenKind } from "@repo/contracts/validation/enum";
 
 export type ManifestDomainData = {
   projectId: string;
