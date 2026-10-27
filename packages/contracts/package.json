@@ -15,10 +15,6 @@
     "./token-kind": {
       "types": "./token-kind.ts",
       "default": "./token-kind.ts"
-    },
-    "./manifest": {
-      "types": "./manifest/index.ts",
-      "default": "./manifest/index.ts"
     }
   },
   "scripts": {
