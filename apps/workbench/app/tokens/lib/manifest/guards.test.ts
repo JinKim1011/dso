@@ -1,4 +1,4 @@
-import { isSupportedTokenKind } from "@repo/contracts/token-kind";
+import { isSupportedTokenKind } from "@repo/contracts/validation/enum";
 import { describe, expect, it } from "vitest";
 import { asString, asStringArray, toId } from "./guards";
 
