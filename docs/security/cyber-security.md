@@ -159,10 +159,9 @@ This week establishes the foundation for every later integration.
 
 #### Build
 
-- Normalize supported definitions from `design-tokens-manifest.json`.
-- Exclude or reject deprecated `class-union` and `unknown` kinds.
-- Seed realistic users, projects, memberships, components, templates, and
-  releases alongside the token data.
+- Treat design-tokens-manifest.json as a legacy workbench compatibility input, not as the canonical database seed format.
+- Define and seed current domain records directly for users, projects, project memberships, token types, tokens, token references, components, document templates, and releases.
+- If legacy manifest data is reused during development, pass it through an explicit adapter that accepts only primitive and semantic kinds. Reject class-union, unknown, and other unsupported kinds before domain conversion.
 - Add shared schemas and types to `packages/contracts` for login, resource
   writes, hierarchy changes, publishing, API keys, and release downloads.
 - Validate required fields, enum values, identifiers, unknown fields, token
