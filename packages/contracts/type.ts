@@ -92,6 +92,7 @@ export type TokenReferenceSlot =
 export type TokenReference = {
   referencingTokenId: string;
   referencedTokenId: string;
+  projectId: string;
   slot: TokenReferenceSlot;
 };
 
