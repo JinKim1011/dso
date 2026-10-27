@@ -15,6 +15,10 @@
     "./token-kind": {
       "types": "./token-kind.ts",
       "default": "./token-kind.ts"
+    },
+    "./operation": {
+      "types": "./operation.ts",
+      "default": "./operation.ts"
     }
   },
   "scripts": {
