@@ -4,6 +4,6 @@
     "rootDir": ".",
     "outDir": "dist"
   },
-  "include": ["*.ts", "validation", "manifest"],
+  "include": ["*.ts", "validation"],
   "exclude": ["node_modules", "dist"]
 }
