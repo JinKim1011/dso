@@ -18,7 +18,8 @@
     }
   },
   "scripts": {
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "check-fixtures": "tsc -p fixtures/tsconfig.fixtures.json"
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
