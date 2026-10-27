@@ -11,10 +11,15 @@
     "./validation/*": {
       "types": "./validation/*.ts",
       "default": "./validation/*.ts"
+    },
+    "./operation": {
+      "types": "./operation.ts",
+      "default": "./operation.ts"
     }
   },
   "scripts": {
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "check-fixtures": "tsc -p fixtures/tsconfig.fixtures.json"
   },
   "devDependencies": {
     "@repo/typescript-config": "*",

@@ -1,4 +1,4 @@
-export const SUPPORTED_KINDS = ["primitive", "semantic"] as const;
+import type { TokenKind } from "@repo/contracts/validation/enum";
 
 export type ManifestTokenRecord = {
   name: string;
@@ -21,7 +21,7 @@ export type ManifestSemanticRecord = {
 export type NormalizedManifestEntry = {
   category: string;
   type: string;
-  kind: string;
+  kind: TokenKind;
   value: string[];
   tokens?: ManifestTokenRecord[];
   semanticMap?: ManifestSemanticRecord[];
@@ -40,6 +40,5 @@ export type ManifestAdapterOptions = {
 
 type ManifestMapper = {
   mapCategory?: (category: string) => string;
-  mapKind?: (kind: string) => string;
   includeEntry?: (entry: NormalizedManifestEntry) => boolean;
 };

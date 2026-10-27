@@ -60,6 +60,7 @@ function reference(
   slot: TokenReference["slot"],
 ): TokenReference {
   return {
+    projectId,
     referencingTokenId,
     referencedTokenId,
     slot,
@@ -75,7 +76,7 @@ describe("validateTokenReference", () => {
 
     const tokens = [
       modeToken("surface-token", "surface"),
-      modeToken("white-token", "white"),
+      singleToken("white-token", "white"),
     ];
 
     const errors = validateTokenReference(

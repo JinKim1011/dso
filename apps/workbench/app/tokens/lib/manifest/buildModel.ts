@@ -4,13 +4,12 @@ import type {
   TokenTypeValueItem,
   TokenTypeViewModel,
 } from "@/_shared/models/tokenGraph";
-import type { SupportedViewKind } from "@/_shared/models/tokenKinds";
+import { toId } from "@/tokens/lib/manifest/guards";
 import { normalizeManifest } from "@/tokens/lib/manifest/normalize";
 import type {
   ManifestAdapterOptions,
   NormalizedManifestEntry,
 } from "@/tokens/lib/manifest/types";
-import { isSupportedKind, toId } from "./guards";
 
 type ManifestViewModelResult = {
   viewModel: TokenGraphViewModel;
@@ -29,7 +28,7 @@ export const DEFAULT_CATEGORY_ORDER = [
 ] as const;
 
 function createValueItems(
-  entry: SupportedEntry,
+  entry: NormalizedManifestEntry,
   tokenTypeId: string,
   category: string,
 ): TokenTypeValueItem[] {
@@ -117,8 +116,6 @@ function sortCategoriesByOrder(
   });
 }
 
-type SupportedEntry = Omit<NormalizedManifestEntry, "kind"> & { kind: SupportedViewKind };
-
 function mapEntry(
   normalized: NormalizedManifestEntry,
   mapper?: ManifestAdapterOptions["mapper"],
@@ -126,19 +123,17 @@ function mapEntry(
   return {
     ...normalized,
     category: mapper?.mapCategory?.(normalized.category) ?? normalized.category,
-    kind: mapper?.mapKind?.(normalized.kind) ?? normalized.kind,
   };
 }
 
-function isSupportedEntry(
+function shouldIncludeEntry(
   entry: NormalizedManifestEntry,
   mapper?: ManifestAdapterOptions["mapper"],
-): entry is SupportedEntry {
-  if (mapper?.includeEntry && !mapper.includeEntry(entry)) return false;
-  return isSupportedKind(entry.kind);
+): boolean {
+  return mapper?.includeEntry?.(entry) ?? true;
 }
 
-function createTokenType(entry: SupportedEntry): TokenTypeViewModel {
+function createTokenType(entry: NormalizedManifestEntry): TokenTypeViewModel {
   const tokenTypeId = toId("token-type", `${entry.category}-${entry.type}-${entry.kind}`);
 
   return {
@@ -183,7 +178,7 @@ export function buildTokenGraphViewModel(
   for (const normalized of entries) {
     const entry = mapEntry(normalized, mapper);
 
-    if (!isSupportedEntry(entry, mapper)) {
+    if (!shouldIncludeEntry(entry, mapper)) {
       skippedCount += 1;
       continue;
     }

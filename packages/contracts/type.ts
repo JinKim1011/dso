@@ -1,22 +1,74 @@
+import type {
+  ApiKeyScope,
+  ProjectMemberRole,
+  ReleaseStatus,
+  TokenKind,
+} from "@repo/contracts/validation/enum";
+
+export type User = {
+  id: string;
+  email: string;
+  passwordHash: string;
+  createdAt: string;
+};
+
 export type Project = {
   id: string;
+  slug: string;
   name: string;
+  createdAt: string;
+};
+
+export type ProjectMember = {
+  projectId: string;
+  userId: string;
+  role: ProjectMemberRole;
+  createdAt: string;
+};
+
+export type AuditEvent = {
+  id: string;
+  userId: string;
+  projectId: string | null;
+  action: string;
+  resourceType: string;
+  resourceId: string | null;
+  createdAt: string;
 };
 
 export type Release = {
   id: string;
   projectId: string;
   version: string;
-  status: "draft" | "published";
+  status: ReleaseStatus;
+  publishedAt: string | null;
+};
+
+export type Session = {
+  id: string;
+  userId: string;
+  createdAt: string;
+  expiresAt: string;
+};
+
+export type ApiKey = {
+  id: string;
+  projectId: string;
+  keyIdentifier: string;
+  keyHash: string;
+  scope: ApiKeyScope;
+  createdAt: string;
+  expiresAt: string;
+  revokedAt: string | null;
 };
 
 export type TokenType = {
   id: string;
   projectId: string;
+  parentTypeId: string | null;
   category: string;
   name: string;
-  kind: "primitive" | "semantic";
-  parentTypeId: string | null;
+  kind: TokenKind;
 };
 
 export type Token = {
@@ -40,5 +92,23 @@ export type TokenReferenceSlot =
 export type TokenReference = {
   referencingTokenId: string;
   referencedTokenId: string;
+  projectId: string;
   slot: TokenReferenceSlot;
+};
+
+export type Component = {
+  id: string;
+  projectId: string;
+  name: string;
+  slug: string;
+  description: string;
+  documentPath: string;
+};
+
+export type DocumentTemplate = {
+  id: string;
+  projectId: string;
+  componentId: string;
+  name: string;
+  content: string;
 };

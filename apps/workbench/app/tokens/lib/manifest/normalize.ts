@@ -1,10 +1,11 @@
+import { asString, asStringArray, isObjectLike } from "@/tokens/lib/manifest/guards";
 import {
   ManifestNormalizationResult,
   ManifestSemanticRecord,
   ManifestTokenRecord,
   NormalizedManifestEntry,
 } from "@/tokens/lib/manifest/types";
-import { asString, asStringArray, isObjectLike } from "./guards";
+import { isSupportedTokenKind } from "@repo/contracts/validation/enum";
 
 export function extractRows(input: unknown): unknown[] {
   if (Array.isArray(input)) return input;
@@ -88,6 +89,10 @@ export function normalizeEntry(raw: unknown): NormalizedManifestEntry | null {
   const value = asStringArray(raw.value);
 
   if (!category || !type || !kind || !value) return null;
+
+  if (!isSupportedTokenKind(kind)) {
+    return null;
+  }
 
   const tokens = Array.isArray(raw.tokens)
     ? raw.tokens
