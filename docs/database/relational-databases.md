@@ -159,9 +159,9 @@ This week establishes the foundation for every later integration.
 
 #### Build
 
-- Normalize supported definitions from `design-tokens-manifest.json`.
-- Exclude or reject deprecated `class-union` and `unknown` kinds.
-- Seed realistic users, projects, memberships, token types, tokens, references, components, templates, and releases.
+- Treat `design-tokens-manifest.json` as a legacy workbench compatibility input, not as the canonical database seed format.
+- Define and seed current domain records directly for users, projects, project memberships, token types, tokens, token references, components, document templates, and releases.
+- If legacy manifest data is reused during development, pass it through an explicit adapter that accepts only primitive and semantic kinds. Reject class-union, unknown, and other unsupported kinds before domain conversion.
 - Record seed row counts and the data-generation method.
 - Implement documented SQL for inserts, updates, filtering, ordering, joins, self-joins, aggregates, upserts, release queries, hierarchy queries, reverse-reference queries, and unreferenced-token analysis.
 - Create `packages/db` with a PostgreSQL pool, parameterized SQL, repositories, and transaction helpers.
