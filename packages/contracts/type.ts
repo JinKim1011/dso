@@ -5,6 +5,13 @@ import type {
   ReleaseStatus,
 } from "@repo/contracts/validation/enum";
 
+export type User = {
+  id: string;
+  email: string;
+  passwordHash: string;
+  createdAt: string;
+};
+
 export type Project = {
   id: string;
   name: string;
@@ -17,12 +24,29 @@ export type ProjectMember = {
   createdAt: string;
 };
 
+export type AuditEvent = {
+  id: string;
+  userId: string;
+  projectId: string | null;
+  action: string;
+  resourceType: string;
+  resourceId: string | null;
+  createdAt: string;
+};
+
 export type Release = {
   id: string;
   projectId: string;
   version: string;
   status: ReleaseStatus;
   publishedAt: string | null;
+};
+
+export type Session = {
+  id: string;
+  userId: string;
+  createdAt: string;
+  expiresAt: string;
 };
 
 export type ApiKey = {
@@ -67,4 +91,21 @@ export type TokenReference = {
   referencingTokenId: string;
   referencedTokenId: string;
   slot: TokenReferenceSlot;
+};
+
+export type Component = {
+  id: string;
+  projectId: string;
+  name: string;
+  slug: string;
+  description: string;
+  documentPath: string;
+};
+
+export type DocumentTemplate = {
+  id: string;
+  projectId: string;
+  componentId: string;
+  name: string;
+  content: string;
 };
