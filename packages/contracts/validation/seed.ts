@@ -105,7 +105,20 @@ function mapTokenDomainErrorCode(
   switch (code) {
     case "wrong-project":
       return "wrong-project";
+    case "duplicate-token-type":
+    case "duplicate-token":
+      return "duplicate-id";
     case "missing-token-type":
+      return "missing-record";
+    case "unsupported-token-kind":
+      return "invalid-enum";
+  }
+}
+
+function mapTokenDomainCollection(
+  code: ReturnType<typeof validateTokenDomain>[number]["code"],
+): string {
+  switch (code) {
     case "unsupported-token-kind":
     case "duplicate-token-type":
     case "duplicate-token":
