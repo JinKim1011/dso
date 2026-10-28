@@ -28,6 +28,22 @@ export type SeedValidationError = {
   message: string;
 };
 
+function addFieldError(
+  errors: SeedValidationError[],
+  collection: string,
+  id: string | undefined,
+  field: string,
+  message: string,
+): void {
+  errors.push({
+    code: "invalid-field",
+    collection,
+    id,
+    field,
+    message,
+  });
+}
+
 function mapHierarchyErrorCode(
   code: TokenTypeHierarchyError["code"],
 ): SeedValidationError["code"] {
