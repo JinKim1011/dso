@@ -1,6 +1,10 @@
 import type { SeedData } from "@repo/contracts/seed";
 import type { ProjectMember, TokenReference } from "@repo/contracts/type";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
+import {
+  type TokenTypeHierarchyError,
+  validateTokenTypeHierarchy,
+} from "@repo/contracts/validation/token-type-hierarchy";
 
 export type SeedValidationError = {
   code:
@@ -15,6 +19,22 @@ export type SeedValidationError = {
   id?: string;
   message: string;
 };
+
+function mapHierarchyErrorCode(
+  code: TokenTypeHierarchyError["code"],
+): SeedValidationError["code"] {
+  switch (code) {
+    case "duplicate-id":
+      return "duplicate-id";
+    case "wrong-project":
+      return "wrong-project";
+    case "cycle":
+    case "self-parent":
+    case "missing-parent":
+    case "cross-project-parent":
+      return "invalid-hierarchy";
+  }
+}
 
 function validateSeedCollectionSizes(seed: SeedData): SeedValidationError[] {
   const errors: SeedValidationError[] = [];
@@ -110,6 +130,37 @@ function validateDuplicateReferences(
     }
 
     seen.add(key);
+  }
+
+  return errors;
+}
+
+export function validateSeedData(seed: SeedData): SeedValidationError[] {
+  const errors: SeedValidationError[] = [];
+
+  errors.push(...validateSeedCollectionSizes(seed));
+
+  errors.push(...findDuplicateIds(seed.users, "users"));
+  errors.push(...findDuplicateIds(seed.projects, "projects"));
+  errors.push(...findDuplicateIds(seed.tokenTypes, "tokenTypes"));
+  errors.push(...findDuplicateIds(seed.components, "components"));
+  errors.push(...findDuplicateIds(seed.documentTemplates, "documentTemplates"));
+  errors.push(...findDuplicateIds(seed.releases, "releases"));
+
+  errors.push(...validateDuplicateMemberships(seed.projectMembers));
+  errors.push(...validateDuplicateReferences(seed.tokenReferences));
+
+  for (const project of seed.projects) {
+    const hierarchyErrors = validateTokenTypeHierarchy(seed.tokenTypes, project.id);
+
+    errors.push(
+      ...hierarchyErrors.map((error) => ({
+        code: mapHierarchyErrorCode(error.code),
+        collection: "tokenTypes",
+        id: error.tokenTypeId,
+        message: error.message,
+      })),
+    );
   }
 
   return errors;
