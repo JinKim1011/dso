@@ -41,6 +41,7 @@ export type Release = {
   projectId: string;
   version: string;
   status: ReleaseStatus;
+  createdAt: string;
   publishedAt: string | null;
 };
 
