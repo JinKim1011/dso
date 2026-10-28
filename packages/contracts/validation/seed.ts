@@ -4,6 +4,7 @@ import { validateDocumentPath } from "@repo/contracts/validation/document-path";
 import { isSupportedProjectMemberRole } from "@repo/contracts/validation/enum";
 import { validateIdentifierString } from "@repo/contracts/validation/identifier";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
+import { validateTokenDomain } from "@repo/contracts/validation/token-domain";
 import {
   type TokenReferenceValidationError,
   validateTokenReference,
@@ -77,6 +78,20 @@ function mapReferenceError(
     case "self-reference":
     case "invalid-slot":
     case "unsupported-slot":
+      return "invalid-reference";
+  }
+}
+
+function mapTokenDomainErrorCode(
+  code: ReturnType<typeof validateTokenDomain>[number]["code"],
+): SeedValidationError["code"] {
+  switch (code) {
+    case "wrong-project":
+      return "wrong-project";
+    case "missing-token-type":
+    case "unsupported-token-kind":
+    case "duplicate-token-type":
+    case "duplicate-token":
       return "invalid-reference";
   }
 }
@@ -276,6 +291,21 @@ export function validateSeedData(seed: SeedData): SeedValidationError[] {
   errors.push(...validateDuplicateReferences(seed.tokenReferences));
 
   for (const project of seed.projects) {
+    const tokenDomainErrors = validateTokenDomain(
+      seed.tokens,
+      seed.tokenTypes,
+      project.id,
+    );
+
+    errors.push(
+      ...tokenDomainErrors.map((error) => ({
+        code: mapTokenDomainErrorCode(error.code),
+        collection: "tokens",
+        id: error.entityId,
+        message: error.message,
+      })),
+    );
+
     const hierarchyErrors = validateTokenTypeHierarchy(seed.tokenTypes, project.id);
 
     errors.push(
