@@ -1,4 +1,6 @@
 import { validateIdentifierString } from "@repo/contracts/validation/identifier";
+import { validateMaxLength } from "@repo/contracts/validation/limit";
+import { validateRequiredString } from "@repo/contracts/validation/required";
 
 export type ValidationIssue = {
   field: string;
@@ -7,6 +9,7 @@ export type ValidationIssue = {
     | "required"
     | "empty"
     | "invalid-format"
+    | "unsafe-character"
     | "unsupported-value"
     | "unknown-field"
     | "too-long"
@@ -26,10 +29,24 @@ function mapIdentifierErrorCode(
     case "empty":
       return "empty";
     case "unsafe-character":
+      return "unsafe-character";
     case "invalid-segment":
       return "invalid-format";
     case "too-long":
       return "too-long";
+  }
+}
+
+function mapRequiredStringErrorCode(
+  code: "not-string" | "empty" | "unsafe-character",
+): ValidationIssue["code"] {
+  switch (code) {
+    case "not-string":
+      return "invalid-type";
+    case "empty":
+      return "empty";
+    case "unsafe-character":
+      return "unsafe-character";
   }
 }
 
@@ -67,4 +84,32 @@ export function validateIdentifierField(
     code: mapIdentifierErrorCode(error.code),
     message: error.message,
   };
+}
+
+export function validateLimitedStringField(
+  value: unknown,
+  field: string,
+  maximum: number,
+): ValidationIssue | null {
+  const result = validateRequiredString(value, field);
+
+  if (!result.success) {
+    return {
+      field,
+      code: mapRequiredStringErrorCode(result.error.code),
+      message: result.error.message,
+    };
+  }
+
+  const lengthError = validateMaxLength(result.value, field, maximum);
+
+  if (lengthError) {
+    return {
+      field,
+      code: "too-long",
+      message: lengthError.message,
+    };
+  }
+
+  return null;
 }
