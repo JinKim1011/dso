@@ -35,6 +35,20 @@ export type SeedValidationError = {
   message: string;
 };
 
+function validateTimestamp(value: unknown, fieldName: string): string | null {
+  if (typeof value !== "string") {
+    return `${fieldName} must be an ISO timestamp.`;
+  }
+
+  const parsed = Date.parse(value);
+
+  if (Number.isNaN(parsed) || new Date(parsed).toISOString() !== value) {
+    return `${fieldName} must use a canonical ISO timestamp such as 2026-10-27T10:00:00.000Z.`;
+  }
+
+  return null;
+}
+
 function addFieldError(
   errors: SeedValidationError[],
   collection: string,
