@@ -140,14 +140,19 @@ function validateDuplicateReferences(
   const seen = new Set<string>();
 
   for (const reference of references) {
-    const key = `${reference.referencedTokenId}:${reference.referencingTokenId}:${reference.slot}`;
+    const key = [
+      reference.projectId,
+      reference.referencingTokenId,
+      reference.referencedTokenId,
+      reference.slot,
+    ].join(":");
 
     if (seen.has(key)) {
       errors.push({
         code: "duplicate-id",
         collection: "tokenReferences",
         id: key,
-        message: `Duplicate reference for referencing token "${reference.referencingTokenId}", referenced token "${reference.referencedTokenId}, and slot "${reference.slot}".`,
+        message: `Duplicate token reference "${key}".`,
       });
     }
 
