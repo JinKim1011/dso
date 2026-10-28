@@ -40,7 +40,7 @@ const session = {
   expiresAt: "2026-10-27T18:00:00Z",
 } satisfies Session;
 
-const baseColorType = {
+export const baseColorType = {
   id: "token-type-base",
   projectId: project.id,
   parentTypeId: null,
@@ -49,7 +49,7 @@ const baseColorType = {
   kind: "primitive",
 } satisfies TokenType;
 
-const semanticColorType = {
+export const semanticColorType = {
   id: "token-type-semantic",
   projectId: project.id,
   parentTypeId: baseColorType.id,
@@ -58,7 +58,7 @@ const semanticColorType = {
   kind: "semantic",
 } satisfies TokenType;
 
-const baseColorToken = {
+export const baseColorToken = {
   id: "token-white",
   projectId: project.id,
   tokenTypeId: baseColorType.id,
@@ -70,7 +70,7 @@ const baseColorToken = {
   },
 } satisfies Token;
 
-const surfaceToken = {
+export const surfaceToken = {
   id: "token-surface",
   projectId: project.id,
   tokenTypeId: semanticColorType.id,
