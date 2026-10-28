@@ -5,10 +5,16 @@ export const CONTRACT_LIMITS = {
   projectName: 200,
   projectSlug: 100,
   email: 320,
+  password: 1_204,
   releaseVersion: 100,
   tokenName: 200,
+  tokenValue: 10_000,
+  cssVariable: 200,
+  description: 5_000,
+  documentPath: 500,
   templateContent: 100_000,
   collectionItems: 1_000,
+  requestBodyBytes: 1_000_000,
 } as const;
 
 export type MaxLengthError = {
