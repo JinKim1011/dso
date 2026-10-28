@@ -1,5 +1,9 @@
 import type { SeedData } from "@repo/contracts/seed";
 import type { ProjectMember, TokenReference } from "@repo/contracts/type";
+import {
+  type TokenReferenceValidationError,
+  validateTokenReference,
+} from "@repo/contracts/validation//token-reference";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import {
   type TokenTypeHierarchyError,
@@ -33,6 +37,24 @@ function mapHierarchyErrorCode(
     case "missing-parent":
     case "cross-project-parent":
       return "invalid-hierarchy";
+  }
+}
+
+function mapReferenceError(
+  code: TokenReferenceValidationError["code"],
+): SeedValidationError["code"] {
+  switch (code) {
+    case "wrong-project":
+      return "wrong-project";
+    case "incompatible-referenced-token-type":
+    case "missing-referenced-token":
+    case "missing-referenced-token-type":
+    case "missing-referencing-token":
+    case "missing-referencing-token-type":
+    case "self-reference":
+    case "invalid-slot":
+    case "unsupported-slot":
+      return "invalid-reference";
   }
 }
 
@@ -158,6 +180,24 @@ export function validateSeedData(seed: SeedData): SeedValidationError[] {
         code: mapHierarchyErrorCode(error.code),
         collection: "tokenTypes",
         id: error.tokenTypeId,
+        message: error.message,
+      })),
+    );
+  }
+
+  for (const reference of seed.tokenReferences) {
+    const referenceErrors = validateTokenReference(
+      reference,
+      seed.tokens,
+      seed.tokenTypes,
+      reference.projectId,
+    );
+
+    errors.push(
+      ...referenceErrors.map((error) => ({
+        code: mapReferenceError(error.code),
+        collection: "tokenReferences",
+        id: `${reference.referencingTokenId}:${reference.referencedTokenId}:${reference.slot}`,
         message: error.message,
       })),
     );
