@@ -22,6 +22,11 @@ export type MaxLengthError = {
   message: string;
 };
 
+export type CollectionLimitError = {
+  code: "too-many-items";
+  message: string;
+};
+
 export function validateMaxLength(
   value: string,
   fieldName: string,
@@ -34,5 +39,23 @@ export function validateMaxLength(
     };
   }
 
+  return null;
+}
+
+export function validateCollectionSize(
+  value: unknown,
+  fieldName: string,
+  maximum: number,
+): CollectionLimitError | null {
+  if (!Array.isArray(value)) {
+    return null;
+  }
+
+  if (value.length > maximum) {
+    return {
+      code: "too-many-items",
+      message: `${fieldName} cannot contain more than ${maximum} itmes.`,
+    };
+  }
   return null;
 }
