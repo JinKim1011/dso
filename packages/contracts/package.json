@@ -12,6 +12,10 @@
       "types": "./validation/*.ts",
       "default": "./validation/*.ts"
     },
+    "./fixtures/*": {
+      "types": "./fixtures/*.ts",
+      "default": "./fixtures/*.ts"
+    },
     "./operation": {
       "types": "./operation.ts",
       "default": "./operation.ts"
