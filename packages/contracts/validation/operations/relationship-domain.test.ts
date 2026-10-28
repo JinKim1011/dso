@@ -8,14 +8,14 @@ import { addReferenceRequest } from "@repo/contracts/fixtures/operation-contract
 import { validateAddReferenceOperation } from "@repo/contracts/validation/operations/relationship-domain";
 import { describe, expect, it } from "vitest";
 
+const request = addReferenceRequest;
+const primitiveType = baseColorType;
+const semanticType = semanticColorType;
+const singleValue = baseColorToken;
+const modesValue = surfaceToken;
+
 describe("validateAddReferenceOperation", () => {
   it("converts an operation request into a valid token reference", () => {
-    const request = addReferenceRequest;
-    const primitiveType = baseColorType;
-    const semanticType = semanticColorType;
-    const singleValue = baseColorToken;
-    const modesValue = surfaceToken;
-
     const errors = validateAddReferenceOperation(
       request,
       [modesValue, singleValue],
