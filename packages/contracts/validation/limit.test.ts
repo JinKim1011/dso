@@ -3,11 +3,13 @@ import { describe, expect, it } from "vitest";
 
 describe("validateMaxLength", () => {
   it("accepts a value at the limit", () => {
-    expect(validateMaxLength("abc", "Name", 3)).toBeNull();
+    const value = "a".repeat(320);
+    expect(validateMaxLength(value, "Email", CONTRACT_LIMITS.email)).toBeNull();
   });
 
   it("rejects a value over the limit", () => {
-    expect(validateMaxLength("abcd", "Name", 3)).toMatchObject({
+    const value = "a".repeat(321);
+    expect(validateMaxLength(value, "Email", CONTRACT_LIMITS.email)).toMatchObject({
       code: "too-long",
     });
   });
