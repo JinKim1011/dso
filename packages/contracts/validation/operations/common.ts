@@ -1,3 +1,5 @@
+import { validateIdentifierString } from "@repo/contracts/validation/identifier";
+
 export type ValidationIssue = {
   field: string;
   code:
@@ -14,6 +16,22 @@ export type ValidationIssue = {
 
 export type ValidationResult<T> =
   { success: true; value: T } | { success: false; issues: ValidationIssue[] };
+
+function mapIdentifierErrorCode(
+  code: "not-string" | "empty" | "unsafe-character" | "too-long" | "invalid-segment",
+): ValidationIssue["code"] {
+  switch (code) {
+    case "not-string":
+      return "invalid-type";
+    case "empty":
+      return "empty";
+    case "unsafe-character":
+    case "invalid-segment":
+      return "invalid-format";
+    case "too-long":
+      return "too-long";
+  }
+}
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -32,4 +50,21 @@ export function collectUnknownFields(
       code: "unknown-field" as const,
       message: `Unknown field "${field}".`,
     }));
+}
+
+export function validateIdentifierField(
+  value: unknown,
+  field: string,
+): ValidationIssue | null {
+  const error = validateIdentifierString(value, field);
+
+  if (!error) {
+    return null;
+  }
+
+  return {
+    field,
+    code: mapIdentifierErrorCode(error.code),
+    message: error.message,
+  };
 }
