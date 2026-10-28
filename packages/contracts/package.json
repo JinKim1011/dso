@@ -8,6 +8,10 @@
       "types": "./type.ts",
       "default": "./type.ts"
     },
+    "./seed": {
+      "types": "./seed.ts",
+      "default": "./seed.ts"
+    },
     "./validation/*": {
       "types": "./validation/*.ts",
       "default": "./validation/*.ts"
@@ -20,9 +24,9 @@
       "types": "./operation.ts",
       "default": "./operation.ts"
     },
-    "./seed": {
-      "types": "./seed.ts",
-      "default": "./seed.ts"
+    "./validation/seed": {
+      "types": "./validation/seed/index.ts",
+      "default": "./validation/seed/index.ts"
     }
   },
   "scripts": {
