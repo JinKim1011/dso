@@ -34,7 +34,7 @@ function mapHierarchyErrorCode(
       return "wrong-project";
     case "cycle":
     case "self-parent":
-    case "missing-parent":
+    case "missing-token-type":
     case "cross-project-parent":
       return "invalid-hierarchy";
   }

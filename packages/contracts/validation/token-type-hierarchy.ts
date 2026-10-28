@@ -4,7 +4,7 @@ export type TokenTypeHierarchyError = {
   code:
     | "duplicate-id"
     | "wrong-project"
-    | "missing-parent"
+    | "missing-token-type"
     | "self-parent"
     | "cross-project-parent"
     | "cycle";
@@ -70,7 +70,7 @@ function validateParentReferences(
 
     if (!parentType) {
       errors.push({
-        code: "missing-parent",
+        code: "missing-token-type",
         tokenTypeId: tokenType.id,
         parentTypeId,
         message: `Parent token type "${parentTypeId}" does not exist.`,
