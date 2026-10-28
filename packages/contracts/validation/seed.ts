@@ -24,6 +24,7 @@ export type SeedValidationError = {
     | "invalid-timestamp";
   collection: string;
   id?: string;
+  field?: string;
   message: string;
 };
 
