@@ -15,6 +15,10 @@
     "./operation": {
       "types": "./operation.ts",
       "default": "./operation.ts"
+    },
+    "./seed": {
+      "types": "./seed.ts",
+      "default": "./seed.ts"
     }
   },
   "scripts": {
