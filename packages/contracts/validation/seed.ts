@@ -249,6 +249,53 @@ function validateMembershipReferences(seed: SeedData): SeedValidationError[] {
   return errors;
 }
 
+function validateSeedIdentifiers(seed: SeedData): SeedValidationError[] {
+  const errors: SeedValidationError[] = [];
+
+  for (const user of seed.users) {
+    validateIdentifierField(errors, "users", user.id, "id", user.id);
+  }
+
+  for (const project of seed.projects) {
+    validateIdentifierField(errors, "projects", project.id, "id", project.id);
+    validateIdentifierField(errors, "projects", project.id, "slug", project.slug);
+  }
+
+  for (const membership of seed.projectMembers) {
+    const id = `${membership.projectId}:${membership.userId}`;
+
+    validateIdentifierField(
+      errors,
+      "projectMembers",
+      id,
+      "projectId",
+      membership.projectId,
+    );
+
+    validateIdentifierField(errors, "projectMembers", id, "userId", membership.userId);
+  }
+
+  for (const tokenType of seed.tokenTypes) {
+    validateIdentifierField(errors, "tokenTypes", tokenType.id, "id", tokenType.id);
+
+    validateIdentifierField(
+      errors,
+      "tokenTypes",
+      tokenType.id,
+      "projectId",
+      tokenType.projectId,
+    );
+  }
+
+  for (const token of seed.tokens) {
+    validateIdentifierField(errors, "tokens", token.id, "id", token.id);
+    validateIdentifierField(errors, "tokens", token.id, "projectId", token.projectId);
+    validateIdentifierField(errors, "tokens", token.id, "tokenTypeId", token.tokenTypeId);
+  }
+
+  return errors;
+}
+
 function validateDuplicateReferences(
   references: readonly TokenReference[],
 ): SeedValidationError[] {
