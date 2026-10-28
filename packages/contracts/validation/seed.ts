@@ -42,3 +42,26 @@ function validateSeedCollectionSizes(seed: SeedData): SeedValidationError[] {
 
   return errors;
 }
+
+function findDuplicateIds<T extends { id: string }>(
+  records: readonly T[],
+  collection: string,
+): SeedValidationError[] {
+  const errors: SeedValidationError[] = [];
+  const seen = new Set<string>();
+
+  for (const record of records) {
+    if (seen.has(record.id)) {
+      errors.push({
+        code: "duplicate-id",
+        collection,
+        id: record.id,
+        message: `${collection} contains duplicate ID "${record.id}".`,
+      });
+    }
+
+    seen.add(record.id);
+  }
+
+  return errors;
+}
