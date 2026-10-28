@@ -32,3 +32,29 @@ export function validateTokenReferences(seed: SeedData): SeedValidationError[] {
 
   return errors;
 }
+
+export function validateDuplicateReferences(seed: SeedData): SeedValidationError[] {
+  const errors: SeedValidationError[] = [];
+  const seen = new Set<string>();
+
+  for (const reference of seed.tokenReferences) {
+    const key = [
+      reference.referencingTokenId,
+      reference.referencedTokenId,
+      reference.slot,
+    ].join(":");
+
+    if (seen.has(key)) {
+      errors.push({
+        code: "duplicate-id",
+        collection: "tokenReferences",
+        id: key,
+        message: `Duplicate token reference "${key}".`,
+      });
+    }
+
+    seen.add(key);
+  }
+
+  return errors;
+}
