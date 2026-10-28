@@ -1,5 +1,6 @@
 import type { SeedData } from "@repo/contracts/seed";
 import type { ProjectMember, TokenReference } from "@repo/contracts/type";
+import { validateDocumentPath } from "@repo/contracts/validation/document-path";
 import { validateIdentifierString } from "@repo/contracts/validation/identifier";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import {
@@ -141,6 +142,25 @@ function validateIdentifierField(
 
   if (validationError) {
     addFieldError(errors, collection, id, field, validationError.message);
+  }
+}
+
+function validateDocumentPathField(
+  errors: SeedValidationError[],
+  collection: string,
+  id: string,
+  value: unknown,
+): void {
+  const validationError = validateDocumentPath(value);
+
+  if (validationError) {
+    errors.push({
+      code: "invalid-document-path",
+      collection,
+      id,
+      field: "documentPath",
+      message: validationError.message,
+    });
   }
 }
 
