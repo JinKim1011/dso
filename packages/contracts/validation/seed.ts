@@ -7,6 +7,7 @@ import {
 } from "@repo/contracts/validation/enum";
 import { validateIdentifierString } from "@repo/contracts/validation/identifier";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
+import type { SeedValidationError } from "@repo/contracts/validation/seed/types";
 import { validateTokenDomain } from "@repo/contracts/validation/token-domain";
 import {
   type TokenReferenceValidationError,
@@ -16,24 +17,6 @@ import {
   type TokenTypeHierarchyError,
   validateTokenTypeHierarchy,
 } from "@repo/contracts/validation/token-type-hierarchy";
-
-export type SeedValidationError = {
-  code:
-    | "too-many-items"
-    | "duplicate-id"
-    | "missing-record"
-    | "wrong-project"
-    | "invalid-reference"
-    | "invalid-hierarchy"
-    | "invalid-document-path"
-    | "invalid-field"
-    | "invalid-enum"
-    | "invalid-timestamp";
-  collection: string;
-  id?: string;
-  field?: string;
-  message: string;
-};
 
 function validateTimestamp(value: unknown, fieldName: string): string | null {
   if (typeof value !== "string") {
