@@ -447,6 +447,71 @@ function validateReleaseRelationships(seed: SeedData): SeedValidationError[] {
   return errors;
 }
 
+function validateSeedTimestamps(seed: SeedData): SeedValidationError[] {
+  const errors: SeedValidationError[] = [];
+
+  for (const user of seed.users) {
+    const message = validateTimestamp(user.createdAt, "createdAt");
+
+    if (message) {
+      errors.push({
+        code: "invalid-timestamp",
+        collection: "users",
+        id: user.id,
+        field: "createdAt",
+        message,
+      });
+    }
+  }
+
+  for (const project of seed.projects) {
+    const message = validateTimestamp(project.createdAt, "createdAt");
+
+    if (message) {
+      errors.push({
+        code: "invalid-timestamp",
+        collection: "projects",
+        id: project.id,
+        field: "createdAt",
+        message,
+      });
+    }
+  }
+
+  for (const release of seed.releases) {
+    if (
+      release.publishedAt !== null &&
+      Date.parse(release.publishedAt) < Date.parse(release.createdAt)
+    ) {
+      errors.push({
+        code: "invalid-timestamp",
+        collection: "releases",
+        id: release.id,
+        field: "publishedAt",
+        message: "publishedAt cannot be earlier than createdAt.",
+      });
+    }
+
+    if (release.publishedAt === null) {
+      continue;
+    }
+
+    const message = validateTimestamp(release.publishedAt, "publishedAt");
+
+    if (message) {
+      errors.push({
+        code: "invalid-timestamp",
+        collection: "releases",
+        id: release.id,
+        field: "publishedAt",
+        message,
+      });
+    }
+  }
+
+  return errors;
+}
+
 export function validateSeedData(seed: SeedData): SeedValidationError[] {
   const errors: SeedValidationError[] = [];
 
