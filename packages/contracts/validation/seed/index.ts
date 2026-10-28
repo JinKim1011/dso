@@ -6,7 +6,10 @@ import {
 import { validateComponents } from "@repo/contracts/validation/seed/components";
 import { validateSeedIdentifiers } from "@repo/contracts/validation/seed/identifiers";
 import { validateMemberships } from "@repo/contracts/validation/seed/memberships";
-import { validateTokenReferences } from "@repo/contracts/validation/seed/references";
+import {
+  validateDuplicateReferences,
+  validateTokenReferences,
+} from "@repo/contracts/validation/seed/references";
 import { validateReleases } from "@repo/contracts/validation/seed/releases";
 import { validateSeedTimestamps } from "@repo/contracts/validation/seed/timestamps";
 import { validateTokens } from "@repo/contracts/validation/seed/tokens";
@@ -25,6 +28,7 @@ export function validateSeedData(seed: SeedData): SeedValidationError[] {
     ...findDuplicateIds(seed.documentTemplates, "documentTemplates"),
     ...findDuplicateIds(seed.releases, "releases"),
 
+    ...validateDuplicateReferences(seed),
     ...validateSeedIdentifiers(seed),
     ...validateMemberships(seed),
     ...validateComponents(seed),
