@@ -1,10 +1,10 @@
 import type { SeedData } from "@repo/contracts/seed";
 import type { ProjectMember, TokenReference } from "@repo/contracts/type";
+import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import {
   type TokenReferenceValidationError,
   validateTokenReference,
-} from "@repo/contracts/validation//token-reference";
-import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
+} from "@repo/contracts/validation/token-reference";
 import {
   type TokenTypeHierarchyError,
   validateTokenTypeHierarchy,
@@ -18,7 +18,10 @@ export type SeedValidationError = {
     | "wrong-project"
     | "invalid-reference"
     | "invalid-hierarchy"
-    | "invalid-document-path";
+    | "invalid-document-path"
+    | "invalid-field"
+    | "invalid-enum"
+    | "invalid-timestamp";
   collection: string;
   id?: string;
   message: string;
