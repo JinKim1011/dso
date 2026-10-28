@@ -11,7 +11,7 @@ const loginRequest = {
   password: "not-a-real-password",
 } satisfies LoginRequest;
 
-const addReferenceRequest = {
+export const addReferenceRequest = {
   projectId: "project-1",
   referencingTokenId: "token-surface",
   referencedTokenId: "token-white",
