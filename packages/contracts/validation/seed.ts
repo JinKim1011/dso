@@ -1,5 +1,6 @@
 import type { SeedData } from "@repo/contracts/seed";
 import type { ProjectMember, TokenReference } from "@repo/contracts/type";
+import { validateIdentifierString } from "@repo/contracts/validation/identifier";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import {
   type TokenReferenceValidationError,
@@ -127,6 +128,20 @@ function findDuplicateIds<T extends { id: string }>(
   }
 
   return errors;
+}
+
+function validateIdentifierField(
+  errors: SeedValidationError[],
+  collection: string,
+  id: string | undefined,
+  field: string,
+  value: unknown,
+): void {
+  const validationError = validateIdentifierString(value, field);
+
+  if (validationError) {
+    addFieldError(errors, collection, id, field, validationError.message);
+  }
 }
 
 function validateDuplicateMemberships(
