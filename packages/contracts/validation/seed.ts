@@ -1,7 +1,10 @@
 import type { SeedData } from "@repo/contracts/seed";
 import type { ProjectMember, TokenReference } from "@repo/contracts/type";
 import { validateDocumentPath } from "@repo/contracts/validation/document-path";
-import { isSupportedProjectMemberRole } from "@repo/contracts/validation/enum";
+import {
+  isSupportedProjectMemberRole,
+  isSupportedReleaseStatus,
+} from "@repo/contracts/validation/enum";
 import { validateIdentifierString } from "@repo/contracts/validation/identifier";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import { validateTokenDomain } from "@repo/contracts/validation/token-domain";
@@ -327,6 +330,55 @@ function validateComponentRelationships(seed: SeedData): SeedValidationError[] {
         id: template.id,
         field: "projectId",
         message: `Template "${template.id}" and component "${component.id}" must belong to the same project.`,
+      });
+    }
+  }
+
+  return errors;
+}
+
+function validateReleaseRelationships(seed: SeedData): SeedValidationError[] {
+  const errors: SeedValidationError[] = [];
+  const projectIds = new Set(seed.projects.map((project) => project.id));
+
+  for (const release of seed.releases) {
+    if (!projectIds.has(release.projectId)) {
+      errors.push({
+        code: "missing-record",
+        collection: "releases",
+        id: release.id,
+        field: "projectId",
+        message: `Project "${release.projectId}" does not exist.`,
+      });
+    }
+
+    if (!isSupportedReleaseStatus(release.status)) {
+      errors.push({
+        code: "invalid-enum",
+        collection: "releases",
+        id: release.id,
+        field: "status",
+        message: `Release status "${release.status}" is not supported.`,
+      });
+    }
+
+    if (release.status === "published" && release.publishedAt === null) {
+      errors.push({
+        code: "invalid-field",
+        collection: "releases",
+        id: release.id,
+        field: "publishedAt",
+        message: "Published releases must have a publishedAt timestamp.",
+      });
+    }
+
+    if (release.status === "draft" && release.publishedAt !== null) {
+      errors.push({
+        code: "invalid-field",
+        collection: "releases",
+        id: release.id,
+        field: "publishedAt",
+        message: "Draft releases cannot have a publishedAt timestamp.",
       });
     }
   }
