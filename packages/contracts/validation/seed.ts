@@ -534,14 +534,8 @@ export function validateSeedData(seed: SeedData): SeedValidationError[] {
   errors.push(...validateSeedTimestamps(seed));
 
   for (const project of seed.projects) {
-    const tokenDomainErrors = validateTokenDomain(
-      seed.tokens,
-      seed.tokenTypes,
-      project.id,
-    );
-
     errors.push(
-      ...tokenDomainErrors.map((error) => ({
+      ...validateTokenDomain(seed.tokens, seed.tokenTypes, project.id).map((error) => ({
         code: mapTokenDomainErrorCode(error.code),
         collection: "tokens",
         id: error.entityId,
@@ -549,10 +543,8 @@ export function validateSeedData(seed: SeedData): SeedValidationError[] {
       })),
     );
 
-    const hierarchyErrors = validateTokenTypeHierarchy(seed.tokenTypes, project.id);
-
     errors.push(
-      ...hierarchyErrors.map((error) => ({
+      ...validateTokenTypeHierarchy(seed.tokenTypes, project.id).map((error) => ({
         code: mapHierarchyErrorCode(error.code),
         collection: "tokenTypes",
         id: error.tokenTypeId,
@@ -562,15 +554,13 @@ export function validateSeedData(seed: SeedData): SeedValidationError[] {
   }
 
   for (const reference of seed.tokenReferences) {
-    const referenceErrors = validateTokenReference(
-      reference,
-      seed.tokens,
-      seed.tokenTypes,
-      reference.projectId,
-    );
-
     errors.push(
-      ...referenceErrors.map((error) => ({
+      ...validateTokenReference(
+        reference,
+        seed.tokens,
+        seed.tokenTypes,
+        reference.projectId,
+      ).map((error) => ({
         code: mapReferenceError(error.code),
         collection: "tokenReferences",
         id: `${reference.referencingTokenId}:${reference.referencedTokenId}:${reference.slot}`,
