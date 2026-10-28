@@ -527,6 +527,12 @@ export function validateSeedData(seed: SeedData): SeedValidationError[] {
   errors.push(...validateDuplicateMemberships(seed.projectMembers));
   errors.push(...validateDuplicateReferences(seed.tokenReferences));
 
+  errors.push(...validateSeedIdentifiers(seed));
+  errors.push(...validateMembershipReferences(seed));
+  errors.push(...validateComponentRelationships(seed));
+  errors.push(...validateReleaseRelationships(seed));
+  errors.push(...validateSeedTimestamps(seed));
+
   for (const project of seed.projects) {
     const tokenDomainErrors = validateTokenDomain(
       seed.tokens,
