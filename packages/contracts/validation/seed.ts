@@ -121,8 +121,12 @@ function mapTokenDomainCollection(
   switch (code) {
     case "unsupported-token-kind":
     case "duplicate-token-type":
+      return "tokenTypes";
+
     case "duplicate-token":
-      return "invalid-reference";
+    case "wrong-project":
+    case "missing-token-type":
+      return "tokens";
   }
 }
 
