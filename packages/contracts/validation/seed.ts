@@ -6,7 +6,10 @@ import {
   isSupportedReleaseStatus,
 } from "@repo/contracts/validation/enum";
 import { validateIdentifierString } from "@repo/contracts/validation/identifier";
-import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
+import {
+  findDuplicateIds,
+  validateSeedCollectionSizes,
+} from "@repo/contracts/validation/seed/collections";
 import type { SeedValidationError } from "@repo/contracts/validation/seed/types";
 import { validateTokenDomain } from "@repo/contracts/validation/token-domain";
 import {
@@ -111,57 +114,6 @@ function mapTokenDomainCollection(
     case "missing-token-type":
       return "tokens";
   }
-}
-
-function validateSeedCollectionSizes(seed: SeedData): SeedValidationError[] {
-  const errors: SeedValidationError[] = [];
-
-  const collections = [
-    ["users", seed.users],
-    ["projects", seed.projects],
-    ["projectMembers", seed.projectMembers],
-    ["tokenTypes", seed.tokenTypes],
-    ["tokens", seed.tokens],
-    ["tokenReferences", seed.tokenReferences],
-    ["components", seed.components],
-    ["documentTemplates", seed.documentTemplates],
-    ["releases", seed.releases],
-  ] as const;
-
-  for (const [collection, records] of collections) {
-    if (records.length > CONTRACT_LIMITS.collectionItems) {
-      errors.push({
-        code: "too-many-items",
-        collection,
-        message: `${collection} cannot contain more than ${CONTRACT_LIMITS.collectionItems} items.`,
-      });
-    }
-  }
-
-  return errors;
-}
-
-function findDuplicateIds<T extends { id: string }>(
-  records: readonly T[],
-  collection: string,
-): SeedValidationError[] {
-  const errors: SeedValidationError[] = [];
-  const seen = new Set<string>();
-
-  for (const record of records) {
-    if (seen.has(record.id)) {
-      errors.push({
-        code: "duplicate-id",
-        collection,
-        id: record.id,
-        message: `${collection} contains duplicate ID "${record.id}".`,
-      });
-    }
-
-    seen.add(record.id);
-  }
-
-  return errors;
 }
 
 function validateIdentifierField(
