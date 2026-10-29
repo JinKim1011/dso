@@ -1,22 +1,15 @@
+import { loginRequest } from "@repo/contracts/fixtures/operation-contracts";
 import { parseLoginRequest } from "@repo/contracts/validation/operations/authentication";
 import { describe, expect, it } from "vitest";
 
 describe("LoginRequest operation parsers", () => {
   it("parses login requests and validates email and password", () => {
-    expect(
-      parseLoginRequest({
-        email: "developer@example.test",
-        password: "not-a-real-password",
-      }),
-    ).toEqual({
+    expect(parseLoginRequest(loginRequest)).toEqual({
       success: true,
-      value: {
-        email: "developer@example.test",
-        password: "not-a-real-password",
-      },
+      value: loginRequest,
     });
 
-    expect(parseLoginRequest({ email: "invalid", password: "secret" })).toMatchObject({
+    expect(parseLoginRequest({ ...loginRequest, email: "invalid" })).toMatchObject({
       success: false,
       issues: [{ field: "email", code: "invalid-format" }],
     });
