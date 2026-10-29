@@ -4,7 +4,7 @@ import {
   validateSeedCollectionSizes,
 } from "@repo/contracts/validation/seed/collections";
 import { validateComponents } from "@repo/contracts/validation/seed/components";
-import { validateSeedFields } from "@repo/contracts/validation/seed/fields";
+import { validateSeedFields } from "@repo/contracts/validation/seed/field-lengths";
 import { validateSeedIdentifiers } from "@repo/contracts/validation/seed/identifiers";
 import { validateMemberships } from "@repo/contracts/validation/seed/memberships";
 import {
