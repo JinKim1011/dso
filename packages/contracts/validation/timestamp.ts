@@ -1,4 +1,4 @@
-import { type ValidationIssue } from "@repo/contracts/validation/operations/common";
+import type { ValidationIssue } from "@repo/contracts/validation/operations/common";
 
 export function validateTimestamp(
   value: unknown,
