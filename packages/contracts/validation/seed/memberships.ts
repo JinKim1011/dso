@@ -10,8 +10,9 @@ export function validateMemberships(seed: SeedData): SeedValidationError[] {
 
   for (const membership of seed.projectMembers) {
     const id = `${membership.projectId}:${membership.userId}`;
+    const key = JSON.stringify([membership.projectId, membership.userId]);
 
-    if (seen.has(id)) {
+    if (seen.has(key)) {
       errors.push({
         code: "duplicate-id",
         collection: "projectMembers",
@@ -20,7 +21,7 @@ export function validateMemberships(seed: SeedData): SeedValidationError[] {
       });
     }
 
-    seen.add(id);
+    seen.add(key);
 
     if (!projectIds.has(membership.projectId)) {
       errors.push({
