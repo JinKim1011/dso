@@ -12,7 +12,10 @@ export function validateTimestamp(
     };
   }
 
-  if (Number.isNaN(Date.parse(value))) {
+  const ISO_TIMESTAMP_RE =
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}(?:Z|[+-]\d{2}:\d{2})$/;
+
+  if (!ISO_TIMESTAMP_RE.test(value) || Number.isNaN(Date.parse(value))) {
     return {
       field: fieldName,
       code: "invalid-format",
