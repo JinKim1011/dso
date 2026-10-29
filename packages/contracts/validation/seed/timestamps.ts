@@ -46,5 +46,47 @@ export function validateSeedTimestamps(seed: SeedData): SeedValidationError[] {
     }
   }
 
+  for (const user of seed.users) {
+    const createdAtError = validateTimestamp(user.createdAt, "createdAt");
+
+    if (createdAtError) {
+      errors.push({
+        code: "invalid-timestamp",
+        collection: "users",
+        id: user.id,
+        field: "createdAt",
+        message: createdAtError.message,
+      });
+    }
+  }
+
+  for (const project of seed.projects) {
+    const createdAtError = validateTimestamp(project.createdAt, "createdAt");
+
+    if (createdAtError) {
+      errors.push({
+        code: "invalid-timestamp",
+        collection: "projects",
+        id: project.id,
+        field: "createdAt",
+        message: createdAtError.message,
+      });
+    }
+  }
+
+  for (const projectMember of seed.projectMembers) {
+    const createdAtError = validateTimestamp(projectMember.createdAt, "createdAt");
+    const key = [projectMember.projectId, projectMember.userId].join(":");
+
+    if (createdAtError) {
+      errors.push({
+        code: "invalid-timestamp",
+        collection: "projectMembers",
+        id: key,
+        field: "createdAt",
+        message: createdAtError.message,
+      });
+    }
+  }
   return errors;
 }
