@@ -1,13 +1,13 @@
 import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
+import { validateSeedFieldLengths } from "@repo/contracts/validation/seed/field-lengths";
 import { describe, expect, it } from "vitest";
-import { validateSeedFields } from "./field-lengths.js";
 
 const cloneSeed = () => structuredClone(validSeed);
 
-describe("validateSeedFields", () => {
+describe("validateSeedFieldLengths", () => {
   it("accepts valid seed fields", () => {
-    expect(validateSeedFields(validSeed)).toEqual([]);
+    expect(validateSeedFieldLengths(validSeed)).toEqual([]);
   });
 
   describe("projects", () => {
@@ -15,14 +15,14 @@ describe("validateSeedFields", () => {
       const seed = cloneSeed();
       seed.projects[0]!.name = "a".repeat(CONTRACT_LIMITS.projectName);
 
-      expect(validateSeedFields(seed)).toEqual([]);
+      expect(validateSeedFieldLengths(seed)).toEqual([]);
     });
 
     it("rejects an overlong project name", () => {
       const seed = cloneSeed();
       seed.projects[0]!.name = "a".repeat(CONTRACT_LIMITS.projectName + 1);
 
-      expect(validateSeedFields(seed)).toContainEqual(
+      expect(validateSeedFieldLengths(seed)).toContainEqual(
         expect.objectContaining({
           code: "invalid-field",
           collection: "projects",
@@ -37,14 +37,14 @@ describe("validateSeedFields", () => {
       const seed = cloneSeed();
       seed.projects[0]!.slug = "a".repeat(CONTRACT_LIMITS.projectSlug);
 
-      expect(validateSeedFields(seed)).toEqual([]);
+      expect(validateSeedFieldLengths(seed)).toEqual([]);
     });
 
     it("rejects an overlong project slug", () => {
       const seed = cloneSeed();
       seed.projects[0]!.slug = "a".repeat(CONTRACT_LIMITS.projectSlug + 1);
 
-      expect(validateSeedFields(seed)).toContainEqual(
+      expect(validateSeedFieldLengths(seed)).toContainEqual(
         expect.objectContaining({
           code: "invalid-field",
           collection: "projects",
@@ -61,14 +61,14 @@ describe("validateSeedFields", () => {
       const seed = cloneSeed();
       seed.tokens[0]!.name = "a".repeat(CONTRACT_LIMITS.tokenName);
 
-      expect(validateSeedFields(seed)).toEqual([]);
+      expect(validateSeedFieldLengths(seed)).toEqual([]);
     });
 
     it("rejects an overlong token name", () => {
       const seed = cloneSeed();
       seed.tokens[0]!.name = "a".repeat(CONTRACT_LIMITS.tokenName + 1);
 
-      expect(validateSeedFields(seed)).toContainEqual(
+      expect(validateSeedFieldLengths(seed)).toContainEqual(
         expect.objectContaining({
           code: "invalid-field",
           collection: "tokens",
@@ -83,21 +83,21 @@ describe("validateSeedFields", () => {
       const seed = cloneSeed();
       seed.tokens[0]!.cssVar = null;
 
-      expect(validateSeedFields(seed)).toEqual([]);
+      expect(validateSeedFieldLengths(seed)).toEqual([]);
     });
 
     it("accepts a CSS variable at the maximum length", () => {
       const seed = cloneSeed();
       seed.tokens[0]!.cssVar = "a".repeat(CONTRACT_LIMITS.cssVariable);
 
-      expect(validateSeedFields(seed)).toEqual([]);
+      expect(validateSeedFieldLengths(seed)).toEqual([]);
     });
 
     it("rejects an overlong CSS variable", () => {
       const seed = cloneSeed();
       seed.tokens[0]!.cssVar = "a".repeat(CONTRACT_LIMITS.cssVariable + 1);
 
-      expect(validateSeedFields(seed)).toContainEqual(
+      expect(validateSeedFieldLengths(seed)).toContainEqual(
         expect.objectContaining({
           code: "invalid-field",
           collection: "tokens",
@@ -114,14 +114,14 @@ describe("validateSeedFields", () => {
       const seed = cloneSeed();
       seed.components[0]!.name = "a".repeat(CONTRACT_LIMITS.componentName);
 
-      expect(validateSeedFields(seed)).toEqual([]);
+      expect(validateSeedFieldLengths(seed)).toEqual([]);
     });
 
     it("rejects an overlong component name", () => {
       const seed = cloneSeed();
       seed.components[0]!.name = "a".repeat(CONTRACT_LIMITS.componentName + 1);
 
-      expect(validateSeedFields(seed)).toContainEqual(
+      expect(validateSeedFieldLengths(seed)).toContainEqual(
         expect.objectContaining({
           code: "invalid-field",
           collection: "components",
@@ -136,7 +136,7 @@ describe("validateSeedFields", () => {
       const seed = cloneSeed();
       seed.components[0]!.description = "a".repeat(CONTRACT_LIMITS.componentDescriptions);
 
-      expect(validateSeedFields(seed)).toEqual([]);
+      expect(validateSeedFieldLengths(seed)).toEqual([]);
     });
 
     it("rejects an overlong component description", () => {
@@ -145,7 +145,7 @@ describe("validateSeedFields", () => {
         CONTRACT_LIMITS.componentDescriptions + 1,
       );
 
-      expect(validateSeedFields(seed)).toContainEqual(
+      expect(validateSeedFieldLengths(seed)).toContainEqual(
         expect.objectContaining({
           code: "invalid-field",
           collection: "components",
@@ -162,14 +162,14 @@ describe("validateSeedFields", () => {
       const seed = cloneSeed();
       seed.documentTemplates[0]!.name = "a".repeat(CONTRACT_LIMITS.templateName);
 
-      expect(validateSeedFields(seed)).toEqual([]);
+      expect(validateSeedFieldLengths(seed)).toEqual([]);
     });
 
     it("rejects an overlong template name", () => {
       const seed = cloneSeed();
       seed.documentTemplates[0]!.name = "a".repeat(CONTRACT_LIMITS.templateName + 1);
 
-      expect(validateSeedFields(seed)).toContainEqual(
+      expect(validateSeedFieldLengths(seed)).toContainEqual(
         expect.objectContaining({
           code: "invalid-field",
           collection: "documentTemplates",
@@ -184,7 +184,7 @@ describe("validateSeedFields", () => {
       const seed = cloneSeed();
       seed.documentTemplates[0]!.content = "a".repeat(CONTRACT_LIMITS.templateContent);
 
-      expect(validateSeedFields(seed)).toEqual([]);
+      expect(validateSeedFieldLengths(seed)).toEqual([]);
     });
 
     it("rejects overlong template content", () => {
@@ -193,7 +193,7 @@ describe("validateSeedFields", () => {
         CONTRACT_LIMITS.templateContent + 1,
       );
 
-      expect(validateSeedFields(seed)).toContainEqual(
+      expect(validateSeedFieldLengths(seed)).toContainEqual(
         expect.objectContaining({
           code: "invalid-field",
           collection: "documentTemplates",
@@ -210,14 +210,14 @@ describe("validateSeedFields", () => {
       const seed = cloneSeed();
       seed.releases[0]!.version = "a".repeat(CONTRACT_LIMITS.releaseVersion);
 
-      expect(validateSeedFields(seed)).toEqual([]);
+      expect(validateSeedFieldLengths(seed)).toEqual([]);
     });
 
     it("rejects an overlong release version", () => {
       const seed = cloneSeed();
       seed.releases[0]!.version = "a".repeat(CONTRACT_LIMITS.releaseVersion + 1);
 
-      expect(validateSeedFields(seed)).toContainEqual(
+      expect(validateSeedFieldLengths(seed)).toContainEqual(
         expect.objectContaining({
           code: "invalid-field",
           collection: "releases",
