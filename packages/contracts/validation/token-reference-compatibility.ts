@@ -1,10 +1,15 @@
 import type { Token, TokenReferenceSlot, TokenType } from "@repo/contracts/type";
+import { hasTokenValueKind } from "@repo/contracts/validation/token-value";
 
 function isModeSlot(slot: TokenReferenceSlot): slot is "light" | "dark" {
   return slot === "light" || slot === "dark";
 }
 
 function supportsSingleValue(token: Token): boolean {
+  if (!hasTokenValueKind(token.value)) {
+    return false;
+  }
+
   return token.value.kind === "single";
 }
 

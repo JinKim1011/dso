@@ -3,30 +3,54 @@ export type RequiredStringError = {
   message: string;
 };
 
+export type RequiredStringOptions = {
+  allowWhitespaceControls?: boolean;
+};
+
+export type RequiredStringResult =
+  { success: true; value: string } | { success: false; error: RequiredStringError };
+
 export function validateRequiredString(
   value: unknown,
   fieldName: string,
-): RequiredStringError | null {
+  options: RequiredStringOptions = {},
+): RequiredStringResult {
   if (typeof value !== "string") {
     return {
-      code: "not-string",
-      message: `${fieldName} must be a string.`,
+      success: false,
+      error: {
+        code: "not-string",
+        message: `${fieldName} must be a string.`,
+      },
     };
   }
 
   if (value.trim().length === 0) {
     return {
-      code: "empty",
-      message: `${fieldName} cannot be empty.`,
+      success: false,
+      error: {
+        code: "empty",
+        message: `${fieldName} cannot be empty.`,
+      },
     };
   }
 
-  if (/[\u0000-\u001F\u007F]/.test(value)) {
+  const controls = options.allowWhitespaceControls
+    ? /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/
+    : /[\u0000-\u001F\u007F]/;
+
+  if (controls.test(value)) {
     return {
-      code: "unsafe-character",
-      message: `${fieldName} contains an unsafe control character.`,
+      success: false,
+      error: {
+        code: "unsafe-character",
+        message: `${fieldName} contains an unsafe control character.`,
+      },
     };
   }
 
-  return null;
+  return {
+    success: true,
+    value,
+  };
 }

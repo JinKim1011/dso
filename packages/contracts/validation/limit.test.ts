@@ -1,14 +1,26 @@
-import { validateMaxLength } from "@repo/contracts/validation/limit";
+import {
+  CONTRACT_LIMITS,
+  validateCollectionSize,
+} from "@repo/contracts/validation/limit";
 import { describe, expect, it } from "vitest";
 
-describe("validateMaxLength", () => {
-  it("accepts a value at the limit", () => {
-    expect(validateMaxLength("abc", "Name", 3)).toBeNull();
+describe("validateCollectionSize", () => {
+  it("accepts exactly the maximum", () => {
+    const items = Array.from({ length: 1_000 });
+
+    expect(
+      validateCollectionSize(items, "references", CONTRACT_LIMITS.collectionItems),
+    ).toBeNull();
   });
 
-  it("rejects a value over the limit", () => {
-    expect(validateMaxLength("abcd", "Name", 3)).toMatchObject({
-      code: "too-long",
+  it("rejects one item over the maximum", () => {
+    const items = Array.from({ length: 1_001 });
+
+    expect(
+      validateCollectionSize(items, "references", CONTRACT_LIMITS.collectionItems),
+    ).toEqual({
+      code: "too-many-items",
+      message: "references cannot contain more than 1000 items.",
     });
   });
 });

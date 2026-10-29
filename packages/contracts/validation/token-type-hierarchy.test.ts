@@ -59,11 +59,11 @@ describe("validateTokenTypeHierarchy", () => {
 
   it("rejects a missing parent", () => {
     const errors = validateTokenTypeHierarchy(
-      [tokenType("surface", "missing-parent")],
+      [tokenType("surface", "missing-token-type")],
       projectId,
     );
 
-    expect(errors.some((error) => error.code === "missing-parent")).toBe(true);
+    expect(errors.some((error) => error.code === "missing-token-type")).toBe(true);
   });
 
   it("rejects a token type as its own parent", () => {

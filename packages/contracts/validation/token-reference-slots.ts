@@ -1,4 +1,5 @@
 import type { Token, TokenReferenceSlot, TokenType } from "@repo/contracts/type";
+import { hasTokenValueKind } from "@repo/contracts/validation/token-value";
 
 export const tokenReferenceSlots: readonly TokenReferenceSlot[] = [
   "value",
@@ -59,6 +60,10 @@ export function supportsTokenReferenceSlot(
       isTypographySlot(slot) &&
       typeof token.value[slot] === "string"
     );
+  }
+
+  if (!hasTokenValueKind(token.value)) {
+    return false;
   }
 
   return token.value.kind === "single";

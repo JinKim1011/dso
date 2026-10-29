@@ -40,7 +40,7 @@ const invalidMember: ProjectMember = {
   userId: "user-1",
   // @ts-expect-error Only editor, publisher, and admin are valid roles.
   role: "owner",
-  createdAt: "2026-10-27T10:00:00Z",
+  createdAt: "2026-10-27T10:00:00.000Z",
 };
 
 const invalidApiKey: ApiKey = {
@@ -50,7 +50,7 @@ const invalidApiKey: ApiKey = {
   keyHash: "hash-only",
   // @ts-expect-error Only release:read is currently supported.
   scope: "project:write",
-  createdAt: "2026-10-27T10:00:00Z",
+  createdAt: "2026-10-27T10:00:00.000Z",
   expiresAt: "2026-11-27T10:00:00Z",
   revokedAt: null,
 };

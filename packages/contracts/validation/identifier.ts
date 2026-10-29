@@ -18,10 +18,10 @@ export function validateIdentifierString(
   fieldName: string,
   maximum = CONTRACT_LIMITS.identifier,
 ): RequiredStringError | MaxLengthError | IdentifierStringError | null {
-  const requiredError = validateRequiredString(value, fieldName);
+  const result = validateRequiredString(value, fieldName);
 
-  if (requiredError) {
-    return requiredError;
+  if (result.success === false) {
+    return result.error;
   }
 
   if (typeof value !== "string") {

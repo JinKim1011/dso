@@ -1,0 +1,143 @@
+import type { SeedData } from "@repo/contracts/seed";
+import { validateIdentifierString } from "@repo/contracts/validation/identifier";
+import type { SeedValidationError } from "@repo/contracts/validation/seed/types";
+
+function validateIdentifierField(
+  errors: SeedValidationError[],
+  collection: string,
+  id: string | undefined,
+  field: string,
+  value: unknown,
+): void {
+  const validationError = validateIdentifierString(value, field);
+
+  if (validationError) {
+    errors.push({
+      code: "invalid-field",
+      collection,
+      id,
+      field,
+      message: validationError.message,
+    });
+  }
+}
+
+export function validateSeedIdentifiers(seed: SeedData): SeedValidationError[] {
+  const errors: SeedValidationError[] = [];
+
+  for (const user of seed.users) {
+    validateIdentifierField(errors, "users", user.id, "id", user.id);
+  }
+
+  for (const project of seed.projects) {
+    validateIdentifierField(errors, "projects", project.id, "id", project.id);
+    validateIdentifierField(errors, "projects", project.id, "slug", project.slug);
+  }
+
+  for (const member of seed.projectMembers) {
+    const id = `${member.projectId}:${member.userId}`;
+
+    validateIdentifierField(errors, "projectMembers", id, "projectId", member.projectId);
+    validateIdentifierField(errors, "projectMembers", id, "userId", member.userId);
+  }
+
+  for (const tokenType of seed.tokenTypes) {
+    validateIdentifierField(errors, "tokenTypes", tokenType.id, "id", tokenType.id);
+    validateIdentifierField(
+      errors,
+      "tokenTypes",
+      tokenType.id,
+      "projectId",
+      tokenType.projectId,
+    );
+
+    if (tokenType.parentTypeId !== null) {
+      validateIdentifierField(
+        errors,
+        "tokenTypes",
+        tokenType.id,
+        "parentTypeId",
+        tokenType.parentTypeId,
+      );
+    }
+  }
+
+  for (const token of seed.tokens) {
+    validateIdentifierField(errors, "tokens", token.id, "id", token.id);
+    validateIdentifierField(errors, "tokens", token.id, "projectId", token.projectId);
+    validateIdentifierField(errors, "tokens", token.id, "tokenTypeId", token.tokenTypeId);
+  }
+
+  for (const reference of seed.tokenReferences) {
+    const id = [
+      reference.referencingTokenId,
+      reference.referencedTokenId,
+      reference.slot,
+    ].join(":");
+
+    validateIdentifierField(
+      errors,
+      "tokenReferences",
+      id,
+      "projectId",
+      reference.projectId,
+    );
+    validateIdentifierField(
+      errors,
+      "tokenReferences",
+      id,
+      "referencingTokenId",
+      reference.referencingTokenId,
+    );
+    validateIdentifierField(
+      errors,
+      "tokenReferences",
+      id,
+      "referencedTokenId",
+      reference.referencedTokenId,
+    );
+  }
+
+  for (const component of seed.components) {
+    validateIdentifierField(errors, "components", component.id, "id", component.id);
+    validateIdentifierField(
+      errors,
+      "components",
+      component.id,
+      "projectId",
+      component.projectId,
+    );
+    validateIdentifierField(errors, "components", component.id, "slug", component.slug);
+  }
+
+  for (const template of seed.documentTemplates) {
+    validateIdentifierField(errors, "documentTemplates", template.id, "id", template.id);
+    validateIdentifierField(
+      errors,
+      "documentTemplates",
+      template.id,
+      "projectId",
+      template.projectId,
+    );
+    validateIdentifierField(
+      errors,
+      "documentTemplates",
+      template.id,
+      "componentId",
+      template.componentId,
+    );
+  }
+
+  for (const release of seed.releases) {
+    validateIdentifierField(errors, "releases", release.id, "id", release.id);
+    validateIdentifierField(
+      errors,
+      "releases",
+      release.id,
+      "projectId",
+      release.projectId,
+    );
+  }
+
+  return errors;
+}
