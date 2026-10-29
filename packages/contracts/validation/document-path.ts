@@ -52,7 +52,7 @@ export function validateDocumentPath(value: unknown): DocumentPathValidationErro
   if (value.length > CONTRACT_LIMITS.documentPath) {
     return {
       code: "too-long",
-      message: "Document path cannot exceed 255 characters.",
+      message: `Document path cannot exceed ${CONTRACT_LIMITS.documentPath} characters.`,
     };
   }
 
