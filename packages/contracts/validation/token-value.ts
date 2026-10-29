@@ -1,3 +1,4 @@
+import type { TokenType } from "@repo/contracts/type";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import {
   type ValidationIssue,
@@ -7,6 +8,28 @@ import {
 
 export function hasTokenValueKind(value: unknown): value is { kind: string } {
   return isRecord(value) && typeof value.kind === "string";
+}
+
+export function expectedValueKind(
+  tokenType: TokenType,
+): "single" | "modes" | "typography" | null {
+  if (tokenType.category === "color" || tokenType.category === "shadow") {
+    return tokenType.kind === "primitive" ? "single" : "modes";
+  }
+
+  if (tokenType.category === "typography") {
+    return tokenType.kind === "primitive" ? "single" : "typography";
+  }
+
+  if (
+    tokenType.category === "spacing" ||
+    tokenType.category === "radius" ||
+    tokenType.category === "motion"
+  ) {
+    return "single";
+  }
+
+  return null;
 }
 
 export function validateTokenValue(value: unknown): ValidationIssue[] {
