@@ -1,5 +1,5 @@
 import { validateIdentifierString } from "@repo/contracts/validation/identifier";
-import { validateMaxLength } from "@repo/contracts/validation/limit";
+import { validateStringLength } from "@repo/contracts/validation/limit";
 import { validateRequiredString } from "@repo/contracts/validation/required";
 
 export type ValidationIssue = {
@@ -101,17 +101,17 @@ export function validateLimitedStringField(
     };
   }
 
-  const lengthError = validateMaxLength(result.value, field, maximum);
+  const lengthError = validateStringLength(result.value, field, maximum);
 
-  if (lengthError) {
-    return {
-      field,
-      code: "too-long",
-      message: lengthError.message,
-    };
+  if (!lengthError) {
+    return null;
   }
 
-  return null;
+  return {
+    field,
+    code: "too-long",
+    message: lengthError.message,
+  };
 }
 
 export function invalidRequestBody(): ValidationResult<never> {
