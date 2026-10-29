@@ -1,5 +1,3 @@
-// provisional and defer final limits to the request-contract task.
-
 export const CONTRACT_LIMITS = {
   identifier: 128,
   projectName: 200,
