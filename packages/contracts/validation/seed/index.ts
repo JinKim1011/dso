@@ -4,6 +4,7 @@ import {
   validateSeedCollectionSizes,
 } from "@repo/contracts/validation/seed/collections";
 import { validateComponents } from "@repo/contracts/validation/seed/components";
+import { validateSeedFields } from "@repo/contracts/validation/seed/fields";
 import { validateSeedIdentifiers } from "@repo/contracts/validation/seed/identifiers";
 import { validateMemberships } from "@repo/contracts/validation/seed/memberships";
 import {
@@ -30,6 +31,7 @@ export function validateSeedData(seed: SeedData): SeedValidationError[] {
 
     ...validateDuplicateReferences(seed),
     ...validateSeedIdentifiers(seed),
+    ...validateSeedFields(seed),
     ...validateMemberships(seed),
     ...validateComponents(seed),
     ...validateReleases(seed),
