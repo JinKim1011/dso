@@ -15,6 +15,7 @@ import { validateReleases } from "@repo/contracts/validation/seed/releases";
 import { validateSeedTimestamps } from "@repo/contracts/validation/seed/timestamps";
 import { validateTokens } from "@repo/contracts/validation/seed/tokens";
 import type { SeedValidationError } from "@repo/contracts/validation/seed/types";
+import { validateUsers } from "@repo/contracts/validation/seed/users";
 
 export type { SeedValidationError } from "@repo/contracts/validation/seed/types";
 
@@ -32,6 +33,7 @@ export function validateSeedData(seed: SeedData): SeedValidationError[] {
     ...validateDuplicateReferences(seed),
     ...validateSeedIdentifiers(seed),
     ...validateSeedFieldLengths(seed),
+    ...validateUsers(seed),
     ...validateMemberships(seed),
     ...validateComponents(seed),
     ...validateReleases(seed),
