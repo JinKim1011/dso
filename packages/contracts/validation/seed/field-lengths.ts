@@ -87,6 +87,7 @@ export function validateSeedFieldLengths(seed: SeedData): SeedValidationError[] 
       "description",
       component.description,
       CONTRACT_LIMITS.componentDescriptions,
+      { allowWhitespaceControls: true },
     );
   }
 
@@ -107,6 +108,7 @@ export function validateSeedFieldLengths(seed: SeedData): SeedValidationError[] 
       "content",
       template.content,
       CONTRACT_LIMITS.templateContent,
+      { allowWhitespaceControls: true },
     );
   }
 
