@@ -2,10 +2,10 @@ import type {
   AddTokenReferenceRequest,
   ChangeTokenTypeParentRequest,
 } from "@repo/contracts/operation";
-import { Token, TokenReference, TokenType } from "@repo/contracts/type";
+import type { Token, TokenReference, TokenType } from "@repo/contracts/type";
 import { validateTokenReference } from "@repo/contracts/validation/token-reference";
 import {
-  TokenTypeHierarchyError,
+  type TokenTypeHierarchyError,
   validateTokenTypeHierarchy,
 } from "@repo/contracts/validation/token-type-hierarchy";
 
