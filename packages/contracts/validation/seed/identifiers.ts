@@ -50,6 +50,16 @@ export function validateSeedIdentifiers(seed: SeedData): SeedValidationError[] {
       "projectId",
       tokenType.projectId,
     );
+
+    if (tokenType.parentTypeId !== null) {
+      validateIdentifierField(
+        errors,
+        "tokenTypes",
+        tokenType.id,
+        "parentTypeId",
+        tokenType.parentTypeId,
+      );
+    }
   }
 
   for (const token of seed.tokens) {
