@@ -3,6 +3,7 @@ import type { TokenType } from "@repo/contracts/type";
 import type { SeedValidationError } from "@repo/contracts/validation/seed/types";
 import { validateTokenDomain } from "@repo/contracts/validation/token-domain";
 import { validateTokenTypeHierarchy } from "@repo/contracts/validation/token-type-hierarchy";
+import { validateTokenValue } from "@repo/contracts/validation/token-value";
 
 function mapTokenDomainError(
   error: ReturnType<typeof validateTokenDomain>[number],
@@ -83,6 +84,20 @@ export function validateTokens(seed: SeedData): SeedValidationError[] {
     const domainErrors = validateTokenDomain(seed.tokens, seed.tokenTypes, project.id);
 
     errors.push(...domainErrors.map(mapTokenDomainError));
+  }
+
+  for (const token of seed.tokens) {
+    const valueErrors = validateTokenValue(token.value);
+
+    for (const error of valueErrors) {
+      errors.push({
+        code: "invalid-field",
+        collection: "tokens",
+        id: token.id,
+        field: error.field,
+        message: error.message,
+      });
+    }
   }
 
   return errors;
