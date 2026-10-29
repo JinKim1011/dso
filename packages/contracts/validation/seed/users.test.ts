@@ -1,5 +1,5 @@
 import { validSeed } from "@repo/contracts/fixtures/valid-seed";
-import { validateSeedFieldLengths } from "@repo/contracts/validation/seed/field-lengths";
+import { validateUsers } from "@repo/contracts/validation/seed/users";
 import { describe, expect, it } from "vitest";
 
 const cloneSeed = () => structuredClone(validSeed);
@@ -9,7 +9,7 @@ describe("users", () => {
     const seed = cloneSeed();
     seed.users[0]!.email = "invalid-email";
 
-    expect(validateSeedFieldLengths(seed)).toContainEqual(
+    expect(validateUsers(seed)).toContainEqual(
       expect.objectContaining({
         code: "invalid-field",
         collection: "users",
