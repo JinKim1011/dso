@@ -3,7 +3,10 @@ import type { TokenType } from "@repo/contracts/type";
 import type { SeedValidationError } from "@repo/contracts/validation/seed/types";
 import { validateTokenDomain } from "@repo/contracts/validation/token-domain";
 import { validateTokenTypeHierarchy } from "@repo/contracts/validation/token-type-hierarchy";
-import { validateTokenValue } from "@repo/contracts/validation/token-value";
+import {
+  expectedValueKind,
+  validateTokenValue,
+} from "@repo/contracts/validation/token-value";
 
 function mapTokenDomainError(
   error: ReturnType<typeof validateTokenDomain>[number],
@@ -96,6 +99,10 @@ export function validateTokens(seed: SeedData): SeedValidationError[] {
     errors.push(...domainErrors.map(mapTokenDomainError));
   }
 
+  const tokenTypesById = new Map(
+    seed.tokenTypes.map((tokenType) => [tokenType.id, tokenType]),
+  );
+
   for (const token of seed.tokens) {
     const valueErrors = validateTokenValue(token.value);
 
@@ -106,6 +113,26 @@ export function validateTokens(seed: SeedData): SeedValidationError[] {
         id: token.id,
         field: error.field,
         message: error.message,
+      });
+    }
+
+    const tokenType = tokenTypesById.get(token.tokenTypeId);
+
+    if (!tokenType || !("kind" in token.value)) {
+      continue;
+    }
+
+    const expectedKind = expectedValueKind(tokenType);
+
+    if (expectedKind && token.value.kind !== expectedKind) {
+      errors.push({
+        code: "invalid-field",
+        collection: "tokens",
+        id: token.id,
+        field: "value.kind",
+        message:
+          `Token "${token.id}" uses value.kind "${token.value.kind}", ` +
+          `but token type "${tokenType.id}" requires "${expectedKind}".`,
       });
     }
   }
