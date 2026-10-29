@@ -1,4 +1,8 @@
 import {
+  downloadReleaseRequest,
+  publishRequest,
+} from "@repo/contracts/fixtures/operation-contracts";
+import {
   parseDownloadReleaseRequest,
   parsePublishReleaseRequest,
 } from "@repo/contracts/validation/operations/releases";
@@ -6,11 +10,9 @@ import { describe, expect, it } from "vitest";
 
 describe("PublishReleaseRequest and DownloadReleaseRequest operation parsers", () => {
   it("parses release requests", () => {
-    expect(
-      parsePublishReleaseRequest({ projectId: "project-1", releaseId: "release-1" }),
-    ).toMatchObject({ success: true });
+    expect(parsePublishReleaseRequest(publishRequest)).toMatchObject({ success: true });
 
-    expect(parseDownloadReleaseRequest({ releaseId: "release-1" })).toMatchObject({
+    expect(parseDownloadReleaseRequest(downloadReleaseRequest)).toMatchObject({
       success: true,
     });
   });
@@ -18,8 +20,7 @@ describe("PublishReleaseRequest and DownloadReleaseRequest operation parsers", (
   it("rejects unknown fields on every request", () => {
     expect(
       parsePublishReleaseRequest({
-        projectId: "project-1",
-        releaseId: "release-1",
+        ...publishRequest,
         role: "admin",
       }),
     ).toMatchObject({
