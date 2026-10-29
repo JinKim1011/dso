@@ -81,7 +81,17 @@ export function validateTokens(seed: SeedData): SeedValidationError[] {
   }
 
   for (const project of seed.projects) {
-    const domainErrors = validateTokenDomain(seed.tokens, seed.tokenTypes, project.id);
+    const projectTokens = seed.tokens.filter((token) => token.projectId === project.id);
+
+    const projectTokenTypes = seed.tokenTypes.filter(
+      (tokenType) => tokenType.projectId === project.id,
+    );
+
+    const domainErrors = validateTokenDomain(
+      projectTokens,
+      projectTokenTypes,
+      project.id,
+    );
 
     errors.push(...domainErrors.map(mapTokenDomainError));
   }
