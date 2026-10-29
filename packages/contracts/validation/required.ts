@@ -35,7 +35,11 @@ export function validateRequiredString(
     };
   }
 
-  if (/[\u0000-\u001F\u007F]/.test(value)) {
+  const controls = options.allowWhitespaceControls
+    ? /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/
+    : /[\u0000-\u001F\u007F]/;
+
+  if (controls.test(value)) {
     return {
       success: false,
       error: {
