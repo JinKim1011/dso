@@ -3,12 +3,17 @@ export type RequiredStringError = {
   message: string;
 };
 
+export type RequiredStringOptions = {
+  allowWhitespaceControls?: boolean;
+};
+
 export type RequiredStringResult =
   { success: true; value: string } | { success: false; error: RequiredStringError };
 
 export function validateRequiredString(
   value: unknown,
   fieldName: string,
+  options: RequiredStringOptions = {},
 ): RequiredStringResult {
   if (typeof value !== "string") {
     return {
