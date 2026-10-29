@@ -50,7 +50,7 @@ export function validateSeedFields(seed: SeedData): SeedValidationError[] {
       "projects",
       project.id,
       "slug",
-      project.name,
+      project.slug,
       CONTRACT_LIMITS.projectSlug,
     );
   }
