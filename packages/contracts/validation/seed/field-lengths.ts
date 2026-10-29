@@ -1,5 +1,9 @@
 import type { SeedData } from "@repo/contracts/seed";
-import { CONTRACT_LIMITS, validateStringLength } from "@repo/contracts/validation/limit";
+import { CONTRACT_LIMITS, validateMaxLength } from "@repo/contracts/validation/limit";
+import {
+  type RequiredStringOptions,
+  validateRequiredString,
+} from "@repo/contracts/validation/required";
 import type { SeedValidationError } from "@repo/contracts/validation/seed/types";
 
 function validateLimitedField(
@@ -9,20 +13,30 @@ function validateLimitedField(
   field: string,
   value: unknown,
   maximum: number,
+  options?: RequiredStringOptions,
 ): void {
-  const error = validateStringLength(value, field, maximum);
+  const requiredError = validateRequiredString(value, field, options);
 
-  if (!error) {
+  if (!requiredError.success) {
+    errors.push({
+      code: "invalid-field",
+      collection,
+      id,
+      field,
+      message: requiredError.error.message,
+    });
     return;
   }
-
-  errors.push({
-    code: "invalid-field",
-    collection,
-    id,
-    field,
-    message: error.message,
-  });
+  const lengthError = validateMaxLength(requiredError.value, field, maximum);
+  if (lengthError) {
+    errors.push({
+      code: "invalid-field",
+      collection,
+      id,
+      field,
+      message: lengthError.message,
+    });
+  }
 }
 
 export function validateSeedFieldLengths(seed: SeedData): SeedValidationError[] {
