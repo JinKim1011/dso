@@ -66,7 +66,7 @@ export function validateCollectionSize(
   if (value.length > maximum) {
     return {
       code: "too-many-items",
-      message: `${fieldName} cannot contain more than ${maximum} itmes.`,
+      message: `${fieldName} cannot contain more than ${maximum} items.`,
     };
   }
   return null;
