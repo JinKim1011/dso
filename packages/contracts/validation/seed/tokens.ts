@@ -57,12 +57,30 @@ function mapTokenDomainError(
 export function validateTokens(seed: SeedData): SeedValidationError[] {
   const errors: SeedValidationError[] = [];
 
+  const tokenTypesById = new Map(
+    seed.tokenTypes.map((tokenType) => [tokenType.id, tokenType]),
+  );
+
   const tokenTypesByProject = new Map<string, TokenType[]>();
 
   for (const tokenType of seed.tokenTypes) {
     const projectTypes = tokenTypesByProject.get(tokenType.projectId) ?? [];
     projectTypes.push(tokenType);
     tokenTypesByProject.set(tokenType.projectId, projectTypes);
+  }
+
+  for (const token of seed.tokens) {
+    const tokenType = tokenTypesById.get(token.tokenTypeId);
+
+    if (tokenType && token.projectId !== tokenType.projectId) {
+      errors.push({
+        code: "wrong-project",
+        collection: "tokens",
+        id: token.id,
+        field: "projectId",
+        message: `Token "${token.id}" and token type "${tokenType.id}" must belong to the same project.`,
+      });
+    }
   }
 
   for (const [projectId, projectTokenTypes] of tokenTypesByProject) {
@@ -98,10 +116,6 @@ export function validateTokens(seed: SeedData): SeedValidationError[] {
 
     errors.push(...domainErrors.map(mapTokenDomainError));
   }
-
-  const tokenTypesById = new Map(
-    seed.tokenTypes.map((tokenType) => [tokenType.id, tokenType]),
-  );
 
   for (const token of seed.tokens) {
     const valueErrors = validateTokenValue(token.value);
