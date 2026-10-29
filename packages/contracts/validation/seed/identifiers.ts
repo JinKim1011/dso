@@ -34,6 +34,13 @@ export function validateSeedIdentifiers(seed: SeedData): SeedValidationError[] {
     validateIdentifierField(errors, "projects", project.id, "slug", project.slug);
   }
 
+  for (const member of seed.projectMembers) {
+    const id = `${member.projectId}:${member.userId}`;
+
+    validateIdentifierField(errors, "projectMembers", id, "projectId", member.projectId);
+    validateIdentifierField(errors, "projectMembers", id, "userId", member.userId);
+  }
+
   for (const tokenType of seed.tokenTypes) {
     validateIdentifierField(errors, "tokenTypes", tokenType.id, "id", tokenType.id);
     validateIdentifierField(
