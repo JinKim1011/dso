@@ -1,3 +1,5 @@
+import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
+
 export type DocumentPathValidationError = {
   code:
     | "not-string"
@@ -47,7 +49,7 @@ export function validateDocumentPath(value: unknown): DocumentPathValidationErro
     };
   }
 
-  if (value.length > 255) {
+  if (value.length > CONTRACT_LIMITS.documentPath) {
     return {
       code: "too-long",
       message: "Document path cannot exceed 255 characters.",
