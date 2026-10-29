@@ -1,6 +1,9 @@
 import { validateIdentifierString } from "@repo/contracts/validation/identifier";
 import { validateMaxLength } from "@repo/contracts/validation/limit";
-import { validateRequiredString } from "@repo/contracts/validation/required";
+import {
+  type RequiredStringOptions,
+  validateRequiredString,
+} from "@repo/contracts/validation/required";
 
 export type ValidationIssue = {
   field: string;
@@ -90,8 +93,9 @@ export function validateLimitedStringField(
   value: unknown,
   field: string,
   maximum: number,
+  options?: RequiredStringOptions,
 ): ValidationIssue | null {
-  const result = validateRequiredString(value, field);
+  const result = validateRequiredString(value, field, options);
 
   if (!result.success) {
     return {
