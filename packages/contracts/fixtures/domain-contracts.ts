@@ -16,27 +16,27 @@ const project = {
   id: "project-1",
   slug: "design-system",
   name: "Design System",
-  createdAt: "2026-10-27T10:00:00Z",
+  createdAt: "2026-10-27T10:00:00.000Z",
 } satisfies Project;
 
 const user = {
   id: "user-1",
   email: "developer@example.test",
   passwordHash: "hash-only",
-  createdAt: "2026-10-27T10:00:00Z",
+  createdAt: "2026-10-27T10:00:00.000Z",
 } satisfies User;
 
 const member = {
   projectId: project.id,
   userId: user.id,
   role: "publisher",
-  createdAt: "2026-10-27T10:00:00Z",
+  createdAt: "2026-10-27T10:00:00.000Z",
 } satisfies ProjectMember;
 
 const session = {
   id: "session-1",
   userId: user.id,
-  createdAt: "2026-10-27T10:00:00Z",
+  createdAt: "2026-10-27T10:00:00.000Z",
   expiresAt: "2026-10-27T18:00:00Z",
 } satisfies Session;
 
@@ -112,8 +112,8 @@ const release = {
   projectId: project.id,
   version: "1.0.0",
   status: "published",
-  createdAt: "2026-10-27T10:00:00Z",
-  publishedAt: "2026-10-27T10:00:00Z",
+  createdAt: "2026-10-27T10:00:00.000Z",
+  publishedAt: "2026-10-27T10:00:00.000Z",
 } satisfies Release;
 
 const apiKey = {
@@ -122,7 +122,7 @@ const apiKey = {
   keyIdentifier: "key-id-1",
   keyHash: "hash-only",
   scope: "release:read",
-  createdAt: "2026-10-27T10:00:00Z",
-  expiresAt: "2026-11-27T10:00:00Z",
+  createdAt: "2026-10-27T10:00:00.000Z",
+  expiresAt: "2026-11-27T10:00:00.000Z",
   revokedAt: null,
 } satisfies ApiKey;

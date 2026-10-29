@@ -6,7 +6,7 @@ export const validSeed: SeedData = {
       id: "user-1",
       email: "developer@example.test",
       passwordHash: "fake-seed-hash",
-      createdAt: "2026-10-27T10:00:00Z",
+      createdAt: "2026-10-27T10:00:00.000Z",
     },
   ],
   projects: [
@@ -14,7 +14,7 @@ export const validSeed: SeedData = {
       id: "project-1",
       slug: "design-system",
       name: "Design System",
-      createdAt: "2026-10-27T10:00:00Z",
+      createdAt: "2026-10-27T10:00:00.000Z",
     },
   ],
   projectMembers: [
@@ -22,7 +22,7 @@ export const validSeed: SeedData = {
       projectId: "project-1",
       userId: "user-1",
       role: "publisher",
-      createdAt: "2026-10-27T10:00:00Z",
+      createdAt: "2026-10-27T10:00:00.000Z",
     },
   ],
   tokenTypes: [
@@ -101,8 +101,8 @@ export const validSeed: SeedData = {
       projectId: "project-1",
       version: "1.0.0",
       status: "published",
-      publishedAt: "2026-10-27T10:00:00Z",
-      createdAt: "2026-10-27T10:00:00Z",
+      publishedAt: "2026-10-27T10:00:00.000Z",
+      createdAt: "2026-10-27T10:00:00.000Z",
     },
   ],
 };

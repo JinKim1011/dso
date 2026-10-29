@@ -38,7 +38,7 @@ describe("validateSeedTimestamps", () => {
   it("rejects publishedAt before createdAt", () => {
     const seed = cloneSeed();
     seed.releases[0]!.createdAt = "2026-10-28T10:00:00Z";
-    seed.releases[0]!.publishedAt = "2026-10-27T10:00:00Z";
+    seed.releases[0]!.publishedAt = "2026-10-27T10:00:00.000Z";
 
     expect(validateSeedTimestamps(seed)).toContainEqual(
       expect.objectContaining({

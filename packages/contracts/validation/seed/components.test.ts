@@ -55,7 +55,7 @@ describe("validateComponents", () => {
       id: "project-2",
       slug: "second-project",
       name: "Second Project",
-      createdAt: "2026-10-27T10:00:00Z",
+      createdAt: "2026-10-27T10:00:00.000Z",
     });
 
     seed.documentTemplates[0]!.projectId = "project-2";
