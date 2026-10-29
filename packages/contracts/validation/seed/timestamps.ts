@@ -1,19 +1,6 @@
 import type { SeedData } from "@repo/contracts/seed";
 import type { SeedValidationError } from "@repo/contracts/validation/seed/types";
-
-function validateTimestamp(value: unknown, fieldName: string): string | null {
-  if (typeof value !== "string") {
-    return `${fieldName} must be an ISO timestamp.`;
-  }
-
-  const parsed = Date.parse(value);
-
-  if (Number.isNaN(parsed)) {
-    return `${fieldName} must be a valid ISO timestamp.`;
-  }
-
-  return null;
-}
+import { validateTimestamp } from "@repo/contracts/validation/timestamp";
 
 export function validateSeedTimestamps(seed: SeedData): SeedValidationError[] {
   const errors: SeedValidationError[] = [];
@@ -27,7 +14,7 @@ export function validateSeedTimestamps(seed: SeedData): SeedValidationError[] {
         collection: "releases",
         id: release.id,
         field: "createdAt",
-        message: createdAtError,
+        message: createdAtError.message,
       });
     }
 
@@ -43,7 +30,7 @@ export function validateSeedTimestamps(seed: SeedData): SeedValidationError[] {
         collection: "releases",
         id: release.id,
         field: "publishedAt",
-        message: publishedAtError,
+        message: publishedAtError.message,
       });
       continue;
     }
