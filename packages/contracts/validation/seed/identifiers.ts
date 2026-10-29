@@ -110,5 +110,23 @@ export function validateSeedIdentifiers(seed: SeedData): SeedValidationError[] {
     validateIdentifierField(errors, "components", component.id, "slug", component.slug);
   }
 
+  for (const template of seed.documentTemplates) {
+    validateIdentifierField(errors, "documentTemplates", template.id, "id", template.id);
+    validateIdentifierField(
+      errors,
+      "documentTemplates",
+      template.id,
+      "projectId",
+      template.projectId,
+    );
+    validateIdentifierField(
+      errors,
+      "documentTemplates",
+      template.id,
+      "componentId",
+      template.componentId,
+    );
+  }
+
   return errors;
 }
