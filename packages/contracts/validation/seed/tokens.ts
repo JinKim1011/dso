@@ -1,4 +1,5 @@
 import type { SeedData } from "@repo/contracts/seed";
+import type { TokenType } from "@repo/contracts/type";
 import type { SeedValidationError } from "@repo/contracts/validation/seed/types";
 import { validateTokenDomain } from "@repo/contracts/validation/token-domain";
 import { validateTokenTypeHierarchy } from "@repo/contracts/validation/token-type-hierarchy";
@@ -76,6 +77,12 @@ export function validateTokens(seed: SeedData): SeedValidationError[] {
         message: error.message,
       })),
     );
+  }
+
+  for (const project of seed.projects) {
+    const domainErrors = validateTokenDomain(seed.tokens, seed.tokenTypes, project.id);
+
+    errors.push(...domainErrors.map(mapTokenDomainError));
   }
 
   return errors;
