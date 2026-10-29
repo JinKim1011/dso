@@ -48,4 +48,46 @@ describe("validateSeedTimestamps", () => {
       }),
     );
   });
+
+  it("rejects an invalid user createdAt timestamp", () => {
+    const seed = cloneSeed();
+    seed.users[0]!.createdAt = "not-a-timestamp";
+
+    expect(validateSeedTimestamps(seed)).toContainEqual(
+      expect.objectContaining({
+        code: "invalid-timestamp",
+        collection: "users",
+        id: seed.users[0]!.id,
+        field: "createdAt",
+      }),
+    );
+  });
+
+  it("rejects an invalid project createdAt timestamp", () => {
+    const seed = cloneSeed();
+    seed.projects[0]!.createdAt = "not-a-timestamp";
+
+    expect(validateSeedTimestamps(seed)).toContainEqual(
+      expect.objectContaining({
+        code: "invalid-timestamp",
+        collection: "projects",
+        id: seed.projects[0]!.id,
+        field: "createdAt",
+      }),
+    );
+  });
+
+  it("rejects an invalid project member createdAt timestamp", () => {
+    const seed = cloneSeed();
+    seed.projectMembers[0]!.createdAt = "not-a-timestamp";
+
+    expect(validateSeedTimestamps(seed)).toContainEqual(
+      expect.objectContaining({
+        code: "invalid-timestamp",
+        collection: "projectMembers",
+        id: `${seed.projectMembers[0]!.projectId}:${seed.projectMembers[0]!.userId}`,
+        field: "createdAt",
+      }),
+    );
+  });
 });
