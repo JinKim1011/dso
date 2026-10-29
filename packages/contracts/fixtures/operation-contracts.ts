@@ -34,7 +34,7 @@ export const publishRequest = {
 
 export const createApiKeyRequest = {
   projectId: "project-1",
-  expiresAt: "2026-11-27T10:00:00Z",
+  expiresAt: "2026-11-27T10:00:00.000Z",
   scope: "release:read",
 } satisfies CreateApiKeyRequest;
 
