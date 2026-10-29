@@ -1,21 +1,30 @@
 import {
   CONTRACT_LIMITS,
   validateCollectionSize,
-  validateMaxLength,
+  validateStringLength,
 } from "@repo/contracts/validation/limit";
 import { describe, expect, it } from "vitest";
 
-describe("validateMaxLength", () => {
-  it("accepts a value at the limit", () => {
-    const value = "a".repeat(320);
-    expect(validateMaxLength(value, "Email", CONTRACT_LIMITS.email)).toBeNull();
+describe("validateStringLength", () => {
+  it("accepts a string at the maximum length", () => {
+    const value = "a".repeat(CONTRACT_LIMITS.tokenName);
+
+    expect(validateStringLength(value, "name", CONTRACT_LIMITS.tokenName)).toBeNull();
   });
 
-  it("rejects a value over the limit", () => {
-    const value = "a".repeat(321);
-    expect(validateMaxLength(value, "Email", CONTRACT_LIMITS.email)).toMatchObject({
+  it("rejects a string over the maximum length", () => {
+    const value = "a".repeat(CONTRACT_LIMITS.tokenName + 1);
+
+    expect(validateStringLength(value, "name", CONTRACT_LIMITS.tokenName)).toEqual({
       code: "too-long",
-      message: "Email cannot contain more than 320 characters.",
+      message: `name cannot exceed ${CONTRACT_LIMITS.tokenName} characters.`,
+    });
+  });
+
+  it("rejects non-string values", () => {
+    expect(validateStringLength(123, "name", 10)).toEqual({
+      code: "not-string",
+      message: "name must be a string.",
     });
   });
 });
