@@ -112,6 +112,7 @@ const release = {
   projectId: project.id,
   version: "1.0.0",
   status: "published",
+  createdAt: "2026-10-27T10:00:00Z",
   publishedAt: "2026-10-27T10:00:00Z",
 } satisfies Release;
 
