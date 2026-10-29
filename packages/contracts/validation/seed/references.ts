@@ -38,11 +38,7 @@ export function validateDuplicateReferences(seed: SeedData): SeedValidationError
   const seen = new Set<string>();
 
   for (const reference of seed.tokenReferences) {
-    const key = [
-      reference.referencingTokenId,
-      reference.referencedTokenId,
-      reference.slot,
-    ].join(":");
+    const key = JSON.stringify([reference.referencingTokenId, reference.slot]);
 
     if (seen.has(key)) {
       errors.push({
