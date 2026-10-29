@@ -5,6 +5,10 @@ import {
   validateLimitedStringField,
 } from "@repo/contracts/validation/operations/common";
 
+export function hasTokenValueKind(value: unknown): value is { kind: string } {
+  return isRecord(value) && typeof value.kind === "string";
+}
+
 export function validateTokenValue(value: unknown): ValidationIssue[] {
   if (!isRecord(value)) {
     return [
