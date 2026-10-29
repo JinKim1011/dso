@@ -19,6 +19,16 @@ export const CONTRACT_LIMITS = {
   requestBodyBytes: 1_000_000,
 } as const;
 
+export type StringLengthValidationError =
+  | {
+      code: "not-string";
+      message: string;
+    }
+  | {
+      code: "too-long";
+      message: string;
+    };
+
 export type MaxLengthError = {
   code: "too-long";
   message: string;
@@ -59,5 +69,27 @@ export function validateCollectionSize(
       message: `${fieldName} cannot contain more than ${maximum} itmes.`,
     };
   }
+  return null;
+}
+
+export function validateStringLength(
+  value: unknown,
+  fieldName: string,
+  maximum: number,
+): StringLengthValidationError | null {
+  if (typeof value !== "string") {
+    return {
+      code: "not-string",
+      message: `${fieldName} must be a string.`,
+    };
+  }
+
+  if (value.length > maximum) {
+    return {
+      code: "too-long",
+      message: `${fieldName} cannot exceed ${maximum} characters.`,
+    };
+  }
+
   return null;
 }
