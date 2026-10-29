@@ -3,9 +3,7 @@ import type {
   ChangeTokenTypeParentRequest,
 } from "@repo/contracts/operation";
 import type { TokenReferenceSlot } from "@repo/contracts/type";
-import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import {
-  type ValidationIssue,
   type ValidationResult,
   collectUnknownFields,
   isRecord,
@@ -130,23 +128,4 @@ export function parseChangeTokenTypeParentRequest(
       parentTypeId: input.parentTypeId as string | null,
     },
   };
-}
-
-export function validateRequestBodySize(
-  body: string | Uint8Array,
-): ValidationIssue | null {
-  const size =
-    typeof body === "string"
-      ? new TextEncoder().encode(body).byteLength
-      : body.byteLength;
-
-  if (size > CONTRACT_LIMITS.requestBodyBytes) {
-    return {
-      field: "",
-      code: "too-long",
-      message: `Request body cannot exceed ${CONTRACT_LIMITS.requestBodyBytes} bytes.`,
-    };
-  }
-
-  return null;
 }
