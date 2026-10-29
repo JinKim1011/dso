@@ -128,5 +128,16 @@ export function validateSeedIdentifiers(seed: SeedData): SeedValidationError[] {
     );
   }
 
+  for (const release of seed.releases) {
+    validateIdentifierField(errors, "releases", release.id, "id", release.id);
+    validateIdentifierField(
+      errors,
+      "releases",
+      release.id,
+      "projectId",
+      release.projectId,
+    );
+  }
+
   return errors;
 }
