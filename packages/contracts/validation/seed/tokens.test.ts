@@ -82,4 +82,22 @@ describe("validateTokens", () => {
       }),
     );
   });
+
+  it("rejects an overlong token value", () => {
+    const seed = cloneSeed();
+
+    seed.tokens[0]!.value = {
+      kind: "single",
+      value: "a".repeat(10_001),
+    };
+
+    expect(validateTokens(seed)).toContainEqual(
+      expect.objectContaining({
+        code: "invalid-field",
+        collection: "tokens",
+        id: "token-white",
+        field: "value.value",
+      }),
+    );
+  });
 });
