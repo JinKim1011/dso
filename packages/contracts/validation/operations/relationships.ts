@@ -5,7 +5,7 @@ import type {
 import type { TokenReferenceSlot } from "@repo/contracts/type";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import {
-  ValidationIssue,
+  type ValidationIssue,
   type ValidationResult,
   collectUnknownFields,
   isRecord,
