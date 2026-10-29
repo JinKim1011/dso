@@ -113,3 +113,16 @@ export function validateLimitedStringField(
 
   return null;
 }
+
+export function invalidRequestBody(): ValidationResult<never> {
+  return {
+    success: false,
+    issues: [
+      {
+        field: "",
+        code: "invalid-type",
+        message: "Request body must be an object.",
+      },
+    ],
+  };
+}
