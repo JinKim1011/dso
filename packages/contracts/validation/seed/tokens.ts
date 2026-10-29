@@ -52,12 +52,16 @@ function mapTokenDomainError(
 export function validateTokens(seed: SeedData): SeedValidationError[] {
   const errors: SeedValidationError[] = [];
 
-  for (const project of seed.projects) {
-    const domainErrors = validateTokenDomain(seed.tokens, seed.tokenTypes, project.id);
+  const tokenTypesByProject = new Map<string, TokenType[]>();
 
-    errors.push(...domainErrors.map(mapTokenDomainError));
+  for (const tokenType of seed.tokenTypes) {
+    const projectTypes = tokenTypesByProject.get(tokenType.projectId) ?? [];
+    projectTypes.push(tokenType);
+    tokenTypesByProject.set(tokenType.projectId, projectTypes);
+  }
 
-    const hierarchyErrors = validateTokenTypeHierarchy(seed.tokenTypes, project.id);
+  for (const [projectId, projectTokenTypes] of tokenTypesByProject) {
+    const hierarchyErrors = validateTokenTypeHierarchy(projectTokenTypes, projectId);
 
     errors.push(
       ...hierarchyErrors.map((error) => ({
