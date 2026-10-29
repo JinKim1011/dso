@@ -102,6 +102,7 @@ export const validSeed: SeedData = {
       version: "1.0.0",
       status: "published",
       publishedAt: "2026-10-27T10:00:00Z",
+      createdAt: "2026-10-27T10:00:00Z",
     },
   ],
 };
