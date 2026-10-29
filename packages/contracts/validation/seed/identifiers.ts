@@ -68,5 +68,35 @@ export function validateSeedIdentifiers(seed: SeedData): SeedValidationError[] {
     validateIdentifierField(errors, "tokens", token.id, "tokenTypeId", token.tokenTypeId);
   }
 
+  for (const reference of seed.tokenReferences) {
+    const id = [
+      reference.referencingTokenId,
+      reference.referencedTokenId,
+      reference.slot,
+    ].join(":");
+
+    validateIdentifierField(
+      errors,
+      "tokenReferences",
+      id,
+      "projectId",
+      reference.projectId,
+    );
+    validateIdentifierField(
+      errors,
+      "tokenReferences",
+      id,
+      "referencingTokenId",
+      reference.referencingTokenId,
+    );
+    validateIdentifierField(
+      errors,
+      "tokenReferences",
+      id,
+      "referencedTokenId",
+      reference.referencedTokenId,
+    );
+  }
+
   return errors;
 }
