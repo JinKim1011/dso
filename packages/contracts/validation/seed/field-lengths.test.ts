@@ -155,6 +155,13 @@ describe("validateSeedFieldLengths", () => {
         }),
       );
     });
+
+    it("accepts newlines in a component description", () => {
+      const seed = cloneSeed();
+      seed.components[0]!.description = "Line one\nLine two";
+
+      expect(validateSeedFieldLengths(seed)).toEqual([]);
+    });
   });
 
   describe("document templates", () => {
