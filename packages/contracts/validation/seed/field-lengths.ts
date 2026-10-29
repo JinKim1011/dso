@@ -32,7 +32,7 @@ function validateLimitedField(
   }
 }
 
-export function validateSeedFields(seed: SeedData): SeedValidationError[] {
+export function validateSeedFieldLengths(seed: SeedData): SeedValidationError[] {
   const errors: SeedValidationError[] = [];
 
   for (const project of seed.projects) {
