@@ -32,6 +32,7 @@ export function validateTokenValue(value: unknown): ValidationIssue[] {
       value[field],
       `value.${field}`,
       CONTRACT_LIMITS.tokenValue,
+      { allowWhitespaceControls: true },
     );
 
     if (issue) {
