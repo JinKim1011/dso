@@ -98,5 +98,17 @@ export function validateSeedIdentifiers(seed: SeedData): SeedValidationError[] {
     );
   }
 
+  for (const component of seed.components) {
+    validateIdentifierField(errors, "components", component.id, "id", component.id);
+    validateIdentifierField(
+      errors,
+      "components",
+      component.id,
+      "projectId",
+      component.projectId,
+    );
+    validateIdentifierField(errors, "components", component.id, "slug", component.slug);
+  }
+
   return errors;
 }
