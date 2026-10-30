@@ -14,7 +14,7 @@ export function mapTokenTypeRow(row: TokenTypeRow): TokenType {
   return {
     id: row.id,
     projectId: row.project_id,
-    parentTypeId: row.parent_type_id,
+    parentTypeId: row.parent_type_id ?? null,
     category: row.category,
     name: row.name,
     kind: row.kind,
