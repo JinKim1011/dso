@@ -42,3 +42,20 @@ export async function insertDocumentTemplate(
 
   return mapDocumentTemplateRow(result.rows[0]);
 }
+
+export async function listDocumentTemplatesByProjectId(
+  database: Queryable,
+  projectId: string,
+): Promise<DocumentTemplate[]> {
+  const result = await database.query<DocumentTemplateRow>(
+    `
+      SELECT id, project_id, component_id, name, content
+      FROM document_templates
+      WHERE project_id = $1
+      ORDER BY id
+    `,
+    [projectId],
+  );
+
+  return result.rows.map(mapDocumentTemplateRow);
+}
