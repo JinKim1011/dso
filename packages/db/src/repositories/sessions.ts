@@ -34,3 +34,22 @@ export async function insertSession(
 
   return mapSessionRow(result.rows[0]);
 }
+
+export async function findActiveSessionById(
+  database: Queryable,
+  sessionId: string,
+): Promise<Session | null> {
+  const result = await database.query<SessionRow>(
+    `
+      SELECT id, user_id, created_at, expires_at
+      FROM sessions
+      WHERE id = $1
+        AND expires_at > NOW()
+    `,
+    [sessionId],
+  );
+
+  const row = result.rows[0];
+
+  return row ? mapSessionRow(row) : null;
+}
