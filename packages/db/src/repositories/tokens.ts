@@ -35,3 +35,20 @@ export async function insertToken(database: Queryable, token: Token): Promise<To
 
   return mapTokenRow(result.rows[0]);
 }
+
+export async function listTokensByProjectId(
+  database: Queryable,
+  projectId: string,
+): Promise<Token[]> {
+  const result = await database.query<TokenRow>(
+    `
+      SELECT id, project_id, token_type_id, name, css_var, value
+      FROM tokens
+      WHERE project_id = $1
+      ORDER BY id
+    `,
+    [projectId],
+  );
+
+  return result.rows.map(mapTokenRow);
+}
