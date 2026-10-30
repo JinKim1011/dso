@@ -18,3 +18,7 @@ function getDatabaseConfig(): PoolConfig {
 export function createDatabasePool(): Pool {
   return new Pool(getDatabaseConfig());
 }
+
+export async function checkDatabaseConnection(pool: Pool): Promise<void> {
+  await pool.query("SELECT 1");
+}
