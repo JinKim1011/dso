@@ -1,3 +1,4 @@
+import { fixtureIds } from "@repo/contracts/fixtures/ids";
 import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { validateTokens } from "@repo/contracts/validation/seed/tokens";
 import { describe, expect, it } from "vitest";
@@ -17,7 +18,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "missing-record",
         collection: "tokens",
-        id: "token-white",
+        id: fixtureIds.whiteToken,
       }),
     );
   });
@@ -30,7 +31,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "wrong-project",
         collection: "tokens",
-        id: "token-white",
+        id: fixtureIds.whiteToken,
       }),
     );
   });
@@ -43,7 +44,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "invalid-enum",
         collection: "tokenTypes",
-        id: "token-type-base",
+        id: fixtureIds.baseTokenType,
       }),
     );
   });
@@ -56,7 +57,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "duplicate-id",
         collection: "tokens",
-        id: "token-white",
+        id: fixtureIds.whiteToken,
       }),
     );
   });
@@ -67,11 +68,11 @@ describe("validateTokens", () => {
     seed.tokenTypes = [
       {
         ...seed.tokenTypes[0]!,
-        parentTypeId: "token-type-semantic",
+        parentTypeId: fixtureIds.semanticTokenType,
       },
       {
         ...seed.tokenTypes[1]!,
-        parentTypeId: "token-type-base",
+        parentTypeId: fixtureIds.baseTokenType,
       },
     ];
 
@@ -95,7 +96,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "invalid-field",
         collection: "tokens",
-        id: "token-white",
+        id: fixtureIds.whiteToken,
         field: "value.value",
       }),
     );
