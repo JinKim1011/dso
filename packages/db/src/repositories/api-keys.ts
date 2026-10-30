@@ -49,3 +49,24 @@ export async function insertApiKey(database: Queryable, apiKey: ApiKey): Promise
 
   return mapApiKeyRow(result.rows[0]);
 }
+
+export async function findActiveApiKeyByIdentifier(
+  database: Queryable,
+  keyIdentifier: string,
+): Promise<ApiKey | null> {
+  const result = await database.query<ApiKeyRow>(
+    `
+      SELECT id, project_id, key_identifier, key_hash, scope,
+             created_at, expires_at, revoked_at
+      FROM api_keys
+      WHERE key_identifier = $1
+        AND revoked_at IS NULL
+        AND expires_at > NOW()
+    `,
+    [keyIdentifier],
+  );
+
+  const row = result.rows[0];
+
+  return row ? mapApiKeyRow(row) : null;
+}
