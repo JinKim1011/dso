@@ -46,7 +46,7 @@ export const validSeed: SeedData = {
   ],
   tokens: [
     {
-      id: fixtureIds.whiteToken,
+      id: fixtureIds.singleToken,
       projectId: fixtureIds.project,
       tokenTypeId: fixtureIds.primitiveTokenType,
       name: "white",
@@ -57,7 +57,7 @@ export const validSeed: SeedData = {
       },
     },
     {
-      id: fixtureIds.surfaceToken,
+      id: fixtureIds.modeToken,
       projectId: fixtureIds.project,
       tokenTypeId: fixtureIds.semanticTokenType,
       name: "surface",
@@ -72,8 +72,8 @@ export const validSeed: SeedData = {
   tokenReferences: [
     {
       projectId: fixtureIds.project,
-      referencingTokenId: fixtureIds.surfaceToken,
-      referencedTokenId: fixtureIds.whiteToken,
+      referencingTokenId: fixtureIds.modeToken,
+      referencedTokenId: fixtureIds.singleToken,
       slot: "light",
     },
   ],

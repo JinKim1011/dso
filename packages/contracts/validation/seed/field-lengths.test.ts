@@ -73,7 +73,7 @@ describe("validateSeedFieldLengths", () => {
         expect.objectContaining({
           code: "invalid-field",
           collection: "tokens",
-          id: fixtureIds.whiteToken,
+          id: fixtureIds.singleToken,
           field: "name",
           message: `name cannot exceed ${CONTRACT_LIMITS.tokenName} characters.`,
         }),
@@ -102,7 +102,7 @@ describe("validateSeedFieldLengths", () => {
         expect.objectContaining({
           code: "invalid-field",
           collection: "tokens",
-          id: fixtureIds.whiteToken,
+          id: fixtureIds.singleToken,
           field: "cssVar",
           message: `cssVar cannot exceed ${CONTRACT_LIMITS.cssVariable} characters.`,
         }),

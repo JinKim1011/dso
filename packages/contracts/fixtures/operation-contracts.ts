@@ -17,8 +17,8 @@ export const loginRequest = {
 
 export const addReferenceRequest = {
   projectId: fixtureIds.project,
-  referencingTokenId: fixtureIds.surfaceToken,
-  referencedTokenId: fixtureIds.whiteToken,
+  referencingTokenId: fixtureIds.modeToken,
+  referencedTokenId: fixtureIds.singleToken,
   slot: "light",
 } satisfies AddTokenReferenceRequest;
 
@@ -50,7 +50,7 @@ export const downloadReleaseRequest = {
 
 export const updateTokenRequest = {
   projectId: fixtureIds.project,
-  tokenId: fixtureIds.surfaceToken,
+  tokenId: fixtureIds.modeToken,
   name: "surface",
   cssVar: "--color-surface",
   value: {

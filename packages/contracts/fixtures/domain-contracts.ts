@@ -60,7 +60,7 @@ export const semanticColorType = {
 } satisfies TokenType;
 
 export const baseColorToken = {
-  id: fixtureIds.whiteToken,
+  id: fixtureIds.singleToken,
   projectId: fixtureIds.project,
   tokenTypeId: fixtureIds.primitiveTokenType,
   name: "white",
@@ -71,8 +71,8 @@ export const baseColorToken = {
   },
 } satisfies Token;
 
-export const surfaceToken = {
-  id: fixtureIds.surfaceToken,
+export const modeToken = {
+  id: fixtureIds.modeToken,
   projectId: fixtureIds.project,
   tokenTypeId: fixtureIds.semanticTokenType,
   name: "surface",
@@ -86,8 +86,8 @@ export const surfaceToken = {
 
 const reference = {
   projectId: fixtureIds.project,
-  referencingTokenId: fixtureIds.surfaceToken,
-  referencedTokenId: fixtureIds.whiteToken,
+  referencingTokenId: fixtureIds.modeToken,
+  referencedTokenId: fixtureIds.singleToken,
   slot: "light",
 } satisfies TokenReference;
 

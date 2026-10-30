@@ -18,7 +18,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "missing-record",
         collection: "tokens",
-        id: fixtureIds.whiteToken,
+        id: fixtureIds.singleToken,
       }),
     );
   });
@@ -31,7 +31,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "wrong-project",
         collection: "tokens",
-        id: fixtureIds.whiteToken,
+        id: fixtureIds.singleToken,
       }),
     );
   });
@@ -57,7 +57,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "duplicate-id",
         collection: "tokens",
-        id: fixtureIds.whiteToken,
+        id: fixtureIds.singleToken,
       }),
     );
   });
@@ -96,7 +96,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "invalid-field",
         collection: "tokens",
-        id: fixtureIds.whiteToken,
+        id: fixtureIds.singleToken,
         field: "value.value",
       }),
     );

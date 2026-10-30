@@ -1,8 +1,8 @@
 import {
   baseColorToken,
   baseColorType,
+  modeToken,
   semanticColorType,
-  surfaceToken,
 } from "@repo/contracts/fixtures/domain-contracts";
 import {
   addReferenceRequest,
@@ -18,7 +18,7 @@ describe("validateAddReferenceOperation", () => {
   it("converts an operation request into a valid token reference", () => {
     const errors = validateAddReferenceOperation(
       addReferenceRequest,
-      [surfaceToken, baseColorToken],
+      [modeToken, baseColorToken],
       [semanticColorType, baseColorType],
     );
 

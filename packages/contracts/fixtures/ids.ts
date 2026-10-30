@@ -8,8 +8,8 @@ export const fixtureIds = {
   primitiveTokenType: randomUUID(),
   semanticTokenType: randomUUID(),
 
-  whiteToken: randomUUID(),
-  surfaceToken: randomUUID(),
+  singleToken: randomUUID(),
+  modeToken: randomUUID(),
 
   component: randomUUID(),
   documentTemplate: randomUUID(),
