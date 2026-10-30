@@ -6,7 +6,7 @@
   "exports": {
     ".": "./src/client.ts",
     "./transaction": "./src/transaction.ts",
-    "./repositories/projects": "./src/repositories/projects.ts"
+    "./repositories/*": "./src/repositories/*.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit"
