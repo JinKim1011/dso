@@ -1,0 +1,24 @@
+{
+  "name": "@repo/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/client.ts",
+    "./transaction": "./src/transaction.ts",
+    "./repositories/projects": "./src/repositories/projects.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "pg": "^8.16.0"
+  },
+  "devDependencies": {
+    "@repo/contracts": "*",
+    "@repo/typescript-config": "*",
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.15.0",
+    "typescript": "5.9.2"
+  }
+}
