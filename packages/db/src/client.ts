@@ -22,3 +22,7 @@ export function createDatabasePool(): Pool {
 export async function checkDatabaseConnection(pool: Pool): Promise<void> {
   await pool.query("SELECT 1");
 }
+
+export async function closeDatabasePool(pool: Pool): Promise<void> {
+  await pool.end();
+}
