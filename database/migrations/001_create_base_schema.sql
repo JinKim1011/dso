@@ -10,7 +10,8 @@ CREATE TABLE releases (
   project_id UUID NOT NULL REFERENCES projects (id),
   version TEXT NOT NULL,
   status TEXT NOT NULL,
-  published_at TIMESTAMPTZ
+  published_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE token_types (
