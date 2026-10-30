@@ -40,3 +40,23 @@ export async function insertProjectMember(
 
   return mapProjectMemberRow(result.rows[0]);
 }
+
+export async function findProjectMember(
+  database: Queryable,
+  projectId: string,
+  userId: string,
+): Promise<ProjectMember | null> {
+  const result = await database.query<ProjectMemberRow>(
+    `
+      SELECT project_id, user_id, role, created_at
+      FROM project_members
+      WHERE project_id = $1
+        AND user_id = $2
+    `,
+    [projectId, userId],
+  );
+
+  const row = result.rows[0];
+
+  return row ? mapProjectMemberRow(row) : null;
+}
