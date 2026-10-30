@@ -1,7 +1,10 @@
 import type { TokenType } from "@repo/contracts/type";
 import type { TokenKind } from "@repo/contracts/validation/enum";
+import type { Pool, PoolClient, QueryResultRow } from "pg";
 
-type TokenTypeRow = {
+type Queryable = Pick<Pool, "query"> | Pick<PoolClient, "query">;
+
+type TokenTypeRow = QueryResultRow & {
   id: string;
   project_id: string;
   parent_type_id: string | null;
@@ -10,7 +13,7 @@ type TokenTypeRow = {
   kind: TokenKind;
 };
 
-export function mapTokenTypeRow(row: TokenTypeRow): TokenType {
+function mapTokenTypeRow(row: TokenTypeRow): TokenType {
   return {
     id: row.id,
     projectId: row.project_id,
@@ -19,4 +22,27 @@ export function mapTokenTypeRow(row: TokenTypeRow): TokenType {
     name: row.name,
     kind: row.kind,
   };
+}
+
+export async function insertTokenType(
+  database: Queryable,
+  tokenType: TokenType,
+): Promise<TokenType> {
+  const result = await database.query<TokenTypeRow>(
+    `
+      INSERT INTO token_types (id, project_id, parent_type_id, category, name, kind)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING id, project_id, parent_type_id, category, name, kind
+    `,
+    [
+      tokenType.id,
+      tokenType.projectId,
+      tokenType.parentTypeId,
+      tokenType.category,
+      tokenType.name,
+      tokenType.kind,
+    ],
+  );
+
+  return mapTokenTypeRow(result.rows[0]);
 }
