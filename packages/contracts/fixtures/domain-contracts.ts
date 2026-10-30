@@ -1,3 +1,4 @@
+import { fixtureIds } from "@repo/contracts/fixtures/ids";
 import type {
   ApiKey,
   Component,
@@ -13,36 +14,36 @@ import type {
 } from "@repo/contracts/type";
 
 const project = {
-  id: "project-1",
+  id: fixtureIds.project,
   slug: "design-system",
   name: "Design System",
   createdAt: "2026-10-27T10:00:00.000Z",
 } satisfies Project;
 
 const user = {
-  id: "user-1",
+  id: fixtureIds.user,
   email: "developer@example.test",
   passwordHash: "hash-only",
   createdAt: "2026-10-27T10:00:00.000Z",
 } satisfies User;
 
 const member = {
-  projectId: project.id,
-  userId: user.id,
+  projectId: fixtureIds.project,
+  userId: fixtureIds.user,
   role: "publisher",
   createdAt: "2026-10-27T10:00:00.000Z",
 } satisfies ProjectMember;
 
 const session = {
-  id: "session-1",
-  userId: user.id,
+  id: fixtureIds.session,
+  userId: fixtureIds.user,
   createdAt: "2026-10-27T10:00:00.000Z",
   expiresAt: "2026-10-27T18:00:00Z",
 } satisfies Session;
 
 export const baseColorType = {
-  id: "token-type-base",
-  projectId: project.id,
+  id: fixtureIds.baseTokenType,
+  projectId: fixtureIds.project,
   parentTypeId: null,
   category: "color",
   name: "Base",
@@ -50,18 +51,18 @@ export const baseColorType = {
 } satisfies TokenType;
 
 export const semanticColorType = {
-  id: "token-type-semantic",
-  projectId: project.id,
-  parentTypeId: baseColorType.id,
+  id: fixtureIds.semanticTokenType,
+  projectId: fixtureIds.project,
+  parentTypeId: fixtureIds.baseTokenType,
   category: "color",
   name: "Semantic",
   kind: "semantic",
 } satisfies TokenType;
 
 export const baseColorToken = {
-  id: "token-white",
-  projectId: project.id,
-  tokenTypeId: baseColorType.id,
+  id: fixtureIds.whiteToken,
+  projectId: fixtureIds.project,
+  tokenTypeId: fixtureIds.baseTokenType,
   name: "white",
   cssVar: "--color-white",
   value: {
@@ -71,9 +72,9 @@ export const baseColorToken = {
 } satisfies Token;
 
 export const surfaceToken = {
-  id: "token-surface",
-  projectId: project.id,
-  tokenTypeId: semanticColorType.id,
+  id: fixtureIds.surfaceToken,
+  projectId: fixtureIds.project,
+  tokenTypeId: fixtureIds.semanticTokenType,
   name: "surface",
   cssVar: "--color-surface",
   value: {
@@ -84,15 +85,15 @@ export const surfaceToken = {
 } satisfies Token;
 
 const reference = {
-  projectId: project.id,
-  referencingTokenId: surfaceToken.id,
-  referencedTokenId: baseColorToken.id,
+  projectId: fixtureIds.project,
+  referencingTokenId: fixtureIds.surfaceToken,
+  referencedTokenId: fixtureIds.whiteToken,
   slot: "light",
 } satisfies TokenReference;
 
 const component = {
-  id: "component-button",
-  projectId: project.id,
+  id: fixtureIds.component,
+  projectId: fixtureIds.project,
   name: "Button",
   slug: "button",
   description: "Button component",
@@ -100,16 +101,16 @@ const component = {
 } satisfies Component;
 
 const template = {
-  id: "template-button",
-  projectId: project.id,
-  componentId: component.id,
+  id: fixtureIds.documentTemplate,
+  projectId: fixtureIds.project,
+  componentId: fixtureIds.component,
   name: "Button documentation",
   content: "# Button",
 } satisfies DocumentTemplate;
 
 const release = {
-  id: "release-1",
-  projectId: project.id,
+  id: fixtureIds.release,
+  projectId: fixtureIds.project,
   version: "1.0.0",
   status: "published",
   createdAt: "2026-10-27T10:00:00.000Z",
@@ -117,8 +118,8 @@ const release = {
 } satisfies Release;
 
 const apiKey = {
-  id: "key-1",
-  projectId: project.id,
+  id: fixtureIds.apiKey,
+  projectId: fixtureIds.project,
   keyIdentifier: "key-id-1",
   keyHash: "hash-only",
   scope: "release:read",
