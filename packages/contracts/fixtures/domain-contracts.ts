@@ -42,7 +42,7 @@ const session = {
 } satisfies Session;
 
 export const baseColorType = {
-  id: fixtureIds.baseTokenType,
+  id: fixtureIds.primitiveTokenType,
   projectId: fixtureIds.project,
   parentTypeId: null,
   category: "color",
@@ -53,7 +53,7 @@ export const baseColorType = {
 export const semanticColorType = {
   id: fixtureIds.semanticTokenType,
   projectId: fixtureIds.project,
-  parentTypeId: fixtureIds.baseTokenType,
+  parentTypeId: fixtureIds.primitiveTokenType,
   category: "color",
   name: "Semantic",
   kind: "semantic",
@@ -62,7 +62,7 @@ export const semanticColorType = {
 export const baseColorToken = {
   id: fixtureIds.whiteToken,
   projectId: fixtureIds.project,
-  tokenTypeId: fixtureIds.baseTokenType,
+  tokenTypeId: fixtureIds.primitiveTokenType,
   name: "white",
   cssVar: "--color-white",
   value: {

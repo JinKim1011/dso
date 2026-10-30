@@ -25,7 +25,7 @@ export const addReferenceRequest = {
 export const changeParentRequest = {
   projectId: fixtureIds.project,
   tokenTypeId: fixtureIds.semanticTokenType,
-  parentTypeId: fixtureIds.baseTokenType,
+  parentTypeId: fixtureIds.primitiveTokenType,
 } satisfies ChangeTokenTypeParentRequest;
 
 export const publishRequest = {

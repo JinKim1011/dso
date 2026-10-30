@@ -28,7 +28,7 @@ export const validSeed: SeedData = {
   ],
   tokenTypes: [
     {
-      id: fixtureIds.baseTokenType,
+      id: fixtureIds.primitiveTokenType,
       projectId: fixtureIds.project,
       parentTypeId: null,
       category: "color",
@@ -38,7 +38,7 @@ export const validSeed: SeedData = {
     {
       id: fixtureIds.semanticTokenType,
       projectId: fixtureIds.project,
-      parentTypeId: fixtureIds.baseTokenType,
+      parentTypeId: fixtureIds.primitiveTokenType,
       category: "color",
       name: "Semantic",
       kind: "semantic",
@@ -48,7 +48,7 @@ export const validSeed: SeedData = {
     {
       id: fixtureIds.whiteToken,
       projectId: fixtureIds.project,
-      tokenTypeId: fixtureIds.baseTokenType,
+      tokenTypeId: fixtureIds.primitiveTokenType,
       name: "white",
       cssVar: "--color-white",
       value: {

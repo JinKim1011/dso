@@ -44,7 +44,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "invalid-enum",
         collection: "tokenTypes",
-        id: fixtureIds.baseTokenType,
+        id: fixtureIds.primitiveTokenType,
       }),
     );
   });
@@ -72,7 +72,7 @@ describe("validateTokens", () => {
       },
       {
         ...seed.tokenTypes[1]!,
-        parentTypeId: fixtureIds.baseTokenType,
+        parentTypeId: fixtureIds.primitiveTokenType,
       },
     ];
 

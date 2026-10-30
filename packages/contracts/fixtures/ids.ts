@@ -5,7 +5,7 @@ export const fixtureIds = {
   project: randomUUID(),
   session: randomUUID(),
 
-  baseTokenType: randomUUID(),
+  primitiveTokenType: randomUUID(),
   semanticTokenType: randomUUID(),
 
   whiteToken: randomUUID(),
