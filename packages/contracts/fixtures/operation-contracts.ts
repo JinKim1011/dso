@@ -1,3 +1,4 @@
+import { fixtureIds } from "@repo/contracts/fixtures/ids";
 import type {
   AddTokenReferenceRequest,
   ChangeTokenTypeParentRequest,
@@ -15,41 +16,41 @@ export const loginRequest = {
 } satisfies LoginRequest;
 
 export const addReferenceRequest = {
-  projectId: "project-1",
-  referencingTokenId: "token-surface",
-  referencedTokenId: "token-white",
+  projectId: fixtureIds.project,
+  referencingTokenId: fixtureIds.surfaceToken,
+  referencedTokenId: fixtureIds.whiteToken,
   slot: "light",
 } satisfies AddTokenReferenceRequest;
 
 export const changeParentRequest = {
-  projectId: "project-1",
-  tokenTypeId: "token-type-semantic",
-  parentTypeId: "token-type-base",
+  projectId: fixtureIds.project,
+  tokenTypeId: fixtureIds.semanticTokenType,
+  parentTypeId: fixtureIds.baseTokenType,
 } satisfies ChangeTokenTypeParentRequest;
 
 export const publishRequest = {
-  projectId: "project-1",
-  releaseId: "release-1",
+  projectId: fixtureIds.project,
+  releaseId: fixtureIds.release,
 } satisfies PublishReleaseRequest;
 
 export const createApiKeyRequest = {
-  projectId: "project-1",
+  projectId: fixtureIds.project,
   expiresAt: "2026-11-27T10:00:00.000Z",
   scope: "release:read",
 } satisfies CreateApiKeyRequest;
 
 export const revokeApiKeyRequest = {
-  projectId: "project-1",
-  apiKeyId: "key-1",
+  projectId: fixtureIds.project,
+  apiKeyId: fixtureIds.apiKey,
 } satisfies RevokeApiKeyRequest;
 
 export const downloadReleaseRequest = {
-  releaseId: "release-1",
+  releaseId: fixtureIds.release,
 } satisfies DownloadReleaseRequest;
 
 export const updateTokenRequest = {
-  projectId: "project-1",
-  tokenId: "token-surface",
+  projectId: fixtureIds.project,
+  tokenId: fixtureIds.surfaceToken,
   name: "surface",
   cssVar: "--color-surface",
   value: {
