@@ -39,3 +39,20 @@ export async function insertTokenReference(
 
   return mapTokenReferenceRow(result.rows[0]);
 }
+
+export async function listTokenReferencesByProjectId(
+  database: Queryable,
+  projectId: string,
+): Promise<TokenReference[]> {
+  const result = await database.query<TokenReferenceRow>(
+    `
+      SELECT referencing_token_id, referenced_token_id, project_id, slot
+      FROM token_references
+      WHERE project_id = $1
+      ORDER BY referencing_token_id, referenced_token_id, slot
+    `,
+    [projectId],
+  );
+
+  return result.rows.map(mapTokenReferenceRow);
+}
