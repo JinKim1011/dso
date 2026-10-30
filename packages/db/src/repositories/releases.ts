@@ -46,3 +46,21 @@ export async function insertRelease(
 
   return mapReleaseRow(result.rows[0]);
 }
+
+export async function findReleaseById(
+  database: Queryable,
+  releaseId: string,
+): Promise<Release | null> {
+  const result = await database.query<ReleaseRow>(
+    `
+      SELECT id, project_id, version, status, created_at, published_at
+      FROM releases
+      WHERE id = $1
+    `,
+    [releaseId],
+  );
+
+  const row = result.rows[0];
+
+  return row ? mapReleaseRow(row) : null;
+}
