@@ -15,7 +15,7 @@ export function mapTokenRow(row: TokenRow): Token {
     projectId: row.project_id,
     tokenTypeId: row.token_type_id,
     name: row.name,
-    cssVar: row.css_var,
+    cssVar: row.css_var ?? null,
     value: row.value,
   };
 }
