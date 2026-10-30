@@ -1,3 +1,4 @@
+import { fixtureIds } from "@repo/contracts/fixtures/ids";
 import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import { validateSeedFieldLengths } from "@repo/contracts/validation/seed/field-lengths";
@@ -26,7 +27,7 @@ describe("validateSeedFieldLengths", () => {
         expect.objectContaining({
           code: "invalid-field",
           collection: "projects",
-          id: "project-1",
+          id: fixtureIds.project,
           field: "name",
           message: `name cannot exceed ${CONTRACT_LIMITS.projectName} characters.`,
         }),
@@ -48,7 +49,7 @@ describe("validateSeedFieldLengths", () => {
         expect.objectContaining({
           code: "invalid-field",
           collection: "projects",
-          id: "project-1",
+          id: fixtureIds.project,
           field: "slug",
           message: `slug cannot exceed ${CONTRACT_LIMITS.projectSlug} characters.`,
         }),
@@ -72,7 +73,7 @@ describe("validateSeedFieldLengths", () => {
         expect.objectContaining({
           code: "invalid-field",
           collection: "tokens",
-          id: "token-white",
+          id: fixtureIds.whiteToken,
           field: "name",
           message: `name cannot exceed ${CONTRACT_LIMITS.tokenName} characters.`,
         }),
@@ -101,7 +102,7 @@ describe("validateSeedFieldLengths", () => {
         expect.objectContaining({
           code: "invalid-field",
           collection: "tokens",
-          id: "token-white",
+          id: fixtureIds.whiteToken,
           field: "cssVar",
           message: `cssVar cannot exceed ${CONTRACT_LIMITS.cssVariable} characters.`,
         }),
@@ -125,7 +126,7 @@ describe("validateSeedFieldLengths", () => {
         expect.objectContaining({
           code: "invalid-field",
           collection: "components",
-          id: "component-button",
+          id: fixtureIds.component,
           field: "name",
           message: `name cannot exceed ${CONTRACT_LIMITS.componentName} characters.`,
         }),
@@ -149,7 +150,7 @@ describe("validateSeedFieldLengths", () => {
         expect.objectContaining({
           code: "invalid-field",
           collection: "components",
-          id: "component-button",
+          id: fixtureIds.component,
           field: "description",
           message: `description cannot exceed ${CONTRACT_LIMITS.componentDescriptions} characters.`,
         }),
@@ -180,7 +181,7 @@ describe("validateSeedFieldLengths", () => {
         expect.objectContaining({
           code: "invalid-field",
           collection: "documentTemplates",
-          id: "template-button",
+          id: fixtureIds.documentTemplate,
           field: "name",
           message: `name cannot exceed ${CONTRACT_LIMITS.templateName} characters.`,
         }),
@@ -204,7 +205,7 @@ describe("validateSeedFieldLengths", () => {
         expect.objectContaining({
           code: "invalid-field",
           collection: "documentTemplates",
-          id: "template-button",
+          id: fixtureIds.documentTemplate,
           field: "content",
           message: `content cannot exceed ${CONTRACT_LIMITS.templateContent} characters.`,
         }),
@@ -228,7 +229,7 @@ describe("validateSeedFieldLengths", () => {
         expect.objectContaining({
           code: "invalid-field",
           collection: "releases",
-          id: "release-1",
+          id: fixtureIds.release,
           field: "version",
           message: `version cannot exceed ${CONTRACT_LIMITS.releaseVersion} characters.`,
         }),
