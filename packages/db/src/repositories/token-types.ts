@@ -46,3 +46,20 @@ export async function insertTokenType(
 
   return mapTokenTypeRow(result.rows[0]);
 }
+
+export async function listTokenTypesByProjectId(
+  database: Queryable,
+  projectId: string,
+): Promise<TokenType[]> {
+  const result = await database.query<TokenTypeRow>(
+    `
+      SELECT id, project_id, parent_type_id, category, name, kind
+      FROM token_types
+      WHERE project_id = $1
+      ORDER BY id
+    `,
+    [projectId],
+  );
+
+  return result.rows.map(mapTokenTypeRow);
+}
