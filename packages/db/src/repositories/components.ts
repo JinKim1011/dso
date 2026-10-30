@@ -45,3 +45,20 @@ export async function insertComponent(
 
   return mapComponentRow(result.rows[0]);
 }
+
+export async function listComponentsByProjectId(
+  database: Queryable,
+  projectId: string,
+): Promise<Component[]> {
+  const result = await database.query<ComponentRow>(
+    `
+      SELECT id, project_id, name, slug, description, document_path
+      FROM components
+      WHERE project_id = $1
+      ORDER BY id
+    `,
+    [projectId],
+  );
+
+  return result.rows.map(mapComponentRow);
+}
