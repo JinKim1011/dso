@@ -10,7 +10,9 @@
     "./transaction": "./src/transaction.ts"
   },
   "scripts": {
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "pg": "^8.16.0"
@@ -20,6 +22,7 @@
     "@repo/typescript-config": "*",
     "@types/node": "^22.0.0",
     "@types/pg": "^8.15.0",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vitest": "^4.1.4"
   }
 }
