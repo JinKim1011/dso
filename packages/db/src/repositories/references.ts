@@ -56,3 +56,22 @@ export async function listTokenReferencesByProjectId(
 
   return result.rows.map(mapTokenReferenceRow);
 }
+
+export async function listTokenReferencesToToken(
+  database: Queryable,
+  projectId: string,
+  referencedTokenId: string,
+): Promise<TokenReference[]> {
+  const result = await database.query<TokenReferenceRow>(
+    `
+      SELECT referencing_token_id, referenced_token_id, project_id, slot
+      FROM token_references
+      WHERE project_id = $1
+        AND referenced_token_id = $2
+      ORDER BY referencing_token_id, slot
+    `,
+    [projectId, referencedTokenId],
+  );
+
+  return result.rows.map(mapTokenReferenceRow);
+}
