@@ -8,6 +8,7 @@
     "./migrations/*": "./src/migrations/*.ts",
     "./test/*": "./test/*.ts",
     "./client": "./src/client.ts",
+    "./seed": "./src/seed.ts",
     "./transaction": "./src/transaction.ts"
   },
   "scripts": {
