@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/client.ts",
-    "./transaction": "./src/transaction.ts",
-    "./repositories/*": "./src/repositories/*.ts"
+    "./repositories/*": "./src/repositories/*.ts",
+    "./client": "./src/client.ts",
+    "./transaction": "./src/transaction.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit"
