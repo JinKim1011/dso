@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./repositories/*": "./src/repositories/*.ts",
+    "./migrations/*": "./src/migrations/*.ts",
     "./client": "./src/client.ts",
     "./transaction": "./src/transaction.ts"
   },
