@@ -4,8 +4,8 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   resolve: {
     alias: {
-      "@repo/db": path.resolve(import.meta.dirname, "src"),
-      "@repo/contracts": path.resolve(import.meta.dirname, "../contracts"),
+      "@repo/db": path.resolve(import.meta.dirname, "../src"),
+      "@repo/contracts": path.resolve(import.meta.dirname, "../../contracts"),
     },
   },
   test: {
