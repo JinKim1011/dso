@@ -19,7 +19,7 @@ import { insertToken, listTokensByProjectId } from "@repo/db/repositories/tokens
 import { describe, expect, it } from "vitest";
 import { getTestDatabase } from "./setup";
 
-describe("porjects repository", () => {
+describe("database porjects repository", () => {
   it("inserts and reads a project", async () => {
     const database = getTestDatabase();
     const project = validSeed.projects[0]!;
@@ -77,7 +77,7 @@ describe("porjects repository", () => {
   });
 });
 
-describe("token types repository", () => {
+describe("database token types repository", () => {
   it("inserts token types, tokens, and references", async () => {
     const database = getTestDatabase();
     const seed = structuredClone(validSeed);
@@ -101,7 +101,7 @@ describe("token types repository", () => {
   });
 });
 
-describe("releases repository", () => {
+describe("database releases repository", () => {
   it("inserts and reads a published release", async () => {
     const database = getTestDatabase();
     const seed = structuredClone(validSeed);
@@ -135,7 +135,7 @@ describe("releases repository", () => {
   });
 });
 
-describe("token references repository", () => {
+describe("database token references repository", () => {
   it("lists tokens that reference a target token", async () => {
     const database = getTestDatabase();
     const seed = structuredClone(validSeed);
