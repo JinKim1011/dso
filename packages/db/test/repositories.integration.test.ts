@@ -17,8 +17,8 @@ import {
   listTokenTypesByProjectId,
 } from "@repo/db/repositories/token-types";
 import { insertToken, listTokensByProjectId } from "@repo/db/repositories/tokens";
+import { getTestDatabase } from "@repo/db/test/setup";
 import { describe, expect, it } from "vitest";
-import { getTestDatabase } from "./setup";
 
 describe("database projects repository", () => {
   it("inserts and reads a project", async () => {
