@@ -63,3 +63,39 @@ export async function listTokenTypesByProjectId(
 
   return result.rows.map(mapTokenTypeRow);
 }
+
+export async function listTokenTypeHierarchy(
+  database: Queryable,
+  projectId: string,
+): Promise<TokenType[]> {
+  const result = await database.query<TokenTypeRow>(
+    `
+      WITH RECURSIVE hierarchy AS (
+        SELECT id, project_id, parent_type_id, category, name, kind, 0 AS depth
+        FROM token_types
+        WHERE project_id = $1
+          AND parent_type_id IS NULL
+
+        UNION ALL
+
+        SELECT child.id,
+               child.project_id,
+               child.parent_type_id,
+               child.category,
+               child.name,
+               child.kind,
+               parent.depth + 1
+        FROM token_types child
+        JOIN hierarchy parent
+          ON child.parent_type_id = parent.id
+        WHERE child.project_id = $1
+      )
+      SELECT id, project_id, parent_type_id, category, name, kind
+      FROM hierarchy
+      ORDER BY id
+    `,
+    [projectId],
+  );
+
+  return result.rows.map(mapTokenTypeRow);
+}
