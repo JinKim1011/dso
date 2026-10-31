@@ -120,26 +120,40 @@ describe("database constraints", () => {
     const database = getTestDatabase();
     const seed = structuredClone(validSeed);
 
-    const otherProjectId = crypto.randomUUID();
-
-    await insertProject(database, seed.projects[0]!);
-    await insertProject(database, {
-      id: otherProjectId,
+    const otherProject = {
+      id: crypto.randomUUID(),
       name: "Other Project",
       slug: "other-project",
       createdAt: "2026-10-27T10:00:00.000Z",
-    });
+    };
+
+    await insertProject(database, seed.projects[0]!);
+    await insertProject(database, otherProject);
 
     await insertTokenType(database, seed.tokenTypes[0]!);
+
+    const otherTokenType = await insertTokenType(database, {
+      ...seed.tokenTypes[0]!,
+      id: crypto.randomUUID(),
+      projectId: otherProject.id,
+    });
+
     await insertToken(database, seed.tokens[0]!);
+
+    const otherToken = await insertToken(database, {
+      ...seed.tokens[0]!,
+      id: crypto.randomUUID(),
+      projectId: otherProject.id,
+      tokenTypeId: otherTokenType.id,
+    });
 
     await expect(
       insertTokenReference(database, {
         projectId: seed.projects[0]!.id,
         referencingTokenId: seed.tokens[0]!.id,
-        referencedTokenId: seed.tokens[0]!.id,
+        referencedTokenId: otherToken.id,
         slot: "dark",
       }),
-    ).rejects.toBeDefined();
+    ).rejects.toSatisfy((error: unknown) => postgresErrorCode(error) === "23503");
   });
 });
