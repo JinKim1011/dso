@@ -13,13 +13,14 @@ import {
 } from "@repo/db/repositories/releases";
 import {
   insertTokenType,
+  listTokenTypeHierarchy,
   listTokenTypesByProjectId,
 } from "@repo/db/repositories/token-types";
 import { insertToken, listTokensByProjectId } from "@repo/db/repositories/tokens";
 import { describe, expect, it } from "vitest";
 import { getTestDatabase } from "./setup";
 
-describe("database porjects repository", () => {
+describe("database projects repository", () => {
   it("inserts and reads a project", async () => {
     const database = getTestDatabase();
     const project = validSeed.projects[0]!;
@@ -98,6 +99,22 @@ describe("database token types repository", () => {
     expect(await listTokenReferencesByProjectId(database, seed.projects[0]!.id)).toEqual([
       seed.tokenReferences[0],
     ]);
+  });
+
+  it("lists the token type hierarchy", async () => {
+    const database = getTestDatabase();
+    const seed = structuredClone(validSeed);
+
+    await insertProject(database, seed.projects[0]!);
+    await insertTokenType(database, seed.tokenTypes[0]!);
+    await insertTokenType(database, seed.tokenTypes[1]!);
+
+    const hierarchy = await listTokenTypeHierarchy(database, seed.projects[0]!.id);
+
+    expect(hierarchy).toEqual(
+      expect.arrayContaining([seed.tokenTypes[0], seed.tokenTypes[1]]),
+    );
+    expect(hierarchy).toHaveLength(2);
   });
 });
 
