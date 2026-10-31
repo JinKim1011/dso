@@ -6,6 +6,7 @@
   "exports": {
     "./repositories/*": "./src/repositories/*.ts",
     "./migrations/*": "./src/migrations/*.ts",
+    "./test/*": "./test/*.ts",
     "./client": "./src/client.ts",
     "./transaction": "./src/transaction.ts"
   },
