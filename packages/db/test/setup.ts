@@ -1,6 +1,6 @@
+import { closeDatabase, resetDatabase, setupDatabase } from "@repo/db/test/database";
 import type { Pool } from "pg";
 import { afterAll, beforeAll, beforeEach } from "vitest";
-import { closeDatabase, resetDatabase, setupDatabase } from "./database";
 
 let database: Pool;
 
