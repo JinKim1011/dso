@@ -41,7 +41,7 @@ const session = {
   expiresAt: "2026-10-27T18:00:00Z",
 } satisfies Session;
 
-export const baseColorType = {
+export const primitiveTokenType = {
   id: fixtureIds.primitiveTokenType,
   projectId: fixtureIds.project,
   parentTypeId: null,
@@ -50,7 +50,7 @@ export const baseColorType = {
   kind: "primitive",
 } satisfies TokenType;
 
-export const semanticColorType = {
+export const semanticTokenType = {
   id: fixtureIds.semanticTokenType,
   projectId: fixtureIds.project,
   parentTypeId: fixtureIds.primitiveTokenType,
