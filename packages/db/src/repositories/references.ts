@@ -37,7 +37,7 @@ export async function insertTokenReference(
     ],
   );
 
-  return mapTokenReferenceRow(result.rows[0]);
+  return mapTokenReferenceRow(result.rows[0]!);
 }
 
 export async function listTokenReferencesByProjectId(

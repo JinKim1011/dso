@@ -40,7 +40,7 @@ export async function insertDocumentTemplate(
     ],
   );
 
-  return mapDocumentTemplateRow(result.rows[0]);
+  return mapDocumentTemplateRow(result.rows[0]!);
 }
 
 export async function listDocumentTemplatesByProjectId(

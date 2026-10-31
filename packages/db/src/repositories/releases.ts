@@ -44,7 +44,7 @@ export async function insertRelease(
     ],
   );
 
-  return mapReleaseRow(result.rows[0]);
+  return mapReleaseRow(result.rows[0]!);
 }
 
 export async function findReleaseById(

@@ -44,7 +44,7 @@ export async function insertTokenType(
     ],
   );
 
-  return mapTokenTypeRow(result.rows[0]);
+  return mapTokenTypeRow(result.rows[0]!);
 }
 
 export async function listTokenTypesByProjectId(
