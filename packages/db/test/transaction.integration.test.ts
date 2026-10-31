@@ -1,8 +1,8 @@
 import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { findProjectById, insertProject } from "@repo/db/repositories/projects";
+import { getTestDatabase } from "@repo/db/test/setup";
 import { withTransaction } from "@repo/db/transaction";
 import { describe, expect, it } from "vitest";
-import { getTestDatabase } from "./setup";
 
 describe("database transaction rollback", () => {
   it("rolls back all writes when the transaction fails", async () => {
