@@ -38,7 +38,7 @@ export async function insertProjectMember(
     ],
   );
 
-  return mapProjectMemberRow(result.rows[0]);
+  return mapProjectMemberRow(result.rows[0]!);
 }
 
 export async function findProjectMember(

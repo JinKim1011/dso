@@ -32,7 +32,7 @@ export async function insertProject(
     [project.id, project.name, project.slug, project.createdAt],
   );
 
-  return mapProjectRow(result.rows[0]);
+  return mapProjectRow(result.rows[0]!);
 }
 
 export async function findProjectById(

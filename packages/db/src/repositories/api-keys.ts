@@ -47,7 +47,7 @@ export async function insertApiKey(database: Queryable, apiKey: ApiKey): Promise
     ],
   );
 
-  return mapApiKeyRow(result.rows[0]);
+  return mapApiKeyRow(result.rows[0]!);
 }
 
 export async function findActiveApiKeyByIdentifier(

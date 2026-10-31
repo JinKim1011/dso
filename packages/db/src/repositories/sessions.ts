@@ -32,7 +32,7 @@ export async function insertSession(
     [session.id, session.userId, session.createdAt, session.expiresAt],
   );
 
-  return mapSessionRow(result.rows[0]);
+  return mapSessionRow(result.rows[0]!);
 }
 
 export async function findActiveSessionById(

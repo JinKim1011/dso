@@ -33,7 +33,7 @@ export async function insertToken(database: Queryable, token: Token): Promise<To
     [token.id, token.projectId, token.tokenTypeId, token.name, token.cssVar, token.value],
   );
 
-  return mapTokenRow(result.rows[0]);
+  return mapTokenRow(result.rows[0]!);
 }
 
 export async function listTokensByProjectId(

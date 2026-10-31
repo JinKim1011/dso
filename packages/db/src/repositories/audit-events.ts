@@ -46,5 +46,5 @@ export async function insertAuditEvent(
     ],
   );
 
-  return mapAuditEventRow(result.rows[0]);
+  return mapAuditEventRow(result.rows[0]!);
 }

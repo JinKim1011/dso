@@ -43,7 +43,7 @@ export async function insertComponent(
     ],
   );
 
-  return mapComponentRow(result.rows[0]);
+  return mapComponentRow(result.rows[0]!);
 }
 
 export async function listComponentsByProjectId(

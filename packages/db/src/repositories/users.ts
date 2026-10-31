@@ -29,5 +29,5 @@ export async function insertUser(database: Queryable, user: User): Promise<User>
     [user.id, user.email, user.passwordHash, user.createdAt],
   );
 
-  return mapUserRow(result.rows[0]);
+  return mapUserRow(result.rows[0]!);
 }
