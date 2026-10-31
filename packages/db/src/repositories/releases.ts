@@ -64,3 +64,21 @@ export async function findReleaseById(
 
   return row ? mapReleaseRow(row) : null;
 }
+
+export async function listPublishedReleasesByProjectId(
+  database: Queryable,
+  projectId: string,
+): Promise<Release[]> {
+  const result = await database.query<ReleaseRow>(
+    `
+      SELECT id, project_id, version, status, created_at, published_at
+      FROM releases
+      WHERE project_id = $1
+        AND status = 'published'
+      ORDER BY published_at DESC, id
+    `,
+    [projectId],
+  );
+
+  return result.rows.map(mapReleaseRow);
+}
