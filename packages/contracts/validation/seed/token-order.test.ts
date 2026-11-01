@@ -20,10 +20,9 @@ describe("validateTokenTypeInsertionOrder", () => {
       {
         code: "invalid-hierarchy",
         collection: "tokenTypes",
-        id: "semantic",
+        id: semanticTokenType.id,
         field: "parentTypeId",
-        message:
-          'Token type "semantic" must appear after its parent "base" in seed.tokenTypes.',
+        message: `Token type "${semanticTokenType.id}" must appear after its parent "${primitiveTokenType.id}" in seed.tokenTypes.`,
       },
     ]);
   });
