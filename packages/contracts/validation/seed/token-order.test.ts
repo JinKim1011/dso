@@ -6,10 +6,6 @@ import type { TokenType } from "@repo/contracts/type";
 import { validateTokenTypeInsertionOrder } from "@repo/contracts/validation/seed/token-type-order";
 import { describe, expect, it } from "vitest";
 
-const parent: TokenType = primitiveTokenType;
-
-const child: TokenType = semanticTokenType;
-
 describe("validateTokenTypeInsertionOrder", () => {
   it("accepts parents before children", () => {
     expect(
