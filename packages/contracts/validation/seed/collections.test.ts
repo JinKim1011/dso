@@ -1,3 +1,4 @@
+import { fixtureIds } from "@repo/contracts/fixtures/ids";
 import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import {
   findDuplicateIds,
@@ -17,7 +18,7 @@ describe("findDuplicateIds", () => {
       expect.objectContaining({
         code: "duplicate-id",
         collection: "projects",
-        id: "project-1",
+        id: fixtureIds.project,
       }),
     );
   });

@@ -417,8 +417,10 @@ implementation work. They are not treated as completed Week 1 evidence:
 - Add the security schema for users, sessions, project membership, API keys,
   and audit events to the ER model and migration verification when the W2
   security migrations are implemented.
-- Confirm whether token references require a unique constraint on
+- Token references intentionally require uniqueness on
   `(referencing_token_id, slot)` in addition to the reference identity key.
+  A token may reference only one target per slot, while supporting multiple
+  slots and therefore multiple references overall.
 
 ## Planned security tests
 

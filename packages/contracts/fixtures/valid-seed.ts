@@ -1,9 +1,10 @@
+import { fixtureIds } from "@repo/contracts/fixtures/ids";
 import type { SeedData } from "@repo/contracts/seed";
 
 export const validSeed: SeedData = {
   users: [
     {
-      id: "user-1",
+      id: fixtureIds.user,
       email: "developer@example.test",
       passwordHash: "fake-seed-hash",
       createdAt: "2026-10-27T10:00:00.000Z",
@@ -11,7 +12,7 @@ export const validSeed: SeedData = {
   ],
   projects: [
     {
-      id: "project-1",
+      id: fixtureIds.project,
       slug: "design-system",
       name: "Design System",
       createdAt: "2026-10-27T10:00:00.000Z",
@@ -19,25 +20,25 @@ export const validSeed: SeedData = {
   ],
   projectMembers: [
     {
-      projectId: "project-1",
-      userId: "user-1",
+      projectId: fixtureIds.project,
+      userId: fixtureIds.user,
       role: "publisher",
       createdAt: "2026-10-27T10:00:00.000Z",
     },
   ],
   tokenTypes: [
     {
-      id: "token-type-base",
-      projectId: "project-1",
+      id: fixtureIds.primitiveTokenType,
+      projectId: fixtureIds.project,
       parentTypeId: null,
       category: "color",
       name: "Base",
       kind: "primitive",
     },
     {
-      id: "token-type-semantic",
-      projectId: "project-1",
-      parentTypeId: "token-type-base",
+      id: fixtureIds.semanticTokenType,
+      projectId: fixtureIds.project,
+      parentTypeId: fixtureIds.primitiveTokenType,
       category: "color",
       name: "Semantic",
       kind: "semantic",
@@ -45,9 +46,9 @@ export const validSeed: SeedData = {
   ],
   tokens: [
     {
-      id: "token-white",
-      projectId: "project-1",
-      tokenTypeId: "token-type-base",
+      id: fixtureIds.singleToken,
+      projectId: fixtureIds.project,
+      tokenTypeId: fixtureIds.primitiveTokenType,
       name: "white",
       cssVar: "--color-white",
       value: {
@@ -56,9 +57,9 @@ export const validSeed: SeedData = {
       },
     },
     {
-      id: "token-surface",
-      projectId: "project-1",
-      tokenTypeId: "token-type-semantic",
+      id: fixtureIds.modeToken,
+      projectId: fixtureIds.project,
+      tokenTypeId: fixtureIds.semanticTokenType,
       name: "surface",
       cssVar: "--color-surface",
       value: {
@@ -70,16 +71,16 @@ export const validSeed: SeedData = {
   ],
   tokenReferences: [
     {
-      projectId: "project-1",
-      referencingTokenId: "token-surface",
-      referencedTokenId: "token-white",
+      projectId: fixtureIds.project,
+      referencingTokenId: fixtureIds.modeToken,
+      referencedTokenId: fixtureIds.singleToken,
       slot: "light",
     },
   ],
   components: [
     {
-      id: "component-button",
-      projectId: "project-1",
+      id: fixtureIds.component,
+      projectId: fixtureIds.project,
       name: "Button",
       slug: "button",
       description: "Button component",
@@ -88,17 +89,17 @@ export const validSeed: SeedData = {
   ],
   documentTemplates: [
     {
-      id: "template-button",
-      projectId: "project-1",
-      componentId: "component-button",
+      id: fixtureIds.documentTemplate,
+      projectId: fixtureIds.project,
+      componentId: fixtureIds.component,
       name: "Button documentation",
       content: "# Button",
     },
   ],
   releases: [
     {
-      id: "release-1",
-      projectId: "project-1",
+      id: fixtureIds.release,
+      projectId: fixtureIds.project,
       version: "1.0.0",
       status: "published",
       publishedAt: "2026-10-27T10:00:00.000Z",

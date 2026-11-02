@@ -1,5 +1,6 @@
 import type { SeedData } from "@repo/contracts/seed";
 import type { TokenType } from "@repo/contracts/type";
+import { validateTokenTypeInsertionOrder } from "@repo/contracts/validation/seed/token-type-order";
 import type { SeedValidationError } from "@repo/contracts/validation/seed/types";
 import { validateTokenDomain } from "@repo/contracts/validation/token-domain";
 import { validateTokenTypeHierarchy } from "@repo/contracts/validation/token-type-hierarchy";
@@ -55,7 +56,9 @@ function mapTokenDomainError(
 }
 
 export function validateTokens(seed: SeedData): SeedValidationError[] {
-  const errors: SeedValidationError[] = [];
+  const errors: SeedValidationError[] = [
+    ...validateTokenTypeInsertionOrder(seed.tokenTypes),
+  ];
 
   const tokenTypesById = new Map(
     seed.tokenTypes.map((tokenType) => [tokenType.id, tokenType]),

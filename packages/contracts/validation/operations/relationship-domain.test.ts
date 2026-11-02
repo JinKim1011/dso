@@ -1,8 +1,8 @@
 import {
   baseColorToken,
-  baseColorType,
-  semanticColorType,
-  surfaceToken,
+  modeToken,
+  primitiveTokenType,
+  semanticTokenType,
 } from "@repo/contracts/fixtures/domain-contracts";
 import {
   addReferenceRequest,
@@ -18,8 +18,8 @@ describe("validateAddReferenceOperation", () => {
   it("converts an operation request into a valid token reference", () => {
     const errors = validateAddReferenceOperation(
       addReferenceRequest,
-      [surfaceToken, baseColorToken],
-      [semanticColorType, baseColorType],
+      [modeToken, baseColorToken],
+      [semanticTokenType, primitiveTokenType],
     );
 
     expect(errors).toEqual([]);
@@ -31,10 +31,10 @@ describe("validateChangeParentOperation", () => {
     const errors = validateChangeParentOperation(
       {
         ...changeParentRequest,
-        tokenTypeId: baseColorType.id,
-        parentTypeId: semanticColorType.id,
+        tokenTypeId: primitiveTokenType.id,
+        parentTypeId: semanticTokenType.id,
       },
-      [semanticColorType, baseColorType],
+      [semanticTokenType, primitiveTokenType],
     );
 
     expect(errors.some((error) => error.code === "cycle")).toBe(true);

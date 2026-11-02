@@ -1,3 +1,4 @@
+import { fixtureIds } from "@repo/contracts/fixtures/ids";
 import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { validateSeedData } from "@repo/contracts/validation/seed/index";
 import { describe, expect, it } from "vitest";
@@ -19,7 +20,7 @@ describe("validateSeedData", () => {
       expect.objectContaining({
         code: "missing-record",
         collection: "tokens",
-        id: "token-white",
+        id: fixtureIds.singleToken,
       }),
     );
   });
