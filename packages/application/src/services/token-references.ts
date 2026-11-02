@@ -1,4 +1,4 @@
-import { DomainValidationError } from "@repo/application/error";
+import { DomainValidationError } from "@repo/application/errors";
 import type { AuthorizationContext } from "@repo/application/types";
 import type { AddTokenReferenceRequest } from "@repo/contracts/operation";
 import type { TokenReference } from "@repo/contracts/type";
@@ -40,3 +40,5 @@ export async function addTokenReference(
 
   return insertTokenReference(database, reference);
 }
+
+// A more complete implementation should use a transaction if the operation also writes an audit event.
