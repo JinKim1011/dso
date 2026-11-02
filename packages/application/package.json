@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./error": "./src/errors.ts",
+    "./errors": "./src/errors.ts",
     "./types": "./src/types.ts",
     "./authorization": "./src/authorization.ts",
     "./services/*": "./src/services/*.ts",
