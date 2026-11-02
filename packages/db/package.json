@@ -17,6 +17,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@repo/application": "*",
     "pg": "^8.16.0"
   },
   "devDependencies": {
