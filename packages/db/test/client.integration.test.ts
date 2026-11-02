@@ -1,8 +1,8 @@
 import {
   checkDatabaseConnection,
   closeDatabasePool,
-  createDatabasePool,
 } from "@repo/db/client";
+import { createTestDatabasePool } from "@repo/db/test/database";
 import type { Pool } from "pg";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -10,7 +10,7 @@ let pool: Pool;
 
 describe("database connection", () => {
   beforeAll(async () => {
-    pool = createDatabasePool();
+    pool = createTestDatabasePool();
   });
 
   afterAll(async () => {
