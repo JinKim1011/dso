@@ -82,3 +82,27 @@ export async function listPublishedReleasesByProjectId(
 
   return result.rows.map(mapReleaseRow);
 }
+
+export async function updateReleasesStatus(
+  database: Queryable,
+  releaseId: string,
+  projectId: string,
+  status: ReleaseStatus,
+  publishedAt: string | null,
+): Promise<Release | null> {
+  const result = await database.query<ReleaseRow>(
+    `
+      UPDATE releases
+      SET status = $1,
+          published_at = $2,
+      WHERE id = $1,
+        AND project_id = $4
+      RETURNING id, project_id, version, status, created_at, published_at
+    `,
+    [status, publishedAt, releaseId, projectId],
+  );
+
+  const row = result.rows[0];
+
+  return row ? mapReleaseRow(row) : null;
+}
