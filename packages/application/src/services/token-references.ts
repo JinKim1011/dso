@@ -7,6 +7,7 @@ import { requireProjectAccess } from "@repo/db/repositories/memberships";
 import { insertTokenReference } from "@repo/db/repositories/references";
 import { listTokenTypesByProjectId } from "@repo/db/repositories/token-types";
 import { listTokensByProjectId } from "@repo/db/repositories/tokens";
+
 import type { Pool } from "pg";
 
 export async function addTokenReference(
@@ -40,5 +41,3 @@ export async function addTokenReference(
 
   return insertTokenReference(database, reference);
 }
-
-// A more complete implementation should use a transaction if the operation also writes an audit event.
