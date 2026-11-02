@@ -80,22 +80,29 @@ describe("database constraints", () => {
     const database = getTestDatabase();
     const seed = structuredClone(validSeed);
 
-    await insertProject(database, seed.projects[0]!);
-    await insertProject(database, {
+    const otherProject = {
       id: crypto.randomUUID(),
       name: "Other Project",
       slug: "other-project",
       createdAt: "2026-10-27T10:00:00.000Z",
-    });
+    };
+
+    await insertProject(database, seed.projects[0]!);
+    await insertProject(database, otherProject);
 
     await insertTokenType(database, seed.tokenTypes[0]!);
 
     await expect(
       insertToken(database, {
         ...seed.tokens[0]!,
-        projectId: crypto.randomUUID(),
+        projectId: otherProject.id,
       }),
-    ).rejects.toSatisfy((error: unknown) => postgresErrorCode(error) === "23503");
+    ).rejects.toSatisfy(
+      (error: unknown) =>
+        postgresErrorCode(error) === "23503" &&
+        (error as { constraint?: string }).constraint ===
+          "tokens_token_type_same_project_fk",
+    );
   });
 
   it("rejects a self-reference", async () => {
