@@ -1,15 +1,10 @@
-import { requiredProjectRole } from "@repo/application/authorization";
 import { ResourceNotFoundError } from "@repo/application/errors";
 import { AuthorizationContext } from "@repo/application/types";
-import {
-  PublishReleaseRequest,
-  PublishedReleaseResponse,
-} from "@repo/contracts/operation";
-import { Release } from "@repo/contracts/type";
+import { PublishedReleaseResponse } from "@repo/contracts/operation";
 import { listComponentsByProjectId } from "@repo/db/repositories/components";
 import { requireProjectAccess } from "@repo/db/repositories/memberships";
 import { listTokenReferencesByProjectId } from "@repo/db/repositories/references";
-import { findReleaseById, updateReleasesStatus } from "@repo/db/repositories/releases";
+import { findReleaseById } from "@repo/db/repositories/releases";
 import { listDocumentTemplatesByProjectId } from "@repo/db/repositories/templates";
 import { listTokenTypesByProjectId } from "@repo/db/repositories/token-types";
 import { listTokensByProjectId } from "@repo/db/repositories/tokens";
@@ -45,34 +40,4 @@ export async function getPublishedRelease(
     components,
     templates,
   };
-}
-
-export async function publishRelease(
-  database: Pool,
-  context: AuthorizationContext,
-  request: PublishReleaseRequest,
-): Promise<Release> {
-  const membership = await requireProjectAccess(database, context, request.projectId);
-
-  requiredProjectRole(membership, request.projectId, "publisher");
-
-  const release = await findReleaseById(database, request.releaseId);
-
-  if (!release || release.projectId !== request.projectId) {
-    throw new ResourceNotFoundError();
-  }
-
-  const published = await updateReleasesStatus(
-    database,
-    release.id,
-    request.projectId,
-    "published",
-    new Date().toISOString(),
-  );
-
-  if (!published) {
-    throw new ResourceNotFoundError();
-  }
-
-  return published;
 }
