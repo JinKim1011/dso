@@ -95,7 +95,7 @@ export async function updateReleasesStatus(
       UPDATE releases
       SET status = $1,
           published_at = $2,
-      WHERE id = $1,
+      WHERE id = $3,
         AND project_id = $4
       RETURNING id, project_id, version, status, created_at, published_at
     `,
