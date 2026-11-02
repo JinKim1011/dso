@@ -1,4 +1,4 @@
-import { ProjectAccessDeniedError } from "@repo/application/error";
+import { ProjectAccessDeniedError } from "@repo/application/errors";
 import type { ProjectMemberRole } from "@repo/contracts/validation/enum";
 
 const ROLE_LEVEL: Record<ProjectMemberRole, number> = {

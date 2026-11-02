@@ -1,7 +1,7 @@
 import {
   AuthenticationRequiredError,
   ProjectAccessDeniedError,
-} from "@repo/application/error";
+} from "@repo/application/errors";
 import type { AuthorizationContext } from "@repo/application/types";
 import type { ProjectMember } from "@repo/contracts/type";
 import type { ProjectMemberRole } from "@repo/contracts/validation/enum";
