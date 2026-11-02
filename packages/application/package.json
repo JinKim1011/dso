@@ -8,7 +8,8 @@
     "./types": "./src/types.ts",
     "./authorization": "./src/authorization.ts",
     "./services/*": "./src/services/*.ts",
-    "./security/*": "./src/security/*.ts"
+    "./security/*": "./src/security/*.ts",
+    "./fixtures": "./test/fixtures.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",
@@ -19,10 +20,12 @@
     "pg": "^8.16.0"
   },
   "devDependencies": {
+    "@repo/db": "*",
     "@repo/contracts": "*",
     "@repo/typescript-config": "*",
     "@types/node": "^22.0.0",
     "@types/pg": "^8.15.0",
+    "pg": "^8.16.0",
     "typescript": "5.9.2",
     "vitest": "^4.1.4"
   }
