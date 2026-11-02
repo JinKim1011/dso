@@ -10,8 +10,22 @@ const migrationsDirectory = path.resolve(
   "../../../database/migrations",
 );
 
+export function createTestDatabasePool(): Pool {
+  const connectionString = process.env.TEST_DATABASE_URL;
+
+  if (!connectionString) {
+    throw new Error("TEST_DATABASE_URL is required for database tests.");
+  }
+
+  if (connectionString === process.env.DATABASE_URL) {
+    throw new Error("TEST_DATABASE_URL must be different from DATABASE_URL.");
+  }
+
+  return createDatabasePool(connectionString);
+}
+
 export async function setupDatabase(): Promise<Pool> {
-  pool = createDatabasePool();
+  pool = createTestDatabasePool();
 
   await runMigrations(pool, migrationsDirectory);
 
