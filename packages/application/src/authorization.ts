@@ -1,11 +1,22 @@
+import { ProjectAccessDeniedError } from "@repo/application/error";
 import type { ProjectMemberRole } from "@repo/contracts/validation/enum";
 
-export type AuthorizationContext = {
-    userId: string;
-    sessionId: string;
-}
+const ROLE_LEVEL: Record<ProjectMemberRole, number> = {
+  editor: 1,
+  publisher: 2,
+  admin: 3,
+};
 
-export type ProjectAccess = {
-    projectId: string;
-    role: ProjectMemberRole;
+export function requiredProjectRole(
+  access: { projectId: string; role: ProjectMemberRole },
+  projectId: string,
+  minimumRole: ProjectMemberRole,
+): void {
+  if (access.projectId !== projectId) {
+    throw new ProjectAccessDeniedError();
+  }
+
+  if (ROLE_LEVEL[access.role] < ROLE_LEVEL[minimumRole]) {
+    throw new ProjectAccessDeniedError();
+  }
 }
