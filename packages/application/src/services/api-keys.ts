@@ -35,7 +35,7 @@ export async function createApiKey(
     const keyIdentifier = generateKeyIdentifier();
     const keyHash = hashApiKey(secret);
 
-    const apiKey = await insertApiKey(database, {
+    const apiKey = await insertApiKey(client, {
       id: crypto.randomUUID(),
       projectId: request.projectId,
       keyIdentifier,
