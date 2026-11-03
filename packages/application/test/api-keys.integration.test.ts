@@ -141,6 +141,39 @@ describe("Create API keys service integration", () => {
       code: "project-access-denied",
     });
   });
+
+  it("rejects cross-project API-key revocation", async () => {
+    const database = getTestDatabase();
+
+    const owner = await seedProject(database, "admin");
+    const otherProject = await seedProject(database, "admin");
+
+    const created = await createApiKey(database, owner.context, {
+      projectId: owner.project.id,
+      expiresAt: "2027-01-01T00:00:00.000Z",
+      scope: "release:read",
+    });
+
+    await expect(
+      revokeApiKey(database, otherProject.context, {
+        projectId: otherProject.project.id,
+        apiKeyId: created.apiKey.id,
+      }),
+    ).rejects.toMatchObject({
+      code: "resource-not-found",
+    });
+
+    const result = await database.query(
+      `
+      SELECT revoked_at
+      FROM api_keys
+      WHERE id = $1
+    `,
+      [created.apiKey.id],
+    );
+
+    expect(result.rows[0].revoked_at).toBeNull();
+  });
 });
 
 describe("Revoke API keys service integration", () => {
