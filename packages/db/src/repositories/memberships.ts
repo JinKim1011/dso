@@ -1,8 +1,4 @@
-import {
-  AuthenticationRequiredError,
-  ProjectAccessDeniedError,
-} from "@repo/application/errors";
-import type { AuthorizationContext } from "@repo/application/types";
+import { ProjectAccessDeniedError } from "@repo/application/errors";
 import type { ProjectMember } from "@repo/contracts/type";
 import type { ProjectMemberRole } from "@repo/contracts/validation/enum";
 import type { Pool, PoolClient, QueryResultRow } from "pg";
@@ -68,14 +64,10 @@ export async function findProjectMember(
 
 export async function requireProjectAccess(
   database: Pool,
-  context: AuthorizationContext,
+  userId: string,
   projectId: string,
 ): Promise<ProjectMember> {
-  if (!context.userId) {
-    throw new AuthenticationRequiredError();
-  }
-
-  const membership = await findProjectMember(database, projectId, context.userId);
+  const membership = await findProjectMember(database, projectId, userId);
 
   if (!membership) {
     throw new ProjectAccessDeniedError();
