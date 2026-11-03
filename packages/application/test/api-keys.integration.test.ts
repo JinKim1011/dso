@@ -302,24 +302,25 @@ describe("Revoke API keys service integration", () => {
   it("Rejects a publisher from revokess an API key", async () => {
     const database = getTestDatabase();
 
-    const fixture = await seedProject(database, "admin");
+    const adminFixture = await seedProject(database, "admin");
+    const publisherFixture = await seedProject(database, "publisher");
 
-    const created = await createApiKey(database, fixture.context, {
-      projectId: fixture.project.id,
+    const created = await createApiKey(database, adminFixture.context, {
+      projectId: adminFixture.project.id,
       expiresAt: "2027-01-01T00:00:00.000Z",
       scope: "release:read",
     });
 
     await insertProjectMember(database, {
-      projectId: fixture.project.id,
-      userId: fixture.user.id,
+      projectId: adminFixture.project.id,
+      userId: publisherFixture.user.id,
       role: "publisher",
       createdAt: new Date().toISOString(),
     });
 
     await expect(
-      revokeApiKey(database, fixture.context, {
-        projectId: fixture.project.id,
+      revokeApiKey(database, publisherFixture.context, {
+        projectId: adminFixture.project.id,
         apiKeyId: created.apiKey.id,
       }),
     ).rejects.toMatchObject({
