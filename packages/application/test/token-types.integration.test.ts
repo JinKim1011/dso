@@ -72,4 +72,23 @@ describe("Token-type parent service integration", () => {
       }),
     ).rejects.toBeInstanceOf(ProjectAccessDeniedError);
   });
+
+  it("serializes concurrent hierarchy changes", async () => {
+    const database = getTestDatabase();
+    const fixture = await seedProject(database, "editor");
+
+    const first = changeTokenTypeParent(database, fixture.context, {
+      projectId: fixture.project.id,
+      tokenTypeId: fixture.primitiveType.id,
+      parentTypeId: null,
+    });
+
+    const second = changeTokenTypeParent(database, fixture.context, {
+      projectId: fixture.project.id,
+      tokenTypeId: fixture.semanticType.id,
+      parentTypeId: fixture.primitiveType.id,
+    });
+
+    await Promise.all([first, second]);
+  });
 });
