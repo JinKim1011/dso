@@ -41,6 +41,7 @@ export async function resetDatabase(database: Pool): Promise<void> {
       sessions,
       document_templates,
       components,
+      release_snapshots,
       token_references,
       tokens,
       token_types,
