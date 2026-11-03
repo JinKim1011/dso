@@ -125,6 +125,22 @@ describe("Create API keys service integration", () => {
       await database.query("DROP FUNCTION IF EXISTS fail_api_key_audit_insert()");
     }
   });
+
+  it("Rejects a publisher from creates an API key", async () => {
+    const database = getTestDatabase();
+
+    const fixture = await seedProject(database, "publisher");
+
+    await expect(
+      createApiKey(database, fixture.context, {
+        projectId: fixture.project.id,
+        expiresAt: "2027-01-01T00:00:00.000Z",
+        scope: "release:read",
+      }),
+    ).rejects.toMatchObject({
+      code: "project-access-denied",
+    });
+  });
 });
 
 describe("Revoke API keys service integration", () => {
@@ -242,5 +258,33 @@ describe("Revoke API keys service integration", () => {
         resource_id: created.apiKey.id,
       },
     ]);
+  });
+
+  it("Rejects a publisher from revokess an API key", async () => {
+    const database = getTestDatabase();
+
+    const fixture = await seedProject(database, "admin");
+
+    const created = await createApiKey(database, fixture.context, {
+      projectId: fixture.project.id,
+      expiresAt: "2027-01-01T00:00:00.000Z",
+      scope: "release:read",
+    });
+
+    await insertProjectMember(database, {
+      projectId: fixture.project.id,
+      userId: fixture.user.id,
+      role: "publisher",
+      createdAt: new Date().toISOString(),
+    });
+
+    await expect(
+      revokeApiKey(database, fixture.context, {
+        projectId: fixture.project.id,
+        apiKeyId: created.apiKey.id,
+      }),
+    ).rejects.toMatchObject({
+      code: "project-access-denied",
+    });
   });
 });
