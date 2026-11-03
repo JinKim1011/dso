@@ -17,7 +17,7 @@ type ReleaseSnapshotRow = QueryResultRow & {
   templates: PublishedReleaseSnapshot["templates"];
 };
 
-export async function insertReleaseSnapshot(
+async function insertReleaseSnapshot(
   database: Queryable,
   releaseId: string,
   snapshot: PublishedReleaseSnapshot,
@@ -91,25 +91,13 @@ export async function createReleaseSnapshot(
     listDocumentTemplatesByProjectId(database, projectId),
   ]);
 
-  await database.query(
-    `
-      INSERT INTO release_snapshots (
-        release_id,
-        token_types,
-        tokens,
-        references,
-        components,
-        templates
-      )
-      VALUES ($1, $2::jsonb, $3::jsonb, $4::jsonb, $5::jsonb, $6::jsonb)
-    `,
-    [
-      releaseId,
-      JSON.stringify(tokenTypes),
-      JSON.stringify(tokens),
-      JSON.stringify(references),
-      JSON.stringify(components),
-      JSON.stringify(templates),
-    ],
-  );
+  const snapshot: PublishedReleaseSnapshot = {
+    tokenTypes,
+    tokens,
+    references,
+    components,
+    templates,
+  };
+
+  await insertReleaseSnapshot(database, releaseId, snapshot);
 }
