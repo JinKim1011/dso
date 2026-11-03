@@ -1,4 +1,5 @@
 import { requiredProjectRole } from "@repo/application/authorization";
+import { ResourceNotFoundError } from "@repo/application/errors";
 import {
   generateKeyIdentifier,
   generateOpaqueApiKeySecret,
@@ -8,9 +9,16 @@ import { AuthorizationContext } from "@repo/application/types";
 import type {
   CreateApiKeyRequest,
   CreateApiKeyResponse,
+  RevokeApiKeyRequest,
 } from "@repo/contracts/operation";
-import { insertApiKey } from "@repo/db/repositories/api-keys";
+import { ApiKey } from "@repo/contracts/type";
+import {
+  insertApiKey,
+  revokeApiKey as revokeStoredApiKey,
+} from "@repo/db/repositories/api-keys";
+import { insertAuditEvent } from "@repo/db/repositories/audit-events";
 import { requireProjectAccess } from "@repo/db/repositories/memberships";
+import { withTransaction } from "@repo/db/transaction";
 import { Pool } from "pg";
 
 export async function createApiKey(
@@ -47,4 +55,39 @@ export async function createApiKey(
     },
     secret,
   };
+}
+
+export async function revokeApiKey(
+  database: Pool,
+  context: AuthorizationContext,
+  request: RevokeApiKeyRequest,
+): Promise<ApiKey> {
+  const membership = await requireProjectAccess(database, context, request.projectId);
+
+  requiredProjectRole(membership, request.projectId, "admin");
+
+  return withTransaction(database, async (client) => {
+    const revoked = await revokeStoredApiKey(
+      client,
+      request.apiKeyId,
+      request.projectId,
+      new Date().toISOString(),
+    );
+
+    if (!revoked) {
+      throw new ResourceNotFoundError();
+    }
+
+    await insertAuditEvent(client, {
+      id: crypto.randomUUID(),
+      userId: context.userId,
+      projectId: request.projectId,
+      action: "api_key.revoked",
+      resourceType: "api_key",
+      resourceId: revoked.id,
+      createdAt: new Date().toISOString(),
+    });
+
+    return revoked;
+  });
 }
