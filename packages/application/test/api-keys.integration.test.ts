@@ -274,21 +274,27 @@ describe("Revoke API keys service integration", () => {
       scope: "release:read",
     });
 
+    await revokeApiKey(database, fixture.context, {
+      projectId: fixture.project.id,
+      apiKeyId: created.apiKey.id,
+    });
+
     const result = await database.query(
       `
-        SELECT action, resource_type, resource_id
-        FROM audit_events
-        WHERE project_id = $1
+      SELECT action, resource_type, resource_id
+      FROM audit_events
+      WHERE project_id = $1
         AND resource_id = $2
-       `,
+        AND action = 'api_key.revoked'
+      `,
       [fixture.project.id, created.apiKey.id],
     );
 
     expect(result.rows).toEqual([
       {
         action: "api_key.revoked",
-        resource_type: "api_key",
         resource_id: created.apiKey.id,
+        resource_type: "api_key",
       },
     ]);
   });
