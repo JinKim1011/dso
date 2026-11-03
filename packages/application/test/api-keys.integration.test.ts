@@ -142,7 +142,7 @@ describe("Create API keys service integration", () => {
     });
   });
 
-  it("rejects cross-project API-key revocation", async () => {
+  it("Rejects cross-project API-key revocation", async () => {
     const database = getTestDatabase();
 
     const owner = await seedProject(database, "admin");
