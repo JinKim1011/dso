@@ -9,10 +9,12 @@ import type { ChangeTokenTypeParentRequest } from "@repo/contracts/operation";
 import type { TokenType } from "@repo/contracts/type";
 import { validateChangeParentOperation } from "@repo/contracts/validation/operations/relationship-domain";
 import { requireProjectAccess } from "@repo/db/repositories/memberships";
+import { lockProjectForUpdate } from "@repo/db/repositories/projects";
 import {
   listTokenTypesByProjectId,
   updateTokenTypeParent,
 } from "@repo/db/repositories/token-types";
+import { withTransaction } from "@repo/db/transaction";
 import type { Pool } from "pg";
 
 export async function changeTokenTypeParent(
@@ -32,24 +34,32 @@ export async function changeTokenTypeParent(
 
   requiredProjectRole(membership, request.projectId, "editor");
 
-  const tokenTypes = await listTokenTypesByProjectId(database, request.projectId);
+  return withTransaction(database, async (client) => {
+    const projectLocked = await lockProjectForUpdate(client, request.projectId);
 
-  const errors = validateChangeParentOperation(request, tokenTypes);
+    if (!projectLocked) {
+      throw new ResourceNotFoundError();
+    }
 
-  if (errors.length > 0) {
-    throw new DomainValidationError(errors);
-  }
+    const tokenTypes = await listTokenTypesByProjectId(client, request.projectId);
 
-  const updated = await updateTokenTypeParent(
-    database,
-    request.tokenTypeId,
-    request.projectId,
-    request.parentTypeId,
-  );
+    const errors = validateChangeParentOperation(request, tokenTypes);
 
-  if (!updated) {
-    throw new ResourceNotFoundError();
-  }
+    if (errors.length > 0) {
+      throw new DomainValidationError(errors);
+    }
 
-  return updated;
+    const updated = await updateTokenTypeParent(
+      client,
+      request.tokenTypeId,
+      request.projectId,
+      request.parentTypeId,
+    );
+
+    if (!updated) {
+      throw new ResourceNotFoundError();
+    }
+
+    return updated;
+  });
 }
