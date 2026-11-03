@@ -82,6 +82,9 @@ export type DownloadReleaseRequest = {
 export type PublishedReleaseResponse = {
   schemaVersion: 1;
   release: Release;
+} & PublishedReleaseSnapshot;
+
+export type PublishedReleaseSnapshot = {
   tokenTypes: TokenType[];
   tokens: Token[];
   references: TokenReference[];
