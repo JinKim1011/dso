@@ -140,4 +140,46 @@ describe("Publising release service integration", () => {
     expect(serialized).not.toContain("keyHash");
     expect(serialized).not.toContain("secret");
   });
+
+  it("returns the published snapshot instead of current project contents", async () => {
+    const database = getTestDatabase();
+    const fixture = await seedProject(database, "publisher");
+
+    const release = await insertRelease(database, {
+      id: crypto.randomUUID(),
+      projectId: fixture.project.id,
+      version: "1.0.0",
+      status: "draft",
+      createdAt: new Date().toISOString(),
+      publishedAt: null,
+    });
+
+    await publishRelease(database, fixture.context, {
+      projectId: fixture.project.id,
+      releaseId: release.id,
+    });
+
+    const beforeChanges = await getPublishedRelease(
+      database,
+      fixture.context,
+      release.id,
+    );
+
+    await database.query(
+      `
+      UPDATE token_types
+      SET parent_type_id = NULL
+      WHERE project_id = $1
+    `,
+      [fixture.project.id],
+    );
+
+    const afterChanges = await getPublishedRelease(database, fixture.context, release.id);
+
+    expect(afterChanges.tokenTypes).toEqual(beforeChanges.tokenTypes);
+    expect(afterChanges.tokens).toEqual(beforeChanges.tokens);
+    expect(afterChanges.references).toEqual(beforeChanges.references);
+    expect(afterChanges.components).toEqual(beforeChanges.components);
+    expect(afterChanges.templates).toEqual(beforeChanges.templates);
+  });
 });
