@@ -1,4 +1,7 @@
-import { requiredProjectRole } from "@repo/application/authorization";
+import {
+  requiredProjectRole,
+  requireProjectAccess,
+} from "@repo/application/authorization";
 import {
   DomainValidationError,
   ProjectAccessDeniedError,
@@ -8,7 +11,6 @@ import type { AuthorizationContext } from "@repo/application/types";
 import type { ChangeTokenTypeParentRequest } from "@repo/contracts/operation";
 import type { TokenType } from "@repo/contracts/type";
 import { validateChangeParentOperation } from "@repo/contracts/validation/operations/relationship-domain";
-import { requireProjectAccess } from "@repo/db/repositories/memberships";
 import { lockProjectForUpdate } from "@repo/db/repositories/projects";
 import {
   listTokenTypesByProjectId,

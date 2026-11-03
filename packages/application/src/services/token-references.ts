@@ -1,3 +1,4 @@
+import { requireProjectAccess } from "@repo/application/authorization";
 import {
   DomainValidationError,
   ProjectAccessDeniedError,
@@ -6,7 +7,6 @@ import type { AuthorizationContext } from "@repo/application/types";
 import type { AddTokenReferenceRequest } from "@repo/contracts/operation";
 import type { TokenReference } from "@repo/contracts/type";
 import { validateTokenReference } from "@repo/contracts/validation/token-reference";
-import { requireProjectAccess } from "@repo/db/repositories/memberships";
 import { insertTokenReference } from "@repo/db/repositories/references";
 import { listTokenTypesByProjectId } from "@repo/db/repositories/token-types";
 import { listTokensByProjectId } from "@repo/db/repositories/tokens";

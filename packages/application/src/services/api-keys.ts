@@ -1,4 +1,7 @@
-import { requiredProjectRole } from "@repo/application/authorization";
+import {
+  requiredProjectRole,
+  requireProjectAccess,
+} from "@repo/application/authorization";
 import {
   ProjectAccessDeniedError,
   ResourceNotFoundError,
@@ -20,7 +23,6 @@ import {
   revokeApiKey as revokeStoredApiKey,
 } from "@repo/db/repositories/api-keys";
 import { insertAuditEvent } from "@repo/db/repositories/audit-events";
-import { requireProjectAccess } from "@repo/db/repositories/memberships";
 import { withTransaction } from "@repo/db/transaction";
 import { Pool } from "pg";
 

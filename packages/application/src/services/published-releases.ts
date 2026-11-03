@@ -1,7 +1,7 @@
+import { requireProjectAccess } from "@repo/application/authorization";
 import { ResourceNotFoundError } from "@repo/application/errors";
 import { AuthorizationContext } from "@repo/application/types";
 import { PublishedReleaseResponse } from "@repo/contracts/operation";
-import { requireProjectAccess } from "@repo/db/repositories/memberships";
 import { findReleaseSnapshot } from "@repo/db/repositories/release-snapshots";
 import { findReleaseById } from "@repo/db/repositories/releases";
 import { Pool } from "pg";

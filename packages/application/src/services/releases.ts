@@ -1,4 +1,7 @@
-import { requiredProjectRole } from "@repo/application/authorization";
+import {
+  requiredProjectRole,
+  requireProjectAccess,
+} from "@repo/application/authorization";
 import {
   ProjectAccessDeniedError,
   ResourceNotFoundError,
@@ -7,7 +10,6 @@ import { AuthorizationContext } from "@repo/application/types";
 import type { PublishReleaseRequest } from "@repo/contracts/operation";
 import type { Release } from "@repo/contracts/type";
 import { insertAuditEvent } from "@repo/db/repositories/audit-events";
-import { requireProjectAccess } from "@repo/db/repositories/memberships";
 import { createReleaseSnapshot } from "@repo/db/repositories/release-snapshots";
 import {
   findDraftReleaseForUpdate,
