@@ -112,4 +112,32 @@ describe("Publising release service integration", () => {
       await database.query("DROP FUNCTION IF EXISTS fail_release_audit_insert()");
     }
   });
+
+  it("does not expose credential fields in a published release response", async () => {
+    const database = getTestDatabase();
+
+    const fixture = await seedProject(database, "admin");
+
+    const release = await insertRelease(database, {
+      id: crypto.randomUUID(),
+      projectId: fixture.project.id,
+      version: "1.0.0",
+      status: "draft",
+      createdAt: new Date().toISOString(),
+      publishedAt: null,
+    });
+
+    await publishRelease(database, fixture.context, {
+      projectId: fixture.project.id,
+      releaseId: release.id,
+    });
+
+    const response = await getPublishedRelease(database, fixture.context, release.id);
+
+    const serialized = JSON.stringify(response);
+
+    expect(serialized).not.toContain("passwordHash");
+    expect(serialized).not.toContain("keyHash");
+    expect(serialized).not.toContain("secret");
+  });
 });
