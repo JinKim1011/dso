@@ -21,7 +21,7 @@ export async function getPublishedRelease(
     throw new ResourceNotFoundError();
   }
 
-  await requireProjectAccess(database, context, release.projectId);
+  await requireProjectAccess(database, context.userId, release.projectId);
 
   const [tokenTypes, tokens, references, components, templates] = await Promise.all([
     listTokenTypesByProjectId(database, release.projectId),

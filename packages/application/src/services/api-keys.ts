@@ -26,7 +26,11 @@ export async function createApiKey(
   context: AuthorizationContext,
   request: CreateApiKeyRequest,
 ): Promise<CreateApiKeyResponse> {
-  const membership = await requireProjectAccess(database, context, request.projectId);
+  const membership = await requireProjectAccess(
+    database,
+    context.userId,
+    request.projectId,
+  );
 
   requiredProjectRole(membership, request.projectId, "admin");
 
@@ -74,7 +78,11 @@ export async function revokeApiKey(
   context: AuthorizationContext,
   request: RevokeApiKeyRequest,
 ): Promise<ApiKey> {
-  const membership = await requireProjectAccess(database, context, request.projectId);
+  const membership = await requireProjectAccess(
+    database,
+    context.userId,
+    request.projectId,
+  );
 
   requiredProjectRole(membership, request.projectId, "admin");
 

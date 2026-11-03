@@ -15,7 +15,11 @@ export async function addTokenReference(
   context: AuthorizationContext,
   request: AddTokenReferenceRequest,
 ): Promise<TokenReference> {
-  const membership = await requireProjectAccess(database, context, request.projectId);
+  const membership = await requireProjectAccess(
+    database,
+    context.userId,
+    request.projectId,
+  );
 
   if (!["editor", "publisher", "admin"].includes(membership.role)) {
     throw new Error("Unreachable role configuration.");

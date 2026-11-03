@@ -14,7 +14,11 @@ export async function publishRelease(
   context: AuthorizationContext,
   request: PublishReleaseRequest,
 ): Promise<Release> {
-  const membership = await requireProjectAccess(database, context, request.projectId);
+  const membership = await requireProjectAccess(
+    database,
+    context.userId,
+    request.projectId,
+  );
 
   requiredProjectRole(membership, request.projectId, "publisher");
 
