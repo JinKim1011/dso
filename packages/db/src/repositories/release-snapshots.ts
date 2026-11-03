@@ -28,7 +28,7 @@ async function insertReleaseSnapshot(
         release_id,
         token_types,
         tokens,
-        references,
+        reference_data,
         components,
         templates
       )
@@ -54,7 +54,7 @@ export async function findReleaseSnapshot(
       SELECT
         token_types,
         tokens,
-        references,
+        reference_data,
         components,
         templates
       FROM release_snapshots
