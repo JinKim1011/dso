@@ -76,6 +76,55 @@ describe("Create API keys service integration", () => {
       },
     ]);
   });
+
+  it("rolls back API-key creation when audit insertion fails", async () => {
+    const database = getTestDatabase();
+    const fixture = await seedProject(database, "admin");
+
+    await database.query(`
+    CREATE FUNCTION fail_api_key_audit_insert()
+    RETURNS trigger AS $$
+    BEGIN
+      IF NEW.action = 'api_key.created' THEN
+        RAISE EXCEPTION 'forced API-key audit failure';
+      END IF;
+
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql
+  `);
+
+    await database.query(`
+    CREATE TRIGGER fail_api_key_audit
+    BEFORE INSERT ON audit_events
+    FOR EACH ROW
+    EXECUTE FUNCTION fail_api_key_audit_insert()
+  `);
+
+    try {
+      await expect(
+        createApiKey(database, fixture.context, {
+          projectId: fixture.project.id,
+          expiresAt: "2027-01-01T00:00:00.000Z",
+          scope: "release:read",
+        }),
+      ).rejects.toThrow("forced API-key audit failure");
+
+      const result = await database.query(
+        `
+        SELECT COUNT(*)::int AS count
+        FROM api_keys
+        WHERE project_id = $1
+      `,
+        [fixture.project.id],
+      );
+
+      expect(result.rows[0].count).toBe(0);
+    } finally {
+      await database.query("DROP TRIGGER IF EXISTS fail_api_key_audit ON audit_events");
+      await database.query("DROP FUNCTION IF EXISTS fail_api_key_audit_insert()");
+    }
+  });
 });
 
 describe("Revoke API keys service integration", () => {
