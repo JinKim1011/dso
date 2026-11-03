@@ -15,7 +15,8 @@ export type TokenReferenceValidationError = {
     | "unsupported-slot"
     | "missing-referencing-token-type"
     | "missing-referenced-token-type"
-    | "incompatible-referenced-token-type";
+    | "incompatible-referenced-token-type"
+    | "invalid-referencing-token-kind";
   message: string;
 };
 
