@@ -1,5 +1,8 @@
 import { requiredProjectRole } from "@repo/application/authorization";
-import { ResourceNotFoundError } from "@repo/application/errors";
+import {
+  ProjectAccessDeniedError,
+  ResourceNotFoundError,
+} from "@repo/application/errors";
 import { AuthorizationContext } from "@repo/application/types";
 import type { PublishReleaseRequest } from "@repo/contracts/operation";
 import type { Release } from "@repo/contracts/type";
@@ -19,6 +22,10 @@ export async function publishRelease(
     context.userId,
     request.projectId,
   );
+
+  if (!membership) {
+    throw new ProjectAccessDeniedError();
+  }
 
   requiredProjectRole(membership, request.projectId, "publisher");
 

@@ -1,5 +1,9 @@
 import { requiredProjectRole } from "@repo/application/authorization";
-import { DomainValidationError, ResourceNotFoundError } from "@repo/application/errors";
+import {
+  DomainValidationError,
+  ProjectAccessDeniedError,
+  ResourceNotFoundError,
+} from "@repo/application/errors";
 import type { AuthorizationContext } from "@repo/application/types";
 import type { ChangeTokenTypeParentRequest } from "@repo/contracts/operation";
 import type { TokenType } from "@repo/contracts/type";
@@ -21,6 +25,10 @@ export async function changeTokenTypeParent(
     context.userId,
     request.projectId,
   );
+
+  if (!membership) {
+    throw new ProjectAccessDeniedError();
+  }
 
   requiredProjectRole(membership, request.projectId, "editor");
 

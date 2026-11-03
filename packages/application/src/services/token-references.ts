@@ -1,4 +1,7 @@
-import { DomainValidationError } from "@repo/application/errors";
+import {
+  DomainValidationError,
+  ProjectAccessDeniedError,
+} from "@repo/application/errors";
 import type { AuthorizationContext } from "@repo/application/types";
 import type { AddTokenReferenceRequest } from "@repo/contracts/operation";
 import type { TokenReference } from "@repo/contracts/type";
@@ -20,6 +23,10 @@ export async function addTokenReference(
     context.userId,
     request.projectId,
   );
+
+  if (!membership) {
+    throw new ProjectAccessDeniedError();
+  }
 
   if (!["editor", "publisher", "admin"].includes(membership.role)) {
     throw new Error("Unreachable role configuration.");

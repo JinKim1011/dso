@@ -1,5 +1,8 @@
 import { requiredProjectRole } from "@repo/application/authorization";
-import { ResourceNotFoundError } from "@repo/application/errors";
+import {
+  ProjectAccessDeniedError,
+  ResourceNotFoundError,
+} from "@repo/application/errors";
 import {
   generateKeyIdentifier,
   generateOpaqueApiKeySecret,
@@ -31,6 +34,10 @@ export async function createApiKey(
     context.userId,
     request.projectId,
   );
+
+  if (!membership) {
+    throw new ProjectAccessDeniedError();
+  }
 
   requiredProjectRole(membership, request.projectId, "admin");
 
@@ -83,6 +90,10 @@ export async function revokeApiKey(
     context.userId,
     request.projectId,
   );
+
+  if (!membership) {
+    throw new ProjectAccessDeniedError();
+  }
 
   requiredProjectRole(membership, request.projectId, "admin");
 
