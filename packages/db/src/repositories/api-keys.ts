@@ -71,7 +71,7 @@ export async function findActiveApiKeyByIdentifier(
   return row ? mapApiKeyRow(row) : null;
 }
 
-export async function revokeApikey(
+export async function revokeApiKey(
   database: Queryable,
   apiKeyId: string,
   projectId: string,
