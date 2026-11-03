@@ -15,7 +15,8 @@ export type TokenReferenceValidationError = {
     | "unsupported-slot"
     | "missing-referencing-token-type"
     | "missing-referenced-token-type"
-    | "incompatible-referenced-token-type";
+    | "incompatible-referenced-token-type"
+    | "invalid-referencing-token-kind";
   message: string;
 };
 
@@ -62,6 +63,13 @@ export function validateTokenReference(
     });
 
     return errors;
+  }
+
+  if (referencingTokenType.kind === "primitive") {
+    errors.push({
+      code: "invalid-referencing-token-kind",
+      message: "Primitive tokens cannot reference other tokens.",
+    });
   }
 
   const referencedTokenType = tokenTypeById.get(referencedToken.tokenTypeId);

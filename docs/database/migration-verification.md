@@ -14,7 +14,7 @@
 - Status: completed
 - Result: all migrations applied successfully
 
-Migrations `001` through `007` were applied in numeric order to an empty PostgreSQL database without errors. The schema was created successfully from an empty database.
+Migrations `001` through `008` were applied in numeric order to an empty PostgreSQL database without errors. The schema was created successfully from an empty database.
 
 Applied migrations:
 
@@ -22,9 +22,10 @@ Applied migrations:
 2. `002_create_users.sql`
 3. `003_create_dependent_tables.sql`
 4. `004_create_token_references.sql`
-5. `005_create_security_tables.sql`
-6. `006_add_constraints.sql`
-7. `007_add_indexes.sql`
+5. `005_create_release_snapshots.sql`
+6. `006_create_security_tables.sql`
+7. `007_add_constraints.sql`
+8. `008_add_indexes.sql`
 
 ## Tables Verified
 
@@ -40,6 +41,7 @@ Applied migrations:
 - `token_references`
 - `components`
 - `document_templates`
+- `release_snapshots`
 
 ### Security tables
 
@@ -69,6 +71,7 @@ The direct token foreign keys enforce token existence.
 - `document_templates.project_id` references `projects.id`
 - `document_templates.(project_id, component_id)` references
   `components.(project_id, id)`
+- `release_snapshots.release_id` references `releases.id`
 
 ### Token-reference relationships
 

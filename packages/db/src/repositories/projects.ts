@@ -58,3 +58,20 @@ export async function findProjectById(
 
   return row ? mapProjectRow(row) : null;
 }
+
+export async function lockProjectForUpdate(
+  database: Queryable,
+  projectId: string,
+): Promise<boolean> {
+  const result = await database.query(
+    `
+      SELECT id
+      FROM projects
+      WHERE id = $1
+      FOR UPDATE
+    `,
+    [projectId],
+  );
+
+  return result.rowCount === 1;
+}

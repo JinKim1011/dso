@@ -224,4 +224,27 @@ describe("validateTokenReference", () => {
 
     expect(errors.some((error) => error.code === "invalid-slot")).toBe(true);
   });
+
+  it("rejects a primitive token from referencing another token", () => {
+    const types = [
+      tokenType("space-a", "spacing", "primitive"),
+      tokenType("space-b", "spacing", "primitive"),
+    ];
+
+    const tokens = [
+      singleToken("space-a-token", "space-a"),
+      singleToken("space-b-token", "space-b"),
+    ];
+
+    const errors = validateTokenReference(
+      reference("space-a-token", "space-b-token", "value"),
+      tokens,
+      types,
+      projectId,
+    );
+
+    expect(errors.some((error) => error.code === "invalid-referencing-token-kind")).toBe(
+      true,
+    );
+  });
 });

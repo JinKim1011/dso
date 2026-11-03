@@ -99,3 +99,25 @@ export async function listTokenTypeHierarchy(
 
   return result.rows.map(mapTokenTypeRow);
 }
+
+export async function updateTokenTypeParent(
+  database: Queryable,
+  tokenTypeId: string,
+  projectId: string,
+  parentTypeId: string | null,
+): Promise<TokenType | null> {
+  const result = await database.query<TokenTypeRow>(
+    `
+      UPDATE token_types
+      SET parent_type_id = $1
+      WHERE id = $2
+        AND project_id = $3
+      RETURNING id, project_id, parent_type_id, category, name, kind
+    `,
+    [parentTypeId, tokenTypeId, projectId],
+  );
+
+  const row = result.rows[0];
+
+  return row ? mapTokenTypeRow(row) : null;
+}

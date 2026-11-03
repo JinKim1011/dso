@@ -82,3 +82,55 @@ export async function listPublishedReleasesByProjectId(
 
   return result.rows.map(mapReleaseRow);
 }
+
+export async function updateReleasesStatus(
+  database: Queryable,
+  releaseId: string,
+  projectId: string,
+  status: ReleaseStatus,
+  publishedAt: string | null,
+): Promise<Release | null> {
+  const result = await database.query<ReleaseRow>(
+    `
+      UPDATE releases
+      SET status = $1,
+          published_at = $2
+      WHERE id = $3
+        AND project_id = $4
+      RETURNING id, project_id, version, status, created_at, published_at
+    `,
+    [status, publishedAt, releaseId, projectId],
+  );
+
+  const row = result.rows[0];
+
+  return row ? mapReleaseRow(row) : null;
+}
+
+export async function findDraftReleaseForUpdate(
+  database: Queryable,
+  releaseId: string,
+  projectId: string,
+): Promise<Release | null> {
+  const result = await database.query<ReleaseRow>(
+    `
+      SELECT
+        id,
+        project_id,
+        version,
+        status,
+        created_at,
+        published_at
+      FROM releases
+      WHERE id = $1
+        AND project_id = $2
+        AND status = 'draft'
+      FOR UPDATE
+    `,
+    [releaseId, projectId],
+  );
+
+  const row = result.rows[0];
+
+  return row ? mapReleaseRow(row) : null;
+}
