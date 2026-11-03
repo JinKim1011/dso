@@ -97,7 +97,7 @@ export async function createReleaseSnapshot(
         release_id,
         token_types,
         tokens,
-        "references",
+        references,
         components,
         templates
       )
