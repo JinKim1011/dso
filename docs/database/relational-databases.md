@@ -143,7 +143,7 @@ Tables, columns, keys, relationships, constraints, and indexes are implemented.
 
 - [ER model](../../docs/database/er-model.md)
 - [Migrations](../../database/migrations/001_create_base_schema.sql) through
-  `007_add_indexes.sql`
+  `008_add_indexes.sql`
 - [Migration verification](../../docs/database/migration-verification.md)
 - [Token hierarchy validator](../../packages/contracts/validation/token-type-hierarchy.ts)
 - [Token reference validator](../../packages/contracts/validation/token-reference.ts)
