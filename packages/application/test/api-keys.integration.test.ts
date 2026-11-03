@@ -47,6 +47,35 @@ describe("Create API keys service integration", () => {
       }),
     ).rejects.toMatchObject({ code: "project-access-denied" });
   });
+
+  it("creates an API key audit event", async () => {
+    const database = getTestDatabase();
+    const fixture = await seedProject(database, "admin");
+
+    const created = await createApiKey(database, fixture.context, {
+      projectId: fixture.project.id,
+      expiresAt: "2027-01-01T00:00:00.000Z",
+      scope: "release:read",
+    });
+
+    const result = await database.query(
+      `
+      SELECT action, resource_type, resource_id
+      FROM audit_events
+      WHERE project_id = $1
+        AND resource_id = $2
+    `,
+      [fixture.project.id, created.apiKey.id],
+    );
+
+    expect(result.rows).toEqual([
+      {
+        action: "api_key.created",
+        resource_type: "api_key",
+        resource_id: created.apiKey.id,
+      },
+    ]);
+  });
 });
 
 describe("Revoke API keys service integration", () => {
