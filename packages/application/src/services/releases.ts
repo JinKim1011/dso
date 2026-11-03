@@ -26,7 +26,7 @@ export async function publishRelease(
 
   return withTransaction(database, async (client) => {
     const published = await updateReleasesStatus(
-      database,
+      client,
       release.id,
       request.projectId,
       "published",
