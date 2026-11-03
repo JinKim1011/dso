@@ -30,31 +30,43 @@ export async function createApiKey(
 
   requiredProjectRole(membership, request.projectId, "admin");
 
-  const secret = generateOpaqueApiKeySecret();
-  const keyIdentifier = generateKeyIdentifier();
-  const keyHash = hashApiKey(secret);
+  return withTransaction(database, async (client) => {
+    const secret = generateOpaqueApiKeySecret();
+    const keyIdentifier = generateKeyIdentifier();
+    const keyHash = hashApiKey(secret);
 
-  const apiKey = await insertApiKey(database, {
-    id: crypto.randomUUID(),
-    projectId: request.projectId,
-    keyIdentifier,
-    keyHash,
-    scope: request.scope,
-    createdAt: new Date().toISOString(),
-    expiresAt: request.expiresAt,
-    revokedAt: null,
+    const apiKey = await insertApiKey(database, {
+      id: crypto.randomUUID(),
+      projectId: request.projectId,
+      keyIdentifier,
+      keyHash,
+      scope: request.scope,
+      createdAt: new Date().toISOString(),
+      expiresAt: request.expiresAt,
+      revokedAt: null,
+    });
+
+    await insertAuditEvent(client, {
+      id: crypto.randomUUID(),
+      userId: context.userId,
+      projectId: request.projectId,
+      action: "api_key.created",
+      resourceType: "api_key",
+      resourceId: apiKey.id,
+      createdAt: new Date().toISOString(),
+    });
+
+    return {
+      apiKey: {
+        id: apiKey.id,
+        projectId: apiKey.projectId,
+        keyIdentifier: apiKey.keyIdentifier,
+        scope: apiKey.scope,
+        expiresAt: apiKey.expiresAt,
+      },
+      secret,
+    };
   });
-
-  return {
-    apiKey: {
-      id: apiKey.id,
-      projectId: apiKey.projectId,
-      keyIdentifier: apiKey.keyIdentifier,
-      scope: apiKey.scope,
-      expiresAt: apiKey.expiresAt,
-    },
-    secret,
-  };
 }
 
 export async function revokeApiKey(
