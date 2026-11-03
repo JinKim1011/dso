@@ -65,6 +65,13 @@ export function validateTokenReference(
     return errors;
   }
 
+  if (referencingTokenType.kind === "primitive") {
+    errors.push({
+      code: "invalid-referencing-token-kind",
+      message: "Primitive tokens cannot reference other tokens.",
+    });
+  }
+
   const referencedTokenType = tokenTypeById.get(referencedToken.tokenTypeId);
 
   if (!referencedTokenType) {
