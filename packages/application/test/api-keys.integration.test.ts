@@ -6,7 +6,7 @@ import { insertProjectMember } from "@repo/db/repositories/memberships";
 import { getTestDatabase } from "@repo/db/test/setup";
 import { describe, expect, it } from "vitest";
 
-describe("API keys service integration", () => {
+describe("Create API keys service integration", () => {
   it("returns the secret only during creation", async () => {
     const database = getTestDatabase();
 
@@ -47,7 +47,9 @@ describe("API keys service integration", () => {
       }),
     ).rejects.toMatchObject({ code: "project-access-denied" });
   });
+});
 
+describe("Revoke API keys service integration", () => {
   it("allows an admin to revoke an API key", async () => {
     const database = getTestDatabase();
 
@@ -73,10 +75,10 @@ describe("API keys service integration", () => {
 
     const result = await database.query(
       ` 
-      SELECT revoked_at
-      FROM api_keys
-      WHERE id = $1
-     `,
+        SELECT revoked_at
+        FROM api_keys
+        WHERE id = $1
+       `,
       [created.apiKey.id],
     );
 
@@ -147,11 +149,11 @@ describe("API keys service integration", () => {
 
     const result = await database.query(
       `
-      SELECT action, resource_type, resource_id
-      FROM audit_events
-      WHERE project_id = $1
-      AND resource_id = $2
-     `,
+        SELECT action, resource_type, resource_id
+        FROM audit_events
+        WHERE project_id = $1
+        AND resource_id = $2
+       `,
       [fixture.project.id, created.apiKey.id],
     );
 
