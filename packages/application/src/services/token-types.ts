@@ -1,3 +1,4 @@
+import { requiredProjectRole } from "@repo/application/authorization";
 import { DomainValidationError, ResourceNotFoundError } from "@repo/application/errors";
 import type { AuthorizationContext } from "@repo/application/types";
 import type { ChangeTokenTypeParentRequest } from "@repo/contracts/operation";
@@ -15,7 +16,9 @@ export async function changeTokenTypeParent(
   context: AuthorizationContext,
   request: ChangeTokenTypeParentRequest,
 ): Promise<TokenType> {
-  await requireProjectAccess(database, context, request.projectId);
+  const membership = await requireProjectAccess(database, context, request.projectId);
+
+  requiredProjectRole(membership, request.projectId, "editor");
 
   const tokenTypes = await listTokenTypesByProjectId(database, request.projectId);
 
