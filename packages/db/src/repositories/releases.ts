@@ -106,3 +106,31 @@ export async function updateReleasesStatus(
 
   return row ? mapReleaseRow(row) : null;
 }
+
+export async function findDraftReleaseForUpdate(
+  database: Queryable,
+  releaseId: string,
+  projectId: string,
+): Promise<Release | null> {
+  const result = await database.query<ReleaseRow>(
+    `
+      SELECT
+        id,
+        project_id,
+        version,
+        status,
+        created_at,
+        published_at
+      FROM releases
+      WHERE id = $1
+        AND project_id = $2
+        AND status = 'draft'
+      FOR UPDATE
+    `,
+    [releaseId, projectId],
+  );
+
+  const row = result.rows[0];
+
+  return row ? mapReleaseRow(row) : null;
+}
