@@ -196,4 +196,41 @@ describe("Authentication service integration", () => {
       message: "Invalid email or password.",
     });
   });
+
+  it("sets the session expiration to eight hours after creation", async () => {
+    const database = getTestDatabase();
+    const password = "correct-password";
+
+    const user = await insertUser(database, {
+      id: crypto.randomUUID(),
+      email: "user@example.test",
+      passwordHash: await hashPassword(password),
+      createdAt: new Date().toISOString(),
+    });
+
+    const result = await login(database, {
+      email: user.email,
+      password,
+    });
+
+    const sessions = await database.query<{
+      created_at: Date;
+      expires_at: Date;
+    }>(
+      `
+      SELECT created_at, expires_at
+      FROM sessions
+      WHERE id = $1
+    `,
+      [result.sessionId],
+    );
+
+    expect(sessions.rows).toHaveLength(1);
+
+    const session = sessions.rows[0]!;
+    const durationMs = session.expires_at.getTime() - session.created_at.getTime();
+
+    expect(durationMs).toBe(8 * 60 * 60 * 1_000);
+    expect(result.response.expiresAt).toBe(session.expires_at.toISOString());
+  });
 });
