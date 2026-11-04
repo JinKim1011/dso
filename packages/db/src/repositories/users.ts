@@ -31,3 +31,21 @@ export async function insertUser(database: Queryable, user: User): Promise<User>
 
   return mapUserRow(result.rows[0]!);
 }
+
+export async function findUserByEmail(
+  database: Queryable,
+  email: string,
+): Promise<User | null> {
+  const result = await database.query<UserRow>(
+    `
+      SELECT id, email, password_hash, created_at
+      FROM users
+      WHERE email = $1
+    `,
+    [email],
+  );
+
+  const row = result.rows[0];
+
+  return row ? mapUserRow(row) : null;
+}
