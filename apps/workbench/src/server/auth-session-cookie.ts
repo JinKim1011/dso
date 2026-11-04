@@ -1,7 +1,7 @@
 import { securityEnvironment } from "./config";
 
 export const SESSION_COOKIE = {
-  name: "dso_session",
+  name: securityEnvironment.sessionCookieName,
   httpOnly: true,
   secure: securityEnvironment.nodeEnv === "production",
   sameSite: "lax" as const,
