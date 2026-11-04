@@ -16,7 +16,7 @@ export function redactSensitiveFields(
   return Object.fromEntries(
     Object.entries(value).map(([key, fieldValue]) => [
       key,
-      SENSITIVE_FIELDS.has(key.toLowerCase()) ? REDACTED : fieldValue,
+      SENSITIVE_FIELDS.has(key) ? REDACTED : fieldValue,
     ]),
   );
 }
