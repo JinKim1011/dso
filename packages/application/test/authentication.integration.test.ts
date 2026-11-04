@@ -165,4 +165,35 @@ describe("Authentication service integration", () => {
       await database.query("DROP FUNCTION IF EXISTS fail_login_audit_insert()");
     }
   });
+
+  it("returns the same error for an unknown email and wrong password", async () => {
+    const database = getTestDatabase();
+
+    await insertUser(database, {
+      id: crypto.randomUUID(),
+      email: "user@example.test",
+      passwordHash: await hashPassword("correct-password"),
+      createdAt: new Date().toISOString(),
+    });
+
+    await expect(
+      login(database, {
+        email: "user@example.test",
+        password: "wrong-password",
+      }),
+    ).rejects.toMatchObject({
+      code: "invalid-credentials",
+      message: "Invalid email or password.",
+    });
+
+    await expect(
+      login(database, {
+        email: "missing@example.test",
+        password: "correct-password",
+      }),
+    ).rejects.toMatchObject({
+      code: "invalid-credentials",
+      message: "Invalid email or password.",
+    });
+  });
 });
