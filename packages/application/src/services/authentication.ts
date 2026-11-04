@@ -8,7 +8,10 @@ import {
   findActiveSessionById,
   insertSession,
 } from "@repo/db/repositories/sessions";
-import { findUserByEmail } from "@repo/db/repositories/users";
+import {
+  canonicalizeEmail,
+  findUserByEmail,
+} from "@repo/db/repositories/users";
 import { withTransaction } from "@repo/db/transaction";
 import { Pool } from "pg";
 
@@ -19,7 +22,7 @@ const DUMMY_PASSWORD_HASH = "$argon2id$v=19$m=19456,t=2,p=1$...";
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export async function login(database: Pool, request: LoginRequest): Promise<LoginResult> {
-  const normalizedEmail = request.email.trim().toLowerCase();
+  const normalizedEmail = canonicalizeEmail(request.email);
   const user = await findUserByEmail(database, normalizedEmail);
 
   const passwordHash = user?.passwordHash ?? DUMMY_PASSWORD_HASH;
