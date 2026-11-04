@@ -85,6 +85,24 @@ ALTER TABLE document_templates
 ADD CONSTRAINT document_templates_component_same_project_fk FOREIGN KEY (project_id, component_id) REFERENCES components (project_id, id);
 
 -- Users
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM users
+    GROUP BY lower(trim(email))
+    HAVING COUNT(*) > 1
+  ) THEN
+    RAISE EXCEPTION
+      'Cannot canonicalize users.email: duplicate normalized emails exist';
+  END IF;
+END
+$$;
+
+UPDATE users
+SET email = lower(trim(email))
+WHERE email <> lower(trim(email));
+
 ALTER TABLE users
 ADD CONSTRAINT users_email_unique UNIQUE (email);
 
