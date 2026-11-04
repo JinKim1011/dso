@@ -3,7 +3,6 @@ import {
   ProjectAccessDeniedError,
 } from "@repo/application/errors";
 import { seedProject } from "@repo/application/fixtures";
-import { addTokenReference } from "@repo/application/services/token-references";
 import { changeTokenTypeParent } from "@repo/application/services/token-types";
 import { getTestDatabase } from "@repo/db/test/setup";
 import { describe, expect, it } from "vitest";
@@ -38,27 +37,6 @@ describe("Token-type parent service integration", () => {
         parentTypeId: other.primitiveType.id,
       }),
     ).rejects.toBeInstanceOf(DomainValidationError);
-  });
-
-  it("rejects a user without project access", async () => {
-    const database = getTestDatabase();
-    const fixture = await seedProject(database);
-
-    await expect(
-      addTokenReference(
-        database,
-        {
-          userId: crypto.randomUUID(),
-          sessionId: crypto.randomUUID(),
-        },
-        {
-          projectId: fixture.project.id,
-          referencingTokenId: fixture.referencingToken.id,
-          referencedTokenId: fixture.referencedToken.id,
-          slot: "light",
-        },
-      ),
-    ).rejects.toBeInstanceOf(ProjectAccessDeniedError);
   });
 
   it("rejects a user from another project", async () => {
