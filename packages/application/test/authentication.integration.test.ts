@@ -22,7 +22,7 @@ describe("Authentication service integration", () => {
 
     const user = await insertUser(database, {
       id: crypto.randomUUID(),
-      email: "user@example.test",
+      email: " User@Example.Test ",
       passwordHash: await hashPassword(password),
       createdAt: new Date().toISOString(),
     });
@@ -36,7 +36,7 @@ describe("Authentication service integration", () => {
     expect(result.response).toMatchObject({
       user: {
         id: user.id,
-        email: user.email,
+        email: "user@example.test",
       },
       expiresAt: expect.any(String),
     });
