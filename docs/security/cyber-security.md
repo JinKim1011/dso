@@ -175,6 +175,9 @@ This week establishes the foundation for every later integration.
   audit-event insertion.
 - Require authorization context for protected repository functions and keep
   credentials, authorization headers, and sensitive payloads out of logs.
+- W3 implements password authentication, database-backed workbench sessions,
+  session expiration, logout, and session-based application authorization.
+  API-key-authenticated release downloads remain deferred to W5.
 - Keep the legacy manifest adapter tolerant for existing workbench
   compatibility, but apply strict validation at the domain and persistence
   boundaries. Database seed data must contain only supported token kinds and
@@ -203,16 +206,19 @@ This week replaces the current persistence path while preserving staged editing.
 
 - Replace filesystem persistence with database repositories.
 - Preserve `StagedManifestContext` and `useStagedManifestActions`.
+- Wire login/logout/session routes to secure, configured cookies and map
+  authenticated sessions to the application authorization context.
 - Protect project reads, token/reference/hierarchy writes, component/template
   writes, publishing, API-key creation/revocation, and release reads.
 - Enforce:
   - Editor: read and edit project resources
   - Publisher: editor permissions plus release publishing
   - Admin: publisher permissions plus API-key management
-  - CLI `release:read`: published-release download only
 - Add CSRF protection to cookie-based mutations and add security headers.
 - Return generic production errors without stacks or secrets.
 - Create audit events for login, publishing, API-key creation, and revocation.
+- W4 published-release reads use authenticated workbench sessions. The CLI
+  `release:read` API-key flow is deferred to W5.
 
 #### Tests
 
@@ -238,6 +244,8 @@ This week delivers the complete publish-to-generation vertical slice.
 - Keep source-code component-token usage claims out of release data.
 - Canonicalize release JSON and sign it with Ed25519.
 - Create `apps/cli` with `dso pull` and `dso generate`.
+- Add the deferred API-key-authenticated published-release download flow for
+  the CLI, including project, scope, expiration, and revocation checks.
 - Return API-key secrets only once and store only hashes.
 - Validate API-key identifier, hash, project, scope, expiration, and revocation.
 - Require HTTPS outside local development; the CLI must never connect to

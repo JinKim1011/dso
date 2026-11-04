@@ -71,6 +71,24 @@ export async function findActiveApiKeyByIdentifier(
   return row ? mapApiKeyRow(row) : null;
 }
 
+export async function findApiKeyById(
+  database: Queryable,
+  apiKeyId: string,
+): Promise<ApiKey | null> {
+  const result = await database.query<ApiKeyRow>(
+    `
+      SELECT id, project_id, key_identifier, key_hash, scope, created_at, expires_at, revoked_at
+      FROM api_keys
+      WHERE id = $1
+    `,
+    [apiKeyId],
+  );
+
+  const row = result.rows[0];
+
+  return row ? mapApiKeyRow(row) : null;
+}
+
 export async function revokeApiKey(
   database: Queryable,
   apiKeyId: string,

@@ -1,19 +1,14 @@
+import { loadDatabaseEnvironment } from "@repo/db/env";
 import { Pool } from "pg";
 
-function getDatabaseUrl(): string {
-  const connectionString = process.env.DATABASE_URL;
+export function createDatabasePool(
+  connectionString = loadDatabaseEnvironment(process.env).databaseUrl,
+): Pool {
+  const environment = loadDatabaseEnvironment(process.env);
 
-  if (!connectionString) {
-    throw new Error("DATABASE_URL is required.");
-  }
-
-  return connectionString;
-}
-
-export function createDatabasePool(connectionString = getDatabaseUrl()): Pool {
   return new Pool({
     connectionString,
-    max: Number(process.env.DB_POOL_MAX ?? 10),
+    max: environment.poolMax,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 5_000,
   });

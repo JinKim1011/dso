@@ -53,3 +53,18 @@ export async function findActiveSessionById(
 
   return row ? mapSessionRow(row) : null;
 }
+
+export async function deleteSession(
+  database: Queryable,
+  sessionId: string,
+): Promise<boolean> {
+  const result = await database.query(
+    `
+      DELETE FROM sessions
+      WHERE id = $1
+    `,
+    [sessionId],
+  );
+
+  return result.rowCount === 1;
+}

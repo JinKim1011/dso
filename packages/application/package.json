@@ -17,11 +17,12 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "argon2": "^0.45.2",
     "pg": "^8.16.0"
   },
   "devDependencies": {
-    "@repo/db": "*",
     "@repo/contracts": "*",
+    "@repo/db": "*",
     "@repo/typescript-config": "*",
     "@types/node": "^22.0.0",
     "@types/pg": "^8.15.0",

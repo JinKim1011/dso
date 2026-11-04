@@ -169,6 +169,9 @@ This week establishes the foundation for every later integration.
 - Add shared contracts and validation for login, resource writes, publishing, API keys, and release downloads.
 - Implement password hashing, database-backed sessions, expiration, and logout.
 - Require authorization context for protected repository operations.
+- W3 delivers authenticated workbench-session access to application services.
+  API-key-authenticated release downloads are deferred to W5 with the CLI and
+  release-signing vertical slice.
 
 #### Tests and evidence
 
@@ -194,12 +197,16 @@ This week replaces the current persistence path while preserving the existing st
 - Implement protected workbench routes for login, logout, session lookup,
   project reads, resource edits, publishing, API-key creation/revocation, and
   published-release reads.
+- Wire login/logout/session routes to the configured secure session cookie and
+  map authenticated sessions to the application authorization context.
 - Enforce the role model:
   - Editor: read and edit project resources.
   - Publisher: editor permissions plus release publishing.
   - Admin: publisher permissions plus API-key management.
 - Add project authorization, CSRF protection for cookie mutations, security
   headers, generic production errors, and audit events.
+- Keep published-release reads session-authenticated for W4. The CLI
+  `release:read` API-key path is implemented in W5.
 
 #### Tests and evidence
 
@@ -221,6 +228,9 @@ This week delivers the complete publish-to-generation vertical slice.
 
 - Create an authenticated published-release API containing token definitions,
   references, token-type hierarchy data, components, and templates.
+- Add the deferred CLI `release:read` path: accept project-scoped API keys,
+  verify the key against the release project and published status, and return
+  only the published release snapshot.
 - Keep source-code component-token usage claims out of the release snapshot.
 - Canonicalize release JSON and sign it with Ed25519.
 - Create `apps/cli` with `dso pull` and `dso generate`.

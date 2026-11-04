@@ -1,5 +1,4 @@
 import {
-  AuthenticationRequiredError,
   DomainValidationError,
   ProjectAccessDeniedError,
 } from "@repo/application/errors";
@@ -38,24 +37,6 @@ describe("Token-type parent service integration", () => {
         parentTypeId: other.primitiveType.id,
       }),
     ).rejects.toBeInstanceOf(DomainValidationError);
-  });
-
-  it("rejects an unauthenticated user", async () => {
-    const database = getTestDatabase();
-
-    const fixture = await seedProject(database, "editor");
-
-    await expect(
-      changeTokenTypeParent(
-        database,
-        { userId: "", sessionId: "" },
-        {
-          projectId: fixture.project.id,
-          tokenTypeId: fixture.primitiveType.id,
-          parentTypeId: fixture.semanticType.id,
-        },
-      ),
-    ).rejects.toBeInstanceOf(AuthenticationRequiredError);
   });
 
   it("rejects a user from another project", async () => {

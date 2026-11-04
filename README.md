@@ -41,12 +41,12 @@ npm run test          # Run tests
 npm run scan          # Scan and validate tokens and components
 ```
 
-Database integration tests are destructive and require a dedicated PostgreSQL
-database. Set `TEST_DATABASE_URL` to that disposable database before running
-them; the test setup refuses to use `DATABASE_URL`:
+Database integration tests are destructive and require separate PostgreSQL
+databases:
 
 ```bash
-TEST_DATABASE_URL=postgres://localhost/dso_test \
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso \
+TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso_test \
   npm --workspace @repo/db test
 ```
 

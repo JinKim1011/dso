@@ -1,4 +1,5 @@
 import { createDatabasePool } from "@repo/db/client";
+import { loadTestDatabaseEnvironment } from "@repo/db/env";
 import { runMigrations } from "@repo/db/migrations/index";
 import path from "node:path";
 import type { Pool } from "pg";
@@ -11,17 +12,9 @@ const migrationsDirectory = path.resolve(
 );
 
 export function createTestDatabasePool(): Pool {
-  const connectionString = process.env.TEST_DATABASE_URL;
+  const { testDatabaseUrl } = loadTestDatabaseEnvironment(process.env);
 
-  if (!connectionString) {
-    throw new Error("TEST_DATABASE_URL is required for database tests.");
-  }
-
-  if (connectionString === process.env.DATABASE_URL) {
-    throw new Error("TEST_DATABASE_URL must be different from DATABASE_URL.");
-  }
-
-  return createDatabasePool(connectionString);
+  return createDatabasePool(testDatabaseUrl);
 }
 
 export async function setupDatabase(): Promise<Pool> {

@@ -33,15 +33,22 @@ Published release API response
 
 ## Authentication
 
-The endpoint accepts either:
+> **Current delivery status:** The published-release response contract is
+> defined in W3, and session-authenticated workbench reads are delivered in
+> W4. CLI API-key authentication for this endpoint is deferred to W5 with
+> release signing and the CLI. Until W5 is implemented, this endpoint must
+> not expose release downloads through API keys.
+
+The target endpoint accepts either:
 
 - an authenticated workbench session for authorized project members; or
 - a project-scoped CLI API key with the `release:read` scope.
 
-The CLI uses the API-key flow and never connects directly to PostgreSQL. The
-API checks that the release exists, belongs to the project associated with the
-credential, and has `status: "published"` before returning it. Unpublished
-releases are not downloadable.
+The CLI will use the API-key flow and never connect directly to PostgreSQL.
+When the W5 API-key flow is implemented, the API must check that the release
+exists, belongs to the project associated with the credential, and has
+`status: "published"` before returning it. Unpublished releases are never
+downloadable.
 
 ### Authorization
 
@@ -51,14 +58,17 @@ Workbench session access is authorized through `project_members`:
 - `publisher` members may publish releases.
 - `admin` members may publish releases and manage project API keys.
 
-CLI access is authorized through a project-scoped API key. The API key must:
+When enabled in W5, CLI access is authorized through a project-scoped API key.
+The API key must:
 
 - belong to the release's project;
 - have the `release:read` scope;
 - not be revoked; and
 - not be expired.
 
-The API must verify the session membership or API-key project scope before assembling the release response.
+The API must verify session membership before assembling a W4 workbench
+response. In W5 it must additionally verify the API-key project scope before
+assembling a CLI response.
 
 The response does not include a `publishedBy` field. The application records the user who performs a publish action in `audit_events`.
 

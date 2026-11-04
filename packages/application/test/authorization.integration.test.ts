@@ -1,14 +1,11 @@
-import {
-  AuthenticationRequiredError,
-  ProjectAccessDeniedError,
-} from "@repo/application/errors";
+import { ProjectAccessDeniedError } from "@repo/application/errors";
 import { seedProject } from "@repo/application/fixtures";
 import { addTokenReference } from "@repo/application/services/token-references";
 import { getTestDatabase } from "@repo/db/test/setup";
 import { describe, expect, it } from "vitest";
 
 describe("Authorization service integration", () => {
-  it("rejects an unauthenticated context", async () => {
+  it("rejects a user without project access", async () => {
     const database = getTestDatabase();
 
     const fixture = await seedProject(database);
@@ -16,7 +13,10 @@ describe("Authorization service integration", () => {
     await expect(
       addTokenReference(
         database,
-        { userId: "", sessionId: "" },
+        {
+          userId: crypto.randomUUID(),
+          sessionId: crypto.randomUUID(),
+        },
         {
           projectId: fixture.project.id,
           referencingTokenId: fixture.referencingToken.id,
@@ -24,7 +24,7 @@ describe("Authorization service integration", () => {
           slot: "light",
         },
       ),
-    ).rejects.toBeInstanceOf(AuthenticationRequiredError);
+    ).rejects.toBeInstanceOf(ProjectAccessDeniedError);
   });
 
   it("rejects a member from another project", async () => {
