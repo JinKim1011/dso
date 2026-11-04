@@ -1,7 +1,10 @@
 import { seedProject } from "@repo/application/fixtures";
 import { hashApiKey } from "@repo/application/security/api-keys";
 import { createApiKey, revokeApiKey } from "@repo/application/services/api-keys";
-import { findActiveApiKeyByIdentifier } from "@repo/db/repositories/api-keys";
+import {
+  findActiveApiKeyByIdentifier,
+  findApiKeyById,
+} from "@repo/db/repositories/api-keys";
 import { insertProjectMember } from "@repo/db/repositories/memberships";
 import { getTestDatabase } from "@repo/db/test/setup";
 import { describe, expect, it } from "vitest";
@@ -326,5 +329,23 @@ describe("Revoke API keys service integration", () => {
     ).rejects.toMatchObject({
       code: "project-access-denied",
     });
+  });
+
+  it("stores only a hash for an API key", async () => {
+    const database = getTestDatabase();
+
+    const adminFixture = await seedProject(database, "admin");
+
+    const result = await createApiKey(database, adminFixture.context, {
+      projectId: adminFixture.project.id,
+      expiresAt: "2027-01-01T00:00:00.000Z",
+      scope: "release:read",
+    });
+
+    const stored = await findApiKeyById(database, result.apiKey.id);
+
+    expect(stored?.keyHash).toEqual(expect.any(String));
+    expect(stored?.keyHash).not.toBe(result.secret);
+    expect(result.apiKey).not.toHaveProperty("keyHash");
   });
 });
