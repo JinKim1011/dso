@@ -14,13 +14,14 @@ import { Pool } from "pg";
 
 const SESSION_DURATION_MS = 8 * 60 * 60 * 1_000;
 
+const DUMMY_PASSWORD_HASH = "$argon2id$v=19$m=19456,t=2,p=1$...";
+
 export async function login(database: Pool, request: LoginRequest): Promise<LoginResult> {
   const normalizedEmail = request.email.trim().toLowerCase();
   const user = await findUserByEmail(database, normalizedEmail);
 
-  const passwordMatches = user
-    ? await verifyPassword(user.passwordHash, request.password)
-    : false;
+  const passwordHash = user?.passwordHash ?? DUMMY_PASSWORD_HASH;
+  const passwordMatches = await verifyPassword(passwordHash, request.password);
 
   if (!user || !passwordMatches) {
     throw new InvalidCredentialsError();
