@@ -25,9 +25,25 @@ export class DomainValidationError extends Error {
 }
 
 export class ResourceNotFoundError extends Error {
-    readonly code ="resource-not-found"
+  readonly code = "resource-not-found";
 
-    constructor(){
-        super("The requested resource was not found.")
-    }
+  constructor() {
+    super("The requested resource was not found.");
+  }
+}
+
+export class InvalidCredentialsError extends Error {
+  readonly code = "invalid-credentials";
+
+  constructor() {
+    super("Invalid email or password.");
+  }
+}
+
+export class SessionExpiredError extends Error {
+  readonly code = "session-expired";
+
+  constructor() {
+    super("The session is expired or invalid.");
+  }
 }
