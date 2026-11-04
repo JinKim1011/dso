@@ -1,3 +1,4 @@
+import { LoginResponse } from "@repo/contracts/operation";
 import type { ProjectMemberRole } from "@repo/contracts/validation/enum";
 
 /**
@@ -13,4 +14,9 @@ export type AuthorizationContext = {
 export type ProjectAccess = {
   projectId: string;
   role: ProjectMemberRole;
+};
+
+export type LoginResult = {
+  response: LoginResponse;
+  sessionId: string;
 };
