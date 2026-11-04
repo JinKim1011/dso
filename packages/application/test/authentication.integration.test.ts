@@ -1,5 +1,10 @@
-import { login } from "@repo/application/services/authentication";
+import {
+  authenticateSession,
+  login,
+  logout,
+} from "@repo/application/services/authentication";
 import { hashPassword } from "@repo/application/services/passwords";
+import { insertSession } from "@repo/db/repositories/sessions";
 import { insertUser } from "@repo/db/repositories/users";
 import { resetDatabase } from "@repo/db/test/database";
 import { getTestDatabase } from "@repo/db/test/setup";
@@ -235,5 +240,104 @@ describe("Authentication service integration", () => {
 
     expect(durationMs).toBe(8 * 60 * 60 * 1_000);
     expect(result.response.expiresAt).toBe(session.expires_at.toISOString());
+  });
+
+  it("resolves an active session", async () => {
+    const database = getTestDatabase();
+    const userId = crypto.randomUUID();
+    const sessionId = crypto.randomUUID();
+
+    await insertUser(database, {
+      id: userId,
+      email: "user@example.test",
+      passwordHash: await hashPassword("test-password"),
+      createdAt: new Date().toISOString(),
+    });
+
+    await insertSession(database, {
+      id: sessionId,
+      userId,
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+    });
+
+    await expect(authenticateSession(database, sessionId)).resolves.toEqual({
+      userId,
+      sessionId,
+    });
+  });
+
+  it("rejects an expired session", async () => {
+    const database = getTestDatabase();
+    const userId = crypto.randomUUID();
+    const sessionId = crypto.randomUUID();
+
+    await insertUser(database, {
+      id: userId,
+      email: "user@example.test",
+      passwordHash: await hashPassword("test-password"),
+      createdAt: new Date().toISOString(),
+    });
+
+    await insertSession(database, {
+      id: sessionId,
+      userId,
+      createdAt: new Date(Date.now() - 120_000).toISOString(),
+      expiresAt: new Date(Date.now() - 60_000).toISOString(),
+    });
+
+    await expect(authenticateSession(database, sessionId)).rejects.toMatchObject({
+      code: "session-expired",
+    });
+  });
+
+  it("rejects an unknown session", async () => {
+    await expect(
+      authenticateSession(getTestDatabase(), crypto.randomUUID()),
+    ).rejects.toMatchObject({
+      code: "session-expired",
+    });
+  });
+
+  it("logout removes the session", async () => {
+    const database = getTestDatabase();
+    const userId = crypto.randomUUID();
+    const sessionId = crypto.randomUUID();
+
+    await insertUser(database, {
+      id: userId,
+      email: "user@example.test",
+      passwordHash: await hashPassword("test-password"),
+      createdAt: new Date().toISOString(),
+    });
+
+    await insertSession(database, {
+      id: sessionId,
+      userId,
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+    });
+
+    await logout(database, {
+      userId,
+      sessionId,
+    });
+
+    const result = await database.query("SELECT id FROM sessions WHERE id = $1", [
+      sessionId,
+    ]);
+
+    expect(result.rows).toHaveLength(0);
+  });
+
+  it("logout is safe when the session is already removed", async () => {
+    const database = getTestDatabase();
+
+    await expect(
+      logout(database, {
+        userId: crypto.randomUUID(),
+        sessionId: crypto.randomUUID(),
+      }),
+    ).resolves.toBeUndefined();
   });
 });
