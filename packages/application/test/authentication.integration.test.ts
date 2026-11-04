@@ -35,6 +35,9 @@ describe("Authentication service integration", () => {
       expiresAt: expect.any(String),
     });
 
+    expect(result.response).not.toHaveProperty("passwordHash");
+    expect(result.response.user).not.toHaveProperty("passwordHash");
+
     const sessions = await database.query(
       `
         SELECT id, user_id, expires_at
