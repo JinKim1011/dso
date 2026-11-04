@@ -19,7 +19,7 @@ function mapUserRow(row: UserRow): User {
   };
 }
 
-function canonicalizeEmail(email: string): string {
+export function canonicalizeEmail(email: string): string {
   return email.trim().toLowerCase();
 }
 
