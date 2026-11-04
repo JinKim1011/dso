@@ -3,7 +3,11 @@ import { verifyPassword } from "@repo/application/services/passwords";
 import type { AuthorizationContext, LoginResult } from "@repo/application/types";
 import { LoginRequest } from "@repo/contracts/operation";
 import { insertAuditEvent } from "@repo/db/repositories/audit-events";
-import { findActiveSessionById, insertSession } from "@repo/db/repositories/sessions";
+import {
+  deleteSession,
+  findActiveSessionById,
+  insertSession,
+} from "@repo/db/repositories/sessions";
 import { findUserByEmail } from "@repo/db/repositories/users";
 import { withTransaction } from "@repo/db/transaction";
 import { Pool } from "pg";
@@ -72,4 +76,11 @@ export async function authenticateSession(
     userId: session.userId,
     sessionId: session.id,
   };
+}
+
+export async function logout(
+  database: Pool,
+  context: AuthorizationContext,
+): Promise<void> {
+  await deleteSession(database, context.sessionId);
 }
