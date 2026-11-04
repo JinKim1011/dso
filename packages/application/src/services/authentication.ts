@@ -16,6 +16,8 @@ const SESSION_DURATION_MS = 8 * 60 * 60 * 1_000;
 
 const DUMMY_PASSWORD_HASH = "$argon2id$v=19$m=19456,t=2,p=1$...";
 
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function login(database: Pool, request: LoginRequest): Promise<LoginResult> {
   const normalizedEmail = request.email.trim().toLowerCase();
   const user = await findUserByEmail(database, normalizedEmail);
@@ -67,6 +69,10 @@ export async function authenticateSession(
   database: Pool,
   sessionId: string,
 ): Promise<AuthorizationContext> {
+  if (sessionId.length !== 36 || UUID_PATTERN.test(sessionId)) {
+    throw new SessionExpiredError();
+  }
+
   const session = await findActiveSessionById(database, sessionId);
 
   if (!session) {
