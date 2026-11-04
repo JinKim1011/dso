@@ -206,10 +206,8 @@ This week replaces the current persistence path while preserving staged editing.
 
 - Replace filesystem persistence with database repositories.
 - Preserve `StagedManifestContext` and `useStagedManifestActions`.
-- Wire login/logout/session routes to secure, configured cookies and map
-  authenticated sessions to the application authorization context.
-- Protect project reads, token/reference/hierarchy writes, component/template
-  writes, publishing, API-key creation/revocation, and release reads.
+- Wire login/logout/session routes to secure, configured cookies and map authenticated sessions to the application authorization context.
+- Protect project reads, token/reference/hierarchy writes, component/template writes, publishing, API-key creation/revocation, and release reads.
 - Enforce:
   - Editor: read and edit project resources
   - Publisher: editor permissions plus release publishing
@@ -217,8 +215,7 @@ This week replaces the current persistence path while preserving staged editing.
 - Add CSRF protection to cookie-based mutations and add security headers.
 - Return generic production errors without stacks or secrets.
 - Create audit events for login, publishing, API-key creation, and revocation.
-- W4 published-release reads use authenticated workbench sessions. The CLI
-  `release:read` API-key flow is deferred to W5.
+- W4 published-release reads use authenticated workbench sessions. The CLI `release:read` API-key flow is deferred to W5.
 
 #### Tests
 
@@ -230,8 +227,7 @@ This week replaces the current persistence path while preserving staged editing.
 
 #### Done When
 
-An authenticated user can edit only authorized projects, role restrictions are
-enforced, and a user can publish through the workbench.
+An authenticated user can edit only authorized projects, role restrictions are enforced, and a user can publish through the workbench.
 
 ### W5: Release signing, CLI, and generation
 
