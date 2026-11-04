@@ -1,9 +1,9 @@
-import { InvalidCredentialsError } from "@repo/application/errors";
+import { InvalidCredentialsError, SessionExpiredError } from "@repo/application/errors";
 import { verifyPassword } from "@repo/application/services/passwords";
-import type { LoginResult } from "@repo/application/types";
+import type { AuthorizationContext, LoginResult } from "@repo/application/types";
 import { LoginRequest } from "@repo/contracts/operation";
 import { insertAuditEvent } from "@repo/db/repositories/audit-events";
-import { insertSession } from "@repo/db/repositories/sessions";
+import { findActiveSessionById, insertSession } from "@repo/db/repositories/sessions";
 import { findUserByEmail } from "@repo/db/repositories/users";
 import { withTransaction } from "@repo/db/transaction";
 import { Pool } from "pg";
@@ -56,4 +56,20 @@ export async function login(database: Pool, request: LoginRequest): Promise<Logi
       sessionId,
     };
   });
+}
+
+export async function authenticateSession(
+  database: Pool,
+  sessionId: string,
+): Promise<AuthorizationContext> {
+  const session = await findActiveSessionById(database, sessionId);
+
+  if (!session) {
+    throw new SessionExpiredError();
+  }
+
+  return {
+    userId: session.userId,
+    sessionId: session.id,
+  };
 }
