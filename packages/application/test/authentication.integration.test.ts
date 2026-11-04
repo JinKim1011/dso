@@ -1,3 +1,4 @@
+import { SessionExpiredError } from "@repo/application/errors";
 import {
   authenticateSession,
   login,
@@ -339,5 +340,11 @@ describe("Authentication service integration", () => {
         sessionId: crypto.randomUUID(),
       }),
     ).resolves.toBeUndefined();
+  });
+
+  it("rejects an unauthenticated session", async () => {
+    await expect(
+      authenticateSession(getTestDatabase(), crypto.randomUUID()),
+    ).rejects.toBeInstanceOf(SessionExpiredError);
   });
 });
