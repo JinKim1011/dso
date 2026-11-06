@@ -1,0 +1,71 @@
+"use client";
+
+import type { TokenGraphViewModel } from "@/features/tokens/model/token-graph";
+import { DotsVerticalIcon, PlusCircledIcon } from "@radix-ui/react-icons";
+import { Button, Card, Text } from "@repo/ui";
+
+export type TokenTypeGroup = {
+  id: string;
+  type: string;
+  kind: TokenGraphViewModel["tokenTypes"][number]["kind"];
+  values: TokenGraphViewModel["tokenTypes"][number]["values"];
+};
+
+type TokenTypeNodeProps = {
+  group: TokenTypeGroup;
+  selectedRowId: string | null;
+  onSelectRow: (rowId: string) => void;
+};
+
+export function TokenTypeNode({ group, selectedRowId, onSelectRow }: TokenTypeNodeProps) {
+  const cardItems = group.values.map((valueItem, index) => ({
+    id: valueItem.id,
+    text: valueItem.name,
+    subText: valueItem.meta,
+    level: 2, // hard-coded for now, will be integrated with the component-used frequency level
+    selected: selectedRowId === valueItem.id,
+    onSelect: () => onSelectRow(valueItem.id),
+    index: (index + 1).toString().padStart(2, "0"),
+  }));
+
+  return (
+    <section
+      data-testid={group.id}
+      key={group.id}
+      className="bg-surface-primary gap-mini py-mini flex w-[20rem] flex-col"
+    >
+      <div className="pl-miniPlus pr-microPlus flex items-center justify-between">
+        <Text as="h3" variant="label-sm" className="text-content-primary">
+          {group.type}
+        </Text>
+
+        <div className="gap-microPlus flex items-center">
+          <Text variant="label-xs" className="text-content-tertiary">
+            {group.kind}
+          </Text>
+          {/* below button will be used for opening a listbox which contains edit and delete actions*/}
+          <Button
+            variant="void"
+            size="sm"
+            aria-label="more"
+            iconOnly={true}
+            leftIcon={DotsVerticalIcon}
+            disabled={true}
+          />
+        </div>
+      </div>
+      <Card cardItems={cardItems} />
+      <div className="self-center">
+        {/* Below button will be used for adding value action */}
+        <Button
+          variant="void"
+          size="lg"
+          aria-label="add"
+          iconOnly={true}
+          leftIcon={PlusCircledIcon}
+          disabled={true}
+        />
+      </div>
+    </section>
+  );
+}
