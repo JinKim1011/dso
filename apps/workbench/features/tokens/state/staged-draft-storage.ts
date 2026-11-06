@@ -13,7 +13,9 @@ export function clearPersistedDraftModel() {
 
   try {
     window.localStorage.removeItem(STAGED_DRAFT_STORAGE_KEY);
-  } catch {}
+  } catch (error) {
+    console.warn("Failed to clear staged draft from local storage.", error);
+  }
 }
 
 export function loadPersistedDraftModel(): TokenGraphViewModel | null {
@@ -39,7 +41,8 @@ export function loadPersistedDraftModel(): TokenGraphViewModel | null {
     }
 
     return parsed.draftModel as TokenGraphViewModel;
-  } catch {
+  } catch (error) {
+    console.warn("Failed to load staged draft from local storage.", error);
     return null;
   }
 }
