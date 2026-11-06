@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, useTheme } from "@repo/ui";
+import { useTheme } from "@/_shared/theme/use-theme";
+import { Button } from "@repo/ui";
 
 export default function Home() {
   const { theme, toggleTheme } = useTheme();

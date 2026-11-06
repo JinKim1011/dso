@@ -10,10 +10,6 @@ export { SegmentedControl } from "./components/SegmentedControl";
 export { Text } from "./components/Text";
 export { Tooltip } from "./components/Tooltip";
 
-// Hooks
-export { useTheme } from "./hooks/useTheme";
-export type { ThemeMode } from "./hooks/useTheme";
-
 // lib
 export { cn } from "./lib/utils";
 

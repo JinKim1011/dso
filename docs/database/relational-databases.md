@@ -192,33 +192,24 @@ This week replaces the current persistence path while preserving the existing st
 - Replace JSON persistence in `route.ts`.
 - Preserve `StagedManifestContext` and `useStagedManifestActions`.
 - Convert database records into the existing token graph model.
-- Persist token edits, token references, token-type hierarchy changes,
-  components, templates, and releases.
-- Implement protected workbench routes for login, logout, session lookup,
-  project reads, resource edits, publishing, API-key creation/revocation, and
-  published-release reads.
-- Wire login/logout/session routes to the configured secure session cookie and
-  map authenticated sessions to the application authorization context.
+- Persist token edits, token references, token-type hierarchy changes, components, templates, and releases.
+- Implement protected workbench routes for login, logout, session lookup, project reads, resource edits, publishing, API-key creation/revocation, and published-release reads.
+- Wire login/logout/session routes to the configured secure session cookie and map authenticated sessions to the application authorization context.
 - Enforce the role model:
   - Editor: read and edit project resources.
   - Publisher: editor permissions plus release publishing.
   - Admin: publisher permissions plus API-key management.
-- Add project authorization, CSRF protection for cookie mutations, security
-  headers, generic production errors, and audit events.
-- Keep published-release reads session-authenticated for W4. The CLI
-  `release:read` API-key path is implemented in W5.
+- Add project authorization, CSRF protection for cookie mutations, security headers, generic production errors, and audit events.
+- Keep published-release reads session-authenticated for W4. The CLI `release:read` API-key path is implemented in W5.
 
 #### Tests and evidence
 
-- Verify unauthenticated requests, cross-project access, insufficient roles,
-  CSRF failures, security headers, audit events, and staged editing.
-- Demonstrate that PostgreSQL is the source of truth and normal workbench
-  usage no longer reads or writes `design-tokens-manifest.json`.
+- Verify unauthenticated requests, cross-project access, insufficient roles, CSRF failures, security headers, audit events, and staged editing.
+- Demonstrate that PostgreSQL is the source of truth and normal workbench usage no longer reads or writes `design-tokens-manifest.json`.
 
 #### Done when
 
-An authenticated user can edit only authorized projects, role restrictions are
-enforced, and a user can publish through the workbench.
+An authenticated user can edit only authorized projects, role restrictions are enforced, and a user can publish through the workbench.
 
 ### W5: Release signing, CLI, and generation
 
