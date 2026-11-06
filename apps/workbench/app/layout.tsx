@@ -1,7 +1,7 @@
+import { WorkbenchShell } from "@/_shared/shell/workbench-shell";
 import "@repo/ui/index.css";
 import "@xyflow/react/dist/style.css";
 import type { Metadata } from "next";
-import { WorkbenchShell } from "./_shared/shell/WorkbenchShell";
 import "./globals.css";
 
 export const metadata: Metadata = {
