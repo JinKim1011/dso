@@ -104,7 +104,18 @@ export function StagedManifestProvider({
       discardRow,
       applyRow,
     }),
-    [baseModel, draftModel, changedRows, addedLines, deletedLines],
+    [
+      baseModel,
+      draftModel,
+      changedRows,
+      addedLines,
+      deletedLines,
+      updateRow,
+      resetDraft,
+      applyDraft,
+      discardRow,
+      applyRow,
+    ],
   );
 
   return (
