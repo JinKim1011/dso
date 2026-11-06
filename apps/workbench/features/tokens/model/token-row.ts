@@ -1,4 +1,7 @@
-import type { TokenTypeValueItem } from "@/features/tokens/model/token-graph";
+import type {
+  TokenGraphViewModel,
+  TokenTypeValueItem,
+} from "@/features/tokens/model/token-graph";
 
 export type TokenRowViewModel = {
   id: string;
@@ -7,7 +10,7 @@ export type TokenRowViewModel = {
   meta?: string;
   preview?: TokenTypeValueItem["preview"];
   category: string;
-  kind: TokenTypeValueItem["kind"];
+  kind: TokenGraphViewModel["tokenTypes"][number]["kind"];
   value: TokenTypeValueItem;
 };
 
