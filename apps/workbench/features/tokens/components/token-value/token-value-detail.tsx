@@ -14,7 +14,7 @@ import {
   TokenTypographyOptions,
 } from "@/features/tokens/components/form/token-typography-form";
 import { TokenValuePreview } from "@/features/tokens/components/token-value/token-value-preview";
-import type { TokenTypeValueItem } from "@/features/tokens/model/token-graph";
+import type { TokenValue } from "@/features/tokens/model/token-graph";
 import { TokenKind } from "@repo/contracts/validation/enum";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
@@ -22,8 +22,8 @@ import { useEffect, useMemo, useState } from "react";
 export type TokenValueDetailUpdate = {
   name: string;
   meta?: string;
-  value?: TokenTypeValueItem["value"];
-  preview?: TokenTypeValueItem["preview"];
+  value?: TokenValue["value"];
+  preview?: TokenValue["preview"];
 };
 
 type TokenValueDetailProps = {
@@ -33,7 +33,7 @@ type TokenValueDetailProps = {
   meta?: string;
   category: string;
   kind: TokenKind;
-  value: TokenTypeValueItem;
+  value: TokenValue;
   onClose?: () => void;
   typographyOptions: TokenTypographyOptions;
   onSave: (rowId: string, next: TokenValueDetailUpdate) => void;
@@ -41,10 +41,7 @@ type TokenValueDetailProps = {
 
 type DraftState = TokenSingleValueDraft | TokenColorDraft | TokenTypographyDraft;
 
-function getTypographyDraft(
-  valueItem: TokenTypeValueItem,
-  name: string,
-): TokenTypographyDraft {
+function getTypographyDraft(valueItem: TokenValue, name: string): TokenTypographyDraft {
   if (valueItem.preview?.kind !== "typography") {
     return { name: "", fontSize: "", fontWeight: "", lineHeight: "" };
   }
@@ -58,7 +55,7 @@ function getTypographyDraft(
 }
 
 function isDualValue(
-  value: TokenTypeValueItem["value"],
+  value: TokenValue["value"],
 ): value is { light?: string; dark?: string } {
   return Boolean(value && typeof value === "object");
 }
@@ -67,7 +64,7 @@ function toInitialDraft(
   name: string,
   category: string,
   kind: TokenKind,
-  valueItem: TokenTypeValueItem,
+  valueItem: TokenValue,
 ): DraftState {
   if (category === "typography" && kind === "semantic") {
     return getTypographyDraft(valueItem, name);

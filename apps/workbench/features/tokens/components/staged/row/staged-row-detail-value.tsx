@@ -1,4 +1,4 @@
-import type { TokenTypeValueItem } from "@/features/tokens/model/token-graph";
+import type { TokenValue } from "@/features/tokens/model/token-graph";
 import { Text } from "@repo/ui";
 
 type valueRow = {
@@ -11,13 +11,13 @@ type StagedRowDetailValueProps = {
   type: "beforeValue" | "afterValue" | "beforeName" | "afterName";
   beforeName?: string;
   afterName?: string;
-  before?: TokenTypeValueItem;
-  after?: TokenTypeValueItem;
+  before?: TokenValue;
+  after?: TokenValue;
 };
 
 function renderValueRows(
-  item: TokenTypeValueItem | undefined,
-  compareToItem?: TokenTypeValueItem | undefined,
+  item: TokenValue | undefined,
+  compareToItem?: TokenValue | undefined,
 ): valueRow[] {
   if (!item) return [{ label: "Value", value: "-" }];
 

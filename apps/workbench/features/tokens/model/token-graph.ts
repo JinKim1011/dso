@@ -11,7 +11,7 @@ export type TokenTypeViewModel = {
   category: string;
   type: string;
   kind: TokenKind;
-  values: TokenTypeValueItem[];
+  values: TokenValue[];
 };
 
 export type TokenGraphViewModel = {
@@ -24,7 +24,7 @@ export type TokenGraphViewModel = {
   tokenTypes: TokenTypeViewModel[];
 };
 
-export type TokenTypeValueItem = {
+export type TokenValue = {
   id: string;
   name: string;
   cssVar?: string;

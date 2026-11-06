@@ -7,8 +7,8 @@ import type {
 import type {
   CategoryViewModel,
   TokenGraphViewModel,
-  TokenTypeValueItem,
   TokenTypeViewModel,
+  TokenValue,
 } from "@/features/tokens/model/token-graph";
 
 type ManifestViewModelResult = {
@@ -64,7 +64,7 @@ function createValueItems(
   entry: NormalizedManifestEntry,
   tokenTypeId: string,
   category: string,
-): TokenTypeValueItem[] {
+): TokenValue[] {
   if (entry.tokens?.length) {
     return entry.tokens.map((token, index) => {
       let status: string | undefined;
@@ -82,7 +82,7 @@ function createValueItems(
           ? `light:${token.values.light ?? "-"} dark:${token.values.dark ?? "-"}`
           : undefined;
 
-      let preview: TokenTypeValueItem["preview"] = undefined;
+      let preview: TokenValue["preview"] = undefined;
       if (category === "color" && token.values) {
         preview = {
           kind: "color",

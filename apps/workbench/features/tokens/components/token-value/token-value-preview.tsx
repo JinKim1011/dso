@@ -1,10 +1,10 @@
-import type { TokenTypeValueItem } from "@/features/tokens/model/token-graph";
+import type { TokenValue } from "@/features/tokens/model/token-graph";
 import { Text } from "@repo/ui";
 
 type TokenValuePreviewProps = {
   category: string;
   kind: string;
-  value: TokenTypeValueItem;
+  value: TokenValue;
 };
 
 export function TokenValuePreview({ category, kind, value }: TokenValuePreviewProps) {
