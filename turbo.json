@@ -8,7 +8,8 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint"],
+      "env": ["NODE_ENV", "DSO_MANIFEST_PATH", "DSO_WORKBENCH_PROJECT_ID"]
     },
     "check-types": {
       "dependsOn": ["^check-types"]
