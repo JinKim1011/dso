@@ -53,5 +53,7 @@ export function persistDraftModel(model: TokenGraphViewModel) {
       draftModel: model,
     };
     window.localStorage.setItem(STAGED_DRAFT_STORAGE_KEY, JSON.stringify(payload));
-  } catch {}
+  } catch (error) {
+    console.warn("Failed to persist staged draft to local storage.", error);
+  }
 }
