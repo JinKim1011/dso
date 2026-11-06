@@ -1,5 +1,5 @@
 import { WorkbenchShell } from "@/_shared/shell/workbench-shell";
-import { ThemeInitializer } from "@/_shared/theme/theme-initializer";
+import { ThemeProvider } from "@/_shared/theme/theme-provider";
 import { loadTokenManifestViewModel } from "@/features/tokens/server/load-token-manifest-view-model";
 import { StagedManifestProvider } from "@/features/tokens/state/staged-manifest-context";
 import "@repo/ui/index.css";
@@ -22,10 +22,11 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ThemeInitializer />
-        <StagedManifestProvider baseManifest={model}>
-          <WorkbenchShell>{children}</WorkbenchShell>
-        </StagedManifestProvider>
+        <ThemeProvider>
+          <StagedManifestProvider baseManifest={model}>
+            <WorkbenchShell>{children}</WorkbenchShell>
+          </StagedManifestProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
