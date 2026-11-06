@@ -15,6 +15,7 @@ import {
   TokenTypographyOptions,
 } from "@/features/tokens/components/form/token-typography-form";
 import { TokenValuePreview } from "@/features/tokens/components/token-value/token-value-preview";
+import { TokenKind } from "@repo/contracts/validation/enum";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
 
@@ -31,7 +32,7 @@ type TokenValueDetailProps = {
   cssVar?: string;
   meta?: string;
   category: string;
-  kind: string;
+  kind: TokenKind;
   value: TokenTypeValueItem;
   onClose?: () => void;
   typographyOptions: TokenTypographyOptions;
@@ -65,7 +66,7 @@ function isDualValue(
 function toInitialDraft(
   name: string,
   category: string,
-  kind: string,
+  kind: TokenKind,
   valueItem: TokenTypeValueItem,
 ): DraftState {
   if (category === "typography" && kind === "semantic") {
@@ -86,7 +87,7 @@ function toInitialDraft(
 
 function buildUpdate(
   category: string,
-  kind: string,
+  kind: TokenKind,
   draft: DraftState,
 ): TokenValueDetailUpdate {
   if (category === "typography" && kind === "semantic") {
