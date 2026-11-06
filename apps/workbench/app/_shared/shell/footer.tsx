@@ -1,7 +1,8 @@
 "use client";
 
+import { useTheme, type ThemeMode } from "@/_shared/theme/use-theme";
 import { LaptopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
-import { Button, SegmentedControl, useTheme, type ThemeMode } from "@repo/ui";
+import { Button, SegmentedControl } from "@repo/ui";
 
 const themeOptions = [
   { value: "light", iconName: SunIcon, ariaLabel: "Light mode" },
