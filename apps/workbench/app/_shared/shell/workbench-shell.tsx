@@ -3,10 +3,14 @@ import { Header } from "@/_shared/shell/header";
 import type { ReactNode } from "react";
 import { Suspense } from "react";
 
+function HeaderFallback() {
+  return <div className="h-10 w-full" aria-hidden="true" />;
+}
+
 export function WorkbenchShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-screen flex-col">
-      <Suspense fallback={null}>
+      <Suspense fallback={<HeaderFallback />}>
         <Header />
       </Suspense>
 
