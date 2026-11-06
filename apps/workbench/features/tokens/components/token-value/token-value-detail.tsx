@@ -1,6 +1,5 @@
 "use client";
 
-import type { TokenTypeValueItem } from "@/_shared/models/tokenGraph";
 import {
   TokenColorDraft,
   TokenColorForm,
@@ -15,6 +14,7 @@ import {
   TokenTypographyOptions,
 } from "@/features/tokens/components/form/token-typography-form";
 import { TokenValuePreview } from "@/features/tokens/components/token-value/token-value-preview";
+import type { TokenTypeValueItem } from "@/features/tokens/model/token-graph";
 import { TokenKind } from "@repo/contracts/validation/enum";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
