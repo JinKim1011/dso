@@ -41,23 +41,16 @@ type TokenValueDetailProps = {
 
 type DraftState = TokenSingleValueDraft | TokenColorDraft | TokenTypographyDraft;
 
-function getTypographyDraft(valueItem: TokenValue, name: string): TokenTypographyDraft {
-  if (valueItem.preview?.kind !== "typography") {
-    return { name: "", fontSize: "", fontWeight: "", lineHeight: "" };
-  }
-
-  return {
-    name: name ?? "",
-    fontSize: valueItem.preview.typography.fontSize,
-    fontWeight: valueItem.preview.typography.fontWeight,
-    lineHeight: valueItem.preview.typography.lineHeight,
-  };
+function isTypographyDraft(draft: DraftState): draft is TokenTypographyDraft {
+  return "fontSize" in draft && "fontWeight" in draft && "lineHeight" in draft;
 }
 
-function isDualValue(
-  value: TokenValue["value"],
-): value is { light?: string; dark?: string } {
-  return Boolean(value && typeof value === "object");
+function isColorDraft(draft: DraftState): draft is TokenColorDraft {
+  return "lightValue" in draft && "darkValue" in draft;
+}
+
+function isSingleValueDraft(draft: DraftState): draft is TokenSingleValueDraft {
+  return "value" in draft;
 }
 
 function toInitialDraft(name: string, valueItem: TokenValueViewModel): DraftState {
@@ -173,30 +166,24 @@ export function TokenValueDetail({
 
   const renderEditor = () => {
     if (category === "typography" && kind === "semantic") {
+      if (!isTypographyDraft(draft)) return null;
+
       return (
         <TokenTypographyForm
-          draft={draft as TokenTypographyDraft}
+          draft={draft}
           options={typographyOptions}
-          onChange={(next) => setDraft(next)}
+          onChange={setDraft}
         />
       );
     }
 
-    if ("lightValue" in draft && "darkValue" in draft) {
-      return (
-        <TokenColorForm
-          draft={draft as TokenColorDraft}
-          onChange={(next) => setDraft(next)}
-        />
-      );
+    if (isColorDraft(draft)) {
+      return <TokenColorForm draft={draft} onChange={setDraft} />;
     }
 
-    return (
-      <TokenSingleValueForm
-        draft={draft as TokenSingleValueDraft}
-        onChange={(next) => setDraft(next)}
-      />
-    );
+    if (!isSingleValueDraft(draft)) return null;
+
+    return <TokenSingleValueForm draft={draft} onChange={setDraft} />;
   };
 
   const between = rowId.match(/token-type:(.*?):value/)?.[1] ?? "";
