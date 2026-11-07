@@ -7,12 +7,22 @@ export type CategoryViewModel = {
   tokenTypeIds: string[];
 };
 
+export type TokenValueViewModel = {
+  id: string;
+  name: string;
+  cssVar?: string;
+  status?: string;
+  value: Token["value"];
+  meta?: string;
+  preview?: TokenValuePreview;
+};
+
 export type TokenTypeViewModel = {
   id: string;
   category: TokenCategory;
   type: string;
   kind: TokenKind;
-  values: TokenValue[];
+  values: TokenValueViewModel[];
 };
 
 export type TokenGraphViewModel = {
