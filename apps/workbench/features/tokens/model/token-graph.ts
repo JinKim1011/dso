@@ -35,6 +35,26 @@ export type TokenGraphViewModel = {
   tokenTypes: TokenTypeViewModel[];
 };
 
+type TokenValuePreview =
+  | {
+      kind: "single";
+      value: string;
+    }
+  | {
+      kind: "modes";
+      light?: string;
+      dark?: string;
+    }
+  | {
+      kind: "typography";
+      typography: {
+        fontSize: string;
+        fontWeight: string;
+        lineHeight: string;
+      };
+    };
+
+// will be deprecated
 export type TokenValue = {
   id: string;
   name: string;
