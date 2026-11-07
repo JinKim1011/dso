@@ -61,27 +61,8 @@ export type TokenValue = {
   cssVar?: string;
   status?: string;
   meta?: string;
-  preview?: TokenValuePreviewData;
-  category?: string;
+  preview?: TokenValuePreview;
+  category?: TokenCategory;
   kind?: TokenKind;
   value?: string | { light?: string; dark?: string };
 };
-
-type TokenValuePreviewData =
-  | {
-      kind: "typography";
-      typography: {
-        fontSize: string;
-        fontWeight: string;
-        lineHeight: string;
-      };
-    }
-  | {
-      kind: "color";
-      light?: string;
-      dark?: string;
-    }
-  | {
-      kind: "spacing";
-      value: string;
-    };
