@@ -60,26 +60,35 @@ function isDualValue(
   return Boolean(value && typeof value === "object");
 }
 
-function toInitialDraft(
-  name: string,
-  category: string,
-  kind: TokenKind,
-  valueItem: TokenValue,
-): DraftState {
-  if (category === "typography" && kind === "semantic") {
-    return getTypographyDraft(valueItem, name);
+function toInitialDraft(name: string, valueItem: TokenValueViewModel): DraftState {
+  switch (valueItem.value.kind) {
+    case "modes":
+      return {
+        name,
+        lightValue: valueItem.value.light ?? "",
+        darkValue: valueItem.value.dark ?? "",
+      };
+
+    case "single":
+      return {
+        name,
+        value: valueItem.value.value,
+      };
+
+    case "typography":
+      return {
+        name,
+        fontSize: valueItem.value.fontSize,
+        fontWeight: valueItem.value.fontWeight,
+        lineHeight: valueItem.value.lineHeight,
+      };
+
+    case "unresolved":
+      return {
+        name,
+        value: "",
+      };
   }
-  if (isDualValue(valueItem.value)) {
-    return {
-      name: name ?? "",
-      lightValue: valueItem.value.light ?? "",
-      darkValue: valueItem.value.dark ?? "",
-    };
-  }
-  return {
-    name: name ?? "",
-    value: typeof valueItem.value === "string" ? valueItem.value : "",
-  };
 }
 
 function buildUpdate(
@@ -144,10 +153,7 @@ export function TokenValueDetail({
   typographyOptions,
   onSave,
 }: TokenValueDetailProps) {
-  const initialDraft = useMemo(
-    () => toInitialDraft(name, category, kind, value),
-    [name, category, kind, value],
-  );
+  const initialDraft = useMemo(() => toInitialDraft(name, value), [name, value]);
 
   const [draft, setDraft] = useState<DraftState>(initialDraft);
 
