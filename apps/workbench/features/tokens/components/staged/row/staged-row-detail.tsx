@@ -1,14 +1,14 @@
 import { StagedRowDetailTag } from "@/features/tokens/components/staged/row/staged-row-detail-tag";
 import { StagedRowDetailValue } from "@/features/tokens/components/staged/row/staged-row-detail-value";
-import type { TokenValue } from "@/features/tokens/model/token-graph";
+import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
 import { RowSpacingIcon } from "@radix-ui/react-icons";
 
 type StagedRowDetailProps = {
   id: string;
   beforeName: string;
   afterName: string;
-  before: TokenValue;
-  after: TokenValue;
+  before: TokenValueViewModel;
+  after: TokenValueViewModel;
 };
 
 export function StagedRowDetail({
