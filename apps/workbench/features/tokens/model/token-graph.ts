@@ -1,14 +1,15 @@
-import type { TokenKind } from "@repo/contracts/validation/enum";
+import type { Token } from "@repo/contracts/type";
+import type { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
 
 export type CategoryViewModel = {
   id: string;
-  category: string;
+  category: TokenCategory;
   tokenTypeIds: string[];
 };
 
 export type TokenTypeViewModel = {
   id: string;
-  category: string;
+  category: TokenCategory;
   type: string;
   kind: TokenKind;
   values: TokenValue[];
