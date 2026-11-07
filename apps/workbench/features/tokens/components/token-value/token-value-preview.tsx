@@ -1,10 +1,10 @@
-import type { TokenValue } from "@/features/tokens/model/token-graph";
+import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
 import { Text } from "@repo/ui";
 
 type TokenValuePreviewProps = {
   category: string;
   kind: string;
-  value: TokenValue;
+  value: TokenValueViewModel;
 };
 
 export function TokenValuePreview({ category, kind, value }: TokenValuePreviewProps) {
@@ -40,7 +40,7 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
     );
   }
 
-  if (category === "color" && kind === "primitive" && value.preview.kind === "color") {
+  if (category === "color" && kind === "semantic" && value.preview.kind === "modes") {
     const swatches = [
       value.preview.light ? { label: "Light", value: value.preview.light } : null,
       value.preview.dark ? { label: "Dark", value: value.preview.dark } : null,
@@ -63,11 +63,24 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
     );
   }
 
-  if (
-    category === "spacing" &&
-    kind === "primitive" &&
-    value.preview.kind === "spacing"
-  ) {
+  if (category === "color" && kind === "primitive" && value.preview.kind === "single") {
+    const color = value.preview.value;
+    return (
+      <div className={wrapperStyle}>
+        <div className="gap-micro flex flex-col">
+          <div
+            className="rounded-round m-auto h-7 w-7"
+            style={{ backgroundColor: color }}
+          />
+          <Text variant="meta-xs" className="text-content-accent text-center">
+            {value.name}
+          </Text>
+        </div>
+      </div>
+    );
+  }
+
+  if (category === "spacing" && kind === "primitive" && value.preview.kind === "single") {
     const size = value.preview.value;
     return (
       <div className={wrapperStyle}>
