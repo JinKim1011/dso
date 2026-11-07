@@ -1,4 +1,4 @@
-import type { TokenValue } from "@/features/tokens/model/token-graph";
+import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
 import { Text } from "@repo/ui";
 
 type valueRow = {
@@ -11,77 +11,76 @@ type StagedRowDetailValueProps = {
   type: "beforeValue" | "afterValue" | "beforeName" | "afterName";
   beforeName?: string;
   afterName?: string;
-  before?: TokenValue;
-  after?: TokenValue;
+  before?: TokenValueViewModel;
+  after?: TokenValueViewModel;
 };
 
 function renderValueRows(
-  item: TokenValue | undefined,
-  compareToItem?: TokenValue | undefined,
+  item: TokenValueViewModel | undefined,
+  compareToItem?: TokenValueViewModel | undefined,
 ): valueRow[] {
   if (!item) return [{ label: "Value", value: "-" }];
 
   const value = item.value;
-  const isObjectValue = value && typeof value === "object";
 
-  if (item.preview?.kind === "typography") {
-    const compareTypography =
-      compareToItem?.preview?.kind === "typography"
-        ? compareToItem.preview.typography
-        : undefined;
+  if (value.kind === "typography") {
+    const previousTypography =
+      compareToItem?.value.kind === "typography" ? compareToItem.value : undefined;
 
     return [
       {
         label: "fontSize",
-        value: item.preview.typography.fontSize,
-        changed: item.preview.typography.fontSize !== compareTypography?.fontSize,
+        value: value.fontSize,
+        changed: value.fontSize !== previousTypography?.fontSize,
       },
       {
         label: "fontWeight",
-        value: item.preview.typography.fontWeight,
-        changed: item.preview.typography.fontWeight !== compareTypography?.fontWeight,
+        value: value.fontWeight,
+        changed: value.fontWeight !== previousTypography?.fontWeight,
       },
       {
         label: "lineHeight",
-        value: item.preview.typography.lineHeight,
-        changed: item.preview.typography.lineHeight !== compareTypography?.lineHeight,
+        value: value.lineHeight,
+        changed: value.lineHeight !== previousTypography?.lineHeight,
       },
     ];
   }
 
-  if (isObjectValue) {
+  if (value.kind === "modes") {
+    const previousModes =
+      compareToItem?.value.kind === "modes" ? compareToItem.value : undefined;
+
     const currentLight = value.light ?? "-";
     const currentDark = value.dark ?? "-";
-    const previousObject =
-      compareToItem?.value && typeof compareToItem.value === "object"
-        ? compareToItem.value
-        : undefined;
 
     return [
       {
         label: "Light",
         value: currentLight,
-        changed: currentLight !== (previousObject?.light ?? "-"),
+        changed: currentLight !== (previousModes?.light ?? "-"),
       },
       {
         label: "Dark",
         value: currentDark,
-        changed: currentDark !== (previousObject?.dark ?? "-"),
+        changed: currentDark !== (previousModes?.dark ?? "-"),
       },
     ];
   }
 
-  const current = typeof value === "string" ? value : "-";
-  const previous =
-    typeof compareToItem?.value === "string" ? compareToItem.value : undefined;
+  if (value.kind === "single") {
+    const previous =
+      compareToItem?.value.kind === "single" ? compareToItem.value.value : undefined;
 
-  return [
-    {
-      label: "Value",
-      value: current,
-      changed: current !== (previous ?? "-"),
-    },
-  ];
+    return [
+      {
+        label: "Value",
+        value: value.value,
+        changed: value.value !== (previous ?? "-"),
+      },
+    ];
+  }
+
+  return [{ label: "Value", value: "unresolved" }];
 }
 
 export function StagedRowDetailValue({
