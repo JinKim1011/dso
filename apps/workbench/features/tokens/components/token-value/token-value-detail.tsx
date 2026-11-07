@@ -1,17 +1,17 @@
 "use client";
 
 import {
-  TokenColorDraft,
   TokenColorForm,
+  type TokenColorDraft,
 } from "@/features/tokens/components/form/token-color-form";
 import {
-  TokenSingleValueDraft,
   TokenSingleValueForm,
+  type TokenSingleValueDraft,
 } from "@/features/tokens/components/form/token-single-value-form";
 import {
-  TokenTypographyDraft,
   TokenTypographyForm,
-  TokenTypographyOptions,
+  type TokenTypographyDraft,
+  type TokenTypographyOptions,
 } from "@/features/tokens/components/form/token-typography-form";
 import { TokenValuePreview } from "@/features/tokens/components/token-value/token-value-preview";
 import type { TokenValue } from "@/features/tokens/model/token-graph";
