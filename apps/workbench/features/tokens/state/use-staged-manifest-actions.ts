@@ -1,7 +1,7 @@
 import { buildManifestFromGraph } from "@/features/tokens/adapters/manifest/to-manifest";
 import type {
   TokenGraphViewModel,
-  TokenValue,
+  TokenValueViewModel,
 } from "@/features/tokens/model/token-graph";
 import { clearPersistedDraftModel } from "@/features/tokens/state/staged-draft-storage";
 import {
@@ -25,7 +25,7 @@ export function useStagedManifestActions({
   setDraftModel,
 }: UseStagedManifestActionsProps) {
   const updateRow = useCallback(
-    (rowId: string, update: Partial<TokenValue>) => {
+    (rowId: string, update: Partial<TokenValueViewModel>) => {
       setDraftModel((current) => ({
         ...current,
         tokenTypes: current.tokenTypes.map((tokenType) => ({
