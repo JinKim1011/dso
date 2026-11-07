@@ -53,16 +53,3 @@ type TokenValuePreview =
         lineHeight: string;
       };
     };
-
-// will be deprecated
-export type TokenValue = {
-  id: string;
-  name: string;
-  cssVar?: string;
-  status?: string;
-  meta?: string;
-  preview?: TokenValuePreview;
-  category?: TokenCategory;
-  kind?: TokenKind;
-  value?: string | { light?: string; dark?: string };
-};
