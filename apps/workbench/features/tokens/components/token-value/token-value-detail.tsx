@@ -14,16 +14,16 @@ import {
   type TokenTypographyOptions,
 } from "@/features/tokens/components/form/token-typography-form";
 import { TokenValuePreview } from "@/features/tokens/components/token-value/token-value-preview";
-import type { TokenValue } from "@/features/tokens/model/token-graph";
-import { TokenKind } from "@repo/contracts/validation/enum";
+import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
+import type { TokenKind } from "@repo/contracts/validation/enum";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
 
 export type TokenValueDetailUpdate = {
   name: string;
   meta?: string;
-  value?: TokenValue["value"];
-  preview?: TokenValue["preview"];
+  value?: TokenValueViewModel["value"];
+  preview?: TokenValueViewModel["preview"];
 };
 
 type TokenValueDetailProps = {
@@ -33,7 +33,7 @@ type TokenValueDetailProps = {
   meta?: string;
   category: string;
   kind: TokenKind;
-  value: TokenValue;
+  value: TokenValueViewModel;
   onClose?: () => void;
   typographyOptions: TokenTypographyOptions;
   onSave: (rowId: string, next: TokenValueDetailUpdate) => void;
@@ -107,6 +107,7 @@ function buildUpdate(
     return {
       name: draft.name,
       value: {
+        kind: "modes",
         light: draft.lightValue || undefined,
         dark: draft.darkValue || undefined,
       },
@@ -122,7 +123,7 @@ function buildUpdate(
   const singleDraft = draft as TokenSingleValueDraft;
   return {
     name: singleDraft.name,
-    value: singleDraft.value,
+    value: { kind: "single", value: singleDraft.value },
     meta: singleDraft.value,
     preview:
       category === "color"
