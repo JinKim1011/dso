@@ -112,7 +112,7 @@ function buildUpdate(
       },
       meta: `light:${draft.lightValue || "-"} dark:${draft.darkValue || "-"}`,
       preview: {
-        kind: "color",
+        kind: "modes",
         light: draft.lightValue || undefined,
         dark: draft.darkValue || undefined,
       },
@@ -125,9 +125,9 @@ function buildUpdate(
     value: singleDraft.value,
     meta: singleDraft.value,
     preview:
-      category === "spacing"
+      category === "color"
         ? {
-            kind: "spacing",
+            kind: "single",
             value: singleDraft.value,
           }
         : undefined,
