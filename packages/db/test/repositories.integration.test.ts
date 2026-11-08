@@ -20,6 +20,34 @@ import { insertToken, listTokensByProjectId } from "@repo/db/repositories/tokens
 import { getTestDatabase } from "@repo/db/test/setup";
 import { describe, expect, it } from "vitest";
 
+function findTokenType(
+  seed: typeof validSeed,
+  name: string,
+  kind: "primitive" | "semantic",
+) {
+  const tokenType = seed.tokenTypes.find(
+    (item) => item.name === name && item.kind === kind,
+  );
+
+  if (!tokenType) {
+    throw new Error(`Missing token type: ${kind}/${name}`);
+  }
+
+  return tokenType;
+}
+
+function findToken(seed: typeof validSeed, name: string, tokenTypeId: string) {
+  const token = seed.tokens.find(
+    (item) => item.name === name && item.tokenTypeId === tokenTypeId,
+  );
+
+  if (!token) {
+    throw new Error(`Missing token: ${tokenTypeId}/${name}`);
+  }
+
+  return token;
+}
+
 describe("database projects repository", () => {
   it("inserts and reads a project", async () => {
     const database = getTestDatabase();
@@ -83,12 +111,17 @@ describe("database token types repository", () => {
     const database = getTestDatabase();
     const seed = structuredClone(validSeed);
 
+    const darkType = findTokenType(seed, "Base Dark", "primitive");
+    const lightType = findTokenType(seed, "Base Light", "primitive");
+
+    const darkToken = findToken(seed, "neutral-0", darkType.id);
+    const lightToken = findToken(seed, "neutral-0", lightType.id);
+
     await insertProject(database, seed.projects[0]!);
-    await insertTokenType(database, seed.tokenTypes[0]!);
-    await insertTokenType(database, seed.tokenTypes[1]!);
-    await insertToken(database, seed.tokens[0]!);
-    await insertToken(database, seed.tokens[1]!);
-    await insertTokenReference(database, seed.tokenReferences[0]!);
+    await insertTokenType(database, darkType);
+    await insertTokenType(database, lightType);
+    await insertToken(database, darkToken);
+    await insertToken(database, lightToken);
 
     expect(await listTokenTypesByProjectId(database, seed.projects[0]!.id)).toHaveLength(
       2,
@@ -96,9 +129,9 @@ describe("database token types repository", () => {
 
     expect(await listTokensByProjectId(database, seed.projects[0]!.id)).toHaveLength(2);
 
-    expect(await listTokenReferencesByProjectId(database, seed.projects[0]!.id)).toEqual([
-      seed.tokenReferences[0],
-    ]);
+    expect(await listTokenReferencesByProjectId(database, seed.projects[0]!.id)).toEqual(
+      [],
+    );
   });
 
   it("lists the token type hierarchy", async () => {
@@ -157,19 +190,58 @@ describe("database token references repository", () => {
     const database = getTestDatabase();
     const seed = structuredClone(validSeed);
 
-    await insertProject(database, seed.projects[0]!);
-    await insertTokenType(database, seed.tokenTypes[0]!);
-    await insertTokenType(database, seed.tokenTypes[1]!);
-    await insertToken(database, seed.tokens[0]!);
-    await insertToken(database, seed.tokens[1]!);
-    await insertTokenReference(database, seed.tokenReferences[0]!);
+    const project = seed.projects[0]!;
 
-    const references = await listTokenReferencesToToken(
-      database,
-      seed.projects[0]!.id,
-      seed.tokens[0]!.id,
+    const semanticType = findTokenType(seed, "surface", "semantic");
+
+    const semanticToken = seed.tokens.find(
+      (token) => token.name === "surface" && token.tokenTypeId === semanticType.id,
+    )!;
+    const lightReference = seed.tokenReferences.find(
+      (reference) =>
+        reference.referencingTokenId === semanticToken.id && reference.slot === "light",
+    )!;
+
+    const darkReference = seed.tokenReferences.find(
+      (reference) =>
+        reference.referencingTokenId === semanticToken.id && reference.slot === "dark",
+    )!;
+
+    const lightToken = seed.tokens.find(
+      (token) => token.id === lightReference.referencedTokenId,
+    )!;
+    const darkToken = seed.tokens.find(
+      (token) => token.id === darkReference.referencedTokenId,
+    )!;
+    const darkType = seed.tokenTypes.find(
+      (tokenType) => tokenType.id === darkToken.tokenTypeId,
+    )!;
+    const lightType = seed.tokenTypes.find(
+      (tokenType) => tokenType.id === lightToken.tokenTypeId,
+    )!;
+
+    await insertProject(database, project);
+
+    await insertTokenType(database, darkType);
+    await insertTokenType(database, lightType);
+    await insertTokenType(database, semanticType);
+
+    await insertToken(database, darkToken);
+    await insertToken(database, lightToken);
+    await insertToken(database, semanticToken);
+
+    const insertedLightReference = await insertTokenReference(database, lightReference);
+    const insertedDarkReference = await insertTokenReference(database, darkReference);
+
+    expect(insertedLightReference).toEqual(lightReference);
+    expect(insertedDarkReference).toEqual(darkReference);
+
+    expect(await listTokenReferencesToToken(database, project.id, lightToken.id)).toEqual(
+      [lightReference],
     );
 
-    expect(references).toEqual([seed.tokenReferences[0]]);
+    expect(await listTokenReferencesToToken(database, project.id, darkToken.id)).toEqual([
+      darkReference,
+    ]);
   });
 });
