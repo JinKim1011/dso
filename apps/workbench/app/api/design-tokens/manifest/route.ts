@@ -1,3 +1,7 @@
+// WILL BE DEPRECATED
+// remove when the save flow replaced,
+// the current staged editing actions still call it.
+
 import fs from "fs/promises";
 import { NextResponse } from "next/server";
 import path from "path";
