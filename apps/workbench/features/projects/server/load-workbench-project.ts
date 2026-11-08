@@ -1,3 +1,7 @@
+// WIP:
+// This loade is not yet production-safe
+// until it recevies authorization cotnext.
+
 import type {
   Component,
   DocumentTemplate,
