@@ -3,8 +3,7 @@ import type { SeedData } from "@repo/contracts/seed";
 import type { Token, TokenType } from "@repo/contracts/type";
 import { randomUUID } from "node:crypto";
 
-const primitiveDarkColorTypeId = randomUUID();
-const primitiveLightColorTypeId = randomUUID();
+const primitiveColorTypeId = randomUUID();
 const semanticSurfaceTypeId = randomUUID();
 const semanticSurfaceInteractiveTypeId = randomUUID();
 const semanticSurfaceFeedbackTypeId = randomUUID();
@@ -14,7 +13,6 @@ const semanticContentFeedbackTypeId = randomUUID();
 const semanticStrokeTypeId = randomUUID();
 const semanticStrokeInteractiveTypeId = randomUUID();
 const semanticStrokeFeedbackTypeId = randomUUID();
-const semanticHeaderTypeId = randomUUID();
 const primitiveFontSizeTypeId = randomUUID();
 const primitiveFontWeightTypeId = randomUUID();
 const primitiveLineHeightTypeId = randomUUID();
@@ -24,6 +22,21 @@ const primitiveEaseOutTypeId = randomUUID();
 const primitiveEaseInOutTypeId = randomUUID();
 
 const tokenId = () => randomUUID();
+
+const createTokenType = (
+  id: string,
+  name: string,
+  category: TokenType["category"],
+  kind: TokenType["kind"],
+  parentTypeId: string | null = null,
+): TokenType => ({
+  id,
+  projectId: fixtureIds.project,
+  parentTypeId,
+  category,
+  name,
+  kind,
+});
 
 const primitiveColorValues = [
   ["neutral-0", "oklch(98.5% 0 0)"],
@@ -55,7 +68,7 @@ const primitiveColorValues = [
 const primitiveColorTokens: Token[] = primitiveColorValues.map(([name, value]) => ({
   id: tokenId(),
   projectId: fixtureIds.project,
-  tokenTypeId: primitiveDarkColorTypeId,
+  tokenTypeId: primitiveColorTypeId,
   name,
   cssVar: `--base-${name}`,
   value: { kind: "single", value },
@@ -63,19 +76,6 @@ const primitiveColorTokens: Token[] = primitiveColorValues.map(([name, value]) =
 
 const primitiveColorByName = new Map(
   primitiveColorTokens.map((token) => [token.name, token]),
-);
-
-const primitiveLightColorTokens: Token[] = primitiveColorValues.map(([name, value]) => ({
-  id: tokenId(),
-  projectId: fixtureIds.project,
-  tokenTypeId: primitiveLightColorTypeId,
-  name,
-  cssVar: `--base-light-${name}`,
-  value: { kind: "single", value },
-}));
-
-const primitiveLightColorByName = new Map(
-  primitiveLightColorTokens.map((token) => [token.name, token]),
 );
 
 const semanticColorValues = [
@@ -175,7 +175,6 @@ const semanticColorValues = [
   ["stroke-feedback-success", "lime-100", "lime-100", semanticStrokeFeedbackTypeId],
   ["stroke-feedback-warning", "amber-100", "amber-100", semanticStrokeFeedbackTypeId],
   ["stroke-feedback-error", "red-100", "red-100", semanticStrokeFeedbackTypeId],
-  ["header-stripe", "neutral-0", "neutral-900", semanticHeaderTypeId],
 ] as const;
 
 const semanticColorTokens: Token[] = semanticColorValues.map(
@@ -187,7 +186,7 @@ const semanticColorTokens: Token[] = semanticColorValues.map(
     cssVar: `--color-${name}`,
     value: {
       kind: "modes",
-      light: `var(--base-light-${lightPrimitiveName})`,
+      light: `var(--base-${lightPrimitiveName})`,
       dark: `var(--base-${darkPrimitiveName})`,
     },
   }),
@@ -307,8 +306,8 @@ const colorReferences = semanticColorTokens
     const [, lightPrimitiveName, darkPrimitiveName] = semanticColorValues.find(
       ([name]) => name === token.name,
     )!;
+    const lightToken = primitiveColorByName.get(lightPrimitiveName)!;
     const darkToken = primitiveColorByName.get(darkPrimitiveName)!;
-    const lightToken = primitiveLightColorByName.get(lightPrimitiveName)!;
 
     return [
       {
@@ -357,158 +356,49 @@ const typographyReferences = typographySemanticTokens.flatMap((token) => {
 });
 
 const tokenTypes: TokenType[] = [
-  {
-    id: primitiveDarkColorTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: null,
-    category: "color",
-    name: "Base Dark",
-    kind: "primitive",
-  },
-  {
-    id: primitiveLightColorTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: null,
-    category: "color",
-    name: "Base Light",
-    kind: "primitive",
-  },
-  {
-    id: semanticSurfaceTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: primitiveDarkColorTypeId,
-    category: "color",
-    name: "surface",
-    kind: "semantic",
-  },
-  {
-    id: semanticSurfaceInteractiveTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: semanticSurfaceTypeId,
-    category: "color",
-    name: "interactive",
-    kind: "semantic",
-  },
-  {
-    id: semanticSurfaceFeedbackTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: semanticSurfaceTypeId,
-    category: "color",
-    name: "feedback",
-    kind: "semantic",
-  },
-  {
-    id: semanticContentTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: primitiveDarkColorTypeId,
-    category: "color",
-    name: "content",
-    kind: "semantic",
-  },
-  {
-    id: semanticContentInteractiveTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: semanticContentTypeId,
-    category: "color",
-    name: "interactive",
-    kind: "semantic",
-  },
-  {
-    id: semanticContentFeedbackTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: semanticContentTypeId,
-    category: "color",
-    name: "feedback",
-    kind: "semantic",
-  },
-  {
-    id: semanticStrokeTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: primitiveDarkColorTypeId,
-    category: "color",
-    name: "stroke",
-    kind: "semantic",
-  },
-  {
-    id: semanticStrokeInteractiveTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: semanticStrokeTypeId,
-    category: "color",
-    name: "interactive",
-    kind: "semantic",
-  },
-  {
-    id: semanticStrokeFeedbackTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: semanticStrokeTypeId,
-    category: "color",
-    name: "feedback",
-    kind: "semantic",
-  },
-  {
-    id: semanticHeaderTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: primitiveDarkColorTypeId,
-    category: "color",
-    name: "header",
-    kind: "semantic",
-  },
-  {
-    id: primitiveFontSizeTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: null,
-    category: "typography",
-    name: "font-size",
-    kind: "primitive",
-  },
-  {
-    id: primitiveFontWeightTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: null,
-    category: "typography",
-    name: "font-weight",
-    kind: "primitive",
-  },
-  {
-    id: primitiveLineHeightTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: null,
-    category: "typography",
-    name: "line-height",
-    kind: "primitive",
-  },
-  {
-    id: semanticTypographyTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: null,
-    category: "typography",
-    name: "Typography",
-    kind: "semantic",
-  },
-  {
-    id: primitiveEaseInTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: null,
-    category: "motion",
-    name: "ease-in",
-    kind: "primitive",
-  },
-  {
-    id: primitiveEaseOutTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: null,
-    category: "motion",
-    name: "ease-out",
-    kind: "primitive",
-  },
-  {
-    id: primitiveEaseInOutTypeId,
-    projectId: fixtureIds.project,
-    parentTypeId: null,
-    category: "motion",
-    name: "ease-in-out",
-    kind: "primitive",
-  },
+  //color
+  createTokenType(primitiveColorTypeId, "Base", "color", "primitive"),
+  createTokenType(semanticSurfaceTypeId, "surface", "color", "semantic"),
+  createTokenType(
+    semanticSurfaceInteractiveTypeId,
+    "interactive",
+    "color",
+    "semantic",
+    semanticSurfaceTypeId,
+  ),
+  createTokenType(semanticSurfaceFeedbackTypeId, "feedback", "color", "semantic"),
+  createTokenType(
+    semanticContentTypeId,
+    "content",
+    "color",
+    "semantic",
+    primitiveColorTypeId,
+  ),
+  createTokenType(
+    semanticContentInteractiveTypeId,
+    "interactive",
+    "color",
+    "semantic",
+    semanticContentTypeId,
+  ),
+  createTokenType(semanticContentFeedbackTypeId, "feedback", "color", "semantic"),
+  createTokenType(semanticStrokeTypeId, "stroke", "color", "semantic"),
+  createTokenType(
+    semanticStrokeInteractiveTypeId,
+    "interactive",
+    "color",
+    "semantic",
+    semanticStrokeTypeId,
+  ),
+  createTokenType(semanticStrokeFeedbackTypeId, "feedback", "color", "semantic"),
+  // typography
+  createTokenType(primitiveFontSizeTypeId, "font-size", "typography", "primitive"),
+  createTokenType(primitiveFontWeightTypeId, "font-weight", "typography", "primitive"),
+  createTokenType(primitiveLineHeightTypeId, "line-height", "typography", "primitive"),
+  createTokenType(semanticTypographyTypeId, "Typography", "typography", "semantic"),
+  createTokenType(primitiveEaseInTypeId, "ease-in", "motion", "primitive"),
+  createTokenType(primitiveEaseOutTypeId, "ease-out", "motion", "primitive"),
+  createTokenType(primitiveEaseInOutTypeId, "ease-in-out", "motion", "primitive"),
 ];
 
 export const validSeed: SeedData = {
@@ -539,7 +429,6 @@ export const validSeed: SeedData = {
   tokenTypes,
   tokens: [
     ...primitiveColorTokens,
-    ...primitiveLightColorTokens,
     ...semanticColorTokens,
     ...typographyPrimitiveTokens,
     ...typographySemanticTokens,
