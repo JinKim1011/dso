@@ -1,8 +1,8 @@
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { validateSeedData } from "@repo/contracts/validation/seed";
 import { closeDatabasePool, createDatabasePool } from "@repo/db/client";
 import { runMigrations } from "@repo/db/migrations/index";
 import { seedDatabase } from "@repo/db/seed";
+import { validSeed } from "@repo/seed-data/valid-seed";
 
 async function main(): Promise<void> {
   const validationErrors = validateSeedData(validSeed);
