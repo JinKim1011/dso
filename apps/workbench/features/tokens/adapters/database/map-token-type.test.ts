@@ -1,12 +1,34 @@
 import type { Token, TokenType } from "@repo/contracts/type";
-import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 import { mapTokenType } from "./map-token-type";
 
-const tokenType = validSeed.tokenTypes.find(
-  (candidate) => candidate.category === "color" && candidate.name === "Base",
-)!;
-const tokens = validSeed.tokens.filter((token) => token.tokenTypeId === tokenType.id);
+const tokenType: TokenType = {
+  id: "color-base",
+  projectId: "project",
+  parentTypeId: null,
+  category: "color",
+  name: "Base",
+  kind: "primitive",
+};
+
+const tokens: Token[] = [
+  {
+    id: "token-b",
+    projectId: tokenType.projectId,
+    tokenTypeId: tokenType.id,
+    name: "blue",
+    cssVar: "--base-blue",
+    value: { kind: "single", value: "oklch(60% 0.2 240)" },
+  },
+  {
+    id: "token-a",
+    projectId: tokenType.projectId,
+    tokenTypeId: tokenType.id,
+    name: "red",
+    cssVar: "--base-red",
+    value: { kind: "single", value: "oklch(60% 0.2 30)" },
+  },
+];
 
 describe("mapTokenType", () => {
   it("maps and sorts tokens belonging to the type", () => {
