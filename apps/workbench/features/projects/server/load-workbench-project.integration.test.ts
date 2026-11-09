@@ -98,6 +98,7 @@ describe("loadWorkbenchProject database pipeline", () => {
     const viewModel = buildTokenGraphViewModel(
       workbenchProject.tokenTypes,
       workbenchProject.tokens,
+      workbenchProject.references,
     );
 
     expect(viewModel).toMatchObject({
@@ -113,6 +114,23 @@ describe("loadWorkbenchProject database pipeline", () => {
       "typography",
       "motion",
     ]);
+
+    expect(
+      viewModel.tokenTypes
+        .flatMap(({ values }) => values)
+        .find(({ name }) => name === "surface"),
+    ).toMatchObject({
+      value: {
+        kind: "modes",
+        light: "var(--base-neutral-0)",
+        dark: "var(--base-neutral-900)",
+      },
+      preview: {
+        kind: "modes",
+        light: "oklch(98.5% 0 0)",
+        dark: "oklch(14.5% 0 0)",
+      },
+    });
 
     expect(
       viewModel.tokenTypes
@@ -142,6 +160,10 @@ describe("loadWorkbenchProject database pipeline", () => {
         fontSize: "var(--text-regular)",
         fontWeight: "var(--font-regular)",
         lineHeight: "var(--leading-relaxed)",
+      },
+      preview: {
+        kind: "typography",
+        typography: { fontSize: "1rem", fontWeight: "400", lineHeight: "1.7" },
       },
     });
   });
