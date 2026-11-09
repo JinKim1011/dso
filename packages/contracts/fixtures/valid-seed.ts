@@ -1,27 +1,37 @@
 import { fixtureIds } from "@repo/contracts/fixtures/ids";
 import type { SeedData } from "@repo/contracts/seed";
 import type { Token, TokenType } from "@repo/contracts/type";
-import { randomUUID } from "node:crypto";
 
-const primitiveColorTypeId = randomUUID();
-const semanticSurfaceTypeId = randomUUID();
-const semanticSurfaceInteractiveTypeId = randomUUID();
-const semanticSurfaceFeedbackTypeId = randomUUID();
-const semanticContentTypeId = randomUUID();
-const semanticContentInteractiveTypeId = randomUUID();
-const semanticContentFeedbackTypeId = randomUUID();
-const semanticStrokeTypeId = randomUUID();
-const semanticStrokeInteractiveTypeId = randomUUID();
-const semanticStrokeFeedbackTypeId = randomUUID();
-const primitiveFontSizeTypeId = randomUUID();
-const primitiveFontWeightTypeId = randomUUID();
-const primitiveLineHeightTypeId = randomUUID();
-const semanticTypographyTypeId = randomUUID();
-const primitiveEaseInTypeId = randomUUID();
-const primitiveEaseOutTypeId = randomUUID();
-const primitiveEaseInOutTypeId = randomUUID();
+const {
+  primitiveColor: primitiveColorTypeId,
+  semanticSurface: semanticSurfaceTypeId,
+  semanticSurfaceInteractive: semanticSurfaceInteractiveTypeId,
+  semanticSurfaceFeedback: semanticSurfaceFeedbackTypeId,
+  semanticContent: semanticContentTypeId,
+  semanticContentInteractive: semanticContentInteractiveTypeId,
+  semanticContentFeedback: semanticContentFeedbackTypeId,
+  semanticStroke: semanticStrokeTypeId,
+  semanticStrokeInteractive: semanticStrokeInteractiveTypeId,
+  semanticStrokeFeedback: semanticStrokeFeedbackTypeId,
+  primitiveFontSize: primitiveFontSizeTypeId,
+  primitiveFontWeight: primitiveFontWeightTypeId,
+  primitiveLineHeight: primitiveLineHeightTypeId,
+  semanticTypography: semanticTypographyTypeId,
+  primitiveEaseIn: primitiveEaseInTypeId,
+  primitiveEaseOut: primitiveEaseOutTypeId,
+  primitiveEaseInOut: primitiveEaseInOutTypeId,
+} = fixtureIds.seedTokenTypes;
 
-const tokenId = () => randomUUID();
+let nextTokenId = 0;
+const tokenId = () => {
+  const id = fixtureIds.seedTokens[nextTokenId++];
+
+  if (!id) {
+    throw new Error("Missing deterministic fixture token ID");
+  }
+
+  return id;
+};
 
 const createTokenType = (
   id: string,
