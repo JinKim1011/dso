@@ -1,3 +1,4 @@
+import type { TokenReferenceLookup } from "@/features/tokens/adapters/database/create-token-reference-lookup";
 import { mapTokenValue } from "@/features/tokens/adapters/database/map-token-value";
 import type {
   TokenTypeViewModel,
@@ -9,6 +10,7 @@ import { isCategory, type TokenCategory } from "@repo/contracts/validation/enum"
 export function mapTokenType(
   tokenType: TokenType,
   tokensByType: Map<string, Token[]>,
+  referenceLookup: TokenReferenceLookup,
 ): TokenTypeViewModel {
   if (!isCategory(tokenType.category)) {
     throw new Error(
@@ -26,7 +28,7 @@ export function mapTokenType(
       id: token.id,
       name: token.name,
       cssVar: token.cssVar ?? undefined,
-      ...mapTokenValue(token, category),
+      ...mapTokenValue(token, tokenType, referenceLookup),
     }));
 
   return {
