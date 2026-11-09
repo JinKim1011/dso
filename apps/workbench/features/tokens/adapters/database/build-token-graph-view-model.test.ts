@@ -1,20 +1,61 @@
-import { validSeed } from "@repo/seed-data/valid-seed";
+import type { Token, TokenType } from "@repo/contracts/type";
 import { describe, expect, it } from "vitest";
 import { buildTokenGraphViewModel } from "./build-token-graph-view-model";
 
 describe("buildTokenGraphViewModel", () => {
   it("builds the graph view model from the token fixture", () => {
-    //token types
-    const tokenTypes = validSeed.tokenTypes.filter(
-      (tokenType) =>
-        tokenType.category === "color" || tokenType.category === "typography",
-    );
-    const tokenTypeIds = new Set(tokenTypes.map((tokenType) => tokenType.id));
-
-    // tokens
-    const tokens = validSeed.tokens.filter((token) =>
-      tokenTypeIds.has(token.tokenTypeId),
-    );
+    const colorBaseType: TokenType = {
+      id: "color-base",
+      projectId: "project",
+      parentTypeId: null,
+      category: "color",
+      name: "Base",
+      kind: "primitive",
+    };
+    const typographyType: TokenType = {
+      id: "typography-semantic",
+      projectId: "project",
+      parentTypeId: null,
+      category: "typography",
+      name: "Typography",
+      kind: "semantic",
+    };
+    const tokenTypes = [typographyType, colorBaseType];
+    const tokens: Token[] = [
+      {
+        id: "color-neutral-0",
+        projectId: colorBaseType.projectId,
+        tokenTypeId: colorBaseType.id,
+        name: "neutral-0",
+        cssVar: "--base-neutral-0",
+        value: { kind: "single", value: "oklch(98.5% 0 0)" },
+      },
+      {
+        id: "color-surface",
+        projectId: colorBaseType.projectId,
+        tokenTypeId: colorBaseType.id,
+        name: "surface",
+        cssVar: "--color-surface",
+        value: {
+          kind: "modes",
+          light: "var(--base-neutral-0)",
+          dark: "var(--base-neutral-900)",
+        },
+      },
+      {
+        id: "typography-body",
+        projectId: typographyType.projectId,
+        tokenTypeId: typographyType.id,
+        name: "body",
+        cssVar: null,
+        value: {
+          kind: "typography",
+          fontSize: "var(--text-regular)",
+          fontWeight: "var(--font-regular)",
+          lineHeight: "var(--leading-relaxed)",
+        },
+      },
+    ];
 
     const viewModel = buildTokenGraphViewModel(tokenTypes, tokens);
 
