@@ -1,5 +1,9 @@
 // represents a complete, realistic database seed.
 
+// TODO:
+// Expand seed coverage to all contract-supported category/type-kind combinations,
+// unresolved values, and semantic motion, spacing, radius, and shadow references.
+
 import type { SeedData } from "@repo/contracts/seed";
 import type { Token, TokenType } from "@repo/contracts/type";
 import { seedIds } from "@repo/seed-data/ids";
