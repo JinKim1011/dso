@@ -6,12 +6,8 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "npm run validate:typography-tokens && npm run validate:color-tokens && turbo run check-types",
-    "validate:color-tokens": "node scripts/validate-color.mjs",
-    "validate:typography-tokens": "node scripts/validate-typography.mjs",
-    "scan": "npm run scan:components && npm run scan:tokens",
-    "scan:components": "node scripts/scan-components.mjs",
-    "scan:tokens": "node scripts/scan-tokens.mjs"
+    "check-types": "turbo run check-types",
+    "db:seed": "tsx scripts/seed-database.ts"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
@@ -21,6 +17,7 @@
     "prettier-plugin-sql": "^0.20.0",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "react-docgen-typescript": "^2.4.0",
+    "tsx": "^4.23.15",
     "turbo": "^2.7.6",
     "typescript": "5.9.2"
   },

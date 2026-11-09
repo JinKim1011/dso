@@ -1,6 +1,6 @@
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { seedDatabase } from "@repo/db/seed";
 import { getTestDatabase } from "@repo/db/test/setup";
+import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 
 const tableNames = [

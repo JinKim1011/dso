@@ -1,6 +1,6 @@
-import { fixtureIds } from "@repo/contracts/fixtures/ids";
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { validateSeedData } from "@repo/contracts/validation/seed/index";
+import { seedIds } from "@repo/seed-data/ids";
+import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 
 const cloneSeed = () => structuredClone(validSeed);
@@ -20,7 +20,7 @@ describe("validateSeedData", () => {
       expect.objectContaining({
         code: "missing-record",
         collection: "tokens",
-        id: fixtureIds.singleToken,
+        id: seedIds.tokens[0],
       }),
     );
   });

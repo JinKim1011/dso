@@ -1,3 +1,7 @@
+// WIP:
+// This loade is not yet production-safe
+// until it recevies authorization cotnext.
+
 import type {
   Component,
   DocumentTemplate,
@@ -40,10 +44,10 @@ export async function loadWorkbenchProject(
     await Promise.all([
       listTokenTypesByProjectId(database, projectId),
       listTokensByProjectId(database, projectId),
-      listTokenReferencesByProjectId(database, projectId),
-      listComponentsByProjectId(database, projectId),
-      listDocumentTemplatesByProjectId(database, projectId),
-      listPublishedReleasesByProjectId(database, projectId),
+      listTokenReferencesByProjectId(database, projectId), // not yet wired into the UI
+      listComponentsByProjectId(database, projectId), // not yet wired into the UI
+      listDocumentTemplatesByProjectId(database, projectId), // not yet wired into the UI
+      listPublishedReleasesByProjectId(database, projectId), // not yet wired into the UI
     ]);
 
   return {

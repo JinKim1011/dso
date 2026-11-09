@@ -1,6 +1,6 @@
 import type {
   TokenGraphViewModel,
-  TokenTypeValueItem,
+  TokenValueViewModel,
 } from "@/features/tokens/model/token-graph";
 
 export type TokenRowViewModel = {
@@ -8,12 +8,12 @@ export type TokenRowViewModel = {
   name: string;
   cssVar?: string;
   meta?: string;
-  preview?: TokenTypeValueItem["preview"];
+  preview?: TokenValueViewModel["preview"];
   category: string;
   kind: TokenGraphViewModel["tokenTypes"][number]["kind"];
-  value: TokenTypeValueItem;
+  value: TokenValueViewModel;
 };
 
 export type TokenRowUpdate = Partial<
-  Pick<TokenTypeValueItem, "name" | "cssVar" | "status" | "meta" | "value">
+  Pick<TokenValueViewModel, "name" | "cssVar" | "status" | "meta" | "value">
 >;

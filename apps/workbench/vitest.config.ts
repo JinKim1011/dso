@@ -5,9 +5,11 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./app"),
-    },
+    alias: [
+      { find: "@/features", replacement: path.resolve(__dirname, "./features") },
+      { find: "@/server", replacement: path.resolve(__dirname, "./src/server") },
+      { find: "@", replacement: path.resolve(__dirname, "./app") },
+    ],
   },
   test: {
     include: ["**/*.{test,spec}.{ts,tsx}"],

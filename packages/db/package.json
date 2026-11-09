@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@repo/contracts": "*",
+    "@repo/seed-data": "*",
     "@repo/typescript-config": "*",
     "@types/node": "^22.0.0",
     "@types/pg": "^8.15.0",

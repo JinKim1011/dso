@@ -1,17 +1,28 @@
-import type { TokenKind } from "@repo/contracts/validation/enum";
+import type { Token } from "@repo/contracts/type";
+import type { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
 
 export type CategoryViewModel = {
   id: string;
-  category: string;
+  category: TokenCategory;
   tokenTypeIds: string[];
+};
+
+export type TokenValueViewModel = {
+  id: string;
+  name: string;
+  cssVar?: string;
+  status?: string;
+  value: Token["value"];
+  meta?: string;
+  preview?: TokenValuePreview;
 };
 
 export type TokenTypeViewModel = {
   id: string;
-  category: string;
+  category: TokenCategory;
   type: string;
   kind: TokenKind;
-  values: TokenTypeValueItem[];
+  values: TokenValueViewModel[];
 };
 
 export type TokenGraphViewModel = {
@@ -24,19 +35,16 @@ export type TokenGraphViewModel = {
   tokenTypes: TokenTypeViewModel[];
 };
 
-export type TokenTypeValueItem = {
-  id: string;
-  name: string;
-  cssVar?: string;
-  status?: string;
-  meta?: string;
-  preview?: TokenValuePreviewData;
-  category?: string;
-  kind?: TokenKind;
-  value?: string | { light?: string; dark?: string };
-};
-
-type TokenValuePreviewData =
+type TokenValuePreview =
+  | {
+      kind: "single";
+      value: string;
+    }
+  | {
+      kind: "modes";
+      light?: string;
+      dark?: string;
+    }
   | {
       kind: "typography";
       typography: {
@@ -44,13 +52,4 @@ type TokenValuePreviewData =
         fontWeight: string;
         lineHeight: string;
       };
-    }
-  | {
-      kind: "color";
-      light?: string;
-      dark?: string;
-    }
-  | {
-      kind: "spacing";
-      value: string;
     };

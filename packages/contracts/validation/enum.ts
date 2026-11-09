@@ -2,11 +2,20 @@ export const PROJECT_MEMBER_ROLES = ["editor", "publisher", "admin"] as const;
 export const API_KEY_SCOPES = ["release:read"] as const;
 export const RELEASE_STATUSES = ["draft", "published"] as const;
 export const TOKEN_KINDS = ["primitive", "semantic"] as const;
+export const TOKEN_CATEGORIES = [
+  "color",
+  "typography",
+  "spacing",
+  "radius",
+  "shadow",
+  "motion",
+] as const;
 
 export type ProjectMemberRole = (typeof PROJECT_MEMBER_ROLES)[number];
 export type ApiKeyScope = (typeof API_KEY_SCOPES)[number];
 export type ReleaseStatus = (typeof RELEASE_STATUSES)[number];
 export type TokenKind = (typeof TOKEN_KINDS)[number];
+export type TokenCategory = (typeof TOKEN_CATEGORIES)[number];
 
 export function isSupportedProjectMemberRole(value: unknown): value is ProjectMemberRole {
   return (
@@ -21,4 +30,7 @@ export function isSupportedReleaseStatus(value: unknown): value is ReleaseStatus
 }
 export function isSupportedTokenKind(value: unknown): value is TokenKind {
   return typeof value === "string" && TOKEN_KINDS.includes(value as TokenKind);
+}
+export function isCategory(value: unknown): value is TokenCategory {
+  return typeof value === "string" && TOKEN_CATEGORIES.includes(value as TokenCategory);
 }

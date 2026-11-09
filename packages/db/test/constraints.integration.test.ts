@@ -1,10 +1,10 @@
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { insertProject } from "@repo/db/repositories/projects";
 import { insertTokenReference } from "@repo/db/repositories/references";
 import { insertRelease } from "@repo/db/repositories/releases";
 import { insertTokenType } from "@repo/db/repositories/token-types";
 import { insertToken } from "@repo/db/repositories/tokens";
 import { getTestDatabase } from "@repo/db/test/setup";
+import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 
 function postgresErrorCode(error: unknown): string | undefined {

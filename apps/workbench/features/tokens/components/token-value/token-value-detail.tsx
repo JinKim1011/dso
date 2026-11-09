@@ -1,29 +1,29 @@
 "use client";
 
 import {
-  TokenColorDraft,
   TokenColorForm,
+  type TokenColorDraft,
 } from "@/features/tokens/components/form/token-color-form";
 import {
-  TokenSingleValueDraft,
   TokenSingleValueForm,
+  type TokenSingleValueDraft,
 } from "@/features/tokens/components/form/token-single-value-form";
 import {
-  TokenTypographyDraft,
   TokenTypographyForm,
-  TokenTypographyOptions,
+  type TokenTypographyDraft,
+  type TokenTypographyOptions,
 } from "@/features/tokens/components/form/token-typography-form";
 import { TokenValuePreview } from "@/features/tokens/components/token-value/token-value-preview";
-import type { TokenTypeValueItem } from "@/features/tokens/model/token-graph";
-import { TokenKind } from "@repo/contracts/validation/enum";
+import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
+import type { TokenKind } from "@repo/contracts/validation/enum";
 import { Button, Text } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
 
 export type TokenValueDetailUpdate = {
   name: string;
   meta?: string;
-  value?: TokenTypeValueItem["value"];
-  preview?: TokenTypeValueItem["preview"];
+  value?: TokenValueViewModel["value"];
+  preview?: TokenValueViewModel["preview"];
 };
 
 type TokenValueDetailProps = {
@@ -33,7 +33,7 @@ type TokenValueDetailProps = {
   meta?: string;
   category: string;
   kind: TokenKind;
-  value: TokenTypeValueItem;
+  value: TokenValueViewModel;
   onClose?: () => void;
   typographyOptions: TokenTypographyOptions;
   onSave: (rowId: string, next: TokenValueDetailUpdate) => void;
@@ -41,48 +41,47 @@ type TokenValueDetailProps = {
 
 type DraftState = TokenSingleValueDraft | TokenColorDraft | TokenTypographyDraft;
 
-function getTypographyDraft(
-  valueItem: TokenTypeValueItem,
-  name: string,
-): TokenTypographyDraft {
-  if (valueItem.preview?.kind !== "typography") {
-    return { name: "", fontSize: "", fontWeight: "", lineHeight: "" };
-  }
-
-  return {
-    name: name ?? "",
-    fontSize: valueItem.preview.typography.fontSize,
-    fontWeight: valueItem.preview.typography.fontWeight,
-    lineHeight: valueItem.preview.typography.lineHeight,
-  };
+function isTypographyDraft(draft: DraftState): draft is TokenTypographyDraft {
+  return "fontSize" in draft && "fontWeight" in draft && "lineHeight" in draft;
 }
 
-function isDualValue(
-  value: TokenTypeValueItem["value"],
-): value is { light?: string; dark?: string } {
-  return Boolean(value && typeof value === "object");
+function isColorDraft(draft: DraftState): draft is TokenColorDraft {
+  return "lightValue" in draft && "darkValue" in draft;
 }
 
-function toInitialDraft(
-  name: string,
-  category: string,
-  kind: TokenKind,
-  valueItem: TokenTypeValueItem,
-): DraftState {
-  if (category === "typography" && kind === "semantic") {
-    return getTypographyDraft(valueItem, name);
+function isSingleValueDraft(draft: DraftState): draft is TokenSingleValueDraft {
+  return "value" in draft;
+}
+
+function toInitialDraft(name: string, valueItem: TokenValueViewModel): DraftState {
+  switch (valueItem.value.kind) {
+    case "modes":
+      return {
+        name,
+        lightValue: valueItem.value.light ?? "",
+        darkValue: valueItem.value.dark ?? "",
+      };
+
+    case "single":
+      return {
+        name,
+        value: valueItem.value.value,
+      };
+
+    case "typography":
+      return {
+        name,
+        fontSize: valueItem.value.fontSize,
+        fontWeight: valueItem.value.fontWeight,
+        lineHeight: valueItem.value.lineHeight,
+      };
+
+    case "unresolved":
+      return {
+        name,
+        value: "",
+      };
   }
-  if (isDualValue(valueItem.value)) {
-    return {
-      name: name ?? "",
-      lightValue: valueItem.value.light ?? "",
-      darkValue: valueItem.value.dark ?? "",
-    };
-  }
-  return {
-    name: name ?? "",
-    value: typeof valueItem.value === "string" ? valueItem.value : "",
-  };
 }
 
 function buildUpdate(
@@ -110,12 +109,13 @@ function buildUpdate(
     return {
       name: draft.name,
       value: {
+        kind: "modes",
         light: draft.lightValue || undefined,
         dark: draft.darkValue || undefined,
       },
       meta: `light:${draft.lightValue || "-"} dark:${draft.darkValue || "-"}`,
       preview: {
-        kind: "color",
+        kind: "modes",
         light: draft.lightValue || undefined,
         dark: draft.darkValue || undefined,
       },
@@ -125,12 +125,12 @@ function buildUpdate(
   const singleDraft = draft as TokenSingleValueDraft;
   return {
     name: singleDraft.name,
-    value: singleDraft.value,
+    value: { kind: "single", value: singleDraft.value },
     meta: singleDraft.value,
     preview:
-      category === "spacing"
+      category === "color"
         ? {
-            kind: "spacing",
+            kind: "single",
             value: singleDraft.value,
           }
         : undefined,
@@ -146,10 +146,7 @@ export function TokenValueDetail({
   typographyOptions,
   onSave,
 }: TokenValueDetailProps) {
-  const initialDraft = useMemo(
-    () => toInitialDraft(name, category, kind, value),
-    [name, category, kind, value],
-  );
+  const initialDraft = useMemo(() => toInitialDraft(name, value), [name, value]);
 
   const [draft, setDraft] = useState<DraftState>(initialDraft);
 
@@ -169,41 +166,25 @@ export function TokenValueDetail({
 
   const renderEditor = () => {
     if (category === "typography" && kind === "semantic") {
+      if (!isTypographyDraft(draft)) return null;
+
       return (
         <TokenTypographyForm
-          draft={draft as TokenTypographyDraft}
+          draft={draft}
           options={typographyOptions}
-          onChange={(next) => setDraft(next)}
+          onChange={setDraft}
         />
       );
     }
 
-    if ("lightValue" in draft && "darkValue" in draft) {
-      return (
-        <TokenColorForm
-          draft={draft as TokenColorDraft}
-          onChange={(next) => setDraft(next)}
-        />
-      );
+    if (isColorDraft(draft)) {
+      return <TokenColorForm draft={draft} onChange={setDraft} />;
     }
 
-    return (
-      <TokenSingleValueForm
-        draft={draft as TokenSingleValueDraft}
-        onChange={(next) => setDraft(next)}
-      />
-    );
+    if (!isSingleValueDraft(draft)) return null;
+
+    return <TokenSingleValueForm draft={draft} onChange={setDraft} />;
   };
-
-  const between = rowId.match(/token-type:(.*?):value/)?.[1] ?? "";
-  const parts = between.split("-");
-  const tokenTypeText = `${parts[1]?.charAt(0).toUpperCase()}${parts[1]?.slice(1).toLowerCase()}`;
-
-  const rawIndex = rowId.split(":").pop() ?? "0";
-  const numericIndex = Number(rawIndex);
-  const displayIndex = String(numericIndex + 1).padStart(2, "0");
-
-  const title = `${tokenTypeText}-${displayIndex}`;
 
   return (
     <div className="px-mini py-miniPlus gap-miniPlus flex w-96 flex-col select-none">
@@ -212,7 +193,7 @@ export function TokenValueDetail({
           variant="label-xxs"
           className="text-content-primary grow-2 basis-0 truncate"
         >
-          {title ? title : rowId}
+          {name}
         </Text>
       </div>
       <TokenValuePreview category={category} kind={kind} value={value} />

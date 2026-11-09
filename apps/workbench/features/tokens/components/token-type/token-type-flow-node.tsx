@@ -1,17 +1,14 @@
 "use client";
 
 import { TokenTypeNode } from "@/features/tokens/components/token-type/token-type-node";
+import type { TokenGraphViewModel } from "@/features/tokens/model/token-graph";
+import type { TokenKind } from "@repo/contracts/validation/enum";
 import { Handle, Node, Position, type NodeProps } from "@xyflow/react";
 
 type TokenTypeFlowData = {
   label: string;
-  kind: "primitive" | "semantic";
-  values: {
-    id: string;
-    name: string;
-    cssVar?: string;
-    meta?: string;
-  }[];
+  kind: TokenKind;
+  values: TokenGraphViewModel["tokenTypes"][number]["values"];
   selectedRowId: string | null;
   onSelectRow: (rowId: string) => void;
 };

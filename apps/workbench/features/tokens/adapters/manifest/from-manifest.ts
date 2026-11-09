@@ -2,14 +2,17 @@ import { toId } from "@/features/tokens/adapters/manifest/guards";
 import { normalizeManifest } from "@/features/tokens/adapters/manifest/normalize";
 import type {
   ManifestAdapterOptions,
+  ManifestTokenRecord,
   NormalizedManifestEntry,
 } from "@/features/tokens/adapters/manifest/types";
 import type {
   CategoryViewModel,
   TokenGraphViewModel,
-  TokenTypeValueItem,
   TokenTypeViewModel,
+  TokenValueViewModel,
 } from "@/features/tokens/model/token-graph";
+import type { Token } from "@repo/contracts/type";
+import { isCategory, type TokenCategory } from "@repo/contracts/validation/enum";
 
 type ManifestViewModelResult = {
   viewModel: TokenGraphViewModel;
@@ -46,7 +49,7 @@ function sortCategoriesByOrder(
 
 function addCategoryLink(
   categoriesByName: Map<string, CategoryViewModel>,
-  categoryName: string,
+  categoryName: TokenCategory,
   tokenTypeId: string,
 ): void {
   if (!categoriesByName.has(categoryName)) {
@@ -63,8 +66,8 @@ function addCategoryLink(
 function createValueItems(
   entry: NormalizedManifestEntry,
   tokenTypeId: string,
-  category: string,
-): TokenTypeValueItem[] {
+  category: TokenCategory,
+): TokenValueViewModel[] {
   if (entry.tokens?.length) {
     return entry.tokens.map((token, index) => {
       let status: string | undefined;
@@ -82,17 +85,18 @@ function createValueItems(
           ? `light:${token.values.light ?? "-"} dark:${token.values.dark ?? "-"}`
           : undefined;
 
-      let preview: TokenTypeValueItem["preview"] = undefined;
-      if (category === "color" && token.values) {
+      const value = toTokenValue(token);
+      let preview: TokenValueViewModel["preview"] = undefined;
+      if (value.kind === "single" && (category === "color" || category === "spacing")) {
         preview = {
-          kind: "color",
-          light: token.values.light,
-          dark: token.values.dark,
+          kind: "single",
+          value: value.value,
         };
-      } else if (category === "spacing" && token.value) {
+      } else if (value.kind === "modes") {
         preview = {
-          kind: "spacing",
-          value: token.value,
+          kind: "modes",
+          light: value.light,
+          dark: value.dark,
         };
       }
 
@@ -103,9 +107,7 @@ function createValueItems(
         status,
         meta,
         preview,
-        category,
-        kind: entry.kind,
-        value: token.values ?? token.value,
+        value,
       };
     });
   }
@@ -123,16 +125,44 @@ function createValueItems(
           lineHeight: semantic.lineHeight,
         },
       },
+      value: {
+        kind: "typography",
+        fontSize: semantic.fontSize,
+        fontWeight: semantic.fontWeight,
+        lineHeight: semantic.lineHeight,
+      },
     }));
   }
 
   return entry.value.map((valueName, index) => ({
     id: `${tokenTypeId}:value:${toId("name", valueName)}:${index}`,
     name: valueName,
+    value: { kind: "unresolved" },
   }));
 }
 
-function createTokenType(entry: NormalizedManifestEntry): TokenTypeViewModel {
+function toTokenValue(token: ManifestTokenRecord): Token["value"] {
+  if (token.values?.light || token.values?.dark) {
+    return {
+      kind: "modes",
+      light: token.values.light,
+      dark: token.values.dark,
+    };
+  }
+
+  if (token.value) {
+    return {
+      kind: "single",
+      value: token.value,
+    };
+  }
+
+  return { kind: "unresolved" };
+}
+
+function createTokenType(
+  entry: NormalizedManifestEntry & { category: TokenCategory },
+): TokenTypeViewModel {
   const tokenTypeId = toId("token-type", `${entry.category}-${entry.type}-${entry.kind}`);
 
   return {
@@ -154,10 +184,16 @@ function shouldIncludeEntry(
 function mapEntry(
   normalized: NormalizedManifestEntry,
   mapper?: ManifestAdapterOptions["mapper"],
-): NormalizedManifestEntry {
+): NormalizedManifestEntry & { category: TokenCategory } {
+  const category = mapper?.mapCategory?.(normalized.category) ?? normalized.category;
+
+  if (!isCategory(category)) {
+    throw new Error(`Unsupported token category "${category}"`);
+  }
+
   return {
     ...normalized,
-    category: mapper?.mapCategory?.(normalized.category) ?? normalized.category,
+    category,
   };
 }
 

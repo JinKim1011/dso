@@ -1,7 +1,7 @@
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { findProjectById, insertProject } from "@repo/db/repositories/projects";
 import { getTestDatabase } from "@repo/db/test/setup";
 import { withTransaction } from "@repo/db/transaction";
+import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 
 describe("database transaction rollback", () => {

@@ -1,18 +1,15 @@
-import { randomUUID } from "node:crypto";
+// provides stable, namespaced IDs for domain fixtures and the complete database seed.
 
 export const fixtureIds = {
-  user: randomUUID(),
-  project: randomUUID(),
-  session: randomUUID(),
-
-  primitiveTokenType: randomUUID(),
-  semanticTokenType: randomUUID(),
-
-  singleToken: randomUUID(),
-  modeToken: randomUUID(),
-
-  component: randomUUID(),
-  documentTemplate: randomUUID(),
-  release: randomUUID(),
-  apiKey: randomUUID(),
+  user: "00000000-0000-4000-8000-000000000001",
+  project: "00000000-0000-4000-8000-000000000002",
+  session: "00000000-0000-4000-8000-000000000003",
+  primitiveTokenType: "00000000-0000-4000-8000-000000000004",
+  semanticTokenType: "00000000-0000-4000-8000-000000000005",
+  singleToken: "00000000-0000-4000-8000-000000000006",
+  modeToken: "00000000-0000-4000-8000-000000000007",
+  component: "00000000-0000-4000-8000-000000000008",
+  documentTemplate: "00000000-0000-4000-8000-000000000009",
+  release: "00000000-0000-4000-8000-00000000000a",
+  apiKey: "00000000-0000-4000-8000-00000000000b",
 } as const;

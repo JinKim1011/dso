@@ -1,10 +1,10 @@
-import type { TokenTypeValueItem } from "@/features/tokens/model/token-graph";
+import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
 import { Text } from "@repo/ui";
 
 type TokenValuePreviewProps = {
   category: string;
   kind: string;
-  value: TokenTypeValueItem;
+  value: TokenValueViewModel;
 };
 
 export function TokenValuePreview({ category, kind, value }: TokenValuePreviewProps) {
@@ -24,11 +24,7 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
         <div className="gap-micro flex flex-col">
           <div
             className="text-content-primary text-center"
-            style={{
-              fontSize: `var(--text-${fontSize})`,
-              fontWeight: `var(--font-${fontWeight})`,
-              lineHeight: `var(--leading-${lineHeight})`,
-            }}
+            style={{ fontSize, fontWeight, lineHeight }}
           >
             Abc123
           </div>
@@ -40,7 +36,7 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
     );
   }
 
-  if (category === "color" && kind === "primitive" && value.preview.kind === "color") {
+  if (category === "color" && kind === "semantic" && value.preview.kind === "modes") {
     const swatches = [
       value.preview.light ? { label: "Light", value: value.preview.light } : null,
       value.preview.dark ? { label: "Dark", value: value.preview.dark } : null,
@@ -63,20 +59,16 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
     );
   }
 
-  if (
-    category === "spacing" &&
-    kind === "primitive" &&
-    value.preview.kind === "spacing"
-  ) {
-    const size = value.preview.value;
+  if (category === "color" && kind === "primitive" && value.preview.kind === "single") {
+    const color = value.preview.value;
     return (
       <div className={wrapperStyle}>
         <div className="gap-micro flex flex-col">
           <div
-            className="bg-surface-accentStrong m-auto"
-            style={{ width: size, height: size }}
+            className="rounded-round m-auto h-7 w-7"
+            style={{ backgroundColor: color }}
           />
-          <Text variant="meta-xs" className="text-content-accentStrong text-center">
+          <Text variant="meta-xs" className="text-content-accent text-center">
             {value.name}
           </Text>
         </div>
