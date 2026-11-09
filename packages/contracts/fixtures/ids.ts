@@ -1,3 +1,5 @@
+// provides stable, namespaced IDs for domain fixtures and the complete database seed.
+
 export const fixtureIds = {
   domain: {
     user: "00000000-0000-4000-8000-000000000001",
