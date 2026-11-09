@@ -1,8 +1,8 @@
-import { fixtureIds } from "@repo/contracts/fixtures/ids";
 import {
   findDuplicateIds,
   validateSeedCollectionSizes,
 } from "@repo/contracts/validation/seed/collections";
+import { seedIds } from "@repo/seed-data/ids";
 import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 
@@ -18,7 +18,7 @@ describe("findDuplicateIds", () => {
       expect.objectContaining({
         code: "duplicate-id",
         collection: "projects",
-        id: fixtureIds.seed.project,
+        id: seedIds.project,
       }),
     );
   });

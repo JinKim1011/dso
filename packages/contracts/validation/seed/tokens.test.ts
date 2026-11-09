@@ -1,5 +1,5 @@
-import { fixtureIds } from "@repo/contracts/fixtures/ids";
 import { validateTokens } from "@repo/contracts/validation/seed/tokens";
+import { seedIds } from "@repo/seed-data/ids";
 import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 
@@ -18,7 +18,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "missing-record",
         collection: "tokens",
-        id: fixtureIds.seed.tokens[0],
+        id: seedIds.tokens[0],
       }),
     );
   });
@@ -31,7 +31,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "wrong-project",
         collection: "tokens",
-        id: fixtureIds.seed.tokens[0],
+        id: seedIds.tokens[0],
       }),
     );
   });
@@ -44,7 +44,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "invalid-enum",
         collection: "tokenTypes",
-        id: fixtureIds.seed.tokenTypes.primitiveColor,
+        id: seedIds.tokenTypes.primitiveColor,
       }),
     );
   });
@@ -57,7 +57,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "duplicate-id",
         collection: "tokens",
-        id: fixtureIds.seed.tokens[0],
+        id: seedIds.tokens[0],
       }),
     );
   });
@@ -68,11 +68,11 @@ describe("validateTokens", () => {
     seed.tokenTypes = [
       {
         ...seed.tokenTypes[0]!,
-        parentTypeId: fixtureIds.seed.tokenTypes.semanticSurface,
+        parentTypeId: seedIds.tokenTypes.semanticSurface,
       },
       {
         ...seed.tokenTypes[1]!,
-        parentTypeId: fixtureIds.seed.tokenTypes.primitiveColor,
+        parentTypeId: seedIds.tokenTypes.primitiveColor,
       },
     ];
 
@@ -96,7 +96,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "invalid-field",
         collection: "tokens",
-        id: fixtureIds.seed.tokens[0],
+        id: seedIds.tokens[0],
         field: "value.value",
       }),
     );
