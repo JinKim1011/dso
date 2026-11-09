@@ -1,9 +1,15 @@
 import type { Token } from "@repo/contracts/type";
-import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 import { mapTokenValue } from "./map-token-value";
 
-const token = validSeed.tokens[0]!;
+const token: Token = {
+  id: "token",
+  projectId: "project",
+  tokenTypeId: "color-base",
+  name: "sample",
+  cssVar: "--sample",
+  value: { kind: "single", value: "oklch(98.5% 0 0)" },
+};
 
 describe("mapTokenValue", () => {
   it("maps a single color value with a preview", () => {
