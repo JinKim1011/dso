@@ -186,16 +186,6 @@ export function TokenValueDetail({
     return <TokenSingleValueForm draft={draft} onChange={setDraft} />;
   };
 
-  const between = rowId.match(/token-type:(.*?):value/)?.[1] ?? "";
-  const parts = between.split("-");
-  const tokenTypeText = `${parts[1]?.charAt(0).toUpperCase()}${parts[1]?.slice(1).toLowerCase()}`;
-
-  const rawIndex = rowId.split(":").pop() ?? "0";
-  const numericIndex = Number(rawIndex);
-  const displayIndex = String(numericIndex + 1).padStart(2, "0");
-
-  const title = `${tokenTypeText}-${displayIndex}`;
-
   return (
     <div className="px-mini py-miniPlus gap-miniPlus flex w-96 flex-col select-none">
       <div className="flex items-center justify-between">
@@ -203,7 +193,7 @@ export function TokenValueDetail({
           variant="label-xxs"
           className="text-content-primary grow-2 basis-0 truncate"
         >
-          {title ? title : rowId}
+          {name}
         </Text>
       </div>
       <TokenValuePreview category={category} kind={kind} value={value} />
