@@ -1,0 +1,26 @@
+{
+  "name": "@repo/seed-data",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./ids": {
+      "types": "./ids.ts",
+      "default": "./ids.ts"
+    },
+    "./valid-seed": {
+      "types": "./valid-seed.ts",
+      "default": "./valid-seed.ts"
+    }
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@repo/contracts": "*"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "typescript": "5.9.2"
+  }
+}
