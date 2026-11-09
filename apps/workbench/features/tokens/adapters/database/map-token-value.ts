@@ -1,9 +1,20 @@
+import type { TokenReferenceLookup } from "@/features/tokens/adapters/database/create-token-reference-lookup";
+import {
+  resolveModeToken,
+  resolveTypographyToken,
+} from "@/features/tokens/adapters/database/resolve-token-reference";
 import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
-import type { Token } from "@repo/contracts/type";
+import type { Token, TokenType } from "@repo/contracts/type";
 
 type MappedTokenValue = Pick<TokenValueViewModel, "value" | "meta" | "preview">;
 
-export function mapTokenValue(token: Token, category: string): MappedTokenValue {
+export function mapTokenValue(
+  token: Token,
+  tokenType: TokenType,
+  referenceLookup: TokenReferenceLookup,
+): MappedTokenValue {
+  const category = tokenType.category;
+
   switch (token.value.kind) {
     case "single":
       return {
@@ -18,32 +29,41 @@ export function mapTokenValue(token: Token, category: string): MappedTokenValue 
             : undefined,
       };
 
-    case "modes":
+    case "modes": {
+      const { light, dark } = token.value;
+
+      const previewValues =
+        category === "color"
+          ? resolveModeToken(token, tokenType, referenceLookup)
+          : { light, dark };
+
       return {
         value: token.value,
-        meta: `light:${token.value.light ?? "-"} dark:${token.value.dark ?? "-"}`,
+        meta: `light:${light ?? "-"} dark:${dark ?? "-"}`,
         preview: {
           kind: "modes",
-          light: token.value.light,
-          dark: token.value.dark,
+          ...previewValues,
         },
       };
+    }
 
-    case "typography":
+    case "typography": {
+      const { fontSize, fontWeight, lineHeight } = token.value;
+
+      const previewValues =
+        category === "typography"
+          ? resolveTypographyToken(token, tokenType, referenceLookup)
+          : { fontSize, fontWeight, lineHeight };
+
       return {
         value: token.value,
-        meta: [token.value.fontSize, token.value.fontWeight, token.value.lineHeight].join(
-          " / ",
-        ),
+        meta: [fontSize, fontWeight, lineHeight].join(" / "),
         preview: {
           kind: "typography",
-          typography: {
-            fontSize: token.value.fontSize,
-            fontWeight: token.value.fontWeight,
-            lineHeight: token.value.lineHeight,
-          },
+          typography: previewValues,
         },
       };
+    }
 
     case "unresolved":
       return {
