@@ -55,6 +55,15 @@ export const seedTokenTypeFixture = {
   kind: "primitive",
 } satisfies TokenType;
 
+export const seedSemanticTokenTypeFixture = {
+  id: fixtureIds.semanticTokenType,
+  projectId: fixtureIds.project,
+  parentTypeId: fixtureIds.primitiveTokenType,
+  category: "color",
+  name: "Semantic",
+  kind: "semantic",
+} satisfies TokenType;
+
 export const seedTokenFixture = {
   id: fixtureIds.singleToken,
   projectId: fixtureIds.project,
@@ -62,6 +71,19 @@ export const seedTokenFixture = {
   name: "white",
   cssVar: "--color-white",
   value: { kind: "single", value: "#ffffff" },
+} satisfies Token;
+
+export const seedModeTokenFixture = {
+  id: fixtureIds.modeToken,
+  projectId: fixtureIds.project,
+  tokenTypeId: fixtureIds.semanticTokenType,
+  name: "surface",
+  cssVar: "--color-surface",
+  value: {
+    kind: "modes",
+    light: "var(--color-white)",
+    dark: "var(--color-black)",
+  },
 } satisfies Token;
 
 export const seedTokenReferenceFixture = {
