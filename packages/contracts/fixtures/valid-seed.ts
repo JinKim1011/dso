@@ -1,3 +1,5 @@
+// represents a complete, realistic database seed.
+
 import { fixtureIds } from "@repo/contracts/fixtures/ids";
 import type { SeedData } from "@repo/contracts/seed";
 import type { Token, TokenType } from "@repo/contracts/type";
