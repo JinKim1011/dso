@@ -18,7 +18,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "missing-record",
         collection: "tokens",
-        id: fixtureIds.singleToken,
+        id: fixtureIds.seed.tokens[0],
       }),
     );
   });
@@ -31,7 +31,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "wrong-project",
         collection: "tokens",
-        id: fixtureIds.singleToken,
+        id: fixtureIds.seed.tokens[0],
       }),
     );
   });
@@ -44,7 +44,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "invalid-enum",
         collection: "tokenTypes",
-        id: fixtureIds.primitiveTokenType,
+        id: fixtureIds.seed.tokenTypes.primitiveColor,
       }),
     );
   });
@@ -57,7 +57,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "duplicate-id",
         collection: "tokens",
-        id: fixtureIds.singleToken,
+        id: fixtureIds.seed.tokens[0],
       }),
     );
   });
@@ -68,11 +68,11 @@ describe("validateTokens", () => {
     seed.tokenTypes = [
       {
         ...seed.tokenTypes[0]!,
-        parentTypeId: fixtureIds.semanticTokenType,
+        parentTypeId: fixtureIds.seed.tokenTypes.semanticSurface,
       },
       {
         ...seed.tokenTypes[1]!,
-        parentTypeId: fixtureIds.primitiveTokenType,
+        parentTypeId: fixtureIds.seed.tokenTypes.primitiveColor,
       },
     ];
 
@@ -96,7 +96,7 @@ describe("validateTokens", () => {
       expect.objectContaining({
         code: "invalid-field",
         collection: "tokens",
-        id: fixtureIds.singleToken,
+        id: fixtureIds.seed.tokens[0],
         field: "value.value",
       }),
     );

@@ -159,7 +159,7 @@ describe("database releases repository", () => {
     await insertProject(database, seed.projects[0]!);
     await insertRelease(database, seed.releases[0]!);
 
-    expect(await findReleaseById(database, fixtureIds.release)).toEqual(seed.releases[0]);
+    expect(await findReleaseById(database, fixtureIds.seed.release)).toEqual(seed.releases[0]);
   });
 
   it("lists only published releases", async () => {

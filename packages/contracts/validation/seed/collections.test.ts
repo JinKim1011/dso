@@ -18,7 +18,7 @@ describe("findDuplicateIds", () => {
       expect.objectContaining({
         code: "duplicate-id",
         collection: "projects",
-        id: fixtureIds.project,
+        id: fixtureIds.seed.project,
       }),
     );
   });

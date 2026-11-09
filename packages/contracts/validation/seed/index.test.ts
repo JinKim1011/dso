@@ -20,7 +20,7 @@ describe("validateSeedData", () => {
       expect.objectContaining({
         code: "missing-record",
         collection: "tokens",
-        id: fixtureIds.singleToken,
+        id: fixtureIds.seed.tokens[0],
       }),
     );
   });
