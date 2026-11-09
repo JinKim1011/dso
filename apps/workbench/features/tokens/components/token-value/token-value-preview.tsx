@@ -24,11 +24,7 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
         <div className="gap-micro flex flex-col">
           <div
             className="text-content-primary text-center"
-            style={{
-              fontSize: `var(--text-${fontSize})`,
-              fontWeight: `var(--font-${fontWeight})`,
-              lineHeight: `var(--leading-${lineHeight})`,
-            }}
+            style={{ fontSize, fontWeight, lineHeight }}
           >
             Abc123
           </div>
