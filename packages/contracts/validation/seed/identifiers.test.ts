@@ -1,15 +1,39 @@
 import { validateSeedIdentifiers } from "@repo/contracts/validation/seed/identifiers";
-import { validSeed } from "@repo/seed-data/valid-seed";
+import {
+  createSeedData,
+  seedComponentFixture,
+  seedDocumentTemplateFixture,
+  seedProjectFixture,
+  seedProjectMemberFixture,
+  seedReleaseFixture,
+  seedTokenFixture,
+  seedTokenReferenceFixture,
+  seedTokenTypeFixture,
+  seedUserFixture,
+} from "@repo/contracts/fixtures/seed-contracts";
 import { describe, expect, it } from "vitest";
 
 describe("validateSeedIdentifiers", () => {
   it("accepts valid identifiers", () => {
-    expect(validateSeedIdentifiers(validSeed)).toEqual([]);
+    const seed = createSeedData({
+      users: [seedUserFixture],
+      projects: [seedProjectFixture],
+      projectMembers: [seedProjectMemberFixture],
+      tokenTypes: [seedTokenTypeFixture],
+      tokens: [seedTokenFixture],
+      tokenReferences: [seedTokenReferenceFixture],
+      components: [seedComponentFixture],
+      documentTemplates: [seedDocumentTemplateFixture],
+      releases: [seedReleaseFixture],
+    });
+
+    expect(validateSeedIdentifiers(seed)).toEqual([]);
   });
 
   it("rejects an empty project ID", () => {
-    const seed = structuredClone(validSeed);
-    seed.projects[0]!.id = "";
+    const seed = createSeedData({
+      projects: [{ ...seedProjectFixture, id: "" }],
+    });
 
     expect(validateSeedIdentifiers(seed)).toContainEqual(
       expect.objectContaining({
@@ -21,8 +45,9 @@ describe("validateSeedIdentifiers", () => {
   });
 
   it("rejects path separators in a token type ID", () => {
-    const seed = structuredClone(validSeed);
-    seed.tokenTypes[0]!.id = "color/base";
+    const seed = createSeedData({
+      tokenTypes: [{ ...seedTokenTypeFixture, id: "color/base" }],
+    });
 
     expect(validateSeedIdentifiers(seed)).toContainEqual(
       expect.objectContaining({
@@ -34,8 +59,9 @@ describe("validateSeedIdentifiers", () => {
   });
 
   it("rejects an overlong token ID", () => {
-    const seed = structuredClone(validSeed);
-    seed.tokens[0]!.id = "a".repeat(129);
+    const seed = createSeedData({
+      tokens: [{ ...seedTokenFixture, id: "a".repeat(129) }],
+    });
 
     expect(validateSeedIdentifiers(seed)).toContainEqual(
       expect.objectContaining({
@@ -47,8 +73,9 @@ describe("validateSeedIdentifiers", () => {
   });
 
   it("rejects an invalid project member user ID", () => {
-    const seed = structuredClone(validSeed);
-    seed.projectMembers[0]!.userId = "user/member";
+    const seed = createSeedData({
+      projectMembers: [{ ...seedProjectMemberFixture, userId: "user/member" }],
+    });
 
     expect(validateSeedIdentifiers(seed)).toContainEqual(
       expect.objectContaining({
@@ -60,8 +87,11 @@ describe("validateSeedIdentifiers", () => {
   });
 
   it("rejects an invalid token reference ID", () => {
-    const seed = structuredClone(validSeed);
-    seed.tokenReferences[0]!.referencedTokenId = "token/reference";
+    const seed = createSeedData({
+      tokenReferences: [
+        { ...seedTokenReferenceFixture, referencedTokenId: "token/reference" },
+      ],
+    });
 
     expect(validateSeedIdentifiers(seed)).toContainEqual(
       expect.objectContaining({
@@ -73,15 +103,17 @@ describe("validateSeedIdentifiers", () => {
   });
 
   it("accepts a null parent type ID", () => {
-    const seed = structuredClone(validSeed);
-    seed.tokenTypes[0]!.parentTypeId = null;
+    const seed = createSeedData({
+      tokenTypes: [{ ...seedTokenTypeFixture, parentTypeId: null }],
+    });
 
     expect(validateSeedIdentifiers(seed)).toEqual([]);
   });
 
   it("rejects an invalid component slug", () => {
-    const seed = structuredClone(validSeed);
-    seed.components[0]!.slug = "button/component";
+    const seed = createSeedData({
+      components: [{ ...seedComponentFixture, slug: "button/component" }],
+    });
 
     expect(validateSeedIdentifiers(seed)).toContainEqual(
       expect.objectContaining({
@@ -93,8 +125,11 @@ describe("validateSeedIdentifiers", () => {
   });
 
   it("rejects an invalid template component ID", () => {
-    const seed = structuredClone(validSeed);
-    seed.documentTemplates[0]!.componentId = "component/template";
+    const seed = createSeedData({
+      documentTemplates: [
+        { ...seedDocumentTemplateFixture, componentId: "component/template" },
+      ],
+    });
 
     expect(validateSeedIdentifiers(seed)).toContainEqual(
       expect.objectContaining({
@@ -106,8 +141,9 @@ describe("validateSeedIdentifiers", () => {
   });
 
   it("rejects an invalid release project ID", () => {
-    const seed = structuredClone(validSeed);
-    seed.releases[0]!.projectId = "project/release";
+    const seed = createSeedData({
+      releases: [{ ...seedReleaseFixture, projectId: "project/release" }],
+    });
 
     expect(validateSeedIdentifiers(seed)).toContainEqual(
       expect.objectContaining({
