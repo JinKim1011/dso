@@ -1,5 +1,6 @@
-import type { Token } from "@repo/contracts/type";
+import type { Token, TokenType } from "@repo/contracts/type";
 import { describe, expect, it } from "vitest";
+import { createTokenReferenceLookup } from "./create-token-reference-lookup";
 import { mapTokenValue } from "./map-token-value";
 
 const token: Token = {
@@ -10,10 +11,19 @@ const token: Token = {
   cssVar: "--sample",
   value: { kind: "single", value: "oklch(98.5% 0 0)" },
 };
+const colorType: TokenType = {
+  id: token.tokenTypeId,
+  projectId: token.projectId,
+  parentTypeId: null,
+  category: "color",
+  name: "Base",
+  kind: "primitive",
+};
+const lookup = createTokenReferenceLookup([], [], []);
 
 describe("mapTokenValue", () => {
   it("maps a single color value with a preview", () => {
-    expect(mapTokenValue(token, "color")).toEqual({
+    expect(mapTokenValue(token, colorType, lookup)).toEqual({
       value: token.value,
       meta: "oklch(98.5% 0 0)",
       preview: {
@@ -29,7 +39,9 @@ describe("mapTokenValue", () => {
       value: { kind: "single", value: "1rem" },
     };
 
-    expect(mapTokenValue(singleToken, "spacing")).toEqual({
+    expect(
+      mapTokenValue(singleToken, { ...colorType, category: "spacing" }, lookup),
+    ).toEqual({
       value: singleToken.value,
       meta: "1rem",
       preview: undefined,
@@ -41,19 +53,21 @@ describe("mapTokenValue", () => {
       ...token,
       value: {
         kind: "modes",
-        light: "var(--light)",
+        light: "#fff",
       },
     };
 
-    expect(mapTokenValue(modesToken, "color")).toEqual({
-      value: modesToken.value,
-      meta: "light:var(--light) dark:-",
-      preview: {
-        kind: "modes",
-        light: "var(--light)",
-        dark: undefined,
+    expect(mapTokenValue(modesToken, { ...colorType, kind: "semantic" }, lookup)).toEqual(
+      {
+        value: modesToken.value,
+        meta: "light:#fff dark:-",
+        preview: {
+          kind: "modes",
+          light: "#fff",
+          dark: undefined,
+        },
       },
-    });
+    );
   });
 
   it("maps typography values", () => {
@@ -61,21 +75,27 @@ describe("mapTokenValue", () => {
       ...token,
       value: {
         kind: "typography",
-        fontSize: "var(--text-body)",
-        fontWeight: "var(--font-regular)",
-        lineHeight: "var(--leading-normal)",
+        fontSize: "1rem",
+        fontWeight: "400",
+        lineHeight: "1.5",
       },
     };
 
-    expect(mapTokenValue(typographyToken, "typography")).toEqual({
+    expect(
+      mapTokenValue(
+        typographyToken,
+        { ...colorType, category: "typography", kind: "semantic" },
+        lookup,
+      ),
+    ).toEqual({
       value: typographyToken.value,
-      meta: "var(--text-body) / var(--font-regular) / var(--leading-normal)",
+      meta: "1rem / 400 / 1.5",
       preview: {
         kind: "typography",
         typography: {
-          fontSize: "var(--text-body)",
-          fontWeight: "var(--font-regular)",
-          lineHeight: "var(--leading-normal)",
+          fontSize: "1rem",
+          fontWeight: "400",
+          lineHeight: "1.5",
         },
       },
     });
@@ -87,7 +107,7 @@ describe("mapTokenValue", () => {
       value: { kind: "unresolved" },
     };
 
-    expect(mapTokenValue(unresolvedToken, "color")).toEqual({
+    expect(mapTokenValue(unresolvedToken, colorType, lookup)).toEqual({
       value: unresolvedToken.value,
       meta: "unresolved",
     });
