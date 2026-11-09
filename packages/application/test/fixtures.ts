@@ -1,9 +1,9 @@
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { insertProjectMember } from "@repo/db/repositories/memberships";
 import { insertProject } from "@repo/db/repositories/projects";
 import { insertTokenType } from "@repo/db/repositories/token-types";
 import { insertToken } from "@repo/db/repositories/tokens";
 import { insertUser } from "@repo/db/repositories/users";
+import { validSeed } from "@repo/seed-data/valid-seed";
 import type { Pool } from "pg";
 
 export async function seedProject(
