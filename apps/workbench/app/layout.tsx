@@ -28,6 +28,7 @@ export default async function RootLayout({
   const model = buildTokenGraphViewModel(
     workbenchProject.tokenTypes,
     workbenchProject.tokens,
+    workbenchProject.references,
   );
 
   return (
