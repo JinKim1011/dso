@@ -69,6 +69,8 @@ describe("validateTokens", () => {
 
   it("rejects duplicate tokens", () => {
     const seed = createSeedData({
+      projects: [seedProjectFixture],
+      tokenTypes: [seedTokenTypeFixture],
       tokens: [seedTokenFixture, { ...seedTokenFixture }],
     });
 
