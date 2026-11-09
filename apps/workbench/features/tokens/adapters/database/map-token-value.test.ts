@@ -1,5 +1,5 @@
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import type { Token } from "@repo/contracts/type";
+import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 import { mapTokenValue } from "./map-token-value";
 

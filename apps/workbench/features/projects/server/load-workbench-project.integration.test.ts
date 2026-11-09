@@ -1,13 +1,13 @@
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
 import { listComponentsByProjectId } from "@repo/db/repositories/components";
-import { listTokenReferencesByProjectId } from "@repo/db/repositories/references";
 import { findProjectById } from "@repo/db/repositories/projects";
+import { listTokenReferencesByProjectId } from "@repo/db/repositories/references";
 import { listPublishedReleasesByProjectId } from "@repo/db/repositories/releases";
 import { listDocumentTemplatesByProjectId } from "@repo/db/repositories/templates";
 import { listTokenTypesByProjectId } from "@repo/db/repositories/token-types";
 import { listTokensByProjectId } from "@repo/db/repositories/tokens";
+import { validSeed } from "@repo/seed-data/valid-seed";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loadWorkbenchProject } from "./load-workbench-project";
 
 vi.mock("@repo/db/repositories/components", () => ({

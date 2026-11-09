@@ -1,5 +1,5 @@
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { validateSeedIdentifiers } from "@repo/contracts/validation/seed/identifiers";
+import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 
 describe("validateSeedIdentifiers", () => {

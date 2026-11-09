@@ -1,9 +1,9 @@
 import { fixtureIds } from "@repo/contracts/fixtures/ids";
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import {
   findDuplicateIds,
   validateSeedCollectionSizes,
 } from "@repo/contracts/validation/seed/collections";
+import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 
 describe("findDuplicateIds", () => {

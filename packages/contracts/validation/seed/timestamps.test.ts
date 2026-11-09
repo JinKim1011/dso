@@ -1,5 +1,5 @@
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { validateSeedTimestamps } from "@repo/contracts/validation/seed/timestamps";
+import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 
 const cloneSeed = () => structuredClone(validSeed);

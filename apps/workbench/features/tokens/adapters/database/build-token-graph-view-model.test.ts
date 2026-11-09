@@ -1,4 +1,4 @@
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
+import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 import { buildTokenGraphViewModel } from "./build-token-graph-view-model";
 

@@ -1,7 +1,7 @@
 import { fixtureIds } from "@repo/contracts/fixtures/ids";
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import { validateSeedFieldLengths } from "@repo/contracts/validation/seed/field-lengths";
+import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 
 const cloneSeed = () => structuredClone(validSeed);

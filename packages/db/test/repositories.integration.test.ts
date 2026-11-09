@@ -1,5 +1,4 @@
 import { fixtureIds } from "@repo/contracts/fixtures/ids";
-import { validSeed } from "@repo/contracts/fixtures/valid-seed";
 import { findProjectById, insertProject } from "@repo/db/repositories/projects";
 import {
   insertTokenReference,
@@ -18,6 +17,7 @@ import {
 } from "@repo/db/repositories/token-types";
 import { insertToken, listTokensByProjectId } from "@repo/db/repositories/tokens";
 import { getTestDatabase } from "@repo/db/test/setup";
+import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 
 function findTokenType(
@@ -159,7 +159,9 @@ describe("database releases repository", () => {
     await insertProject(database, seed.projects[0]!);
     await insertRelease(database, seed.releases[0]!);
 
-    expect(await findReleaseById(database, fixtureIds.seed.release)).toEqual(seed.releases[0]);
+    expect(await findReleaseById(database, fixtureIds.seed.release)).toEqual(
+      seed.releases[0],
+    );
   });
 
   it("lists only published releases", async () => {
