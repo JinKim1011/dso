@@ -14,36 +14,36 @@ import type {
 } from "@repo/contracts/type";
 
 const project = {
-  id: fixtureIds.project,
+  id: fixtureIds.domain.project,
   slug: "design-system",
   name: "Design System",
   createdAt: "2026-10-27T10:00:00.000Z",
 } satisfies Project;
 
 const user = {
-  id: fixtureIds.user,
+  id: fixtureIds.domain.user,
   email: "developer@example.test",
   passwordHash: "hash-only",
   createdAt: "2026-10-27T10:00:00.000Z",
 } satisfies User;
 
 const member = {
-  projectId: fixtureIds.project,
-  userId: fixtureIds.user,
+  projectId: fixtureIds.domain.project,
+  userId: fixtureIds.domain.user,
   role: "publisher",
   createdAt: "2026-10-27T10:00:00.000Z",
 } satisfies ProjectMember;
 
 const session = {
-  id: fixtureIds.session,
-  userId: fixtureIds.user,
+  id: fixtureIds.domain.session,
+  userId: fixtureIds.domain.user,
   createdAt: "2026-10-27T10:00:00.000Z",
   expiresAt: "2026-10-27T18:00:00Z",
 } satisfies Session;
 
 export const primitiveTokenType = {
-  id: fixtureIds.primitiveTokenType,
-  projectId: fixtureIds.project,
+  id: fixtureIds.domain.primitiveTokenType,
+  projectId: fixtureIds.domain.project,
   parentTypeId: null,
   category: "color",
   name: "Base",
@@ -51,18 +51,18 @@ export const primitiveTokenType = {
 } satisfies TokenType;
 
 export const semanticTokenType = {
-  id: fixtureIds.semanticTokenType,
-  projectId: fixtureIds.project,
-  parentTypeId: fixtureIds.primitiveTokenType,
+  id: fixtureIds.domain.semanticTokenType,
+  projectId: fixtureIds.domain.project,
+  parentTypeId: fixtureIds.domain.primitiveTokenType,
   category: "color",
   name: "Semantic",
   kind: "semantic",
 } satisfies TokenType;
 
 export const baseColorToken = {
-  id: fixtureIds.singleToken,
-  projectId: fixtureIds.project,
-  tokenTypeId: fixtureIds.primitiveTokenType,
+  id: fixtureIds.domain.singleToken,
+  projectId: fixtureIds.domain.project,
+  tokenTypeId: fixtureIds.domain.primitiveTokenType,
   name: "white",
   cssVar: "--color-white",
   value: {
@@ -72,9 +72,9 @@ export const baseColorToken = {
 } satisfies Token;
 
 export const modeToken = {
-  id: fixtureIds.modeToken,
-  projectId: fixtureIds.project,
-  tokenTypeId: fixtureIds.semanticTokenType,
+  id: fixtureIds.domain.modeToken,
+  projectId: fixtureIds.domain.project,
+  tokenTypeId: fixtureIds.domain.semanticTokenType,
   name: "surface",
   cssVar: "--color-surface",
   value: {
@@ -85,15 +85,15 @@ export const modeToken = {
 } satisfies Token;
 
 const reference = {
-  projectId: fixtureIds.project,
-  referencingTokenId: fixtureIds.modeToken,
-  referencedTokenId: fixtureIds.singleToken,
+  projectId: fixtureIds.domain.project,
+  referencingTokenId: fixtureIds.domain.modeToken,
+  referencedTokenId: fixtureIds.domain.singleToken,
   slot: "light",
 } satisfies TokenReference;
 
 const component = {
-  id: fixtureIds.component,
-  projectId: fixtureIds.project,
+  id: fixtureIds.domain.component,
+  projectId: fixtureIds.domain.project,
   name: "Button",
   slug: "button",
   description: "Button component",
@@ -101,16 +101,16 @@ const component = {
 } satisfies Component;
 
 const template = {
-  id: fixtureIds.documentTemplate,
-  projectId: fixtureIds.project,
-  componentId: fixtureIds.component,
+  id: fixtureIds.domain.documentTemplate,
+  projectId: fixtureIds.domain.project,
+  componentId: fixtureIds.domain.component,
   name: "Button documentation",
   content: "# Button",
 } satisfies DocumentTemplate;
 
 const release = {
-  id: fixtureIds.release,
-  projectId: fixtureIds.project,
+  id: fixtureIds.domain.release,
+  projectId: fixtureIds.domain.project,
   version: "1.0.0",
   status: "published",
   createdAt: "2026-10-27T10:00:00.000Z",
@@ -118,8 +118,8 @@ const release = {
 } satisfies Release;
 
 const apiKey = {
-  id: fixtureIds.apiKey,
-  projectId: fixtureIds.project,
+  id: fixtureIds.domain.apiKey,
+  projectId: fixtureIds.domain.project,
   keyIdentifier: "key-id-1",
   keyHash: "hash-only",
   scope: "release:read",
