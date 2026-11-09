@@ -1,17 +1,28 @@
 import { validateComponents } from "@repo/contracts/validation/seed/components";
-import { validSeed } from "@repo/seed-data/valid-seed";
+import {
+  createSeedData,
+  seedComponentFixture,
+  seedDocumentTemplateFixture,
+  seedProjectFixture,
+} from "@repo/contracts/fixtures/seed-contracts";
 import { describe, expect, it } from "vitest";
-
-const cloneSeed = () => structuredClone(validSeed);
 
 describe("validateComponents", () => {
   it("accepts valid components and templates", () => {
-    expect(validateComponents(validSeed)).toEqual([]);
+    const seed = createSeedData({
+      projects: [seedProjectFixture],
+      components: [seedComponentFixture],
+      documentTemplates: [seedDocumentTemplateFixture],
+    });
+
+    expect(validateComponents(seed)).toEqual([]);
   });
 
   it("rejects an unsafe document path", () => {
-    const seed = cloneSeed();
-    seed.components[0]!.documentPath = "../secrets.md";
+    const seed = createSeedData({
+      projects: [seedProjectFixture],
+      components: [{ ...seedComponentFixture, documentPath: "../secrets.md" }],
+    });
 
     expect(validateComponents(seed)).toContainEqual(
       expect.objectContaining({
@@ -23,8 +34,9 @@ describe("validateComponents", () => {
   });
 
   it("rejects a component with a missing project", () => {
-    const seed = cloneSeed();
-    seed.components[0]!.projectId = "missing-project";
+    const seed = createSeedData({
+      components: [{ ...seedComponentFixture, projectId: "missing-project" }],
+    });
 
     expect(validateComponents(seed)).toContainEqual(
       expect.objectContaining({
@@ -36,8 +48,13 @@ describe("validateComponents", () => {
   });
 
   it("rejects a template with a missing component", () => {
-    const seed = cloneSeed();
-    seed.documentTemplates[0]!.componentId = "missing-component";
+    const seed = createSeedData({
+      projects: [seedProjectFixture],
+      components: [seedComponentFixture],
+      documentTemplates: [
+        { ...seedDocumentTemplateFixture, componentId: "missing-component" },
+      ],
+    });
 
     expect(validateComponents(seed)).toContainEqual(
       expect.objectContaining({
@@ -49,16 +66,19 @@ describe("validateComponents", () => {
   });
 
   it("rejects a template and component from different projects", () => {
-    const seed = cloneSeed();
-
-    seed.projects.push({
+    const secondProject = {
+      ...seedProjectFixture,
       id: "project-2",
       slug: "second-project",
       name: "Second Project",
-      createdAt: "2026-10-27T10:00:00.000Z",
+    };
+    const seed = createSeedData({
+      projects: [seedProjectFixture, secondProject],
+      components: [seedComponentFixture],
+      documentTemplates: [
+        { ...seedDocumentTemplateFixture, projectId: secondProject.id },
+      ],
     });
-
-    seed.documentTemplates[0]!.projectId = "project-2";
 
     expect(validateComponents(seed)).toContainEqual(
       expect.objectContaining({
