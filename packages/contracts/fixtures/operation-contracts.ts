@@ -16,41 +16,41 @@ export const loginRequest = {
 } satisfies LoginRequest;
 
 export const addReferenceRequest = {
-  projectId: fixtureIds.project,
-  referencingTokenId: fixtureIds.modeToken,
-  referencedTokenId: fixtureIds.singleToken,
+  projectId: fixtureIds.domain.project,
+  referencingTokenId: fixtureIds.domain.modeToken,
+  referencedTokenId: fixtureIds.domain.singleToken,
   slot: "light",
 } satisfies AddTokenReferenceRequest;
 
 export const changeParentRequest = {
-  projectId: fixtureIds.project,
-  tokenTypeId: fixtureIds.semanticTokenType,
-  parentTypeId: fixtureIds.primitiveTokenType,
+  projectId: fixtureIds.domain.project,
+  tokenTypeId: fixtureIds.domain.semanticTokenType,
+  parentTypeId: fixtureIds.domain.primitiveTokenType,
 } satisfies ChangeTokenTypeParentRequest;
 
 export const publishRequest = {
-  projectId: fixtureIds.project,
-  releaseId: fixtureIds.release,
+  projectId: fixtureIds.domain.project,
+  releaseId: fixtureIds.domain.release,
 } satisfies PublishReleaseRequest;
 
 export const createApiKeyRequest = {
-  projectId: fixtureIds.project,
+  projectId: fixtureIds.domain.project,
   expiresAt: "2026-11-27T10:00:00.000Z",
   scope: "release:read",
 } satisfies CreateApiKeyRequest;
 
 export const revokeApiKeyRequest = {
-  projectId: fixtureIds.project,
-  apiKeyId: fixtureIds.apiKey,
+  projectId: fixtureIds.domain.project,
+  apiKeyId: fixtureIds.domain.apiKey,
 } satisfies RevokeApiKeyRequest;
 
 export const downloadReleaseRequest = {
-  releaseId: fixtureIds.release,
+  releaseId: fixtureIds.domain.release,
 } satisfies DownloadReleaseRequest;
 
 export const updateTokenRequest = {
-  projectId: fixtureIds.project,
-  tokenId: fixtureIds.modeToken,
+  projectId: fixtureIds.domain.project,
+  tokenId: fixtureIds.domain.modeToken,
   name: "surface",
   cssVar: "--color-surface",
   value: {
