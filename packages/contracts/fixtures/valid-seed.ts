@@ -20,11 +20,11 @@ const {
   primitiveEaseIn: primitiveEaseInTypeId,
   primitiveEaseOut: primitiveEaseOutTypeId,
   primitiveEaseInOut: primitiveEaseInOutTypeId,
-} = fixtureIds.seedTokenTypes;
+} = fixtureIds.seed.tokenTypes;
 
 let nextTokenId = 0;
 const tokenId = () => {
-  const id = fixtureIds.seedTokens[nextTokenId++];
+  const id = fixtureIds.seed.tokens[nextTokenId++];
 
   if (!id) {
     throw new Error("Missing deterministic fixture token ID");
@@ -41,7 +41,7 @@ const createTokenType = (
   parentTypeId: string | null = null,
 ): TokenType => ({
   id,
-  projectId: fixtureIds.project,
+  projectId: fixtureIds.seed.project,
   parentTypeId,
   category,
   name,
@@ -77,7 +77,7 @@ const primitiveColorValues = [
 
 const primitiveColorTokens: Token[] = primitiveColorValues.map(([name, value]) => ({
   id: tokenId(),
-  projectId: fixtureIds.project,
+  projectId: fixtureIds.seed.project,
   tokenTypeId: primitiveColorTypeId,
   name,
   cssVar: `--base-${name}`,
@@ -190,7 +190,7 @@ const semanticColorValues = [
 const semanticColorTokens: Token[] = semanticColorValues.map(
   ([name, lightPrimitiveName, darkPrimitiveName, tokenTypeId]) => ({
     id: tokenId(),
-    projectId: fixtureIds.project,
+    projectId: fixtureIds.seed.project,
     tokenTypeId,
     name,
     cssVar: `--color-${name}`,
@@ -238,7 +238,7 @@ const typographyPrimitiveTokens: Token[] = typographyPrimitiveValues.flatMap(
   ([tokenTypeId, cssPrefix, values]) =>
     values.map(([name, value]) => ({
       id: tokenId(),
-      projectId: fixtureIds.project,
+      projectId: fixtureIds.seed.project,
       tokenTypeId,
       name,
       cssVar: `--${cssPrefix === "font-size" ? "text" : cssPrefix === "font-weight" ? "font" : "leading"}-${name}`,
@@ -260,7 +260,7 @@ const typographySemanticValues = [
 const typographySemanticTokens: Token[] = typographySemanticValues.map(
   ([name, fontSize, fontWeight, lineHeight]) => ({
     id: tokenId(),
-    projectId: fixtureIds.project,
+    projectId: fixtureIds.seed.project,
     tokenTypeId: semanticTypographyTypeId,
     name,
     cssVar: null,
@@ -296,7 +296,7 @@ const motionValues = [
 
 const motionTokens: Token[] = motionValues.map(([name, value]) => ({
   id: tokenId(),
-  projectId: fixtureIds.project,
+  projectId: fixtureIds.seed.project,
   tokenTypeId: name.startsWith("ease-in-out-")
     ? primitiveEaseInOutTypeId
     : name.startsWith("ease-in-")
@@ -321,13 +321,13 @@ const colorReferences = semanticColorTokens
 
     return [
       {
-        projectId: fixtureIds.project,
+        projectId: fixtureIds.seed.project,
         referencingTokenId: token.id,
         referencedTokenId: lightToken.id,
         slot: "light" as const,
       },
       {
-        projectId: fixtureIds.project,
+        projectId: fixtureIds.seed.project,
         referencingTokenId: token.id,
         referencedTokenId: darkToken.id,
         slot: "dark" as const,
@@ -357,7 +357,7 @@ const typographyReferences = typographySemanticTokens.flatMap((token) => {
     }
 
     return {
-      projectId: fixtureIds.project,
+      projectId: fixtureIds.seed.project,
       referencingTokenId: token.id,
       referencedTokenId: referencedToken.id,
       slot,
@@ -414,7 +414,7 @@ const tokenTypes: TokenType[] = [
 export const validSeed: SeedData = {
   users: [
     {
-      id: fixtureIds.user,
+      id: fixtureIds.seed.user,
       email: "developer@example.test",
       passwordHash: "fake-seed-hash",
       createdAt: "2026-10-27T10:00:00.000Z",
@@ -422,7 +422,7 @@ export const validSeed: SeedData = {
   ],
   projects: [
     {
-      id: fixtureIds.project,
+      id: fixtureIds.seed.project,
       slug: "design-system",
       name: "Design System",
       createdAt: "2026-10-27T10:00:00.000Z",
@@ -430,8 +430,8 @@ export const validSeed: SeedData = {
   ],
   projectMembers: [
     {
-      projectId: fixtureIds.project,
-      userId: fixtureIds.user,
+      projectId: fixtureIds.seed.project,
+      userId: fixtureIds.seed.user,
       role: "publisher",
       createdAt: "2026-10-27T10:00:00.000Z",
     },
@@ -447,8 +447,8 @@ export const validSeed: SeedData = {
   tokenReferences: [...colorReferences, ...typographyReferences],
   components: [
     {
-      id: fixtureIds.component,
-      projectId: fixtureIds.project,
+      id: fixtureIds.seed.component,
+      projectId: fixtureIds.seed.project,
       name: "Button",
       slug: "button",
       description: "Button component",
@@ -457,17 +457,17 @@ export const validSeed: SeedData = {
   ],
   documentTemplates: [
     {
-      id: fixtureIds.documentTemplate,
-      projectId: fixtureIds.project,
-      componentId: fixtureIds.component,
+      id: fixtureIds.seed.documentTemplate,
+      projectId: fixtureIds.seed.project,
+      componentId: fixtureIds.seed.component,
       name: "Button documentation",
       content: "# Button",
     },
   ],
   releases: [
     {
-      id: fixtureIds.release,
-      projectId: fixtureIds.project,
+      id: fixtureIds.seed.release,
+      projectId: fixtureIds.seed.project,
       version: "1.0.0",
       status: "published",
       publishedAt: "2026-10-27T10:00:00.000Z",
