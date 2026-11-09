@@ -20,7 +20,13 @@ describe("buildTokenGraphViewModel", () => {
       name: "Typography",
       kind: "semantic",
     };
-    const tokenTypes = [typographyType, colorBaseType];
+    const colorSemanticType: TokenType = {
+      ...colorBaseType,
+      id: "color-semantic",
+      name: "Surface",
+      kind: "semantic",
+    };
+    const tokenTypes = [typographyType, colorBaseType, colorSemanticType];
     const tokens: Token[] = [
       {
         id: "color-neutral-0",
@@ -33,13 +39,13 @@ describe("buildTokenGraphViewModel", () => {
       {
         id: "color-surface",
         projectId: colorBaseType.projectId,
-        tokenTypeId: colorBaseType.id,
+        tokenTypeId: colorSemanticType.id,
         name: "surface",
         cssVar: "--color-surface",
         value: {
           kind: "modes",
-          light: "var(--base-neutral-0)",
-          dark: "var(--base-neutral-900)",
+          light: "#fff",
+          dark: "#111",
         },
       },
       {
@@ -50,14 +56,14 @@ describe("buildTokenGraphViewModel", () => {
         cssVar: null,
         value: {
           kind: "typography",
-          fontSize: "var(--text-regular)",
-          fontWeight: "var(--font-regular)",
-          lineHeight: "var(--leading-relaxed)",
+          fontSize: "1rem",
+          fontWeight: "400",
+          lineHeight: "1.7",
         },
       },
     ];
 
-    const viewModel = buildTokenGraphViewModel(tokenTypes, tokens);
+    const viewModel = buildTokenGraphViewModel(tokenTypes, tokens, []);
 
     // color category related
     const modeToken = viewModel.tokenTypes
@@ -121,22 +127,22 @@ describe("buildTokenGraphViewModel", () => {
     });
     expect(modeToken).toMatchObject({
       name: "surface",
-      meta: "light:var(--base-neutral-0) dark:var(--base-neutral-900)",
+      meta: "light:#fff dark:#111",
       preview: {
         kind: "modes",
-        light: "var(--base-neutral-0)",
-        dark: "var(--base-neutral-900)",
+        light: "#fff",
+        dark: "#111",
       },
     });
     expect(typographyToken).toMatchObject({
       name: "body",
-      meta: "var(--text-regular) / var(--font-regular) / var(--leading-relaxed)",
+      meta: "1rem / 400 / 1.7",
       preview: {
         kind: "typography",
         typography: {
-          fontSize: "var(--text-regular)",
-          fontWeight: "var(--font-regular)",
-          lineHeight: "var(--leading-relaxed)",
+          fontSize: "1rem",
+          fontWeight: "400",
+          lineHeight: "1.7",
         },
       },
     });
