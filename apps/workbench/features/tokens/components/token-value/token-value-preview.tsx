@@ -80,22 +80,5 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
     );
   }
 
-  if (category === "spacing" && kind === "primitive" && value.preview.kind === "single") {
-    const size = value.preview.value;
-    return (
-      <div className={wrapperStyle}>
-        <div className="gap-micro flex flex-col">
-          <div
-            className="bg-surface-accentStrong m-auto"
-            style={{ width: size, height: size }}
-          />
-          <Text variant="meta-xs" className="text-content-accentStrong text-center">
-            {value.name}
-          </Text>
-        </div>
-      </div>
-    );
-  }
-
   return null;
 }
