@@ -2,7 +2,17 @@
 
 import { fixtureIds } from "@repo/contracts/fixtures/ids";
 import type { SeedData } from "@repo/contracts/seed";
-import type { Project, ProjectMember, Release, User } from "@repo/contracts/type";
+import type {
+  Component,
+  DocumentTemplate,
+  Project,
+  ProjectMember,
+  Release,
+  Token,
+  TokenReference,
+  TokenType,
+  User,
+} from "@repo/contracts/type";
 
 const fixtureTimestamp = "2026-10-27T10:00:00.000Z";
 
@@ -35,6 +45,48 @@ export const seedReleaseFixture = {
   createdAt: fixtureTimestamp,
   publishedAt: fixtureTimestamp,
 } satisfies Release;
+
+export const seedTokenTypeFixture = {
+  id: fixtureIds.primitiveTokenType,
+  projectId: fixtureIds.project,
+  parentTypeId: null,
+  category: "color",
+  name: "Base",
+  kind: "primitive",
+} satisfies TokenType;
+
+export const seedTokenFixture = {
+  id: fixtureIds.singleToken,
+  projectId: fixtureIds.project,
+  tokenTypeId: fixtureIds.primitiveTokenType,
+  name: "white",
+  cssVar: "--color-white",
+  value: { kind: "single", value: "#ffffff" },
+} satisfies Token;
+
+export const seedTokenReferenceFixture = {
+  projectId: fixtureIds.project,
+  referencingTokenId: fixtureIds.modeToken,
+  referencedTokenId: fixtureIds.singleToken,
+  slot: "light",
+} satisfies TokenReference;
+
+export const seedComponentFixture = {
+  id: fixtureIds.component,
+  projectId: fixtureIds.project,
+  name: "Button",
+  slug: "button",
+  description: "Button component",
+  documentPath: "components/button.md",
+} satisfies Component;
+
+export const seedDocumentTemplateFixture = {
+  id: fixtureIds.documentTemplate,
+  projectId: fixtureIds.project,
+  componentId: fixtureIds.component,
+  name: "Button documentation",
+  content: "# Button",
+} satisfies DocumentTemplate;
 
 export function createSeedData(overrides: Partial<SeedData> = {}): SeedData {
   return {
