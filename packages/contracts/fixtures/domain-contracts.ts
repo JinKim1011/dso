@@ -4,8 +4,8 @@ import { fixtureIds } from "@repo/contracts/fixtures/ids";
 import type { Token, TokenType } from "@repo/contracts/type";
 
 export const primitiveTokenType = {
-  id: fixtureIds.domain.primitiveTokenType,
-  projectId: fixtureIds.domain.project,
+  id: fixtureIds.primitiveTokenType,
+  projectId: fixtureIds.project,
   parentTypeId: null,
   category: "color",
   name: "Base",
@@ -13,18 +13,18 @@ export const primitiveTokenType = {
 } satisfies TokenType;
 
 export const semanticTokenType = {
-  id: fixtureIds.domain.semanticTokenType,
-  projectId: fixtureIds.domain.project,
-  parentTypeId: fixtureIds.domain.primitiveTokenType,
+  id: fixtureIds.semanticTokenType,
+  projectId: fixtureIds.project,
+  parentTypeId: fixtureIds.primitiveTokenType,
   category: "color",
   name: "Semantic",
   kind: "semantic",
 } satisfies TokenType;
 
 export const baseColorToken = {
-  id: fixtureIds.domain.singleToken,
-  projectId: fixtureIds.domain.project,
-  tokenTypeId: fixtureIds.domain.primitiveTokenType,
+  id: fixtureIds.singleToken,
+  projectId: fixtureIds.project,
+  tokenTypeId: fixtureIds.primitiveTokenType,
   name: "white",
   cssVar: "--color-white",
   value: {
@@ -34,9 +34,9 @@ export const baseColorToken = {
 } satisfies Token;
 
 export const modeToken = {
-  id: fixtureIds.domain.modeToken,
-  projectId: fixtureIds.domain.project,
-  tokenTypeId: fixtureIds.domain.semanticTokenType,
+  id: fixtureIds.modeToken,
+  projectId: fixtureIds.project,
+  tokenTypeId: fixtureIds.semanticTokenType,
   name: "surface",
   cssVar: "--color-surface",
   value: {
