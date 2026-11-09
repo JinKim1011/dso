@@ -2,23 +2,32 @@ import {
   findDuplicateIds,
   validateSeedCollectionSizes,
 } from "@repo/contracts/validation/seed/collections";
-import { seedIds } from "@repo/seed-data/ids";
-import { validSeed } from "@repo/seed-data/valid-seed";
+import {
+  createSeedData,
+  seedProjectFixture,
+  seedUserFixture,
+} from "@repo/contracts/fixtures/seed-contracts";
+import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import { describe, expect, it } from "vitest";
 
 describe("findDuplicateIds", () => {
   it("accepts unique IDs", () => {
-    expect(findDuplicateIds(validSeed.projects, "projects")).toEqual([]);
+    const projects = [
+      seedProjectFixture,
+      { ...seedProjectFixture, id: "second-project", slug: "second-project" },
+    ];
+
+    expect(findDuplicateIds(projects, "projects")).toEqual([]);
   });
 
   it("rejects duplicate IDs", () => {
-    const projects = [...validSeed.projects, { ...validSeed.projects[0]! }];
+    const projects = [seedProjectFixture, { ...seedProjectFixture }];
 
     expect(findDuplicateIds(projects, "projects")).toContainEqual(
       expect.objectContaining({
         code: "duplicate-id",
         collection: "projects",
-        id: seedIds.project,
+        id: seedProjectFixture.id,
       }),
     );
   });
@@ -26,18 +35,23 @@ describe("findDuplicateIds", () => {
 
 describe("validateSeedCollectionSizes", () => {
   it("accepts collections within the configured limit", () => {
-    expect(validateSeedCollectionSizes(validSeed)).toEqual([]);
+    const seed = createSeedData({
+      users: [seedUserFixture],
+      projects: [seedProjectFixture],
+    });
+
+    expect(validateSeedCollectionSizes(seed)).toEqual([]);
   });
 
   it("rejects a collection that exceeds the configured limit", () => {
-    const seed = structuredClone(validSeed);
-
-    for (let index = 0; index <= 1_000; index += 1) {
-      seed.users.push({
-        ...validSeed.users[0]!,
+    const users = Array.from(
+      { length: CONTRACT_LIMITS.collectionItems + 1 },
+      (_, index) => ({
+        ...seedUserFixture,
         id: `user-${index}`,
-      });
-    }
+      }),
+    );
+    const seed = createSeedData({ users });
 
     expect(validateSeedCollectionSizes(seed)).toContainEqual(
       expect.objectContaining({
