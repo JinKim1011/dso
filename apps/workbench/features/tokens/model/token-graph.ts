@@ -36,6 +36,13 @@ export type TokenGraphViewModel = {
   tokenTypes: TokenTypeViewModel[];
 };
 
+export type TokenReferenceOption = {
+  value: string; // referenced token ID
+  label: string;
+  resolvedValue: string;
+  cssVar?: string;
+};
+
 type TokenValueReferences = Partial<Record<TokenReferenceSlot, string>>;
 
 type TokenValuePreview =
