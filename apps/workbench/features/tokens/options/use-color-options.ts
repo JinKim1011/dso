@@ -15,7 +15,7 @@ export function useColorOptions(draftModel: TokenGraphViewModel): TokenReference
               ? [
                   {
                     value: token.id,
-                    label: `${type.type} / ${token.name}`,
+                    label: token.name,
                     resolvedValue: token.value.value,
                     cssVar: token.cssVar,
                   },
