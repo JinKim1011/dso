@@ -49,6 +49,13 @@ export type TypographyReferenceOptions = {
   lineHeight: TokenReferenceOption[];
 };
 
+export type TokenValueDetailUpdate = {
+  name: string;
+  meta?: string;
+  value?: TokenValueViewModel["value"];
+  preview?: TokenValueViewModel["preview"];
+};
+
 type TokenValueReferences = Partial<Record<TokenReferenceSlot, string>>;
 
 type TokenValuePreview =

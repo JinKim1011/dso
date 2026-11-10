@@ -1,5 +1,6 @@
 import type {
   TokenReferenceOption,
+  TokenValueDetailUpdate,
   TokenValueViewModel,
   TypographyReferenceOptions,
 } from "@/features/tokens/model/token-graph";
@@ -15,13 +16,6 @@ export type TokenEditorDraft =
       fontWeightId?: string;
       lineHeightId?: string;
     };
-
-export type TokenValueDetailUpdate = {
-  name: string;
-  meta?: string;
-  value?: TokenValueViewModel["value"];
-  preview?: TokenValueViewModel["preview"];
-};
 
 export function createTokenEditorDraft(
   name: string,
