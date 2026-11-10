@@ -2,14 +2,12 @@
 
 import { TokenModesForm } from "@/features/tokens/components/form/token-modes-form";
 import { TokenSingleForm } from "@/features/tokens/components/form/token-single-form";
-import {
-  TokenTypographyForm,
-  type TokenTypographyOptions,
-} from "@/features/tokens/components/form/token-typography-form";
+import { TokenTypographyForm } from "@/features/tokens/components/form/token-typography-form";
 import { TokenValuePreview } from "@/features/tokens/components/token-value/token-value-preview";
 import type {
   TokenReferenceOption,
   TokenValueViewModel,
+  TypographyReferenceOptions,
 } from "@/features/tokens/model/token-graph";
 import type { TokenValueDetailUpdate } from "@/features/tokens/model/token-value-editor";
 import { useTokenValueEditor } from "@/features/tokens/state/use-token-value-editor";
@@ -25,8 +23,8 @@ type TokenValueDetailProps = {
   kind: TokenKind;
   value: TokenValueViewModel;
   colorOptions: TokenReferenceOption[];
+  typographyOptions: TypographyReferenceOptions;
   onClose?: () => void;
-  typographyOptions: TokenTypographyOptions;
   onSave: (rowId: string, next: TokenValueDetailUpdate) => void;
 };
 
@@ -36,8 +34,8 @@ export function TokenValueDetail({
   category,
   kind,
   value,
-  typographyOptions,
   colorOptions,
+  typographyOptions,
   onSave,
 }: TokenValueDetailProps) {
   const {
@@ -49,7 +47,16 @@ export function TokenValueDetail({
     previewValue,
     undo,
     save,
-  } = useTokenValueEditor({ rowId, name, value, category, kind, colorOptions, onSave });
+  } = useTokenValueEditor({
+    rowId,
+    name,
+    value,
+    category,
+    kind,
+    colorOptions,
+    typographyOptions,
+    onSave,
+  });
 
   const renderEditor = () => {
     if (category === "typography" && kind === "semantic") {
@@ -57,9 +64,22 @@ export function TokenValueDetail({
 
       return (
         <TokenTypographyForm
-          draft={draft}
+          draft={{
+            name: draft.name,
+            fontSizeReferencedTokenId: draft.fontSizeId,
+            fontWeightReferencedTokenId: draft.fontWeightId,
+            lineHeightReferencedTokenId: draft.lineHeightId,
+          }}
           options={typographyOptions}
-          onChange={(next) => setDraft({ ...next, kind: "typography" })}
+          onChange={(next) =>
+            setDraft({
+              kind: "typography",
+              name: next.name,
+              fontSizeId: next.fontSizeReferencedTokenId,
+              fontWeightId: next.fontWeightReferencedTokenId,
+              lineHeightId: next.lineHeightReferencedTokenId,
+            })
+          }
         />
       );
     }
