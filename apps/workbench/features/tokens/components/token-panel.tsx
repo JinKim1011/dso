@@ -7,6 +7,7 @@ import {
   type TokenValueDetailUpdate,
 } from "@/features/tokens/components/token-value/token-value-detail";
 import { TokenRowViewModel } from "@/features/tokens/model/token-row";
+import type { TokenReferenceOption } from "@/features/tokens/model/token-graph";
 import { createMotionTransition } from "@repo/ui";
 import { type ReactFlowInstance } from "@xyflow/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,6 +19,7 @@ type TokenPanelProps = {
   hasPreviousRow: boolean;
   flowInstance: ReactFlowInstance | null;
   typographyOptions: TokenTypographyOptions;
+  colorOptions: TokenReferenceOption[];
   selectPreviousRow: () => void;
   selectNextRow: () => void;
   handleSaveRow: (rowId: string, update: TokenValueDetailUpdate) => void;
@@ -30,6 +32,7 @@ export function TokenPanel({
   hasPreviousRow,
   flowInstance,
   typographyOptions,
+  colorOptions,
   selectPreviousRow,
   selectNextRow,
   handleSaveRow,
@@ -81,6 +84,7 @@ export function TokenPanel({
                 kind={selectedRow.kind}
                 value={selectedRow.value}
                 typographyOptions={typographyOptions}
+                colorOptions={colorOptions}
                 onSave={handleSaveRow}
                 onClose={clearSelection}
               />
