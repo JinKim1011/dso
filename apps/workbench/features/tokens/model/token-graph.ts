@@ -11,7 +11,6 @@ export type TokenValueViewModel = {
   id: string;
   name: string;
   cssVar?: string;
-  status?: string;
   value: TokenValue;
   meta?: string;
   preview?: TokenValuePreview;
