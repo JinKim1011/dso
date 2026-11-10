@@ -19,7 +19,7 @@ type UseTokenValueEditorProps = {
   value: TokenValueViewModel;
   category: TokenCategory;
   kind: TokenKind;
-  colorOptions: TokenReferenceOption[];
+  modeOptions: TokenReferenceOption[];
   typographyOptions: TypographyReferenceOptions;
   onSave: (rowId: string, update: TokenValueDetailUpdate) => void;
 };
@@ -30,7 +30,7 @@ export function useTokenValueEditor({
   value,
   category,
   kind,
-  colorOptions,
+  modeOptions,
   typographyOptions,
   onSave,
 }: UseTokenValueEditorProps) {
@@ -49,7 +49,7 @@ export function useTokenValueEditor({
     draft,
     initialDraft,
     value,
-    colorOptions,
+    modeOptions,
     typographyOptions,
   );
 
