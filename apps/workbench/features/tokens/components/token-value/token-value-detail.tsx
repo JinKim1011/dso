@@ -5,9 +5,9 @@ import {
   type TokenModesDraft,
 } from "@/features/tokens/components/form/token-modes-form";
 import {
-  TokenSingleValueForm,
-  type TokenSingleValueDraft,
-} from "@/features/tokens/components/form/token-single-value-form";
+  TokenSingleForm,
+  type TokenSingleDraft,
+} from "@/features/tokens/components/form/token-single-form";
 import {
   TokenTypographyForm,
   type TokenTypographyDraft,
@@ -39,7 +39,7 @@ type TokenValueDetailProps = {
   onSave: (rowId: string, next: TokenValueDetailUpdate) => void;
 };
 
-type DraftState = TokenSingleValueDraft | TokenModesDraft | TokenTypographyDraft;
+type DraftState = TokenSingleDraft | TokenModesDraft | TokenTypographyDraft;
 
 function isTypographyDraft(draft: DraftState): draft is TokenTypographyDraft {
   return "fontSize" in draft && "fontWeight" in draft && "lineHeight" in draft;
@@ -49,7 +49,7 @@ function isColorDraft(draft: DraftState): draft is TokenModesDraft {
   return "lightValue" in draft && "darkValue" in draft;
 }
 
-function isSingleValueDraft(draft: DraftState): draft is TokenSingleValueDraft {
+function isSingleValueDraft(draft: DraftState): draft is TokenSingleDraft {
   return "value" in draft;
 }
 
@@ -122,7 +122,7 @@ function buildUpdate(
     };
   }
 
-  const singleDraft = draft as TokenSingleValueDraft;
+  const singleDraft = draft as TokenSingleDraft;
   return {
     name: singleDraft.name,
     value: { kind: "single", value: singleDraft.value },
@@ -183,7 +183,7 @@ export function TokenValueDetail({
 
     if (!isSingleValueDraft(draft)) return null;
 
-    return <TokenSingleValueForm draft={draft} onChange={setDraft} />;
+    return <TokenSingleForm draft={draft} onChange={setDraft} />;
   };
 
   return (
