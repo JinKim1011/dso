@@ -70,6 +70,35 @@ describe("mapTokenValue", () => {
     );
   });
 
+  it("preserves referenced token IDs while resolving mode previews", () => {
+    const semanticType: TokenType = { ...colorType, id: "semantic", kind: "semantic" };
+    const modesToken: Token = {
+      ...token,
+      id: "surface",
+      tokenTypeId: semanticType.id,
+      value: { kind: "modes", light: "var(--sample)", dark: "#111" },
+    };
+    const references = [
+      {
+        projectId: token.projectId,
+        referencingTokenId: modesToken.id,
+        referencedTokenId: token.id,
+        slot: "light" as const,
+      },
+    ];
+    const referenceLookup = createTokenReferenceLookup(
+      [colorType, semanticType],
+      [token, modesToken],
+      references,
+    );
+
+    expect(mapTokenValue(modesToken, semanticType, referenceLookup)).toMatchObject({
+      value: modesToken.value,
+      references: { light: token.id },
+      preview: { kind: "modes", light: "oklch(98.5% 0 0)", dark: "#111" },
+    });
+  });
+
   it("maps typography values", () => {
     const typographyToken: Token = {
       ...token,
