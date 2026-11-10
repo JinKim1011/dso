@@ -6,7 +6,10 @@ import {
 import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
 import type { Token, TokenType } from "@repo/contracts/type";
 
-type MappedTokenValue = Pick<TokenValueViewModel, "value" | "meta" | "preview">;
+type MappedTokenValue = Pick<
+  TokenValueViewModel,
+  "value" | "meta" | "preview" | "references"
+>;
 
 export function mapTokenValue(
   token: Token,
@@ -37,8 +40,16 @@ export function mapTokenValue(
           ? resolveModeToken(token, tokenType, referenceLookup)
           : { light, dark };
 
+      const lightReference = referenceLookup.find(token.id, "light");
+      const darkReference = referenceLookup.find(token.id, "dark");
+      const references = {
+        ...(lightReference.kind === "found" ? { light: lightReference.token.id } : {}),
+        ...(darkReference.kind === "found" ? { dark: darkReference.token.id } : {}),
+      };
+
       return {
         value: token.value,
+        ...(Object.keys(references).length ? { references } : {}),
         meta: `light:${light ?? "-"} dark:${dark ?? "-"}`,
         preview: {
           kind: "modes",
