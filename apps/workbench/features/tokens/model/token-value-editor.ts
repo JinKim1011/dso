@@ -1,6 +1,7 @@
 import type {
   TokenReferenceOption,
   TokenValueViewModel,
+  TypographyReferenceOptions,
 } from "@/features/tokens/model/token-graph";
 import type { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
 
@@ -103,7 +104,8 @@ export function getTokenEditorState(
   draft: TokenEditorDraft,
   initialDraft: TokenEditorDraft,
   value: TokenValueViewModel,
-  colorOptions: readonly TokenReferenceOption[],
+  modeOptions: readonly TokenReferenceOption[],
+  typographyOptions: TypographyReferenceOptions,
 ) {
   const isDirty = JSON.stringify(draft) !== JSON.stringify(initialDraft);
 
