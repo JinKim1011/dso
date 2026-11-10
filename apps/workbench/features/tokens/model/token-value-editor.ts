@@ -11,9 +11,9 @@ export type TokenEditorDraft =
   | {
       kind: "typography";
       name: string;
-      fontSize: string;
-      fontWeight: string;
-      lineHeight: string;
+      fontSizeId?: string;
+      fontWeightId?: string;
+      lineHeightId?: string;
     };
 
 export type TokenValueDetailUpdate = {
@@ -52,9 +52,9 @@ export function createTokenEditorDraft(
       return {
         kind: "typography",
         name,
-        fontSize: tokenValue.fontSize,
-        fontWeight: tokenValue.fontWeight,
-        lineHeight: tokenValue.lineHeight,
+        fontSizeId: value.references?.fontSize,
+        fontWeightId: value.references?.fontWeight,
+        lineHeightId: value.references?.lineHeight,
       };
 
     case "unresolved":
@@ -81,22 +81,7 @@ export function buildTokenEditorUpdate(
       return { name: draft.name };
 
     case "typography":
-      if (category !== "typography" || kind !== "semantic") {
-        throw new Error("Unsupported typography draft for this category and kind.");
-      }
-
-      return {
-        name: draft.name,
-        meta: `${draft.fontSize} / ${draft.fontWeight} / ${draft.lineHeight}`,
-        preview: {
-          kind: "typography",
-          typography: {
-            fontSize: draft.fontSize,
-            fontWeight: draft.fontWeight,
-            lineHeight: draft.lineHeight,
-          },
-        },
-      };
+      return { name: draft.name };
   }
 }
 
