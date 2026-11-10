@@ -1,4 +1,4 @@
-import type { Token, TokenReferenceSlot } from "@repo/contracts/type";
+import type { TokenReferenceSlot, TokenValue } from "@repo/contracts/type";
 import type { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
 
 export type CategoryViewModel = {
@@ -12,7 +12,7 @@ export type TokenValueViewModel = {
   name: string;
   cssVar?: string;
   status?: string;
-  value: Token["value"];
+  value: TokenValue;
   meta?: string;
   preview?: TokenValuePreview;
   references?: TokenValueReferences;
