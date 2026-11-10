@@ -66,8 +66,25 @@ export function mapTokenValue(
           ? resolveTypographyToken(token, tokenType, referenceLookup)
           : { fontSize, fontWeight, lineHeight };
 
+      const fontSizeReference = referenceLookup.find(token.id, "fontSize");
+      const fontWeightReference = referenceLookup.find(token.id, "fontWeight");
+      const lineHeightReference = referenceLookup.find(token.id, "lineHeight");
+
+      const references = {
+        ...(fontSizeReference.kind === "found"
+          ? { fontSize: fontSizeReference.token.id }
+          : {}),
+        ...(fontWeightReference.kind === "found"
+          ? { fontWeight: fontWeightReference.token.id }
+          : {}),
+        ...(lineHeightReference.kind === "found"
+          ? { lineHeight: lineHeightReference.token.id }
+          : {}),
+      };
+
       return {
         value: token.value,
+        ...(Object.keys(references).length ? { references } : {}),
         meta: [fontSize, fontWeight, lineHeight].join(" / "),
         preview: {
           kind: "typography",
