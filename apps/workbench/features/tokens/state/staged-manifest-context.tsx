@@ -1,5 +1,6 @@
 "use client";
 
+import type { ChangedRow } from "@/features/tokens/model/staged/staged-change";
 import type { TokenGraphViewModel } from "@/features/tokens/model/token-graph";
 import type { TokenRowUpdate } from "@/features/tokens/model/token-row";
 import {
@@ -7,11 +8,8 @@ import {
   loadPersistedDraftModel,
   persistDraftModel,
 } from "@/features/tokens/state/staged-draft-storage";
-import {
-  buildChangedRows,
-  getManifestLineChangeStats,
-  type ChangedRow,
-} from "@/features/tokens/state/staged-manifest-model";
+import { buildChangedRows } from "@/features/tokens/state/staged-graph-model";
+import { getManifestLineChangeStats } from "@/features/tokens/state/staged-manifest-model";
 import { useStagedManifestActions } from "@/features/tokens/state/use-staged-manifest-actions";
 import {
   createContext,
