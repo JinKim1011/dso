@@ -8,7 +8,7 @@ import {
   buildChangedRows,
   findRowById,
   replaceRowInModel,
-} from "@/features/tokens/state/staged-manifest-model";
+} from "@/features/tokens/state/staged-graph-model";
 import { Dispatch, SetStateAction, useCallback } from "react";
 
 type UseStagedManifestActionsProps = {
