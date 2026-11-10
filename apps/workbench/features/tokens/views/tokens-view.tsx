@@ -10,6 +10,7 @@ import {
 import { TokenRowViewModel } from "@/features/tokens/model/token-row";
 import { useRowNavigation } from "@/features/tokens/navigation/use-row-navigation";
 import { useRowSelection } from "@/features/tokens/navigation/use-row-selection";
+import { useColorOptions } from "@/features/tokens/options/use-color-options";
 import { useTypographyOptions } from "@/features/tokens/options/use-typography-options";
 import { useStagedManifest } from "@/features/tokens/state/staged-manifest-context";
 import {
@@ -59,6 +60,7 @@ export function TokensView({ category }: TokensViewProps) {
     );
   }, [filteredModel]);
   const typographyOptions = useTypographyOptions({ draftModel });
+  const colorOptions = useColorOptions(draftModel);
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
 
   const { selectedRowId, toggleRowSelection, clearSelection } = useRowSelection({
@@ -127,6 +129,7 @@ export function TokensView({ category }: TokensViewProps) {
         hasPreviousRow={hasPreviousRow}
         flowInstance={flowInstance}
         typographyOptions={typographyOptions}
+        colorOptions={colorOptions}
         selectPreviousRow={selectPreviousRow}
         selectNextRow={selectNextRow}
         handleSaveRow={(rowId, update) => {
