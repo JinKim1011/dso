@@ -35,7 +35,9 @@ export function TokenTypographyForm({
         value={draft.fontSizeReferencedTokenId}
         options={options.fontSize}
         placeholder="Select font size"
-        onChange={(name) => onChange({ ...draft, name })}
+        onChange={(fontSizeReferencedTokenId) =>
+          onChange({ ...draft, fontSizeReferencedTokenId })
+        }
       />
       <TokenFieldCombobox
         id="token-font-weight"
@@ -43,7 +45,9 @@ export function TokenTypographyForm({
         value={draft.fontWeightReferencedTokenId}
         options={options.fontWeight}
         placeholder="Select font weight"
-        onChange={(name) => onChange({ ...draft, name })}
+        onChange={(fontWeightReferencedTokenId) =>
+          onChange({ ...draft, fontWeightReferencedTokenId })
+        }
       />
       <TokenFieldCombobox
         id="token-line-height"
@@ -51,7 +55,9 @@ export function TokenTypographyForm({
         value={draft.lineHeightReferencedTokenId}
         options={options.lineHeight}
         placeholder="Select line height"
-        onChange={(name) => onChange({ ...draft, name })}
+        onChange={(lineHeightReferencedTokenId) =>
+          onChange({ ...draft, lineHeightReferencedTokenId })
+        }
       />
     </div>
   );
