@@ -43,6 +43,12 @@ export type TokenReferenceOption = {
   cssVar?: string;
 };
 
+export type TypographyReferenceOptions = {
+  fontSize: TokenReferenceOption[];
+  fontWeight: TokenReferenceOption[];
+  lineHeight: TokenReferenceOption[];
+};
+
 type TokenValueReferences = Partial<Record<TokenReferenceSlot, string>>;
 
 type TokenValuePreview =
