@@ -22,7 +22,7 @@ type TokenValueDetailProps = {
   category: TokenCategory;
   kind: TokenKind;
   value: TokenValueViewModel;
-  colorOptions: TokenReferenceOption[];
+  modeOptions: TokenReferenceOption[];
   typographyOptions: TypographyReferenceOptions;
   onClose?: () => void;
   onSave: (rowId: string, next: TokenValueDetailUpdate) => void;
@@ -34,7 +34,7 @@ export function TokenValueDetail({
   category,
   kind,
   value,
-  colorOptions,
+  modeOptions,
   typographyOptions,
   onSave,
 }: TokenValueDetailProps) {
@@ -53,7 +53,7 @@ export function TokenValueDetail({
     value,
     category,
     kind,
-    colorOptions,
+    modeOptions,
     typographyOptions,
     onSave,
   });
@@ -92,7 +92,7 @@ export function TokenValueDetail({
             lightReferencedTokenId: draft.lightId,
             darkReferencedTokenId: draft.darkId,
           }}
-          options={colorOptions}
+          options={modeOptions}
           onChange={(next) =>
             setDraft({
               kind: "modes",
