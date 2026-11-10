@@ -39,11 +39,9 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
   ].join(" ");
 
   const displayLabel =
-    changedRowCount != null && changedRowCount > 1
-      ? `${String(changedRowCount)} TOKENS CHANGED`
-      : changedRowCount === 1
-        ? "1 TOKEN CHANGED"
-        : "NO TOKENS CHANGED";
+    changedRowCount != null && changedRowCount >= 1
+      ? `${String(changedRowCount)} CHANGED`
+      : "NO CHANGES";
 
   return (
     <div className={wrapperClasses}>
@@ -55,7 +53,7 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
           |
         </Text>
         <Text variant="label-xxs" as="span" className="text-content-tertiary/70">
-          DESIGN TOKEN MANAGER
+          AGENT DOCS MANAGER
         </Text>
       </div>
       <div className={centerWrapperClasses}>
