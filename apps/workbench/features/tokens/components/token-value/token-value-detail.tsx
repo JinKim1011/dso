@@ -1,141 +1,34 @@
 "use client";
 
-import {
-  TokenModesForm,
-  type TokenModesDraft,
-} from "@/features/tokens/components/form/token-modes-form";
-import {
-  TokenSingleForm,
-  type TokenSingleDraft,
-} from "@/features/tokens/components/form/token-single-form";
+import { TokenModesForm } from "@/features/tokens/components/form/token-modes-form";
+import { TokenSingleForm } from "@/features/tokens/components/form/token-single-form";
 import {
   TokenTypographyForm,
-  type TokenTypographyDraft,
   type TokenTypographyOptions,
 } from "@/features/tokens/components/form/token-typography-form";
 import { TokenValuePreview } from "@/features/tokens/components/token-value/token-value-preview";
-import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
-import type { TokenKind } from "@repo/contracts/validation/enum";
+import type {
+  TokenReferenceOption,
+  TokenValueViewModel,
+} from "@/features/tokens/model/token-graph";
+import type { TokenValueDetailUpdate } from "@/features/tokens/model/token-value-editor";
+import { useTokenValueEditor } from "@/features/tokens/state/use-token-value-editor";
+import type { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
 import { Button, Text } from "@repo/ui";
-import { useEffect, useMemo, useState } from "react";
-
-export type TokenValueDetailUpdate = {
-  name: string;
-  meta?: string;
-  value?: TokenValueViewModel["value"];
-  preview?: TokenValueViewModel["preview"];
-};
 
 type TokenValueDetailProps = {
   rowId: string;
   name: string;
   cssVar?: string;
   meta?: string;
-  category: string;
+  category: TokenCategory;
   kind: TokenKind;
   value: TokenValueViewModel;
+  colorOptions: TokenReferenceOption[];
   onClose?: () => void;
   typographyOptions: TokenTypographyOptions;
   onSave: (rowId: string, next: TokenValueDetailUpdate) => void;
 };
-
-type DraftState = TokenSingleDraft | TokenModesDraft | TokenTypographyDraft;
-
-function isTypographyDraft(draft: DraftState): draft is TokenTypographyDraft {
-  return "fontSize" in draft && "fontWeight" in draft && "lineHeight" in draft;
-}
-
-function isColorDraft(draft: DraftState): draft is TokenModesDraft {
-  return "lightValue" in draft && "darkValue" in draft;
-}
-
-function isSingleValueDraft(draft: DraftState): draft is TokenSingleDraft {
-  return "value" in draft;
-}
-
-function toInitialDraft(name: string, valueItem: TokenValueViewModel): DraftState {
-  switch (valueItem.value.kind) {
-    case "modes":
-      return {
-        name,
-        lightValue: valueItem.value.light ?? "",
-        darkValue: valueItem.value.dark ?? "",
-      };
-
-    case "single":
-      return {
-        name,
-        value: valueItem.value.value,
-      };
-
-    case "typography":
-      return {
-        name,
-        fontSize: valueItem.value.fontSize,
-        fontWeight: valueItem.value.fontWeight,
-        lineHeight: valueItem.value.lineHeight,
-      };
-
-    case "unresolved":
-      return {
-        name,
-        value: "",
-      };
-  }
-}
-
-function buildUpdate(
-  category: string,
-  kind: TokenKind,
-  draft: DraftState,
-): TokenValueDetailUpdate {
-  if (category === "typography" && kind === "semantic") {
-    const typographyDraft = draft as TokenTypographyDraft;
-    return {
-      name: typographyDraft.name,
-      meta: `${typographyDraft.fontSize} / ${typographyDraft.fontWeight} / ${typographyDraft.lineHeight}`,
-      preview: {
-        kind: "typography",
-        typography: {
-          fontSize: typographyDraft.fontSize,
-          fontWeight: typographyDraft.fontWeight,
-          lineHeight: typographyDraft.lineHeight,
-        },
-      },
-    };
-  }
-
-  if ("lightValue" in draft && "darkValue" in draft) {
-    return {
-      name: draft.name,
-      value: {
-        kind: "modes",
-        light: draft.lightValue || undefined,
-        dark: draft.darkValue || undefined,
-      },
-      meta: `light:${draft.lightValue || "-"} dark:${draft.darkValue || "-"}`,
-      preview: {
-        kind: "modes",
-        light: draft.lightValue || undefined,
-        dark: draft.darkValue || undefined,
-      },
-    };
-  }
-
-  const singleDraft = draft as TokenSingleDraft;
-  return {
-    name: singleDraft.name,
-    value: { kind: "single", value: singleDraft.value },
-    meta: singleDraft.value,
-    preview:
-      category === "color"
-        ? {
-            kind: "single",
-            value: singleDraft.value,
-          }
-        : undefined,
-  };
-}
 
 export function TokenValueDetail({
   rowId,
@@ -144,46 +37,62 @@ export function TokenValueDetail({
   kind,
   value,
   typographyOptions,
+  colorOptions,
   onSave,
 }: TokenValueDetailProps) {
-  const initialDraft = useMemo(() => toInitialDraft(name, value), [name, value]);
-
-  const [draft, setDraft] = useState<DraftState>(initialDraft);
-
-  useEffect(() => {
-    setDraft(initialDraft);
-  }, [initialDraft]);
-
-  const isDirty = JSON.stringify(draft) !== JSON.stringify(initialDraft);
-
-  const handleCancel = () => {
-    setDraft(initialDraft);
-  };
-
-  const handleSave = () => {
-    onSave(rowId, buildUpdate(category, kind, draft));
-  };
+  const {
+    draft,
+    setDraft,
+    isDirty,
+    referencesChanged,
+    missingReference,
+    previewValue,
+    undo,
+    save,
+  } = useTokenValueEditor({ rowId, name, value, category, kind, colorOptions, onSave });
 
   const renderEditor = () => {
     if (category === "typography" && kind === "semantic") {
-      if (!isTypographyDraft(draft)) return null;
+      if (draft.kind !== "typography") return null;
 
       return (
         <TokenTypographyForm
           draft={draft}
           options={typographyOptions}
-          onChange={setDraft}
+          onChange={(next) => setDraft({ ...next, kind: "typography" })}
         />
       );
     }
 
-    if (isColorDraft(draft)) {
-      return <TokenModesForm draft={draft} onChange={setDraft} />;
+    if (draft.kind === "modes") {
+      return (
+        <TokenModesForm
+          draft={{
+            name: draft.name,
+            lightReferencedTokenId: draft.lightId,
+            darkReferencedTokenId: draft.darkId,
+          }}
+          options={colorOptions}
+          onChange={(next) =>
+            setDraft({
+              kind: "modes",
+              name: next.name,
+              lightId: next.lightReferencedTokenId,
+              darkId: next.darkReferencedTokenId,
+            })
+          }
+        />
+      );
     }
 
-    if (!isSingleValueDraft(draft)) return null;
+    if (draft.kind !== "single") return null;
 
-    return <TokenSingleForm draft={draft} onChange={setDraft} />;
+    return (
+      <TokenSingleForm
+        draft={draft}
+        onChange={(next) => setDraft({ ...next, kind: "single" })}
+      />
+    );
   };
 
   return (
@@ -196,23 +105,24 @@ export function TokenValueDetail({
           {name}
         </Text>
       </div>
-      <TokenValuePreview category={category} kind={kind} value={value} />
+      <TokenValuePreview category={category} kind={kind} value={previewValue} />
       {renderEditor()}
+      {missingReference && (
+        <Text variant="meta-xs">A referenced token is unavailable.</Text>
+      )}
+      {referencesChanged && (
+        <Text variant="meta-xs">Saving reference changes is not available yet.</Text>
+      )}
       {isDirty && (
         <div className="gap-microPlus flex grow basis-0 justify-end">
-          <Button
-            variant="void"
-            label="UNDO"
-            disabled={!isDirty}
-            onClick={handleCancel}
-          />
+          <Button variant="void" label="UNDO" disabled={!isDirty} onClick={undo} />
           <Button
             variant="fill"
             label="SAVE"
             overrideBgClass="bg-surface-accentStrong hover:bg-surface-accentStrong active:bg-surface-accentStrong"
             overrideTextColorClass="text-content-primary hover:text-content-tertiary active:text-content-quaternary"
-            disabled={!isDirty}
-            onClick={handleSave}
+            disabled={!isDirty || referencesChanged || missingReference}
+            onClick={save}
           />
         </div>
       )}
