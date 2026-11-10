@@ -10,7 +10,7 @@ import {
 import { TokenRowViewModel } from "@/features/tokens/model/token-row";
 import { useRowNavigation } from "@/features/tokens/navigation/use-row-navigation";
 import { useRowSelection } from "@/features/tokens/navigation/use-row-selection";
-import { useColorOptions } from "@/features/tokens/options/use-color-options";
+import { useModeOptions } from "@/features/tokens/options/use-mode-options";
 import { useTypographyOptions } from "@/features/tokens/options/use-typography-options";
 import { useStagedManifest } from "@/features/tokens/state/staged-manifest-context";
 import {
@@ -62,10 +62,6 @@ export function TokensView({ category }: TokensViewProps) {
     );
   }, [filteredModel]);
 
-  const colorOptions = useColorOptions(draftModel);
-
-  const typographyOptions = useTypographyOptions(draftModel);
-
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
 
   const { selectedRowId, toggleRowSelection, clearSelection } = useRowSelection({
@@ -107,6 +103,17 @@ export function TokensView({ category }: TokensViewProps) {
     });
   }, [flowBase.nodes, selectedRowId, toggleRowSelection]);
 
+  const typographyOptions = useTypographyOptions(draftModel);
+  const colorOptions = useModeOptions({ draftModel, category: "color" });
+  const shadowOptions = useModeOptions({ draftModel, category: "shadow" });
+
+  const modeOptions =
+    selectedRow?.category === "color"
+      ? colorOptions
+      : selectedRow?.category === "shadow"
+        ? shadowOptions
+        : [];
+
   return (
     <div className="bg-dot-pattern rounded-mini border-stroke-secondary relative flex h-full w-full overflow-hidden border">
       <ReactFlow
@@ -134,7 +141,7 @@ export function TokensView({ category }: TokensViewProps) {
         hasPreviousRow={hasPreviousRow}
         flowInstance={flowInstance}
         typographyOptions={typographyOptions}
-        colorOptions={colorOptions}
+        modeOptions={modeOptions}
         selectPreviousRow={selectPreviousRow}
         selectNextRow={selectNextRow}
         handleSaveRow={(rowId, update) => {
