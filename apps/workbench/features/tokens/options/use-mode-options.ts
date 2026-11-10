@@ -2,13 +2,24 @@ import type {
   TokenGraphViewModel,
   TokenReferenceOption,
 } from "@/features/tokens/model/token-graph";
+import { TokenCategory } from "@repo/contracts/validation/enum";
 import { useMemo } from "react";
 
-export function useColorOptions(draftModel: TokenGraphViewModel): TokenReferenceOption[] {
+type ModeCategory = Extract<TokenCategory, "color" | "shadow">;
+
+type UseModeOptionsProps = {
+  draftModel: TokenGraphViewModel;
+  category: ModeCategory;
+};
+
+export function useModeOptions({
+  draftModel,
+  category,
+}: UseModeOptionsProps): TokenReferenceOption[] {
   return useMemo(
     () =>
       draftModel.tokenTypes
-        .filter((type) => type.category === "color" && type.kind === "primitive")
+        .filter((type) => type.category === category && type.kind === "primitive")
         .flatMap((type) =>
           type.values.flatMap((token) =>
             token.value.kind === "single"
@@ -24,6 +35,6 @@ export function useColorOptions(draftModel: TokenGraphViewModel): TokenReference
           ),
         )
         .sort((a, b) => a.label.localeCompare(b.label)),
-    [draftModel],
+    [draftModel, category],
   );
 }
