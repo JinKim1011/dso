@@ -1,9 +1,9 @@
 "use client";
 
 import {
-  TokenColorForm,
-  type TokenColorDraft,
-} from "@/features/tokens/components/form/token-color-form";
+  TokenModesForm,
+  type TokenModesDraft,
+} from "@/features/tokens/components/form/token-modes-form";
 import {
   TokenSingleValueForm,
   type TokenSingleValueDraft,
@@ -39,13 +39,13 @@ type TokenValueDetailProps = {
   onSave: (rowId: string, next: TokenValueDetailUpdate) => void;
 };
 
-type DraftState = TokenSingleValueDraft | TokenColorDraft | TokenTypographyDraft;
+type DraftState = TokenSingleValueDraft | TokenModesDraft | TokenTypographyDraft;
 
 function isTypographyDraft(draft: DraftState): draft is TokenTypographyDraft {
   return "fontSize" in draft && "fontWeight" in draft && "lineHeight" in draft;
 }
 
-function isColorDraft(draft: DraftState): draft is TokenColorDraft {
+function isColorDraft(draft: DraftState): draft is TokenModesDraft {
   return "lightValue" in draft && "darkValue" in draft;
 }
 
@@ -178,7 +178,7 @@ export function TokenValueDetail({
     }
 
     if (isColorDraft(draft)) {
-      return <TokenColorForm draft={draft} onChange={setDraft} />;
+      return <TokenModesForm draft={draft} onChange={setDraft} />;
     }
 
     if (!isSingleValueDraft(draft)) return null;
