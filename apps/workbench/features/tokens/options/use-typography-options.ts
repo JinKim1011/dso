@@ -1,50 +1,57 @@
-import type { TokenTypographyOptions } from "@/features/tokens/components/form/token-typography-form";
-import type { TokenGraphViewModel } from "@/features/tokens/model/token-graph";
+import type {
+  TokenGraphViewModel,
+  TokenReferenceOption,
+  TypographyReferenceOptions,
+} from "@/features/tokens/model/token-graph";
 import { useMemo } from "react";
 
-type UseTypographyOptionsProps = {
-  draftModel: TokenGraphViewModel;
-};
-
-export function useTypographyOptions({
-  draftModel,
-}: UseTypographyOptionsProps): TokenTypographyOptions {
+export function useTypographyOptions(
+  draftModel: TokenGraphViewModel,
+): TypographyReferenceOptions {
   return useMemo(() => {
-    const fontSize = new Set<string>();
-    const fontWeight = new Set<string>();
-    const lineHeight = new Set<string>();
-
-    draftModel.tokenTypes
-      .filter(
-        (tokenType) =>
-          tokenType.category === "typography" && tokenType.kind === "primitive",
-      )
-      .forEach((tokenType) => {
-        const typeName = tokenType.type.toLowerCase();
-
-        for (const valueItem of tokenType.values) {
-          if (!valueItem.name) continue;
-
-          if (typeName.includes("fontsize")) {
-            fontSize.add(valueItem.name);
-            continue;
-          }
-
-          if (typeName.includes("fontweight")) {
-            fontWeight.add(valueItem.name);
-            continue;
-          }
-
-          if (typeName.includes("lineheight")) {
-            lineHeight.add(valueItem.name);
-          }
-        }
-      });
-
-    return {
-      fontSize: [...fontSize].sort(),
-      fontWeight: [...fontWeight].sort(),
-      lineHeight: [...lineHeight].sort(),
+    const options: TypographyReferenceOptions = {
+      fontSize: [],
+      fontWeight: [],
+      lineHeight: [],
     };
+
+    for (const type of draftModel.tokenTypes) {
+      if (type.category !== "typography" || type.kind !== "primitive") {
+        continue;
+      }
+
+      let target: TokenReferenceOption[];
+
+      switch (type.type) {
+        case "font-size":
+          target = options.fontSize;
+          break;
+        case "font-weight":
+          target = options.fontWeight;
+          break;
+        case "line-height":
+          target = options.lineHeight;
+          break;
+        default:
+          continue;
+      }
+
+      for (const token of type.values) {
+        if (token.value.kind !== "single") continue;
+
+        target.push({
+          value: token.id,
+          label: token.name,
+          resolvedValue: token.value.value,
+          cssVar: token.cssVar,
+        });
+      }
+    }
+
+    for (const group of Object.values(options)) {
+      group.sort((a, b) => a.label.localeCompare(b.label));
+    }
+
+    return options;
   }, [draftModel]);
 }
