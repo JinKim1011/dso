@@ -1,5 +1,6 @@
 import type {
   TokenReferenceOption,
+  TokenValueDetailUpdate,
   TokenValueViewModel,
   TypographyReferenceOptions,
 } from "@/features/tokens/model/token-graph";
@@ -8,7 +9,6 @@ import {
   createTokenEditorDraft,
   getTokenEditorState,
   type TokenEditorDraft,
-  type TokenValueDetailUpdate,
 } from "@/features/tokens/model/token-value-editor";
 import type { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
 import { useEffect, useMemo, useState } from "react";

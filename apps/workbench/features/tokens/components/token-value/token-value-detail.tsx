@@ -6,10 +6,10 @@ import { TokenTypographyForm } from "@/features/tokens/components/form/token-typ
 import { TokenValuePreview } from "@/features/tokens/components/token-value/token-value-preview";
 import type {
   TokenReferenceOption,
+  TokenValueDetailUpdate,
   TokenValueViewModel,
   TypographyReferenceOptions,
 } from "@/features/tokens/model/token-graph";
-import type { TokenValueDetailUpdate } from "@/features/tokens/model/token-value-editor";
 import { useTokenValueEditor } from "@/features/tokens/state/use-token-value-editor";
 import type { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
 import { Button, Text } from "@repo/ui";
