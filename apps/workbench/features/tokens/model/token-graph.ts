@@ -52,8 +52,9 @@ export type TypographyReferenceOptions = {
 export type TokenValueDetailUpdate = {
   name: string;
   meta?: string;
-  value?: TokenValueViewModel["value"];
-  preview?: TokenValueViewModel["preview"];
+  value?: TokenValue;
+  preview?: TokenValuePreview;
+  references?: TokenValueReferences;
 };
 
 type TokenValueReferences = Partial<Record<TokenReferenceSlot, string>>;
