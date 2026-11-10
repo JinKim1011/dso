@@ -45,13 +45,16 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
     return (
       <div className={wrapperStyle}>
         {swatches.map((swatch) => (
-          <div className="flex flex-1 flex-col items-center" key={swatch?.label}>
+          <div
+            className="gap-microPlus flex flex-1 flex-col items-center"
+            key={swatch?.label}
+          >
             <div
               className="rounded-round h-7 w-7"
               style={{ background: swatch?.value }}
             />
             <Text variant="meta-xs" className="text-content-accent">
-              {swatch?.value}
+              {swatch?.label}
             </Text>
           </div>
         ))}
