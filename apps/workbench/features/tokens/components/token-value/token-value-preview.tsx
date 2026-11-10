@@ -51,7 +51,7 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
               style={{ background: swatch?.value }}
             />
             <Text variant="meta-xs" className="text-content-accent">
-              {swatch?.label}
+              {swatch?.value}
             </Text>
           </div>
         ))}
