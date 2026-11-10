@@ -1,10 +1,12 @@
 import { Combobox, Text } from "@repo/ui";
 
+type TokenFieldComboboxOption = string | { value: string; label: string };
+
 type TokenFieldComboboxProps = {
   id: string;
   label: string;
   value?: string;
-  options: string[];
+  options: TokenFieldComboboxOption[];
   placeholder?: string;
   onChange: (value: string) => void;
 };
@@ -34,7 +36,9 @@ export function TokenFieldCombobox({
         <Combobox
           id={id}
           value={value}
-          options={options.map((option) => ({ value: option, label: option }))}
+          options={options.map((option) =>
+            typeof option === "string" ? { value: option, label: option } : option,
+          )}
           placeholder={placeholder}
           onChange={(next) => {
             if (!next) return;
