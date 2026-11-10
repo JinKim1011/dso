@@ -19,7 +19,7 @@ type TokenPanelProps = {
   hasPreviousRow: boolean;
   flowInstance: ReactFlowInstance | null;
   typographyOptions: TypographyReferenceOptions;
-  colorOptions: TokenReferenceOption[];
+  modeOptions: TokenReferenceOption[];
   selectPreviousRow: () => void;
   selectNextRow: () => void;
   handleSaveRow: (rowId: string, update: TokenValueDetailUpdate) => void;
@@ -32,7 +32,7 @@ export function TokenPanel({
   hasPreviousRow,
   flowInstance,
   typographyOptions,
-  colorOptions,
+  modeOptions,
   selectPreviousRow,
   selectNextRow,
   handleSaveRow,
@@ -84,7 +84,7 @@ export function TokenPanel({
                 kind={selectedRow.kind}
                 value={selectedRow.value}
                 typographyOptions={typographyOptions}
-                colorOptions={colorOptions}
+                modeOptions={modeOptions}
                 onSave={handleSaveRow}
                 onClose={clearSelection}
               />
