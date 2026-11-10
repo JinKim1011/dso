@@ -1,16 +1,16 @@
 import { TokenFieldInput } from "@/features/tokens/components/field/token-field-input";
 
-export type TokenSingleValueDraft = {
+export type TokenSingleDraft = {
   name: string;
   value: string;
 };
 
-type TokenSingleValueFormProps = {
-  draft: TokenSingleValueDraft;
-  onChange: (next: TokenSingleValueDraft) => void;
+type TokenSingleFormProps = {
+  draft: TokenSingleDraft;
+  onChange: (next: TokenSingleDraft) => void;
 };
 
-export function TokenSingleValueForm({ draft, onChange }: TokenSingleValueFormProps) {
+export function TokenSingleForm({ draft, onChange }: TokenSingleFormProps) {
   return (
     <div className="gap-mini flex flex-col">
       <TokenFieldInput
