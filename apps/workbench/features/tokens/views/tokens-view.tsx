@@ -42,9 +42,11 @@ export function TokensView({ category }: TokensViewProps) {
       tokenTypes: draftModel.tokenTypes.filter((t) => t.category === category),
     };
   }, [draftModel, category]);
+
   const flowBase = useMemo(() => {
     return mapTokenGraphToFlow(filteredModel);
   }, [filteredModel]);
+
   const rows = useMemo<TokenRowViewModel[]>(() => {
     return filteredModel.tokenTypes.flatMap((tokenType) =>
       tokenType.values.map((valueItem) => ({
@@ -59,8 +61,11 @@ export function TokensView({ category }: TokensViewProps) {
       })),
     );
   }, [filteredModel]);
-  const typographyOptions = useTypographyOptions({ draftModel });
+
   const colorOptions = useColorOptions(draftModel);
+
+  const typographyOptions = useTypographyOptions(draftModel);
+
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
 
   const { selectedRowId, toggleRowSelection, clearSelection } = useRowSelection({
