@@ -1,22 +1,17 @@
 import { TokenFieldCombobox } from "@/features/tokens/components/field/token-field-combobox";
 import { TokenFieldInput } from "@/features/tokens/components/field/token-field-input";
+import type { TypographyReferenceOptions } from "@/features/tokens/model/token-graph";
 
 export type TokenTypographyDraft = {
   name: string;
-  fontSize: string;
-  fontWeight: string;
-  lineHeight: string;
-};
-
-export type TokenTypographyOptions = {
-  fontSize: string[];
-  fontWeight: string[];
-  lineHeight: string[];
+  fontSizeReferencedTokenId: string | undefined;
+  fontWeightReferencedTokenId: string | undefined;
+  lineHeightReferencedTokenId: string | undefined;
 };
 
 type TokenTypographyFormProps = {
   draft: TokenTypographyDraft;
-  options: TokenTypographyOptions;
+  options: TypographyReferenceOptions;
   onChange: (next: TokenTypographyDraft) => void;
 };
 
@@ -37,26 +32,26 @@ export function TokenTypographyForm({
       <TokenFieldCombobox
         id="token-font-size"
         label="Size"
-        value={draft.fontSize}
+        value={draft.fontSizeReferencedTokenId}
         options={options.fontSize}
         placeholder="Select font size"
-        onChange={(fontSize) => onChange({ ...draft, fontSize })}
+        onChange={(name) => onChange({ ...draft, name })}
       />
       <TokenFieldCombobox
         id="token-font-weight"
         label="Weight"
-        value={draft.fontWeight}
+        value={draft.fontWeightReferencedTokenId}
         options={options.fontWeight}
         placeholder="Select font weight"
-        onChange={(fontWeight) => onChange({ ...draft, fontWeight })}
+        onChange={(name) => onChange({ ...draft, name })}
       />
       <TokenFieldCombobox
         id="token-line-height"
         label="Line height"
-        value={draft.lineHeight}
+        value={draft.lineHeightReferencedTokenId}
         options={options.lineHeight}
         placeholder="Select line height"
-        onChange={(lineHeight) => onChange({ ...draft, lineHeight })}
+        onChange={(name) => onChange({ ...draft, name })}
       />
     </div>
   );
