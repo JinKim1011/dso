@@ -1,13 +1,13 @@
 "use client";
 
-import type { TokenTypographyOptions } from "@/features/tokens/components/form/token-typography-form";
 import { FlowControls } from "@/features/tokens/components/react-flow/flow-controls";
-import {
-  TokenValueDetail,
-  type TokenValueDetailUpdate,
-} from "@/features/tokens/components/token-value/token-value-detail";
+import { TokenValueDetail } from "@/features/tokens/components/token-value/token-value-detail";
+import type {
+  TokenReferenceOption,
+  TypographyReferenceOptions,
+} from "@/features/tokens/model/token-graph";
 import { TokenRowViewModel } from "@/features/tokens/model/token-row";
-import type { TokenReferenceOption } from "@/features/tokens/model/token-graph";
+import type { TokenValueDetailUpdate } from "@/features/tokens/model/token-value-editor";
 import { createMotionTransition } from "@repo/ui";
 import { type ReactFlowInstance } from "@xyflow/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,7 +18,7 @@ type TokenPanelProps = {
   hasNextRow: boolean;
   hasPreviousRow: boolean;
   flowInstance: ReactFlowInstance | null;
-  typographyOptions: TokenTypographyOptions;
+  typographyOptions: TypographyReferenceOptions;
   colorOptions: TokenReferenceOption[];
   selectPreviousRow: () => void;
   selectNextRow: () => void;
