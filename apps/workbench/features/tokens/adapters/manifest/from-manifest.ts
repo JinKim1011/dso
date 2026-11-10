@@ -70,15 +70,6 @@ function createValueItems(
 ): TokenValueViewModel[] {
   if (entry.tokens?.length) {
     return entry.tokens.map((token, index) => {
-      let status: string | undefined;
-
-      if (typeof token.status === "string") {
-        status = token.status;
-      } else if (token.status) {
-        status =
-          [token.status.light, token.status.dark].filter(Boolean).join("/") || undefined;
-      }
-
       const meta = token.value
         ? token.value
         : token.values
@@ -104,7 +95,6 @@ function createValueItems(
         id: `${tokenTypeId}:value:${toId("name", token.name)}:${index}`,
         name: token.name,
         cssVar: token.cssVar,
-        status,
         meta,
         preview,
         value,

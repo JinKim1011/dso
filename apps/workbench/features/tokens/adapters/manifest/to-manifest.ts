@@ -41,7 +41,6 @@ export function buildManifestFromGraph(
       tokens: tokenType.values.map((value) => ({
         name: value.name,
         cssVar: value.cssVar,
-        status: value.status,
         ...(value.value.kind === "single"
           ? { value: value.value.value }
           : value.value.kind === "modes"

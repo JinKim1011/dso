@@ -29,23 +29,6 @@ export function normalizeTokenRecord(raw: unknown): ManifestTokenRecord | null {
 
   const cssVar = asString(raw.cssVar);
   const value = asString(raw.value);
-  const statusRaw = raw.status;
-
-  let status: ManifestTokenRecord["status"];
-
-  if (typeof statusRaw === "string") {
-    status = statusRaw;
-  } else if (isObjectLike(statusRaw)) {
-    const light = asString(statusRaw.light);
-    const dark = asString(statusRaw.dark);
-
-    if (light || dark) {
-      status = {
-        light,
-        dark,
-      };
-    }
-  }
 
   const valuesRaw = raw.values;
   let values: ManifestTokenRecord["values"];
@@ -61,7 +44,6 @@ export function normalizeTokenRecord(raw: unknown): ManifestTokenRecord | null {
     name,
     cssVar,
     value,
-    status,
     values,
   };
 }

@@ -8,7 +8,6 @@ export type ManifestTokenRecord = {
     light?: string;
     dark?: string;
   };
-  status?: string | { light?: string; dark?: string };
 };
 
 export type ManifestSemanticRecord = {
