@@ -1,6 +1,7 @@
 import type {
   TokenReferenceOption,
   TokenValueViewModel,
+  TypographyReferenceOptions,
 } from "@/features/tokens/model/token-graph";
 import {
   buildTokenEditorUpdate,
@@ -19,6 +20,7 @@ type UseTokenValueEditorProps = {
   category: TokenCategory;
   kind: TokenKind;
   colorOptions: TokenReferenceOption[];
+  typographyOptions: TypographyReferenceOptions;
   onSave: (rowId: string, update: TokenValueDetailUpdate) => void;
 };
 
@@ -29,6 +31,7 @@ export function useTokenValueEditor({
   category,
   kind,
   colorOptions,
+  typographyOptions,
   onSave,
 }: UseTokenValueEditorProps) {
   const initialDraft = useMemo(
@@ -42,7 +45,13 @@ export function useTokenValueEditor({
     setDraft(initialDraft);
   }, [initialDraft, rowId]);
 
-  const state = getTokenEditorState(draft, initialDraft, value, colorOptions);
+  const state = getTokenEditorState(
+    draft,
+    initialDraft,
+    value,
+    colorOptions,
+    typographyOptions,
+  );
 
   const undo = () => setDraft(initialDraft);
 
