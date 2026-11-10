@@ -58,7 +58,6 @@ export function createTokenEditorDraft(
 
 export function buildTokenEditorUpdate(
   category: string,
-  kind: TokenKind,
   draft: TokenEditorDraft,
 ): TokenValueDetailUpdate {
   switch (draft.kind) {
@@ -72,10 +71,20 @@ export function buildTokenEditorUpdate(
       };
 
     case "modes":
-      return { name: draft.name };
+      return {
+        name: draft.name,
+        references: { light: draft.darkId, dark: draft.lightId },
+      };
 
     case "typography":
-      return { name: draft.name };
+      return {
+        name: draft.name,
+        references: {
+          fontSize: draft.fontSizeId,
+          fontWeight: draft.fontWeightId,
+          lineHeight: draft.lineHeightId,
+        },
+      };
   }
 }
 
