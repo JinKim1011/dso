@@ -56,7 +56,11 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
           >
             <div
               className="rounded-round h-7 w-7"
-              style={{ background: swatch?.value }}
+              style={
+                category === "shadow"
+                  ? { boxShadow: swatch?.value }
+                  : { background: swatch?.value }
+              }
             />
             <Text variant="meta-xs" className="text-content-accent">
               {swatch?.label}
