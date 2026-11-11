@@ -16,5 +16,5 @@ export type TokenRowViewModel = {
 };
 
 export type TokenRowUpdate = Partial<
-  Pick<TokenValueViewModel, "name" | "cssVar" | "meta" | "value">
+  Pick<TokenValueViewModel, "name" | "cssVar" | "meta" | "value" | "references">
 >;
