@@ -1,9 +1,10 @@
 import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
+import { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
 import { Text } from "@repo/ui";
 
 type TokenValuePreviewProps = {
-  category: string;
-  kind: string;
+  category: TokenCategory;
+  kind: TokenKind;
   value: TokenValueViewModel;
 };
 
