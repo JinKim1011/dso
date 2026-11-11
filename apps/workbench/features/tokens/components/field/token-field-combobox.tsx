@@ -8,7 +8,7 @@ type TokenFieldComboboxProps = {
   value?: string;
   options: TokenFieldComboboxOption[];
   placeholder?: string;
-  onChange: (value: string) => void;
+  onChange: (value: string | undefined) => void;
 };
 
 export function TokenFieldCombobox({
@@ -40,10 +40,7 @@ export function TokenFieldCombobox({
             typeof option === "string" ? { value: option, label: option } : option,
           )}
           placeholder={placeholder}
-          onChange={(next) => {
-            if (!next) return;
-            onChange(next);
-          }}
+          onChange={onChange}
         />
       </div>
     </div>
