@@ -7,6 +7,10 @@ import {
   mapTokenGraphToFlow,
   type TokenTypeNodeData,
 } from "@/features/tokens/graph/map-to-flow";
+import {
+  buildTokenDisplayModel,
+  createTokenDisplayResolver,
+} from "@/features/tokens/model/token-display";
 import { TokenRowViewModel } from "@/features/tokens/model/token-row";
 import { useRowNavigation } from "@/features/tokens/navigation/use-row-navigation";
 import { useRowSelection } from "@/features/tokens/navigation/use-row-selection";
@@ -31,36 +35,47 @@ type TokensViewProps = {
 };
 
 export function TokensView({ category }: TokensViewProps) {
-  const { draftModel, updateRow } = useStagedManifest();
+  const { baseModel, draftModel, updateRow } = useStagedManifest();
+
+  const resolveDisplay = useMemo(
+    () => createTokenDisplayResolver(baseModel, draftModel),
+    [baseModel, draftModel],
+  );
+  const displayModel = useMemo(
+    () => buildTokenDisplayModel(draftModel, resolveDisplay),
+    [draftModel, resolveDisplay],
+  );
 
   const filteredModel = useMemo(() => {
-    if (!category) return draftModel;
+    if (!category) return displayModel;
 
     return {
-      ...draftModel,
-      categories: draftModel.categories.filter((c) => c.category === category),
-      tokenTypes: draftModel.tokenTypes.filter((t) => t.category === category),
+      ...displayModel,
+      categories: displayModel.categories.filter((c) => c.category === category),
+      tokenTypes: displayModel.tokenTypes.filter((t) => t.category === category),
     };
-  }, [draftModel, category]);
+  }, [displayModel, category]);
 
   const flowBase = useMemo(() => {
     return mapTokenGraphToFlow(filteredModel);
   }, [filteredModel]);
 
   const rows = useMemo<TokenRowViewModel[]>(() => {
-    return filteredModel.tokenTypes.flatMap((tokenType) =>
-      tokenType.values.map((valueItem) => ({
-        id: valueItem.id,
-        name: valueItem.name,
-        cssVar: valueItem.cssVar,
-        meta: valueItem.meta,
-        preview: valueItem.preview,
-        category: tokenType.category,
-        kind: tokenType.kind,
-        value: valueItem,
-      })),
-    );
-  }, [filteredModel]);
+    return draftModel.tokenTypes
+      .filter((type) => !category || type.category === category)
+      .flatMap((tokenType) =>
+        tokenType.values.map((valueItem) => ({
+          id: valueItem.id,
+          name: valueItem.name,
+          cssVar: valueItem.cssVar,
+          meta: valueItem.meta,
+          preview: valueItem.preview,
+          category: tokenType.category,
+          kind: tokenType.kind,
+          value: valueItem,
+        })),
+      );
+  }, [draftModel, category]);
 
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
 
@@ -142,6 +157,7 @@ export function TokensView({ category }: TokensViewProps) {
         flowInstance={flowInstance}
         typographyOptions={typographyOptions}
         modeOptions={modeOptions}
+        resolveDisplay={resolveDisplay}
         selectPreviousRow={selectPreviousRow}
         selectNextRow={selectNextRow}
         handleSaveRow={(rowId, update) => {
