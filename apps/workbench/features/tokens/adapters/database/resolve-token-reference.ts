@@ -66,7 +66,10 @@ export function resolveTypographyToken(
 
   const { fontSize, fontWeight, lineHeight } = token.value;
 
-  function resolve(slot: "fontSize" | "fontWeight" | "lineHeight", value: string) {
+  function resolve(
+    slot: "fontSize" | "fontWeight" | "lineHeight",
+    value: string | undefined,
+  ) {
     const resolved = resolveTokenReferenceValue(
       token,
       tokenType,
