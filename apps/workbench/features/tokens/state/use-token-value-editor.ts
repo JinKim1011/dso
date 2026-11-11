@@ -56,7 +56,7 @@ export function useTokenValueEditor({
   const undo = () => setDraft(initialDraft);
 
   const save = () => {
-    if (state.referencesChanged || state.missingReference) return;
+    if (state.missingReference) return;
     onSave(rowId, buildTokenEditorUpdate(category, draft));
   };
 

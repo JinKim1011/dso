@@ -38,25 +38,17 @@ export function TokenValueDetail({
   typographyOptions,
   onSave,
 }: TokenValueDetailProps) {
-  const {
-    draft,
-    setDraft,
-    isDirty,
-    referencesChanged,
-    missingReference,
-    previewValue,
-    undo,
-    save,
-  } = useTokenValueEditor({
-    rowId,
-    name,
-    value,
-    category,
-    kind,
-    modeOptions,
-    typographyOptions,
-    onSave,
-  });
+  const { draft, setDraft, isDirty, missingReference, previewValue, undo, save } =
+    useTokenValueEditor({
+      rowId,
+      name,
+      value,
+      category,
+      kind,
+      modeOptions,
+      typographyOptions,
+      onSave,
+    });
 
   const renderEditor = () => {
     if (category === "typography" && kind === "semantic") {
@@ -130,9 +122,6 @@ export function TokenValueDetail({
       {missingReference && (
         <Text variant="meta-xs">A referenced token is unavailable.</Text>
       )}
-      {referencesChanged && (
-        <Text variant="meta-xs">Saving reference changes is not available yet.</Text>
-      )}
       {isDirty && (
         <div className="gap-microPlus flex grow basis-0 justify-end">
           <Button variant="void" label="UNDO" disabled={!isDirty} onClick={undo} />
@@ -141,7 +130,7 @@ export function TokenValueDetail({
             label="SAVE"
             overrideBgClass="bg-surface-accentStrong hover:bg-surface-accentStrong active:bg-surface-accentStrong"
             overrideTextColorClass="text-content-primary hover:text-content-tertiary active:text-content-quaternary"
-            disabled={!isDirty || referencesChanged || missingReference}
+            disabled={!isDirty || missingReference}
             onClick={save}
           />
         </div>
