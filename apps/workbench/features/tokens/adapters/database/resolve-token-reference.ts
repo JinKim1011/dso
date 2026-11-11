@@ -53,7 +53,11 @@ export function resolveTypographyToken(
   token: Token,
   tokenType: TokenType,
   referenceLookup: TokenReferenceLookup,
-): { fontSize: string; fontWeight: string; lineHeight: string } {
+): {
+  fontSize: string | undefined;
+  fontWeight: string | undefined;
+  lineHeight: string | undefined;
+} {
   if (
     token.value.kind !== "typography" ||
     token.tokenTypeId !== tokenType.id ||
@@ -66,27 +70,28 @@ export function resolveTypographyToken(
 
   const { fontSize, fontWeight, lineHeight } = token.value;
 
-  function resolve(
-    slot: "fontSize" | "fontWeight" | "lineHeight",
-    value: string | undefined,
-  ) {
-    const resolved = resolveTokenReferenceValue(
+  return {
+    fontSize: resolveTokenReferenceValue(
       token,
       tokenType,
-      slot,
-      value,
+      "fontSize",
+      fontSize,
       referenceLookup,
-    );
-    if (resolved === undefined) {
-      throw new Error(`Missing value for token "${token.id}" and slot "${slot}".`);
-    }
-    return resolved;
-  }
-
-  return {
-    fontSize: resolve("fontSize", fontSize),
-    fontWeight: resolve("fontWeight", fontWeight),
-    lineHeight: resolve("lineHeight", lineHeight),
+    ),
+    fontWeight: resolveTokenReferenceValue(
+      token,
+      tokenType,
+      "fontWeight",
+      fontWeight,
+      referenceLookup,
+    ),
+    lineHeight: resolveTokenReferenceValue(
+      token,
+      tokenType,
+      "lineHeight",
+      lineHeight,
+      referenceLookup,
+    ),
   };
 }
 
