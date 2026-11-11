@@ -86,10 +86,17 @@ export function mapTokenValue(
         value: token.value,
         ...(Object.keys(references).length ? { references } : {}),
         meta: [fontSize, fontWeight, lineHeight].join(" / "),
-        preview: {
-          kind: "typography",
-          typography: previewValues,
-        },
+        preview:
+          previewValues.fontSize && previewValues.fontWeight && previewValues.lineHeight
+            ? {
+                kind: "typography",
+                typography: {
+                  fontSize: previewValues.fontSize,
+                  fontWeight: previewValues.fontWeight,
+                  lineHeight: previewValues.lineHeight,
+                },
+              }
+            : undefined,
       };
     }
 
