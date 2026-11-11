@@ -77,17 +77,12 @@ export function resolveTypography(context: SlotContext, value: TypographyValue) 
   const fontWeight = resolveSlot(context, "fontWeight", value.fontWeight);
   const lineHeight = resolveSlot(context, "lineHeight", value.lineHeight);
 
-  const complete =
-    fontSize.value !== undefined &&
-    fontWeight.value !== undefined &&
-    lineHeight.value !== undefined;
+  const complete = !!fontSize.value && !!fontWeight.value && !!lineHeight.value;
 
   return {
     meta: [fontSize.label, fontWeight.label, lineHeight.label].join(" / "),
     preview:
-      fontSize.value !== undefined &&
-      fontWeight.value !== undefined &&
-      lineHeight.value !== undefined
+      fontSize.value && fontWeight.value && lineHeight.value
         ? {
             kind: "typography" as const,
             typography: {
