@@ -1,6 +1,11 @@
+import { StagedRowDetailReferences } from "@/features/tokens/components/staged/row/staged-row-detail-references";
 import { StagedRowDetailTag } from "@/features/tokens/components/staged/row/staged-row-detail-tag";
 import { StagedRowDetailValue } from "@/features/tokens/components/staged/row/staged-row-detail-value";
-import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
+import type { ReferenceChange } from "@/features/tokens/model/staged/staged-change";
+import type {
+  TokenGraphViewModel,
+  TokenValueViewModel,
+} from "@/features/tokens/model/token-graph";
 import { RowSpacingIcon } from "@radix-ui/react-icons";
 
 type StagedRowDetailProps = {
@@ -9,6 +14,9 @@ type StagedRowDetailProps = {
   afterName: string;
   before: TokenValueViewModel;
   after: TokenValueViewModel;
+  references: ReferenceChange[];
+  baseModel: TokenGraphViewModel;
+  draftModel: TokenGraphViewModel;
 };
 
 export function StagedRowDetail({
@@ -17,6 +25,9 @@ export function StagedRowDetail({
   afterName,
   before,
   after,
+  references,
+  baseModel,
+  draftModel,
 }: StagedRowDetailProps) {
   const wrapperStyle = [
     "w-full flex flex-col h-full",
@@ -40,6 +51,11 @@ export function StagedRowDetail({
               afterName={afterName}
             />
             <StagedRowDetailValue type="afterValue" after={after} before={before} />
+            <StagedRowDetailReferences
+              side="after"
+              references={references}
+              model={draftModel}
+            />
           </div>
         </div>
         <StagedRowDetailTag
@@ -61,6 +77,11 @@ export function StagedRowDetail({
               afterName={afterName}
             />
             <StagedRowDetailValue type="beforeValue" before={before} after={after} />
+            <StagedRowDetailReferences
+              side="before"
+              references={references}
+              model={baseModel}
+            />
           </div>
         </div>
       </div>
