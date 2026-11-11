@@ -157,6 +157,31 @@ describe("mapTokenValue", () => {
     });
   });
 
+  it.each(Array.from({ length: 8 }, (_, mask) => mask))(
+    "only previews typography when every slot is present (mask %i)",
+    (mask) => {
+      const value = {
+        kind: "typography" as const,
+        fontSize: mask & 1 ? "1rem" : undefined,
+        fontWeight: mask & 2 ? "400" : undefined,
+        lineHeight: mask & 4 ? "1.5" : undefined,
+      };
+      const mapped = mapTokenValue(
+        { ...token, value },
+        { ...colorType, category: "typography", kind: "semantic" },
+        lookup,
+      );
+      expect(mapped.preview).toEqual(
+        mask === 7
+          ? {
+              kind: "typography",
+              typography: { fontSize: "1rem", fontWeight: "400", lineHeight: "1.5" },
+            }
+          : undefined,
+      );
+    },
+  );
+
   it("maps unresolved values", () => {
     const unresolvedToken: Token = {
       ...token,
