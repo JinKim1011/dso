@@ -16,7 +16,10 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
   if (
     category === "typography" &&
     kind === "semantic" &&
-    value.preview.kind === "typography"
+    value.preview.kind === "typography" &&
+    value.preview.typography.fontSize &&
+    value.preview.typography.fontWeight &&
+    value.preview.typography.lineHeight
   ) {
     const { fontSize, fontWeight, lineHeight } = value.preview.typography;
 
