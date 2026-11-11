@@ -111,7 +111,7 @@ export function resolveModes(context: SlotContext, value: ModesValue) {
   const complete = light.value !== undefined && dark.value !== undefined;
 
   return {
-    meta: `light:${light.label} dark:${dark.label}`,
+    meta: `${light.label} / ${dark.label}`,
     preview: { kind: "modes" as const, light: light.value, dark: dark.value },
     incomplete: !complete,
     missing: light.missing || dark.missing,
