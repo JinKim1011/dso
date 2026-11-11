@@ -1,7 +1,7 @@
 "use client";
 
 import { autoUpdate, flip, size, useFloating } from "@floating-ui/react";
-import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
+import { ChevronDownIcon, ChevronUpIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
 import {
   type FocusEventHandler,
@@ -102,7 +102,7 @@ export function Combobox({
   };
 
   const handleSelect = (nextValue: string) => {
-    onChange(nextValue);
+    if (nextValue !== "") onChange(nextValue);
     setIsOpen(false);
   };
   const handleClick = () => {
