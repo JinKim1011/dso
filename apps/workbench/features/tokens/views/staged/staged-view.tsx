@@ -12,7 +12,8 @@ import { List, Text } from "@repo/ui";
 import { useEffect, useMemo, useRef } from "react";
 
 export function StagedView() {
-  const { changedRows, discardRow, applyRow } = useStagedManifest();
+  const { baseModel, draftModel, changedRows, discardRow, applyRow } =
+    useStagedManifest();
   const { activeFilter, setActiveFilter, filteredCategories } = useFilterState({
     changedRows,
   });
@@ -111,6 +112,9 @@ export function StagedView() {
                 afterName={selectedRow.nameAfter}
                 before={selectedRow.before}
                 after={selectedRow.after}
+                references={selectedRow.change.references}
+                baseModel={baseModel}
+                draftModel={draftModel}
               />
             )}
             {!selectedRow && (
