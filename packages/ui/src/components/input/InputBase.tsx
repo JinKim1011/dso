@@ -12,6 +12,7 @@ export interface InputBaseProps extends Omit<
   "className"
 > {
   rightIcon?: IconComponent;
+  rightAction?: React.ReactNode;
 }
 
 const inputBaseVariant = cva(
@@ -64,6 +65,7 @@ const iconVariant = cva("size-4 shrink-0", {
 
 export const InputBase = ({
   rightIcon: RightIcon,
+  rightAction,
   disabled = false,
   readOnly = false,
   ...props
@@ -81,7 +83,8 @@ export const InputBase = ({
         className={inputVariant({ readOnly, disabled })}
         spellCheck={false}
       ></input>
-      {RightIcon && <RightIcon aria-hidden className={iconVariant({ disabled })} />}
+      {rightAction ??
+        (RightIcon && <RightIcon aria-hidden className={iconVariant({ disabled })} />)}
     </div>
   );
 };
