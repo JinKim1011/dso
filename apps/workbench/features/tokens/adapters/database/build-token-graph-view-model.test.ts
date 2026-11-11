@@ -127,7 +127,7 @@ describe("buildTokenGraphViewModel", () => {
     });
     expect(modeToken).toMatchObject({
       name: "surface",
-      meta: "light:#fff dark:#111",
+      meta: "#fff / #111",
       preview: {
         kind: "modes",
         light: "#fff",
