@@ -2,6 +2,7 @@
 
 import { FlowControls } from "@/features/tokens/components/react-flow/flow-controls";
 import { TokenValueDetail } from "@/features/tokens/components/token-value/token-value-detail";
+import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
 import type {
   TokenReferenceOption,
   TokenValueDetailUpdate,
@@ -20,6 +21,7 @@ type TokenPanelProps = {
   flowInstance: ReactFlowInstance | null;
   typographyOptions: TypographyReferenceOptions;
   modeOptions: TokenReferenceOption[];
+  resolveDisplay: TokenDisplayResolver;
   selectPreviousRow: () => void;
   selectNextRow: () => void;
   handleSaveRow: (rowId: string, update: TokenValueDetailUpdate) => void;
@@ -33,6 +35,7 @@ export function TokenPanel({
   flowInstance,
   typographyOptions,
   modeOptions,
+  resolveDisplay,
   selectPreviousRow,
   selectNextRow,
   handleSaveRow,
@@ -85,6 +88,7 @@ export function TokenPanel({
                 value={selectedRow.value}
                 typographyOptions={typographyOptions}
                 modeOptions={modeOptions}
+                resolveDisplay={resolveDisplay}
                 onSave={handleSaveRow}
                 onClose={clearSelection}
               />
