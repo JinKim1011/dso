@@ -51,10 +51,10 @@ export function mapTokenValue(
         value: token.value,
         ...(Object.keys(references).length ? { references } : {}),
         meta: `${light ?? "-"} / ${dark ?? "-"}`,
-        preview: {
-          kind: "modes",
-          ...previewValues,
-        },
+        preview:
+          previewValues.light || previewValues.dark
+            ? { kind: "modes", ...previewValues }
+            : undefined,
       };
     }
 
