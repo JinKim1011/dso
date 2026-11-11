@@ -60,7 +60,7 @@ describe("mapTokenValue", () => {
     expect(mapTokenValue(modesToken, { ...colorType, kind: "semantic" }, lookup)).toEqual(
       {
         value: modesToken.value,
-        meta: "light:#fff dark:-",
+        meta: "#fff / -",
         preview: {
           kind: "modes",
           light: "#fff",
