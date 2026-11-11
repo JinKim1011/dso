@@ -112,7 +112,10 @@ export function resolveModes(context: SlotContext, value: ModesValue) {
 
   return {
     meta: `${light.label} / ${dark.label}`,
-    preview: { kind: "modes" as const, light: light.value, dark: dark.value },
+    preview:
+      light.value !== undefined && dark.value !== undefined
+        ? { kind: "modes" as const, light: light.value, dark: dark.value }
+        : undefined,
     incomplete: !complete,
     missing: light.missing || dark.missing,
   };
