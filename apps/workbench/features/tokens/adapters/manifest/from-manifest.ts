@@ -83,7 +83,7 @@ function createValueItems(
           kind: "single",
           value: value.value,
         };
-      } else if (value.kind === "modes") {
+      } else if (value.kind === "modes" && (value.light || value.dark)) {
         preview = {
           kind: "modes",
           light: value.light,
@@ -132,7 +132,7 @@ function createValueItems(
 }
 
 function toTokenValue(token: ManifestTokenRecord): Token["value"] {
-  if (token.values?.light || token.values?.dark) {
+  if (token.values) {
     return {
       kind: "modes",
       light: token.values.light,
