@@ -93,6 +93,24 @@ describe("token preview resolvers", () => {
     ).toEqual({ fontSize: "1rem", fontWeight: "400", lineHeight: "1.5" });
   });
 
+  it("allows empty typography slots while still validating populated slots", () => {
+    const emptyLookup = createTokenReferenceLookup([], [], []);
+    expect(
+      resolveTypographyToken(
+        { ...body, value: { kind: "typography", fontWeight: "400" } },
+        bodyType,
+        emptyLookup,
+      ),
+    ).toEqual({ fontSize: undefined, fontWeight: "400", lineHeight: undefined });
+    expect(() =>
+      resolveTypographyToken(
+        { ...body, value: { kind: "typography", lineHeight: "var(--missing)" } },
+        bodyType,
+        emptyLookup,
+      ),
+    ).toThrow(`Missing reference for token "${body.id}" and slot "lineHeight".`);
+  });
+
   it("reports references missing for expressions, including typography", () => {
     const emptyLookup = createTokenReferenceLookup([], [], []);
     expect(() => resolveModeToken(surface, surfaceType, emptyLookup)).toThrow(
