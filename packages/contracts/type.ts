@@ -84,7 +84,7 @@ export type Token = {
 export type TokenValue =
   | { kind: "single"; value: string }
   | { kind: "modes"; light?: string; dark?: string }
-  | { kind: "typography"; fontSize: string; fontWeight: string; lineHeight: string }
+  | { kind: "typography"; fontSize?: string; fontWeight?: string; lineHeight?: string }
   | { kind: "unresolved" };
 
 export type TokenReferenceSlot =
