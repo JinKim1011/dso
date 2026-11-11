@@ -30,17 +30,17 @@ function renderValueRows(
     return [
       {
         label: "fontSize",
-        value: value.fontSize,
+        value: value.fontSize ?? "-",
         changed: value.fontSize !== previousTypography?.fontSize,
       },
       {
         label: "fontWeight",
-        value: value.fontWeight,
+        value: value.fontWeight ?? "-",
         changed: value.fontWeight !== previousTypography?.fontWeight,
       },
       {
         label: "lineHeight",
-        value: value.lineHeight,
+        value: value.lineHeight ?? "-",
         changed: value.lineHeight !== previousTypography?.lineHeight,
       },
     ];
