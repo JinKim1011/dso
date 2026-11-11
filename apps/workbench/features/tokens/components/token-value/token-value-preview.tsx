@@ -44,31 +44,30 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
     (category === "color" || category === "shadow") &&
     kind === "semantic" &&
     value.preview.kind === "modes" &&
-    value.preview.light &&
-    value.preview.dark
+    (value.preview.light || value.preview.dark)
   ) {
     const swatches = [
       value.preview.light ? { label: "Light", value: value.preview.light } : null,
       value.preview.dark ? { label: "Dark", value: value.preview.dark } : null,
-    ].filter(Boolean);
+    ].filter((swatch) => swatch !== null);
 
     return (
       <div className={wrapperStyle}>
         {swatches.map((swatch) => (
           <div
             className="gap-microPlus flex flex-1 flex-col items-center"
-            key={swatch?.label}
+            key={swatch.label}
           >
             <div
               className="rounded-round h-7 w-7"
               style={
                 category === "shadow"
-                  ? { boxShadow: swatch?.value }
-                  : { background: swatch?.value }
+                  ? { boxShadow: swatch.value }
+                  : { background: swatch.value }
               }
             />
             <Text variant="meta-xs" className="text-content-accent">
-              {swatch?.label}
+              {swatch.label}
             </Text>
           </div>
         ))}
