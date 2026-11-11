@@ -120,7 +120,7 @@ export function TokenValueDetail({
       <TokenValuePreview category={category} kind={kind} value={previewValue} />
       {renderEditor()}
       {missingReference && (
-        <Text variant="meta-xs">A referenced token is unavailable.</Text>
+        <Text variant="meta-xs">A referenced token is unavailable.</Text> // replace when sonner installed
       )}
       {isDirty && (
         <div className="gap-microPlus flex grow basis-0 justify-end">
