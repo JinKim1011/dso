@@ -4,6 +4,7 @@ import { TokenModesForm } from "@/features/tokens/components/form/token-modes-fo
 import { TokenSingleForm } from "@/features/tokens/components/form/token-single-form";
 import { TokenTypographyForm } from "@/features/tokens/components/form/token-typography-form";
 import { TokenValuePreview } from "@/features/tokens/components/token-value/token-value-preview";
+import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
 import type {
   TokenReferenceOption,
   TokenValueDetailUpdate,
@@ -23,6 +24,7 @@ type TokenValueDetailProps = {
   kind: TokenKind;
   value: TokenValueViewModel;
   modeOptions: TokenReferenceOption[];
+  resolveDisplay: TokenDisplayResolver;
   typographyOptions: TypographyReferenceOptions;
   onClose?: () => void;
   onSave: (rowId: string, next: TokenValueDetailUpdate) => void;
@@ -35,20 +37,30 @@ export function TokenValueDetail({
   kind,
   value,
   modeOptions,
+  resolveDisplay,
   typographyOptions,
   onSave,
 }: TokenValueDetailProps) {
-  const { draft, setDraft, isDirty, missingReference, previewValue, undo, save } =
-    useTokenValueEditor({
-      rowId,
-      name,
-      value,
-      category,
-      kind,
-      modeOptions,
-      typographyOptions,
-      onSave,
-    });
+  const {
+    draft,
+    setDraft,
+    isDirty,
+    missingReference,
+    incomplete,
+    previewValue,
+    undo,
+    save,
+  } = useTokenValueEditor({
+    rowId,
+    name,
+    value,
+    category,
+    kind,
+    modeOptions,
+    resolveDisplay,
+    typographyOptions,
+    onSave,
+  });
 
   const renderEditor = () => {
     if (category === "typography" && kind === "semantic") {
