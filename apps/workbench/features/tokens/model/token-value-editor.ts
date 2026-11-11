@@ -4,6 +4,7 @@ import type {
   TokenValueViewModel,
   TypographyReferenceOptions,
 } from "@/features/tokens/model/token-graph";
+import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
 import type { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
 
 export type TokenEditorDraft =
@@ -94,16 +95,25 @@ export function getTokenEditorState(
   value: TokenValueViewModel,
   modeOptions: readonly TokenReferenceOption[],
   typographyOptions: TypographyReferenceOptions,
+  resolveDisplay: TokenDisplayResolver,
+  category: TokenCategory,
+  kind: TokenKind,
 ) {
   const isDirty = JSON.stringify(draft) !== JSON.stringify(initialDraft);
+  const display = resolveDisplay(
+    { ...value, ...buildTokenEditorUpdate(category, draft) },
+    { category, kind },
+    value,
+  );
 
   switch (draft.kind) {
     case "single":
       return {
         isDirty,
         referencesChanged: false,
-        missingReference: false,
-        previewValue: value,
+        missingReference: display.missingReference,
+        incomplete: display.incomplete,
+        previewValue: display.value,
       };
 
     case "modes": {
@@ -117,20 +127,12 @@ export function getTokenEditorState(
 
       const missingReference = (!!draft.lightId && !light) || (!!draft.darkId && !dark);
 
-      const previous = value.preview?.kind === "modes" ? value.preview : undefined;
-
       return {
         isDirty,
         referencesChanged,
-        missingReference,
-        previewValue: {
-          ...value,
-          preview: {
-            kind: "modes" as const,
-            light: draft.lightId ? light?.resolvedValue : previous?.light,
-            dark: draft.darkId ? dark?.resolvedValue : previous?.dark,
-          },
-        },
+        missingReference: missingReference || display.missingReference,
+        incomplete: display.incomplete,
+        previewValue: display.value,
       };
     }
 
@@ -156,34 +158,12 @@ export function getTokenEditorState(
         (!!draft.fontWeightId && !fontWeight) ||
         (!!draft.lineHeightId && !lineHeight);
 
-      const previous =
-        value.preview?.kind === "typography" ? value.preview.typography : undefined;
-
-      const resolved = {
-        fontSize: draft.fontSizeId ? fontSize?.resolvedValue : previous?.fontSize,
-        fontWeight: draft.fontWeightId ? fontWeight?.resolvedValue : previous?.fontWeight,
-        lineHeight: draft.lineHeightId ? lineHeight?.resolvedValue : previous?.lineHeight,
-      };
-
-      const preview =
-        resolved.fontSize !== undefined &&
-        resolved.fontWeight !== undefined &&
-        resolved.lineHeight !== undefined
-          ? {
-              kind: "typography" as const,
-              typography: {
-                fontSize: resolved.fontSize,
-                fontWeight: resolved.fontWeight,
-                lineHeight: resolved.lineHeight,
-              },
-            }
-          : undefined;
-
       return {
         isDirty,
         referencesChanged,
-        missingReference,
-        previewValue: { ...value, preview },
+        missingReference: missingReference || display.missingReference,
+        incomplete: display.incomplete,
+        previewValue: display.value,
       };
     }
   }
