@@ -37,7 +37,11 @@ export function TokenValuePreview({ category, kind, value }: TokenValuePreviewPr
     );
   }
 
-  if (category === "color" && kind === "semantic" && value.preview.kind === "modes") {
+  if (
+    (category === "color" || category === "shadow") &&
+    kind === "semantic" &&
+    value.preview.kind === "modes"
+  ) {
     const swatches = [
       value.preview.light ? { label: "Light", value: value.preview.light } : null,
       value.preview.dark ? { label: "Dark", value: value.preview.dark } : null,
