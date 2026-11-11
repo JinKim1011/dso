@@ -106,15 +106,18 @@ function createValueItems(
     return entry.semanticMap.map((semantic, index) => ({
       id: `${tokenTypeId}:value:${toId("name", semantic.name)}:${index}`,
       name: semantic.name,
-      meta: `${semantic.fontSize} / ${semantic.fontWeight} / ${semantic.lineHeight}`,
-      preview: {
-        kind: "typography",
-        typography: {
-          fontSize: semantic.fontSize,
-          fontWeight: semantic.fontWeight,
-          lineHeight: semantic.lineHeight,
-        },
-      },
+      meta: [semantic.fontSize, semantic.fontWeight, semantic.lineHeight].join(" / "),
+      preview:
+        semantic.fontSize && semantic.fontWeight && semantic.lineHeight
+          ? {
+              kind: "typography",
+              typography: {
+                fontSize: semantic.fontSize,
+                fontWeight: semantic.fontWeight,
+                lineHeight: semantic.lineHeight,
+              },
+            }
+          : undefined,
       value: {
         kind: "typography",
         fontSize: semantic.fontSize,

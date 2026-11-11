@@ -12,9 +12,9 @@ export type ManifestTokenRecord = {
 
 export type ManifestSemanticRecord = {
   name: string;
-  fontSize: string;
-  fontWeight: string;
-  lineHeight: string;
+  fontSize?: string;
+  fontWeight?: string;
+  lineHeight?: string;
 };
 
 export type NormalizedManifestEntry = {

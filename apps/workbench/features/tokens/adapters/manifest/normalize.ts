@@ -56,7 +56,14 @@ export function normalizeSemanticRecord(raw: unknown): ManifestSemanticRecord | 
   const fontWeight = asString(raw.fontWeight);
   const lineHeight = asString(raw.lineHeight);
 
-  if (!name || !fontSize || !fontWeight || !lineHeight) return null;
+  if (!name) return null;
+  if (
+    [raw.fontSize, raw.fontWeight, raw.lineHeight].some(
+      (value) => value !== undefined && typeof value !== "string",
+    )
+  ) {
+    return null;
+  }
 
   return {
     name,
