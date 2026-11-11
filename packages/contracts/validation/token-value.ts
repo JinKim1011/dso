@@ -96,7 +96,9 @@ export function validateTokenValue(value: unknown): ValidationIssue[] {
       break;
     case "typography":
       for (const field of ["fontSize", "fontWeight", "lineHeight"] as const) {
-        validateValueField(field);
+        if (field in value) {
+          validateValueField(field);
+        }
       }
       if (
         Object.keys(value).some(
