@@ -113,10 +113,22 @@ export function StagedManifestProvider({
       draftModel,
       changedRows,
       changedRowCount: changedRows.length,
+      isStaleDraft,
+      draftLoadError,
       addedManifestLineCount: addedLines,
       deletedManifestLineCount: deletedLines,
       updateRow,
-      resetDraft,
+      resetDraft: () => {
+        if (isStaleDraft || draftLoadError) {
+          clearPersistedDraftModel(projectId);
+          setBaseModel(baseManifest);
+          setDraftModel(baseManifest);
+          setIsStaleDraft(false);
+          setDraftLoadError(false);
+        } else {
+          resetDraft();
+        }
+      },
       applyDraft,
       discardRow,
       applyRow,
@@ -125,6 +137,10 @@ export function StagedManifestProvider({
       baseModel,
       draftModel,
       changedRows,
+      isStaleDraft,
+      draftLoadError,
+      projectId,
+      baseManifest,
       addedLines,
       deletedLines,
       updateRow,
