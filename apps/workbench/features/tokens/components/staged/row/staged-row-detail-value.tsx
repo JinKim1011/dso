@@ -1,4 +1,9 @@
-import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
+import type {
+  TokenGraphViewModel,
+  TokenValueViewModel,
+} from "@/features/tokens/model/token-graph";
+import { findRowById } from "@/features/tokens/state/staged-graph-model";
+import type { TokenReferenceSlot } from "@repo/contracts/type";
 import { Text } from "@repo/ui";
 
 type valueRow = {
