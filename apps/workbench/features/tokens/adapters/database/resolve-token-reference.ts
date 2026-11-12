@@ -12,11 +12,7 @@ function resolveTokenReferenceValue(
   const result = referenceLookup.find(token.id, slot);
 
   if (result.kind === "not-found") {
-    if (value && /\bvar\s*\(/i.test(value)) {
-      throw new Error(`Missing reference for token "${token.id}" and slot "${slot}".`);
-    }
-
-    return value;
+    return undefined;
   }
 
   const target = result.token;
