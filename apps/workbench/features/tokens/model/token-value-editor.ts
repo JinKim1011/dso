@@ -6,6 +6,7 @@ import type {
 } from "@/features/tokens/model/token-graph";
 import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
 import type { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
+import { containsCssVariable } from "@repo/contracts/validation/token-value";
 
 export type TokenEditorDraft =
   | { kind: "single"; name: string; value: string }
@@ -112,6 +113,7 @@ export function getTokenEditorState(
     case "single":
       return {
         isDirty,
+        invalidPrimitiveValue: kind === "primitive" && containsCssVariable(draft.value),
         referencesChanged: false,
         missingReference: display.missingReference,
         incomplete: display.incomplete,
@@ -131,6 +133,7 @@ export function getTokenEditorState(
 
       return {
         isDirty,
+        invalidPrimitiveValue: false,
         referencesChanged,
         missingReference: missingReference || display.missingReference,
         incomplete: display.incomplete,
@@ -162,6 +165,7 @@ export function getTokenEditorState(
 
       return {
         isDirty,
+        invalidPrimitiveValue: false,
         referencesChanged,
         missingReference: missingReference || display.missingReference,
         incomplete: display.incomplete,
