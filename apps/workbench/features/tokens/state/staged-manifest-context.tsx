@@ -25,6 +25,8 @@ type StagedContextType = {
   draftModel: TokenGraphViewModel;
   changedRows: ChangedRow[];
   changedRowCount: number;
+  isStaleDraft: boolean;
+  draftLoadError: boolean;
   addedManifestLineCount: number;
   deletedManifestLineCount: number;
   updateRow: (rowId: string, update: TokenRowUpdate) => void;
@@ -49,6 +51,8 @@ export function StagedManifestProvider({
 
   const { updateRow, applyDraft, discardRow, applyRow, resetDraft } =
     useStagedManifestActions({
+      projectId,
+      canApply: hasHydratedDraft && !isStaleDraft && !draftLoadError,
       baseModel,
       draftModel,
       setBaseModel,
