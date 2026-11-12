@@ -109,7 +109,7 @@ export function useStagedManifestActions({
 
         const hasPendingChanges = buildChangedRows(nextBaseModel, draftModel).length > 0;
         if (!hasPendingChanges) {
-          clearPersistedDraftModel();
+          clearPersistedDraftModel(projectId);
         }
       }
 
