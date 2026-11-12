@@ -13,6 +13,7 @@ import {
 import { supportsTokenReferenceSlot } from "@repo/contracts/validation/token-reference-slots";
 import {
   expectedValueKind,
+  validatePrimitiveTokenValue,
   validateTokenValue,
 } from "@repo/contracts/validation/token-value";
 
@@ -187,6 +188,19 @@ export function validateSaveStagedChanges(
   const proposedState = applyChanges(request, tokenById, currentReferences, projectId);
   const finalTokens = Array.from(proposedState.tokens.values());
   const finalReferences = proposedState.references;
+
+  for (const token of finalTokens) {
+    const tokenType = typeById.get(token.tokenTypeId.toLowerCase());
+    if (tokenType?.kind !== "primitive") continue;
+    for (const issue of validatePrimitiveTokenValue(token.value)) {
+      issues.push({
+        code: "invalid-value",
+        tokenId: token.id,
+        field: issue.field,
+        message: issue.message,
+      });
+    }
+  }
 
   for (const change of request.changes) {
     const token = proposedState.tokens.get(change.tokenId.toLowerCase())!;
