@@ -132,7 +132,7 @@ describe("mapTokenValue", () => {
     });
   });
 
-  it("maps typography values", () => {
+  it("ignores legacy typography slot values without references", () => {
     const typographyToken: Token = {
       ...token,
       value: {
@@ -150,16 +150,9 @@ describe("mapTokenValue", () => {
         lookup,
       ),
     ).toEqual({
-      value: typographyToken.value,
-      meta: "1rem / 400 / 1.5",
-      preview: {
-        kind: "typography",
-        typography: {
-          fontSize: "1rem",
-          fontWeight: "400",
-          lineHeight: "1.5",
-        },
-      },
+      value: { kind: "typography" },
+      meta: "unset / unset / unset",
+      preview: undefined,
     });
   });
 
