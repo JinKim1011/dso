@@ -19,9 +19,13 @@ export function mapTokenValue(
   const category = tokenType.category;
 
   switch (token.value.kind) {
-    case "single":
+    case "single": {
+      const valueReference = referenceLookup.find(token.id, "value");
       return {
         value: token.value,
+        ...(valueReference.kind === "found"
+          ? { references: { value: valueReference.token.id } }
+          : {}),
         meta: token.value.value,
         preview:
           category === "color" || category === "shadow"
@@ -31,6 +35,7 @@ export function mapTokenValue(
               }
             : undefined,
       };
+    }
 
     case "modes": {
       const previewValues =
