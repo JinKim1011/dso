@@ -20,6 +20,7 @@ type StagedRowDetailValueProps = {
 function renderValueRows(
   item: TokenValueViewModel | undefined,
   compareToItem?: TokenValueViewModel | undefined,
+  model?: TokenGraphViewModel,
 ): valueRow[] {
   if (!item) return [{ label: "Value", value: "-" }];
 
@@ -94,8 +95,8 @@ export function StagedRowDetailValue({
   baseModel,
   draftModel,
 }: StagedRowDetailValueProps) {
-  const beforeRows = renderValueRows(before, after);
-  const afterRows = renderValueRows(after, before);
+  const beforeRows = renderValueRows(before, after, baseModel);
+  const afterRows = renderValueRows(after, before, draftModel);
 
   return (
     <div className="gap-micro flex w-full flex-col">
