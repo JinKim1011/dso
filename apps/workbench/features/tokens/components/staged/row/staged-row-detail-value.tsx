@@ -13,6 +13,8 @@ type StagedRowDetailValueProps = {
   afterName?: string;
   before?: TokenValueViewModel;
   after?: TokenValueViewModel;
+  baseModel?: TokenGraphViewModel;
+  draftModel?: TokenGraphViewModel;
 };
 
 function renderValueRows(
@@ -89,6 +91,8 @@ export function StagedRowDetailValue({
   afterName,
   before,
   after,
+  baseModel,
+  draftModel,
 }: StagedRowDetailValueProps) {
   const beforeRows = renderValueRows(before, after);
   const afterRows = renderValueRows(after, before);
