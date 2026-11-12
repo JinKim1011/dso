@@ -4,7 +4,6 @@ import { Button, Tooltip } from "@repo/ui";
 type StagedRowActionsProps = {
   rowId: string;
   isApplying: boolean;
-  isStaleDraft: boolean;
   onDiscard: (rowId: string) => void;
   onApply: (rowId: string) => void;
 };
@@ -12,7 +11,6 @@ type StagedRowActionsProps = {
 export function StagedRowActions({
   rowId,
   isApplying,
-  isStaleDraft,
   onDiscard,
   onApply,
 }: StagedRowActionsProps) {
@@ -33,21 +31,20 @@ export function StagedRowActions({
           disabled={isApplying}
         />
       </Tooltip>
-      <Tooltip content="PUSH">
-        <Button
-          size="sm"
-          iconOnly={true}
-          overrideBgClass="bg-surface-tertiary hover:bg-surface-success active:bg-surface-success"
-          overrideTextColorClass="text-content-tertiary hover:text-content-success active:text-content-success"
-          aria-label="apply-row"
-          leftIcon={CheckIcon}
-          onClick={(event) => {
-            event.stopPropagation();
-            onApply(rowId);
-          }}
-          disabled={isApplying || isStaleDraft}
-        />
-      </Tooltip>
+
+      <Button
+        size="sm"
+        iconOnly={true}
+        overrideBgClass="bg-surface-tertiary hover:bg-surface-success active:bg-surface-success"
+        overrideTextColorClass="text-content-tertiary hover:text-content-success active:text-content-success"
+        aria-label="apply-row"
+        leftIcon={CheckIcon}
+        onClick={(event) => {
+          event.stopPropagation();
+          onApply(rowId);
+        }}
+        disabled
+      />
     </div>
   );
 }
