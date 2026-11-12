@@ -12,6 +12,8 @@ import {
 import { Dispatch, SetStateAction, useCallback } from "react";
 
 type UseStagedManifestActionsProps = {
+  projectId: string;
+  canApply: boolean;
   baseModel: TokenGraphViewModel;
   draftModel: TokenGraphViewModel;
   setBaseModel: Dispatch<SetStateAction<TokenGraphViewModel>>;
@@ -19,6 +21,8 @@ type UseStagedManifestActionsProps = {
 };
 
 export function useStagedManifestActions({
+  projectId,
+  canApply,
   baseModel,
   draftModel,
   setBaseModel,
@@ -65,11 +69,11 @@ export function useStagedManifestActions({
     if (response.ok) {
       setBaseModel(draftModel);
       setDraftModel(draftModel);
-      clearPersistedDraftModel();
+      clearPersistedDraftModel(projectId);
     }
 
     return response;
-  }, [draftModel, setBaseModel, setDraftModel]);
+  }, [canApply, draftModel, projectId, setBaseModel, setDraftModel]);
 
   const applyRow = useCallback(
     async (rowId: string): Promise<Response> => {
