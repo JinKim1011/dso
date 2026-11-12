@@ -79,36 +79,12 @@ export function validateTokenValue(value: unknown): ValidationIssue[] {
       validateValueField("value");
       break;
     case "modes":
-      for (const field of ["light", "dark"] as const) {
-        if (field in value) {
-          validateValueField(field);
-        }
-      }
-      if (
-        Object.keys(value).some((field) => !["kind", "light", "dark"].includes(field))
-      ) {
-        issues.push({
-          field: "value",
-          code: "unknown-field",
-          message: "value contains an unknown field.",
-        });
-      }
-      break;
     case "typography":
-      for (const field of ["fontSize", "fontWeight", "lineHeight"] as const) {
-        if (field in value) {
-          validateValueField(field);
-        }
-      }
-      if (
-        Object.keys(value).some(
-          (field) => !["kind", "fontSize", "fontWeight", "lineHeight"].includes(field),
-        )
-      ) {
+      if (Object.keys(value).some((field) => field !== "kind")) {
         issues.push({
           field: "value",
           code: "unknown-field",
-          message: "value contains an unknown field.",
+          message: "Semantic slots must be represented by token references.",
         });
       }
       break;
