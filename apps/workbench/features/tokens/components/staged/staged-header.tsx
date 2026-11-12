@@ -67,7 +67,7 @@ export function StagedHeader({ onBack }: StagedHeaderProps) {
           >
             <Button
               size="sm"
-              disabled={isApplying || isStaleDraft || draftLoadError}
+              disabled
               label={isApplying ? "PUSHING..." : "PUSH ALL"}
               variant="void"
               onClick={handleBulkApply}
