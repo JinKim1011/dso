@@ -42,11 +42,7 @@ describe("buildTokenGraphViewModel", () => {
         tokenTypeId: colorSemanticType.id,
         name: "surface",
         cssVar: "--color-surface",
-        value: {
-          kind: "modes",
-          light: "#fff",
-          dark: "#111",
-        },
+        value: { kind: "modes" },
       },
       {
         id: "typography-body",
@@ -54,16 +50,18 @@ describe("buildTokenGraphViewModel", () => {
         tokenTypeId: typographyType.id,
         name: "body",
         cssVar: null,
-        value: {
-          kind: "typography",
-          fontSize: "1rem",
-          fontWeight: "400",
-          lineHeight: "1.7",
-        },
+        value: { kind: "typography" },
       },
     ];
 
-    const viewModel = buildTokenGraphViewModel(tokenTypes, tokens, []);
+    const viewModel = buildTokenGraphViewModel(tokenTypes, tokens, [
+      {
+        projectId: colorBaseType.projectId,
+        referencingTokenId: "color-surface",
+        referencedTokenId: "color-neutral-0",
+        slot: "light",
+      },
+    ]);
 
     // color category related
     const modeToken = viewModel.tokenTypes
@@ -127,24 +125,17 @@ describe("buildTokenGraphViewModel", () => {
     });
     expect(modeToken).toMatchObject({
       name: "surface",
-      meta: "#fff / #111",
+      meta: "neutral-0 / unset",
       preview: {
         kind: "modes",
-        light: "#fff",
-        dark: "#111",
+        light: "oklch(98.5% 0 0)",
+        dark: undefined,
       },
     });
     expect(typographyToken).toMatchObject({
       name: "body",
-      meta: "1rem / 400 / 1.7",
-      preview: {
-        kind: "typography",
-        typography: {
-          fontSize: "1rem",
-          fontWeight: "400",
-          lineHeight: "1.7",
-        },
-      },
+      meta: "unset / unset / unset",
+      preview: undefined,
     });
   });
 });
