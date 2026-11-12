@@ -143,3 +143,12 @@ export function validateUuidField(value: unknown, field: string): ValidationIssu
   }
   return null;
 }
+
+export function invalidObject(path: string): ValidationResult<never> {
+  return {
+    success: false,
+    issues: [
+      { field: path, code: "invalid-type", message: `${path} must be an object.` },
+    ],
+  };
+}
