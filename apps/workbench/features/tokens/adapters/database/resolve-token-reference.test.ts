@@ -120,7 +120,7 @@ describe("token preview resolvers", () => {
     });
   });
 
-  it("rejects an incompatible referenced token and returns its value without recursive resolution", () => {
+  it("rejects an incompatible referenced token and primitive CSS variables", () => {
     const neutralType = validSeed.tokenTypes.find(
       (type) => type.id === neutral.tokenTypeId,
     )!;
@@ -135,7 +135,7 @@ describe("token preview resolvers", () => {
         lookupFor(neutral, { ...neutralType, category: "typography" }),
       ),
     ).toThrow(`Invalid reference for token "${surface.id}" and slot "light".`);
-    expect(
+    expect(() =>
       resolveModeToken(
         onlyLight,
         surfaceType,
@@ -144,7 +144,7 @@ describe("token preview resolvers", () => {
           neutralType,
         ),
       ),
-    ).toEqual({ light: "var(--missing)", dark: undefined });
+    ).toThrow(`Invalid reference for token "${surface.id}" and slot "light".`);
   });
 
   it("validates typography references against their slot", () => {
