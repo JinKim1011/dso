@@ -38,8 +38,8 @@ export function TokensView({ category }: TokensViewProps) {
   const { baseModel, draftModel, updateRow } = useStagedManifest();
 
   const resolveDisplay = useMemo(
-    () => createTokenDisplayResolver(baseModel, draftModel),
-    [baseModel, draftModel],
+    () => createTokenDisplayResolver(draftModel),
+    [draftModel],
   );
   const displayModel = useMemo(
     () => buildTokenDisplayModel(draftModel, resolveDisplay),
