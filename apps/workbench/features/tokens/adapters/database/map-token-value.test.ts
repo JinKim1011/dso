@@ -159,22 +159,26 @@ describe("mapTokenValue", () => {
   it.each(Array.from({ length: 8 }, (_, mask) => mask))(
     "only previews typography when every slot is present (mask %i)",
     (mask) => {
-      const value = {
-        kind: "typography" as const,
-        fontSize: mask & 1 ? "1rem" : undefined,
-        fontWeight: mask & 2 ? "400" : undefined,
-        lineHeight: mask & 4 ? "1.5" : undefined,
-      };
+      const body = validSeed.tokens.find(
+        (item) => item.name === "body" && item.value.kind === "typography",
+      )!;
+      const bodyType = validSeed.tokenTypes.find((type) => type.id === body.tokenTypeId)!;
+      const slots = ["fontSize", "fontWeight", "lineHeight"] as const;
+      const references = validSeed.tokenReferences.filter(
+        (reference) =>
+          reference.referencingTokenId === body.id &&
+          slots.some((slot, index) => slot === reference.slot && !!(mask & (1 << index))),
+      );
       const mapped = mapTokenValue(
-        { ...token, value },
-        { ...colorType, category: "typography", kind: "semantic" },
-        lookup,
+        body,
+        bodyType,
+        createTokenReferenceLookup(validSeed.tokenTypes, validSeed.tokens, references),
       );
       expect(mapped.preview).toEqual(
         mask === 7
           ? {
               kind: "typography",
-              typography: { fontSize: "1rem", fontWeight: "400", lineHeight: "1.5" },
+              typography: { fontSize: "1rem", fontWeight: "400", lineHeight: "1.7" },
             }
           : undefined,
       );
