@@ -3,6 +3,7 @@ import type {
   TokenReferenceOption,
   TypographyReferenceOptions,
 } from "@/features/tokens/model/token-graph";
+import { containsCssVariable } from "@repo/contracts/validation/token-value";
 import { useMemo } from "react";
 
 export function useTypographyOptions(
@@ -37,7 +38,8 @@ export function useTypographyOptions(
       }
 
       for (const token of type.values) {
-        if (token.value.kind !== "single") continue;
+        if (token.value.kind !== "single" || containsCssVariable(token.value.value))
+          continue;
 
         target.push({
           value: token.id,
