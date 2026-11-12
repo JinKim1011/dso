@@ -31,6 +31,23 @@ function wrapper({ children }: { children: ReactNode }) {
 describe("staged draft reload", () => {
   afterEach(() => localStorage.clear());
 
+  it("does not call legacy apply or clear staged changes when saving is unavailable", async () => {
+    const token = validSeed.tokens.find((item) => item.name === "surface")!;
+    const current = renderHook(() => useStagedManifest(), { wrapper });
+    act(() => current.result.current.updateRow(token.id, { name: "draft edit" }));
+    await waitFor(() => expect(current.result.current.changedRowCount).toBe(1));
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    expect((await current.result.current.applyDraft()).status).toBe(503);
+    expect((await current.result.current.applyRow(token.id)).status).toBe(503);
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(findRowById(current.result.current.draftModel, token.id)?.name).toBe(
+      "draft edit",
+    );
+    expect(localStorage.length).toBe(1);
+    fetchSpy.mockRestore();
+    current.unmount();
+  });
+
   it.each([
     { name: "surface", kind: "modes", slot: "light" },
     { name: "body", kind: "typography", slot: "fontSize" },
