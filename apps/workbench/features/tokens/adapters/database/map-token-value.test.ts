@@ -48,7 +48,7 @@ describe("mapTokenValue", () => {
     });
   });
 
-  it("maps mode values, including missing modes", () => {
+  it("treats a mode without references as empty, including legacy values", () => {
     const modesToken: Token = {
       ...token,
       value: {
@@ -59,13 +59,9 @@ describe("mapTokenValue", () => {
 
     expect(mapTokenValue(modesToken, { ...colorType, kind: "semantic" }, lookup)).toEqual(
       {
-        value: modesToken.value,
-        meta: "#fff / -",
-        preview: {
-          kind: "modes",
-          light: "#fff",
-          dark: undefined,
-        },
+        value: { kind: "modes" },
+        meta: "unset / unset",
+        preview: undefined,
       },
     );
   });
