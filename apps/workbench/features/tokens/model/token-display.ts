@@ -10,7 +10,6 @@ import type {
 } from "@/features/tokens/model/token-graph";
 
 type ResolverRows = {
-  baseRows: Map<string, TokenValueViewModel>;
   draftRows: SlotContext["draftRows"];
 };
 
@@ -30,12 +29,9 @@ function resolveTokenDisplay(
   rows: ResolverRows,
   row: TokenValueViewModel,
   type: Pick<TokenTypeViewModel, "category" | "kind">,
-  previousRow?: TokenValueViewModel,
 ): TokenDisplay {
   const context: SlotContext = {
     row,
-    baseRow: rows.baseRows.get(row.id),
-    previousRow,
     category: type.category,
     draftRows: rows.draftRows,
   };
@@ -92,20 +88,15 @@ export function createTokenDisplayResolver(
   baseModel: TokenGraphViewModel,
   draftModel: TokenGraphViewModel,
 ): TokenDisplayResolver {
-  const baseRows = new Map(
-    baseModel.tokenTypes.flatMap((type) =>
-      type.values.map((row) => [row.id, row] as const),
-    ),
-  );
   const draftRows = new Map(
     draftModel.tokenTypes.flatMap((type) =>
       type.values.map((row) => [row.id, { row, type }] as const),
     ),
   );
 
-  const rows = { baseRows, draftRows };
+  const rows = { draftRows };
 
-  return (row, type, previousRow) => resolveTokenDisplay(rows, row, type, previousRow);
+  return (row, type) => resolveTokenDisplay(rows, row, type);
 }
 
 export function buildTokenDisplayModel(
