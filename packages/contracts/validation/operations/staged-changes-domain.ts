@@ -27,6 +27,7 @@ export type StagedChangesDomainIssue = {
     | "duplicate-reference"
     | TokenReferenceValidationError["code"];
   tokenId: string;
+  referencedTokenId?: string;
   field: string;
   message: string;
 };
