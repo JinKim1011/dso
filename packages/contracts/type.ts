@@ -83,6 +83,7 @@ export type Token = {
 
 export type TokenValue =
   | { kind: "single"; value: string }
+  // Legacy manifest fields; validated semantic values contain only the kind.
   | { kind: "modes"; light?: string; dark?: string }
   | { kind: "typography"; fontSize?: string; fontWeight?: string; lineHeight?: string }
   | { kind: "unresolved" };
