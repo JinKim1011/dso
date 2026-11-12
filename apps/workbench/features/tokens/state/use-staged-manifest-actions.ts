@@ -115,7 +115,7 @@ export function useStagedManifestActions({
 
       return response;
     },
-    [baseModel, draftModel, setBaseModel],
+    [baseModel, canApply, draftModel, projectId, setBaseModel],
   );
 
   return {
