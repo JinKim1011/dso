@@ -46,7 +46,7 @@ export function TokenValueDetail({
     setDraft,
     isDirty,
     missingReference,
-    incomplete,
+    invalidPrimitiveValue,
     previewValue,
     undo,
     save,
@@ -134,6 +134,11 @@ export function TokenValueDetail({
       {missingReference && (
         <Text variant="meta-xs">A referenced token is unavailable.</Text> // replace when sonner installed
       )}
+      {invalidPrimitiveValue && (
+        <Text variant="meta-xs">
+          Primitive token values cannot contain CSS var() functions.
+        </Text>
+      )}
       {isDirty && (
         <div className="gap-microPlus flex grow basis-0 justify-end">
           <Button variant="void" label="UNDO" disabled={!isDirty} onClick={undo} />
@@ -142,7 +147,7 @@ export function TokenValueDetail({
             label="SAVE"
             overrideBgClass="bg-surface-accentStrong hover:bg-surface-accentStrong active:bg-surface-accentStrong"
             overrideTextColorClass="text-content-primary hover:text-content-tertiary active:text-content-quaternary"
-            disabled={!isDirty || missingReference}
+            disabled={!isDirty || missingReference || invalidPrimitiveValue}
             onClick={save}
           />
         </div>
