@@ -58,12 +58,10 @@ export function resolveSlot(context: SlotContext, slot: TokenReferenceSlot): Slo
   return { value: target.row.value.value, label: target.row.name, missing: false };
 }
 
-type TypographyValue = Extract<TokenValueViewModel["value"], { kind: "typography" }>;
-
-export function resolveTypography(context: SlotContext, value: TypographyValue) {
-  const fontSize = resolveSlot(context, "fontSize", value.fontSize);
-  const fontWeight = resolveSlot(context, "fontWeight", value.fontWeight);
-  const lineHeight = resolveSlot(context, "lineHeight", value.lineHeight);
+export function resolveTypography(context: SlotContext) {
+  const fontSize = resolveSlot(context, "fontSize");
+  const fontWeight = resolveSlot(context, "fontWeight");
+  const lineHeight = resolveSlot(context, "lineHeight");
 
   const complete = !!fontSize.value && !!fontWeight.value && !!lineHeight.value;
 
