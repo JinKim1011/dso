@@ -57,6 +57,56 @@ function validate(
 }
 
 describe("validateSaveStagedChanges", () => {
+  it.each(["var(--missing)", "calc(1px + VAR (--spacing))", "v\\61 r(--missing)"])(
+    "rejects primitive CSS variables in the final batch: %s",
+    (value) => {
+      const request: SaveStagedChangesRequest = {
+        projectId: fixtureIds.project,
+        changes: [
+          {
+            tokenId: baseColorToken.id,
+            value: { before: baseColorToken.value, after: { kind: "single", value } },
+            references: [],
+          },
+        ],
+      };
+      expect(validate(request)).toMatchObject({
+        success: false,
+        issues: expect.arrayContaining([
+          expect.objectContaining({ code: "invalid-value", tokenId: baseColorToken.id }),
+          expect.objectContaining({
+            code: "invalid-referenced-token-value",
+            tokenId: modeToken.id,
+          }),
+        ]),
+      });
+      expect(validate(request, tokens, tokenTypes, [])).toMatchObject({
+        success: false,
+        issues: expect.arrayContaining([
+          expect.objectContaining({ code: "invalid-value", tokenId: baseColorToken.id }),
+        ]),
+      });
+    },
+  );
+
+  it("allows repairing a pre-existing primitive CSS variable", () => {
+    const invalid: Token = {
+      ...baseColorToken,
+      value: { kind: "single", value: "var(--x)" },
+    };
+    const request: SaveStagedChangesRequest = {
+      projectId: fixtureIds.project,
+      changes: [
+        {
+          tokenId: invalid.id,
+          value: { before: invalid.value, after: baseColorToken.value },
+          references: [],
+        },
+      ],
+    };
+    expect(validate(request, [modeToken, invalid, otherTarget]).success).toBe(true);
+  });
+
   it("reports unrelated invalid references but permits a batch that repairs them", () => {
     const invalidReference: TokenReference = {
       ...reference,
