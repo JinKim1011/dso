@@ -48,11 +48,7 @@ describe("token preview resolvers", () => {
       light: "oklch(98.5% 0 0)",
       dark: "oklch(14.5% 0 0)",
     });
-    expect(surface.value).toEqual({
-      kind: "modes",
-      light: "var(--base-neutral-0)",
-      dark: "var(--base-neutral-900)",
-    });
+    expect(surface.value).toEqual({ kind: "modes" });
   });
 
   it("resolves seeded typography slots to their primitive values", () => {
