@@ -5,6 +5,7 @@ import type { TokenGraphViewModel } from "@/features/tokens/model/token-graph";
 import type { TokenRowUpdate } from "@/features/tokens/model/token-row";
 import {
   clearPersistedDraftModel,
+  discardLegacyDraft,
   loadPersistedDraftModel,
   persistDraftModel,
 } from "@/features/tokens/state/staged-draft-storage";
@@ -39,9 +40,11 @@ type StagedContextType = {
 const StagedManifestContext = createContext<StagedContextType | undefined>(undefined);
 
 export function StagedManifestProvider({
+  projectId,
   baseManifest,
   children,
 }: {
+  projectId: string;
   baseManifest: TokenGraphViewModel;
   children: ReactNode;
 }) {
@@ -60,13 +63,23 @@ export function StagedManifestProvider({
     });
 
   useEffect(() => {
-    const persistedDraft = loadPersistedDraftModel();
-    if (persistedDraft) {
-      setDraftModel(persistedDraft);
+    discardLegacyDraft();
+    try {
+      const persistedDraft = loadPersistedDraftModel(projectId);
+      if (persistedDraft) {
+        setBaseModel(persistedDraft.baseModel);
+        setDraftModel(persistedDraft.draftModel);
+        setIsStaleDraft(
+          JSON.stringify(persistedDraft.baseModel) !== JSON.stringify(baseManifest),
+        );
+      }
+    } catch (error) {
+      console.warn("Failed to restore staged draft.", error);
+      setDraftLoadError(true);
     }
 
     setHasHydratedDraft(true);
-  }, []);
+  }, [projectId, baseManifest]);
 
   useEffect(() => {
     if (!hasHydratedDraft) return;
