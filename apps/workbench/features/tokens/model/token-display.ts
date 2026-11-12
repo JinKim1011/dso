@@ -82,7 +82,6 @@ function resolveTokenDisplay(
 }
 
 export function createTokenDisplayResolver(
-  baseModel: TokenGraphViewModel,
   draftModel: TokenGraphViewModel,
 ): TokenDisplayResolver {
   const draftRows = new Map(
