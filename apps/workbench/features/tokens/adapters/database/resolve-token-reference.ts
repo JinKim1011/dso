@@ -1,6 +1,7 @@
 import type { TokenReferenceLookup } from "@/features/tokens/adapters/database/create-token-reference-lookup";
 import type { Token, TokenReferenceSlot, TokenType } from "@repo/contracts/type";
 import { isCompatibleReferencedType } from "@repo/contracts/validation/token-reference-compatibility";
+import { validatePrimitiveTokenValue } from "@repo/contracts/validation/token-value";
 
 function resolveTokenReferenceValue(
   token: Token,
@@ -22,6 +23,7 @@ function resolveTokenReferenceValue(
     target.projectId !== token.projectId ||
     targetType.projectId !== token.projectId ||
     !isCompatibleReferencedType(target, tokenType, targetType, slot) ||
+    validatePrimitiveTokenValue(target.value).length > 0 ||
     target.value.kind !== "single"
   ) {
     throw new Error(`Invalid reference for token "${token.id}" and slot "${slot}".`);
