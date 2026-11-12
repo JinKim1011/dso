@@ -86,41 +86,31 @@ describe("token preview resolvers", () => {
     ).toEqual({ fontSize: undefined, fontWeight: undefined, lineHeight: undefined });
   });
 
-  it("allows empty typography slots while still validating populated slots", () => {
+  it("ignores legacy expressions when the reference is absent", () => {
     const emptyLookup = createTokenReferenceLookup([], [], []);
     expect(
-      resolveTypographyToken(
-        { ...body, value: { kind: "typography", fontWeight: "400" } },
-        bodyType,
+      resolveModeToken(
+        { ...surface, value: { kind: "modes", light: "var(--missing)" } },
+        surfaceType,
         emptyLookup,
       ),
-    ).toEqual({ fontSize: undefined, fontWeight: "400", lineHeight: undefined });
-    expect(() =>
+    ).toEqual({ light: undefined, dark: undefined });
+    expect(
       resolveTypographyToken(
         { ...body, value: { kind: "typography", lineHeight: "var(--missing)" } },
         bodyType,
         emptyLookup,
       ),
-    ).toThrow(`Missing reference for token "${body.id}" and slot "lineHeight".`);
+    ).toEqual({ fontSize: undefined, fontWeight: undefined, lineHeight: undefined });
   });
 
-  it("reports references missing for expressions, including typography", () => {
-    const emptyLookup = createTokenReferenceLookup([], [], []);
-    expect(() => resolveModeToken(surface, surfaceType, emptyLookup)).toThrow(
-      `Missing reference for token "${surface.id}" and slot "light".`,
-    );
-    expect(() => resolveTypographyToken(body, bodyType, emptyLookup)).toThrow(
-      `Missing reference for token "${body.id}" and slot "fontSize".`,
-    );
-  });
-
-  it("rejects mismatched values and permits whitespace around a simple reference", () => {
+  it("resolves references by ID regardless of the token value expression", () => {
     const neutralType = validSeed.tokenTypes.find(
       (type) => type.id === neutral.tokenTypeId,
     )!;
     const onlyLight = {
       ...surface,
-      value: { kind: "modes" as const, light: " var( --base-neutral-0 ) " },
+      value: { kind: "modes" as const, light: "var(--other)" },
     };
     expect(
       resolveModeToken(onlyLight, surfaceType, lookupFor(neutral, neutralType)),
@@ -128,13 +118,6 @@ describe("token preview resolvers", () => {
       light: "oklch(98.5% 0 0)",
       dark: undefined,
     });
-    expect(() =>
-      resolveModeToken(
-        { ...onlyLight, value: { kind: "modes", light: "var(--other)" } },
-        surfaceType,
-        lookupFor(neutral, neutralType),
-      ),
-    ).toThrow(`Value and reference disagree for token "${surface.id}" and slot "light".`);
   });
 
   it("rejects an incompatible referenced token and unresolved primitive value", () => {
