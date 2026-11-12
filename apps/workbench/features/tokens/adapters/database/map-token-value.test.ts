@@ -1,6 +1,7 @@
 import type { Token, TokenType } from "@repo/contracts/type";
 import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
+import { buildStagedTokenChange } from "@/features/tokens/model/staged/staged-change-diff";
 import { createTokenReferenceLookup } from "./create-token-reference-lookup";
 import { mapTokenValue } from "./map-token-value";
 
@@ -48,6 +49,52 @@ describe("mapTokenValue", () => {
       preview: undefined,
     });
   });
+
+  it.each(["spacing", "radius", "motion"] as const)(
+    "round-trips the semantic %s value reference through staging",
+    (category) => {
+      const primitiveType: TokenType = { ...colorType, category };
+      const semanticType: TokenType = {
+        ...primitiveType,
+        id: "semantic",
+        kind: "semantic",
+      };
+      const source: Token = { ...token, id: "source", tokenTypeId: semanticType.id };
+      const replacement: Token = { ...token, id: "replacement" };
+      const reference = {
+        projectId: token.projectId,
+        referencingTokenId: source.id,
+        referencedTokenId: token.id,
+        slot: "value" as const,
+      };
+      const makeRow = (references: (typeof reference)[]) => ({
+        id: source.id,
+        name: source.name,
+        ...mapTokenValue(
+          source,
+          semanticType,
+          createTokenReferenceLookup(
+            [primitiveType, semanticType],
+            [source, token, replacement],
+            references,
+          ),
+        ),
+      });
+      const empty = makeRow([]);
+      const assigned = makeRow([reference]);
+      const replaced = makeRow([{ ...reference, referencedTokenId: replacement.id }]);
+      expect(buildStagedTokenChange(assigned, assigned)).toBeNull();
+      expect(buildStagedTokenChange(empty, assigned)?.references).toEqual([
+        { slot: "value", beforeTokenId: null, afterTokenId: token.id },
+      ]);
+      expect(buildStagedTokenChange(assigned, replaced)?.references).toEqual([
+        { slot: "value", beforeTokenId: token.id, afterTokenId: replacement.id },
+      ]);
+      expect(buildStagedTokenChange(assigned, empty)?.references).toEqual([
+        { slot: "value", beforeTokenId: token.id, afterTokenId: null },
+      ]);
+    },
+  );
 
   it("treats a mode without references as empty, including legacy values", () => {
     const modesToken: Token = {
