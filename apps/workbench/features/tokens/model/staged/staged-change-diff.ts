@@ -16,22 +16,9 @@ function areTokenValuesEqual(before: TokenValue, after: TokenValue): boolean {
       return after.kind === "single" && before.value === after.value;
 
     case "modes":
-      return (
-        after.kind === "modes" &&
-        before.light === after.light &&
-        before.dark === after.dark
-      );
-
     case "typography":
-      return (
-        after.kind === "typography" &&
-        before.fontSize === after.fontSize &&
-        before.fontWeight === after.fontWeight &&
-        before.lineHeight === after.lineHeight
-      );
-
     case "unresolved":
-      return after.kind === "unresolved";
+      return true;
   }
 }
 
