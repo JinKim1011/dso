@@ -82,6 +82,14 @@ export function useStagedManifestActions({
 
   const applyRow = useCallback(
     async (rowId: string): Promise<Response> => {
+      if (!canApply) {
+        return new Response(
+          "Draft is not ready to apply. Discard the stale draft first.",
+          {
+            status: 409,
+          },
+        );
+      }
       const draftRow = findRowById(draftModel, rowId);
       if (!draftRow) {
         return new Response("Row not found in draft model", { status: 404 });
