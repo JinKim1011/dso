@@ -72,6 +72,54 @@ const cases = [
 describe("token previews across database, editor and staged models", () => {
   afterEach(() => clearPersistedDraftModel(projectId));
 
+  it("flags primitive CSS variables in the editor and referenced preview", () => {
+    const surface = validSeed.tokens.find((item) => item.name === "surface")!;
+    const row = rowIn(baseModel, surface.id);
+    const targetId = row.references!.light!;
+    const primitive = rowIn(baseModel, targetId);
+    const primitiveType = baseModel.tokenTypes.find((type) =>
+      type.values.some((item) => item.id === targetId),
+    )!;
+    const invalid = {
+      ...primitive,
+      value: { kind: "single" as const, value: "var(--x)" },
+    };
+    const draftModel = withRow(baseModel, invalid);
+    const resolve = createTokenDisplayResolver(draftModel);
+    const surfaceType = baseModel.tokenTypes.find(
+      (type) => type.id === surface.tokenTypeId,
+    )!;
+    expect(resolve(row, surfaceType)).toMatchObject({
+      missingReference: true,
+      value: { meta: expect.stringContaining("unavailable") },
+    });
+    const initial = createTokenEditorDraft(
+      primitive.name,
+      primitive,
+      primitiveType.category,
+      primitiveType.kind,
+    );
+    const draft = createTokenEditorDraft(
+      invalid.name,
+      invalid,
+      primitiveType.category,
+      primitiveType.kind,
+    );
+    expect(
+      getTokenEditorState(
+        draft,
+        initial,
+        invalid,
+        options,
+        typographyOptions,
+        resolve,
+        primitiveType.category,
+        primitiveType.kind,
+      ),
+    ).toMatchObject({ invalidPrimitiveValue: true });
+    expect(resolve(invalid, primitiveType).value.preview).toBeUndefined();
+  });
+
   for (const testCase of cases) {
     it.each(Array.from({ length: 1 << testCase.slots.length }, (_, mask) => mask))(
       `${testCase.kind} slots, mask %i`,
