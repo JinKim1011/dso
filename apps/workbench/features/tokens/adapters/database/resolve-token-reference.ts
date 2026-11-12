@@ -32,20 +32,6 @@ function resolveTokenReferenceValue(
     throw new Error(`Invalid reference for token "${token.id}" and slot "${slot}".`);
   }
 
-  const match = value?.match(/^\s*var\(\s*(--[^\s(),]+)\s*\)\s*$/);
-
-  if (!target.cssVar || match?.[1] !== target.cssVar) {
-    throw new Error(
-      `Value and reference disagree for token "${token.id}" and slot "${slot}".`,
-    );
-  }
-
-  if (/\bvar\s*\(/i.test(target.value.value)) {
-    throw new Error(
-      `Referenced token "${target.id}" has an unresolved value for token "${token.id}" and slot "${slot}".`,
-    );
-  }
-
   return target.value.value;
 }
 
