@@ -233,6 +233,7 @@ export function validateSaveStagedChanges(
     for (const reference of change.references) {
       if (
         reference.afterTokenId === null &&
+        !currentReferences.has(referenceKey(token.id, reference.slot)) &&
         (tokenType.kind === "primitive" ||
           !supportsTokenReferenceSlot(token, tokenType, reference.slot))
       ) {
@@ -256,6 +257,7 @@ export function validateSaveStagedChanges(
       issues.push({
         ...issue,
         tokenId: reference.referencingTokenId,
+        referencedTokenId: reference.referencedTokenId,
         field: `references.${reference.slot}`,
       });
     }
