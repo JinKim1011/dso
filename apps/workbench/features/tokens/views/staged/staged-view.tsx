@@ -12,8 +12,15 @@ import { List, Text } from "@repo/ui";
 import { useEffect, useMemo, useRef } from "react";
 
 export function StagedView() {
-  const { baseModel, draftModel, changedRows, discardRow, applyRow } =
-    useStagedManifest();
+  const {
+    baseModel,
+    draftModel,
+    changedRows,
+    discardRow,
+    applyRow,
+    isStaleDraft,
+    draftLoadError,
+  } = useStagedManifest();
   const { activeFilter, setActiveFilter, filteredCategories } = useFilterState({
     changedRows,
   });
@@ -63,6 +70,7 @@ export function StagedView() {
       <StagedRowActions
         rowId={row.rowId}
         isApplying={isApplying}
+        isStaleDraft={isStaleDraft || draftLoadError}
         onDiscard={handleRowDiscard}
         onApply={handleRowApply}
       />
@@ -82,6 +90,19 @@ export function StagedView() {
 
   return (
     <section className="flex h-full w-full flex-col">
+      {/* // will be replaced by toaster later */}
+      {isStaleDraft && (
+        <p role="alert" className="text-content-error p-small">
+          Project data changed since this draft was created. Your edits are preserved, but
+          applying is disabled. Discard all changes to use the current project data.
+        </p>
+      )}
+      {draftLoadError && (
+        <p role="alert" className="text-content-error p-small">
+          The saved draft could not be restored. Applying is disabled. Discard all to
+          remove it and start from the current project data.
+        </p>
+      )}
       {rowsLength === 0 && (
         <div className="bg-dot-pattern rounded-mini border-stroke-secondary flex h-full w-full items-center justify-center overflow-hidden border">
           <Text
