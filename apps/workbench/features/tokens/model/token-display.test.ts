@@ -62,6 +62,8 @@ const cases = [
 ];
 
 describe("token previews across database, editor and staged models", () => {
+  afterEach(() => clearPersistedDraftModel());
+
   for (const testCase of cases) {
     it.each(Array.from({ length: 1 << testCase.slots.length }, (_, mask) => mask))(
       `${testCase.kind} slots, mask %i`,
