@@ -70,7 +70,6 @@ export function StagedView() {
       <StagedRowActions
         rowId={row.rowId}
         isApplying={isApplying}
-        isStaleDraft={isStaleDraft || draftLoadError}
         onDiscard={handleRowDiscard}
         onApply={handleRowApply}
       />
