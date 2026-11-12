@@ -50,7 +50,12 @@ export function StagedRowDetail({
               beforeName={beforeName}
               afterName={afterName}
             />
-            <StagedRowDetailValue type="afterValue" after={after} before={before} />
+            <StagedRowDetailValue
+              type="afterValue"
+              after={after}
+              before={before}
+              draftModel={draftModel}
+            />
             <StagedRowDetailReferences
               side="after"
               references={references}
@@ -76,7 +81,12 @@ export function StagedRowDetail({
               beforeName={beforeName}
               afterName={afterName}
             />
-            <StagedRowDetailValue type="beforeValue" before={before} after={after} />
+            <StagedRowDetailValue
+              type="beforeValue"
+              before={before}
+              after={after}
+              baseModel={baseModel}
+            />
             <StagedRowDetailReferences
               side="before"
               references={references}
