@@ -8,6 +8,7 @@ import type {
   TokenTypeViewModel,
   TokenValueViewModel,
 } from "@/features/tokens/model/token-graph";
+import { containsCssVariable } from "@repo/contracts/validation/token-value";
 
 type ResolverRows = {
   draftRows: SlotContext["draftRows"];
@@ -43,7 +44,8 @@ function resolveTokenDisplay(
           ...row,
           meta: row.value.value,
           preview:
-            type.category === "color"
+            type.category === "color" &&
+            !(type.kind === "primitive" && containsCssVariable(row.value.value))
               ? { kind: "single", value: row.value.value }
               : undefined,
         },
