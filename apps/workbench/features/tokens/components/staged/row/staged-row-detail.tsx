@@ -1,12 +1,12 @@
 import { StagedRowDetailReferences } from "@/features/tokens/components/staged/row/staged-row-detail-references";
 import { StagedRowDetailTag } from "@/features/tokens/components/staged/row/staged-row-detail-tag";
 import { StagedRowDetailValue } from "@/features/tokens/components/staged/row/staged-row-detail-value";
-import type { ReferenceChange } from "@/features/tokens/model/staged/staged-change";
 import type {
   TokenGraphViewModel,
   TokenValueViewModel,
 } from "@/features/tokens/model/token-graph";
 import { RowSpacingIcon } from "@radix-ui/react-icons";
+import type { ReferenceChange } from "@repo/contracts/operation";
 
 type StagedRowDetailProps = {
   id: string;

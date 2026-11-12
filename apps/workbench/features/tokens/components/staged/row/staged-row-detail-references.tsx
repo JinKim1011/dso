@@ -1,6 +1,6 @@
-import type { ReferenceChange } from "@/features/tokens/model/staged/staged-change";
 import type { TokenGraphViewModel } from "@/features/tokens/model/token-graph";
 import { findRowById } from "@/features/tokens/state/staged-graph-model";
+import type { ReferenceChange } from "@repo/contracts/operation";
 import { Text } from "@repo/ui";
 
 type StagedRowDetailReferencesProps = {

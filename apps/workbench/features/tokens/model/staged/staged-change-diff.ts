@@ -1,8 +1,5 @@
-import type {
-  ReferenceChange,
-  StagedTokenChange,
-} from "@/features/tokens/model/staged/staged-change";
 import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
+import type { ReferenceChange, StagedTokenChange } from "@repo/contracts/operation";
 import type { TokenValue } from "@repo/contracts/type";
 import { tokenReferenceSlots } from "@repo/contracts/validation/token-reference-slots";
 
