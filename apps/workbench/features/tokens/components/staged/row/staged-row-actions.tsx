@@ -4,6 +4,7 @@ import { Button, Tooltip } from "@repo/ui";
 type StagedRowActionsProps = {
   rowId: string;
   isApplying: boolean;
+  isStaleDraft: boolean;
   onDiscard: (rowId: string) => void;
   onApply: (rowId: string) => void;
 };
@@ -11,6 +12,7 @@ type StagedRowActionsProps = {
 export function StagedRowActions({
   rowId,
   isApplying,
+  isStaleDraft,
   onDiscard,
   onApply,
 }: StagedRowActionsProps) {
@@ -43,7 +45,7 @@ export function StagedRowActions({
             event.stopPropagation();
             onApply(rowId);
           }}
-          disabled={isApplying}
+          disabled={isApplying || isStaleDraft}
         />
       </Tooltip>
     </div>
