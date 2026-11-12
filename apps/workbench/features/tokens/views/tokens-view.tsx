@@ -61,7 +61,7 @@ export function TokensView({ category }: TokensViewProps) {
   }, [filteredModel]);
 
   const rows = useMemo<TokenRowViewModel[]>(() => {
-    return draftModel.tokenTypes
+    return displayModel.tokenTypes
       .filter((type) => !category || type.category === category)
       .flatMap((tokenType) =>
         tokenType.values.map((valueItem) => ({
@@ -75,7 +75,7 @@ export function TokensView({ category }: TokensViewProps) {
           value: valueItem,
         })),
       );
-  }, [draftModel, category]);
+  }, [displayModel, category]);
 
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
 
