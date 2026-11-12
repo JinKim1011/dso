@@ -74,12 +74,14 @@ export function buildTokenEditorUpdate(
     case "modes":
       return {
         name: draft.name,
+        value: { kind: "modes" },
         references: { light: draft.lightId, dark: draft.darkId },
       };
 
     case "typography":
       return {
         name: draft.name,
+        value: { kind: "typography" },
         references: {
           fontSize: draft.fontSizeId,
           fontWeight: draft.fontWeightId,
