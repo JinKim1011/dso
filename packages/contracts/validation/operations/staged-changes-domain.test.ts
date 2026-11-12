@@ -57,6 +57,70 @@ function validate(
 }
 
 describe("validateSaveStagedChanges", () => {
+  it("reports unrelated invalid references but permits a batch that repairs them", () => {
+    const invalidReference: TokenReference = {
+      ...reference,
+      referencedTokenId: fixtureIds.release,
+    };
+    const untouched = validate(emptyRequest, tokens, tokenTypes, [invalidReference]);
+    expect(untouched).toMatchObject({
+      success: false,
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "missing-referenced-token",
+          tokenId: modeToken.id,
+          referencedTokenId: fixtureIds.release,
+          field: "references.light",
+        }),
+      ]),
+    });
+
+    const repair: SaveStagedChangesRequest = {
+      projectId: fixtureIds.project,
+      changes: [
+        {
+          tokenId: modeToken.id,
+          references: [
+            {
+              slot: "light",
+              beforeTokenId: fixtureIds.release,
+              afterTokenId: otherTarget.id,
+            },
+          ],
+        },
+      ],
+    };
+    expect(validate(repair, tokens, tokenTypes, [invalidReference])).toMatchObject({
+      success: true,
+      references: [{ ...reference, referencedTokenId: otherTarget.id }],
+    });
+  });
+
+  it("allows clearing an existing unsupported reference to repair the final state", () => {
+    const invalidReference: TokenReference = {
+      ...reference,
+      slot: "fontSize",
+    };
+    const repair: SaveStagedChangesRequest = {
+      projectId: fixtureIds.project,
+      changes: [
+        {
+          tokenId: modeToken.id,
+          references: [
+            {
+              slot: "fontSize",
+              beforeTokenId: baseColorToken.id,
+              afterTokenId: null,
+            },
+          ],
+        },
+      ],
+    };
+    expect(validate(repair, tokens, tokenTypes, [invalidReference])).toMatchObject({
+      success: true,
+      references: [],
+    });
+  });
   it("accepts empty batches and returns an unchanged state", () => {
     expect(validate(emptyRequest)).toEqual({
       success: true,
@@ -440,7 +504,6 @@ describe("validateSaveStagedChanges", () => {
       success: false,
       issues: expect.arrayContaining([
         expect.objectContaining({ code: "invalid-value", field: "value.kind" }),
-        expect.objectContaining({ code: "unsupported-slot", field: "references.light" }),
       ]),
     });
   });
