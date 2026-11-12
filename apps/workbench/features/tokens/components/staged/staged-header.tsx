@@ -10,7 +10,8 @@ type StagedHeaderProps = {
 };
 
 export function StagedHeader({ onBack }: StagedHeaderProps) {
-  const { applyDraft, resetDraft, changedRowCount } = useStagedManifest();
+  const { applyDraft, resetDraft, changedRowCount, isStaleDraft, draftLoadError } =
+    useStagedManifest();
   const [isApplying, setIsApplying] = useState(false);
 
   const handleBulkApply = async () => {
@@ -47,7 +48,7 @@ export function StagedHeader({ onBack }: StagedHeaderProps) {
         />
       </div>
 
-      {changedRowCount > 0 ? (
+      {changedRowCount > 0 || isStaleDraft || draftLoadError ? (
         <div className="gap-mini flex">
           <Tooltip
             content={`${changedRowCount} ${changedRowCount === 1 ? "CHANGE" : "CHANGES"}`}
@@ -66,7 +67,7 @@ export function StagedHeader({ onBack }: StagedHeaderProps) {
           >
             <Button
               size="sm"
-              disabled={isApplying}
+              disabled={isApplying || isStaleDraft || draftLoadError}
               label={isApplying ? "PUSHING..." : "PUSH ALL"}
               variant="void"
               onClick={handleBulkApply}
