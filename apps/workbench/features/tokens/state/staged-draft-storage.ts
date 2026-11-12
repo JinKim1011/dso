@@ -40,7 +40,20 @@ export function loadPersistedDraftModel(): TokenGraphViewModel | null {
       return null;
     }
 
-    return parsed.draftModel as TokenGraphViewModel;
+    const draftModel = parsed.draftModel as TokenGraphViewModel;
+    return {
+      ...draftModel,
+      tokenTypes: draftModel.tokenTypes.map((tokenType) => ({
+        ...tokenType,
+        values: tokenType.values.map((row) => {
+          if (tokenType.kind !== "semantic") return row;
+          if (row.value.kind === "modes" || row.value.kind === "typography") {
+            return { ...row, value: { kind: row.value.kind } };
+          }
+          return row;
+        }),
+      })),
+    };
   } catch (error) {
     console.warn("Failed to load staged draft from local storage.", error);
     return null;
