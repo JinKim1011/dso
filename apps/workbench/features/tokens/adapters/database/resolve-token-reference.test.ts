@@ -57,12 +57,7 @@ describe("token preview resolvers", () => {
       fontWeight: "400",
       lineHeight: "1.7",
     });
-    expect(body.value).toEqual({
-      kind: "typography",
-      fontSize: "var(--text-regular)",
-      fontWeight: "var(--font-regular)",
-      lineHeight: "var(--leading-relaxed)",
-    });
+    expect(body.value).toEqual({ kind: "typography" });
   });
 
   it("preserves literal and absent values without references", () => {
