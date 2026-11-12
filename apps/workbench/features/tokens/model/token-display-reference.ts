@@ -4,6 +4,7 @@ import type {
 } from "@/features/tokens/model/token-graph";
 import { TokenReferenceSlot } from "@repo/contracts/type";
 import { TokenCategory } from "@repo/contracts/validation/enum";
+import { containsCssVariable } from "@repo/contracts/validation/token-value";
 
 export type SlotContext = {
   row: TokenValueViewModel;
@@ -19,8 +20,6 @@ const typographyTypes = {
   lineHeight: "line-height",
 } as const;
 
-const hasVarFunction = (variable: string) => /\bvar\s*\(/i.test(variable);
-
 function isReferenceValid(
   context: SlotContext,
   target: { row: TokenValueViewModel; type: TokenTypeViewModel } | undefined,
@@ -30,7 +29,7 @@ function isReferenceValid(
   if (target.type.kind !== "primitive") return false;
   if (target.type.category !== context.category) return false;
   if (target.row.value.kind !== "single") return false;
-  if (hasVarFunction(target.row.value.value)) return false;
+  if (containsCssVariable(target.row.value.value)) return false;
 
   const expected =
     slot in typographyTypes
