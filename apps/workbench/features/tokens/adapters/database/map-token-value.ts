@@ -5,6 +5,7 @@ import {
 } from "@/features/tokens/adapters/database/resolve-token-reference";
 import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
 import type { Token, TokenType } from "@repo/contracts/type";
+import { containsCssVariable } from "@repo/contracts/validation/token-value";
 
 type MappedTokenValue = Pick<
   TokenValueViewModel,
@@ -28,7 +29,8 @@ export function mapTokenValue(
           : {}),
         meta: token.value.value,
         preview:
-          category === "color" || category === "shadow"
+          (category === "color" || category === "shadow") &&
+          !(tokenType.kind === "primitive" && containsCssVariable(token.value.value))
             ? {
                 kind: "single",
                 value: token.value.value,
