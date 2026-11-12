@@ -1,31 +1,24 @@
-import { buildManifestFromGraph } from "@/features/tokens/adapters/manifest/to-manifest";
 import type {
   TokenGraphViewModel,
   TokenValueViewModel,
 } from "@/features/tokens/model/token-graph";
-import { clearPersistedDraftModel } from "@/features/tokens/state/staged-draft-storage";
 import {
-  buildChangedRows,
   findRowById,
   replaceRowInModel,
 } from "@/features/tokens/state/staged-graph-model";
 import { Dispatch, SetStateAction, useCallback } from "react";
 
 type UseStagedManifestActionsProps = {
-  projectId: string;
   canApply: boolean;
   baseModel: TokenGraphViewModel;
   draftModel: TokenGraphViewModel;
-  setBaseModel: Dispatch<SetStateAction<TokenGraphViewModel>>;
   setDraftModel: Dispatch<SetStateAction<TokenGraphViewModel>>;
 };
 
 export function useStagedManifestActions({
-  projectId,
   canApply,
   baseModel,
   draftModel,
-  setBaseModel,
   setDraftModel,
 }: UseStagedManifestActionsProps) {
   const updateRow = useCallback(
@@ -63,22 +56,8 @@ export function useStagedManifestActions({
         status: 409,
       });
     }
-    const manifest = buildManifestFromGraph(draftModel);
-
-    const response = await fetch("/api/design-tokens/manifest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ manifest: manifest }),
-    });
-
-    if (response.ok) {
-      setBaseModel(draftModel);
-      setDraftModel(draftModel);
-      clearPersistedDraftModel(projectId);
-    }
-
-    return response;
-  }, [canApply, draftModel, projectId, setBaseModel, setDraftModel]);
+    return new Response("PostgreSQL saving is not available yet.", { status: 503 });
+  }, [canApply]);
 
   const applyRow = useCallback(
     async (rowId: string): Promise<Response> => {
@@ -90,32 +69,12 @@ export function useStagedManifestActions({
           },
         );
       }
-      const draftRow = findRowById(draftModel, rowId);
-      if (!draftRow) {
+      if (!findRowById(draftModel, rowId)) {
         return new Response("Row not found in draft model", { status: 404 });
       }
-
-      const nextBaseModel = replaceRowInModel(baseModel, rowId, draftRow);
-      const manifest = buildManifestFromGraph(nextBaseModel);
-
-      const response = await fetch("/api/design-tokens/manifest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ manifest }),
-      });
-
-      if (response.ok) {
-        setBaseModel(nextBaseModel);
-
-        const hasPendingChanges = buildChangedRows(nextBaseModel, draftModel).length > 0;
-        if (!hasPendingChanges) {
-          clearPersistedDraftModel(projectId);
-        }
-      }
-
-      return response;
+      return new Response("PostgreSQL saving is not available yet.", { status: 503 });
     },
-    [baseModel, canApply, draftModel, projectId, setBaseModel],
+    [canApply, draftModel],
   );
 
   return {
