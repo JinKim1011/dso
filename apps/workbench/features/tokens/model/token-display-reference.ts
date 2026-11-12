@@ -42,23 +42,11 @@ function isReferenceValid(
   return expected === undefined || target.type.type === expected;
 }
 
-export function resolveSlot(
-  context: SlotContext,
-  slot: TokenReferenceSlot,
-  literal: string | undefined,
-): SlotResult {
+export function resolveSlot(context: SlotContext, slot: TokenReferenceSlot): SlotResult {
   const targetId = context.row.references?.[slot];
 
   if (!targetId) {
-    if (context.baseRow?.references?.[slot] || context.previousRow?.references?.[slot]) {
-      return { value: undefined, label: "unset", missing: false };
-    }
-
-    if (literal && /\bvar\s*\(/i.test(literal)) {
-      return { value: undefined, label: "unavailable", missing: true };
-    }
-
-    return { value: literal, label: literal ?? "unset", missing: false };
+    return { value: undefined, label: "unset", missing: false };
   }
 
   const target = context.draftRows.get(targetId);
