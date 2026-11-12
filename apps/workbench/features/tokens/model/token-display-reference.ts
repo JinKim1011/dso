@@ -7,8 +7,6 @@ import { TokenCategory } from "@repo/contracts/validation/enum";
 
 export type SlotContext = {
   row: TokenValueViewModel;
-  baseRow?: TokenValueViewModel;
-  previousRow?: TokenValueViewModel;
   category: TokenCategory;
   draftRows: Map<string, { row: TokenValueViewModel; type: TokenTypeViewModel }>;
 };
