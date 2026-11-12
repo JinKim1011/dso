@@ -89,9 +89,46 @@ describe("mapTokenValue", () => {
     );
 
     expect(mapTokenValue(modesToken, semanticType, referenceLookup)).toMatchObject({
-      value: modesToken.value,
+      value: { kind: "modes" },
       references: { light: token.id },
-      preview: { kind: "modes", light: "oklch(98.5% 0 0)", dark: "#111" },
+      meta: "sample / unset",
+      preview: { kind: "modes", light: "oklch(98.5% 0 0)", dark: undefined },
+    });
+  });
+
+  it("resolves shadow modes from referenced primitive values", () => {
+    const primitiveType: TokenType = { ...colorType, category: "shadow" };
+    const semanticType: TokenType = {
+      ...primitiveType,
+      id: "shadow-semantic",
+      kind: "semantic",
+    };
+    const shadow: Token = {
+      ...token,
+      value: { kind: "single", value: "0 1px 2px #000" },
+    };
+    const semantic: Token = {
+      ...token,
+      id: "shadow-surface",
+      tokenTypeId: semanticType.id,
+      value: { kind: "modes" },
+    };
+    const referenceLookup = createTokenReferenceLookup(
+      [primitiveType, semanticType],
+      [shadow, semantic],
+      [
+        {
+          projectId: token.projectId,
+          referencingTokenId: semantic.id,
+          referencedTokenId: shadow.id,
+          slot: "dark",
+        },
+      ],
+    );
+    expect(mapTokenValue(semantic, semanticType, referenceLookup)).toMatchObject({
+      meta: "unset / sample",
+      references: { dark: shadow.id },
+      preview: { kind: "modes", light: undefined, dark: "0 1px 2px #000" },
     });
   });
 
