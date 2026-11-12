@@ -46,11 +46,7 @@ function modeToken(id: string, tokenTypeId: string, currentProjectId = projectId
     tokenTypeId,
     name: id,
     cssVar: `--${id}`,
-    value: {
-      kind: "modes",
-      light: "#ffffff",
-      dark: "#000000",
-    },
+    value: { kind: "modes" },
   };
 }
 
