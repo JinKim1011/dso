@@ -51,7 +51,7 @@ function resolveTokenDisplay(
         incomplete: false,
       };
     case "modes": {
-      const { meta, preview, incomplete, missing } = resolveModes(context, row.value);
+      const { meta, preview, incomplete, missing } = resolveModes(context);
 
       return {
         value: {
@@ -64,10 +64,7 @@ function resolveTokenDisplay(
       };
     }
     case "typography": {
-      const { meta, preview, incomplete, missing } = resolveTypography(
-        context,
-        row.value,
-      );
+      const { meta, preview, incomplete, missing } = resolveTypography(context);
 
       return {
         value: { ...row, meta, preview },
