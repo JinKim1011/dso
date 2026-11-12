@@ -23,6 +23,8 @@ export type ValidationIssue = {
 export type ValidationResult<T> =
   { success: true; value: T } | { success: false; issues: ValidationIssue[] };
 
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function mapIdentifierErrorCode(
   code: "not-string" | "empty" | "unsafe-character" | "too-long" | "invalid-segment",
 ): ValidationIssue["code"] {
@@ -129,4 +131,25 @@ export function invalidRequestBody(): ValidationResult<never> {
       },
     ],
   };
+}
+
+export function unknownFields(
+  input: Record<string, unknown>,
+  allowed: readonly string[],
+  path: string,
+): ValidationIssue[] {
+  return collectUnknownFields(input, allowed).map((issue) => ({
+    ...issue,
+    field: path ? `${path}.${issue.field}` : issue.field,
+  }));
+}
+
+export function validateUuidField(value: unknown, field: string): ValidationIssue | null {
+  const issue = validateIdentifierField(value, field);
+  if (issue) return issue;
+
+  if (typeof value !== "string" || !UUID_PATTERN.test(value)) {
+    return { field, code: "invalid-format", message: `${field} must be a UUID.` };
+  }
+  return null;
 }
