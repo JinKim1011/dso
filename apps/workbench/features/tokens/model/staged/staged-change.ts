@@ -20,11 +20,6 @@ export type StagedTokenChange = {
     after: TokenValue;
   };
 
-  cssVar?: {
-    before: string | undefined;
-    after: string | undefined;
-  };
-
   references: ReferenceChange[];
 };
 

@@ -68,10 +68,6 @@ export function buildStagedTokenChange(
     change.name = { before: before.name, after: after.name };
   }
 
-  if (cssVarChanged) {
-    change.cssVar = { before: before.cssVar, after: after.cssVar };
-  }
-
   if (valueChanged) {
     change.value = { before: before.value, after: after.value };
   }
