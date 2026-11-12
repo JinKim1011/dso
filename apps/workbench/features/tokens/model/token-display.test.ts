@@ -1,27 +1,35 @@
 import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
+import { buildStagedTokenChange } from "@/features/tokens/model/staged/staged-change-diff";
 import {
   buildTokenDisplayModel,
   createTokenDisplayResolver,
 } from "@/features/tokens/model/token-display";
+import type {
+  TokenGraphViewModel,
+  TokenValueViewModel,
+} from "@/features/tokens/model/token-graph";
 import {
   buildTokenEditorUpdate,
   createTokenEditorDraft,
   getTokenEditorState,
   type TokenEditorDraft,
 } from "@/features/tokens/model/token-value-editor";
-import type {
-  TokenGraphViewModel,
-  TokenValueViewModel,
-} from "@/features/tokens/model/token-graph";
-import type { Token, TokenReferenceSlot } from "@repo/contracts/type";
+import {
+  clearPersistedDraftModel,
+  discardLegacyDraft,
+  loadPersistedDraftModel,
+  persistDraftModel,
+} from "@/features/tokens/state/staged-draft-storage";
+import type { TokenReferenceSlot } from "@repo/contracts/type";
 import { validSeed } from "@repo/seed-data/valid-seed";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 const baseModel = buildTokenGraphViewModel(
   validSeed.tokenTypes,
   validSeed.tokens,
   validSeed.tokenReferences,
 );
+const projectId = validSeed.projects[0]!.id;
 
 function rowIn(model: TokenGraphViewModel, id: string): TokenValueViewModel {
   const row = model.tokenTypes
@@ -62,7 +70,7 @@ const cases = [
 ];
 
 describe("token previews across database, editor and staged models", () => {
-  afterEach(() => clearPersistedDraftModel());
+  afterEach(() => clearPersistedDraftModel(projectId));
 
   for (const testCase of cases) {
     it.each(Array.from({ length: 1 << testCase.slots.length }, (_, mask) => mask))(
@@ -103,7 +111,7 @@ describe("token previews across database, editor and staged models", () => {
                   lineHeightId: references.lineHeight,
                 }
               : initialDraft;
-        const resolve = createTokenDisplayResolver(baseModel, baseModel);
+        const resolve = createTokenDisplayResolver(baseModel);
         const editor = getTokenEditorState(
           draft,
           initialDraft,
@@ -121,34 +129,12 @@ describe("token previews across database, editor and staged models", () => {
         const stagedModel = withRow(baseModel, stagedRow);
         const stagedDisplay = buildTokenDisplayModel(
           stagedModel,
-          createTokenDisplayResolver(baseModel, stagedModel),
+          createTokenDisplayResolver(stagedModel),
         );
 
-        const databaseValue =
-          token.value.kind === "modes"
-            ? {
-                kind: "modes" as const,
-                light: selectedSlots.has("light") ? token.value.light : undefined,
-                dark: selectedSlots.has("dark") ? token.value.dark : undefined,
-              }
-            : token.value.kind === "typography"
-              ? {
-                  kind: "typography" as const,
-                  fontSize: selectedSlots.has("fontSize")
-                    ? token.value.fontSize
-                    : undefined,
-                  fontWeight: selectedSlots.has("fontWeight")
-                    ? token.value.fontWeight
-                    : undefined,
-                  lineHeight: selectedSlots.has("lineHeight")
-                    ? token.value.lineHeight
-                    : undefined,
-                }
-              : token.value;
-        const reloadedToken: Token = { ...token, value: databaseValue };
         const reloadedModel = buildTokenGraphViewModel(
           validSeed.tokenTypes,
-          validSeed.tokens.map((item) => (item.id === token.id ? reloadedToken : item)),
+          validSeed.tokens,
           validSeed.tokenReferences.filter(
             (reference) =>
               reference.referencingTokenId !== token.id ||
@@ -158,19 +144,25 @@ describe("token previews across database, editor and staged models", () => {
         const databasePreview = rowIn(reloadedModel, token.id).preview;
         const reloadedDisplay = buildTokenDisplayModel(
           reloadedModel,
-          createTokenDisplayResolver(reloadedModel, reloadedModel),
+          createTokenDisplayResolver(reloadedModel),
         );
+
         expect(editor.previewValue.preview).toEqual(databasePreview);
         expect(editor.missingReference).toBe(false);
         expect(rowIn(stagedDisplay, token.id).preview).toEqual(databasePreview);
         expect(rowIn(reloadedDisplay, token.id).preview).toEqual(databasePreview);
-        const persistedDraft: TokenGraphViewModel = JSON.parse(
-          JSON.stringify(stagedModel),
-        );
+
+        persistDraftModel(projectId, baseModel, stagedModel);
+
+        const persistedDraft = loadPersistedDraftModel(projectId)?.draftModel;
+
+        expect(persistedDraft).not.toBeNull();
+
         const restoredDisplay = buildTokenDisplayModel(
-          persistedDraft,
-          createTokenDisplayResolver(baseModel, persistedDraft),
+          persistedDraft!,
+          createTokenDisplayResolver(persistedDraft!),
         );
+
         expect(rowIn(restoredDisplay, token.id).preview).toEqual(databasePreview);
         expect(databasePreview !== undefined).toBe(
           testCase.kind === "modes" ? mask !== 0 : mask === 7,
@@ -179,12 +171,122 @@ describe("token previews across database, editor and staged models", () => {
     );
   }
 
+  for (const testCase of cases) {
+    for (const slot of testCase.slots) {
+      it(`persists ${testCase.kind} ${slot} assignment, replacement and clearing`, () => {
+        const token = validSeed.tokens.find(
+          (item) => item.name === testCase.name && item.value.kind === testCase.kind,
+        )!;
+        const original = rowIn(baseModel, token.id);
+        const type = baseModel.tokenTypes.find((item) => item.id === token.tokenTypeId)!;
+        const firstId = original.references?.[slot];
+        expect(firstId).toBeDefined();
+        const primitiveType = baseModel.tokenTypes.find((item) =>
+          item.values.some((row) => row.id === firstId),
+        )!;
+        const replacement = primitiveType.values.find((row) => row.id !== firstId)!;
+        expect(replacement.value.kind).toBe("single");
+
+        const initial = {
+          ...original,
+          references: { ...original.references, [slot]: undefined },
+        };
+        const evaluate = (targetId: string | undefined) => {
+          const draft = createTokenEditorDraft(
+            initial.name,
+            initial,
+            type.category,
+            type.kind,
+          );
+          const field = `${slot}Id`;
+          const update = buildTokenEditorUpdate(type.category, {
+            ...draft,
+            [field]: targetId,
+          });
+          const stagedRow = { ...initial, ...update };
+          const model = withRow(baseModel, stagedRow);
+          persistDraftModel(projectId, baseModel, model);
+          const restored = loadPersistedDraftModel(projectId)!.draftModel;
+          const restoredRow = rowIn(restored, token.id);
+          expect(restoredRow.references?.[slot]).toBe(targetId);
+          expect(restoredRow.value).toEqual({ kind: testCase.kind });
+          return {
+            row: restoredRow,
+            display: createTokenDisplayResolver(restored)(restoredRow, type),
+          };
+        };
+
+        const assigned = evaluate(firstId);
+        expect(assigned.display.value.meta).toContain(rowIn(baseModel, firstId!).name);
+        expect(assigned.display.value.preview).toBeDefined();
+
+        const replaced = evaluate(replacement.id);
+        expect(replaced.display.value.meta).toContain(replacement.name);
+        if (replacement.value.kind !== "single") throw new Error("Expected primitive");
+        if (testCase.kind === "modes") {
+          expect(replaced.display.value.preview).toMatchObject({
+            kind: "modes",
+            [slot]: replacement.value.value,
+          });
+        } else {
+          expect(replaced.display.value.preview).toMatchObject({
+            kind: "typography",
+            typography: { [slot]: replacement.value.value },
+          });
+        }
+
+        const cleared = evaluate(undefined);
+        expect(cleared.display.value.meta).toContain("unset");
+        expect(cleared.display.missingReference).toBe(false);
+        if (testCase.kind === "typography") {
+          expect(cleared.display.value.preview).toBeUndefined();
+        } else {
+          expect(cleared.display.value.preview).not.toHaveProperty(
+            slot,
+            expect.any(String),
+          );
+        }
+        expect(buildStagedTokenChange(original, cleared.row)?.references).toContainEqual({
+          slot,
+          beforeTokenId: firstId,
+          afterTokenId: null,
+        });
+      });
+    }
+  }
+
+  it("discards legacy drafts without a project or baseline", () => {
+    const token = validSeed.tokens.find((item) => item.name === "surface")!;
+    const row = rowIn(baseModel, token.id);
+    const body = validSeed.tokens.find(
+      (item) => item.name === "body" && item.value.kind === "typography",
+    )!;
+    const bodyRow = rowIn(baseModel, body.id);
+    const legacySurface = withRow(baseModel, {
+      ...row,
+      value: { kind: "modes", light: "#fff", dark: "var(--old)" },
+      references: { ...row.references, light: undefined },
+    });
+    const legacy = withRow(legacySurface, {
+      ...bodyRow,
+      value: { kind: "typography", fontSize: "var(--old)", fontWeight: "400" },
+      references: { ...bodyRow.references, fontSize: undefined },
+    });
+    localStorage.setItem(
+      "dso-workbench-staged-draft",
+      JSON.stringify({ version: 1, draftModel: legacy }),
+    );
+    discardLegacyDraft();
+    expect(loadPersistedDraftModel(projectId)).toBeNull();
+    expect(localStorage.getItem("dso-workbench-staged-draft")).toBeNull();
+  });
+
   it("shows a valid mode while flagging an unavailable reference", () => {
     const token = validSeed.tokens.find((item) => item.name === "surface")!;
     const row = rowIn(baseModel, token.id);
     const type = baseModel.tokenTypes.find((item) => item.id === token.tokenTypeId)!;
     const broken = { ...row, references: { ...row.references, dark: "missing" } };
-    const result = createTokenDisplayResolver(baseModel, baseModel)(broken, type);
+    const result = createTokenDisplayResolver(baseModel)(broken, type);
     expect(result.missingReference).toBe(true);
     expect(result.value.preview).toMatchObject({
       kind: "modes",
@@ -200,7 +302,7 @@ describe("token previews across database, editor and staged models", () => {
     const row = rowIn(baseModel, token.id);
     const type = baseModel.tokenTypes.find((item) => item.id === token.tokenTypeId)!;
     const broken = { ...row, references: { ...row.references, fontSize: "missing" } };
-    const result = createTokenDisplayResolver(baseModel, baseModel)(broken, type);
+    const result = createTokenDisplayResolver(baseModel)(broken, type);
     expect(result.missingReference).toBe(true);
     expect(result.value.preview).toBeUndefined();
   });
