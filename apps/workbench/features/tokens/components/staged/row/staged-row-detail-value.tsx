@@ -26,48 +26,28 @@ function renderValueRows(
 
   const value = item.value;
 
-  if (value.kind === "typography") {
-    const previousTypography =
-      compareToItem?.value.kind === "typography" ? compareToItem.value : undefined;
-
-    return [
-      {
-        label: "fontSize",
-        value: value.fontSize ?? "-",
-        changed: value.fontSize !== previousTypography?.fontSize,
-      },
-      {
-        label: "fontWeight",
-        value: value.fontWeight ?? "-",
-        changed: value.fontWeight !== previousTypography?.fontWeight,
-      },
-      {
-        label: "lineHeight",
-        value: value.lineHeight ?? "-",
-        changed: value.lineHeight !== previousTypography?.lineHeight,
-      },
-    ];
-  }
-
-  if (value.kind === "modes") {
-    const previousModes =
-      compareToItem?.value.kind === "modes" ? compareToItem.value : undefined;
-
-    const currentLight = value.light ?? "-";
-    const currentDark = value.dark ?? "-";
-
-    return [
-      {
-        label: "Light",
-        value: currentLight,
-        changed: currentLight !== (previousModes?.light ?? "-"),
-      },
-      {
-        label: "Dark",
-        value: currentDark,
-        changed: currentDark !== (previousModes?.dark ?? "-"),
-      },
-    ];
+  if (value.kind === "typography" || value.kind === "modes") {
+    const slots: { label: string; slot: TokenReferenceSlot }[] =
+      value.kind === "modes"
+        ? [
+            { label: "Light", slot: "light" },
+            { label: "Dark", slot: "dark" },
+          ]
+        : [
+            { label: "fontSize", slot: "fontSize" },
+            { label: "fontWeight", slot: "fontWeight" },
+            { label: "lineHeight", slot: "lineHeight" },
+          ];
+    return slots.map(({ label, slot }) => {
+      const tokenId = item.references?.[slot];
+      return {
+        label,
+        value: tokenId
+          ? (model && findRowById(model, tokenId)?.name) || "Missing token"
+          : "-",
+        changed: tokenId !== compareToItem?.references?.[slot],
+      };
+    });
   }
 
   if (value.kind === "single") {
