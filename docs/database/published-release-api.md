@@ -170,9 +170,7 @@ Show one realistic JSON example.
       "name": "default",
       "cssVar": "--surface-default",
       "value": {
-        "kind": "modes",
-        "light": "var(--base-neutral-0)",
-        "dark": "var(--base-neutral-900)"
+        "kind": "modes"
       }
     },
     {
@@ -182,9 +180,7 @@ Show one realistic JSON example.
       "name": "muted",
       "cssVar": "--surface-muted",
       "value": {
-        "kind": "modes",
-        "light": "var(--base-neutral-50)",
-        "dark": "var(--base-neutral-850)"
+        "kind": "modes"
       }
     },
     {
@@ -194,9 +190,7 @@ Show one realistic JSON example.
       "name": "hoverWeak",
       "cssVar": "--surface-interactive-hoverWeak",
       "value": {
-        "kind": "modes",
-        "light": "var(--base-neutral-50)",
-        "dark": "var(--base-neutral-850)"
+        "kind": "modes"
       }
     }
   ],
@@ -312,12 +306,13 @@ The token definitions in the release. Each token points to a token type through
 - `value` uses the domain value union.
 - For `color` and `shadow` tokens:
   - a `primitive` token uses `kind: "single"` with one direct string value;
-  - a `semantic` token uses `kind: "modes"` with `light` and `dark` values.
+  - a `semantic` token uses `kind: "modes"` and references for its `light`
+    and `dark` slots.
 - For `typography` tokens:
   - a primitive `font-size`, `font-weight`, or `line-height` token uses
     `kind: "single"` with one direct string value;
   - a semantic typography token such as `body-md` uses `kind: "typography"`
-    with `fontSize`, `fontWeight`, and `lineHeight` fields.
+    with references for its `fontSize`, `fontWeight`, and `lineHeight` slots.
 - Other token categories use their category-specific value shape.
 
 ### `tokenReferences`
@@ -332,6 +327,12 @@ same-category primitive tokens. The referenced primitive token supplies one
 Typography semantic tokens use `fontSize`, `fontWeight`, and `lineHeight`
 slots to reference the corresponding primitive typography types:
 `font-size`, `font-weight`, and `line-height`.
+
+Semantic color, shadow, and typography values contain only their `kind`. A slot is
+populated when a corresponding reference exists, and empty otherwise. Consumers
+resolve referenced IDs to primitive token values; semantic slots do not store
+literal values or CSS `var(...)` expressions. `cssVar` remains a separate token
+property.
 
 ### `components`
 
