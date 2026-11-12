@@ -13,7 +13,9 @@ const body = validSeed.tokens.find(
   (token) => token.name === "body" && token.value.kind === "typography",
 )!;
 const bodyType = validSeed.tokenTypes.find((type) => type.id === body.tokenTypeId)!;
-const neutral = validSeed.tokens.find((token) => token.cssVar === "--base-neutral-0")!;
+const neutral = validSeed.tokens.find(
+  (token) => token.id === "00000000-0000-4000-8000-000000000106",
+)!;
 const lookup = createTokenReferenceLookup(
   validSeed.tokenTypes,
   validSeed.tokens,
@@ -172,7 +174,9 @@ describe("token preview resolvers", () => {
   });
 
   it("validates typography references against their slot", () => {
-    const weight = validSeed.tokens.find((token) => token.cssVar === "--font-regular")!;
+    const weight = validSeed.tokens.find(
+      (token) => token.id === "00000000-0000-4000-8000-00000000023b",
+    )!;
     const weightType = validSeed.tokenTypes.find(
       (type) => type.id === weight.tokenTypeId,
     )!;
