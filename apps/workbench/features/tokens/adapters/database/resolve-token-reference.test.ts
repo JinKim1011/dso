@@ -60,7 +60,7 @@ describe("token preview resolvers", () => {
     expect(body.value).toEqual({ kind: "typography" });
   });
 
-  it("preserves literal and absent values without references", () => {
+  it("treats missing references as empty, even with legacy slot values", () => {
     const emptyLookup = createTokenReferenceLookup([], [], []);
     expect(
       resolveModeToken(
@@ -68,7 +68,7 @@ describe("token preview resolvers", () => {
         surfaceType,
         emptyLookup,
       ),
-    ).toEqual({ light: "#fff", dark: undefined });
+    ).toEqual({ light: undefined, dark: undefined });
     expect(
       resolveTypographyToken(
         {
@@ -83,7 +83,7 @@ describe("token preview resolvers", () => {
         bodyType,
         emptyLookup,
       ),
-    ).toEqual({ fontSize: "1rem", fontWeight: "400", lineHeight: "1.5" });
+    ).toEqual({ fontSize: undefined, fontWeight: undefined, lineHeight: undefined });
   });
 
   it("allows empty typography slots while still validating populated slots", () => {
