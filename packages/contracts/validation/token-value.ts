@@ -1,13 +1,36 @@
-import type { TokenType } from "@repo/contracts/type";
+import type { TokenType, TokenValue } from "@repo/contracts/type";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import {
   type ValidationIssue,
   isRecord,
   validateLimitedStringField,
 } from "@repo/contracts/validation/operations/common";
+import { isTokenFunction, tokenize } from "@csstools/css-tokenizer";
 
 export function hasTokenValueKind(value: unknown): value is { kind: string } {
   return isRecord(value) && typeof value.kind === "string";
+}
+
+export function containsCssVariable(value: string): boolean {
+  return (
+    /\bvar\s*\(/i.test(value) ||
+    tokenize({ css: value }).some(
+      (token) => isTokenFunction(token) && token[4].value.toLowerCase() === "var",
+    )
+  );
+}
+
+export function validatePrimitiveTokenValue(value: TokenValue): ValidationIssue[] {
+  if (value.kind === "single" && containsCssVariable(value.value)) {
+    return [
+      {
+        field: "value.value",
+        code: "unsupported-value",
+        message: "Primitive token values cannot contain CSS var() functions.",
+      },
+    ];
+  }
+  return [];
 }
 
 export function expectedValueKind(
