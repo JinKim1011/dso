@@ -56,11 +56,9 @@ export function StagedManifestProvider({
 
   const { updateRow, applyDraft, discardRow, applyRow, resetDraft } =
     useStagedManifestActions({
-      projectId,
       canApply: hasHydratedDraft && !isStaleDraft && !draftLoadError,
       baseModel,
       draftModel,
-      setBaseModel,
       setDraftModel,
     });
 
