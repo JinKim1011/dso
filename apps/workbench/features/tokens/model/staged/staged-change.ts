@@ -1,27 +1,5 @@
 import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
-import type { TokenReferenceSlot, TokenValue } from "@repo/contracts/type";
-
-export type ReferenceChange = {
-  slot: TokenReferenceSlot;
-  beforeTokenId: string | null;
-  afterTokenId: string | null;
-};
-
-export type StagedTokenChange = {
-  tokenId: string;
-
-  name?: {
-    before: string;
-    after: string;
-  };
-
-  value?: {
-    before: TokenValue;
-    after: TokenValue;
-  };
-
-  references: ReferenceChange[];
-};
+import type { StagedTokenChange } from "@repo/contracts/operation";
 
 export type ChangedRow = {
   rowId: string;
@@ -32,6 +10,5 @@ export type ChangedRow = {
   tokenType: string;
   before: TokenValueViewModel;
   after: TokenValueViewModel;
-
   change: StagedTokenChange;
 };
