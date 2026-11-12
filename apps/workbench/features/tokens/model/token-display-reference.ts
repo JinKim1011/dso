@@ -85,11 +85,9 @@ export function resolveTypography(context: SlotContext, value: TypographyValue) 
   };
 }
 
-type ModesValue = Extract<TokenValueViewModel["value"], { kind: "modes" }>;
-
-export function resolveModes(context: SlotContext, value: ModesValue) {
-  const light = resolveSlot(context, "light", value.light);
-  const dark = resolveSlot(context, "dark", value.dark);
+export function resolveModes(context: SlotContext) {
+  const light = resolveSlot(context, "light");
+  const dark = resolveSlot(context, "dark");
 
   const complete = !!light.value && !!dark.value;
 
