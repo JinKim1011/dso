@@ -58,6 +58,11 @@ export function useStagedManifestActions({
   }, [baseModel, setDraftModel]);
 
   const applyDraft = useCallback(async (): Promise<Response> => {
+    if (!canApply) {
+      return new Response("Draft is not ready to apply. Discard the stale draft first.", {
+        status: 409,
+      });
+    }
     const manifest = buildManifestFromGraph(draftModel);
 
     const response = await fetch("/api/design-tokens/manifest", {
