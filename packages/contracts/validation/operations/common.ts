@@ -62,13 +62,14 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 export function collectUnknownFields(
   value: Record<string, unknown>,
   allowedFields: readonly string[],
+  path = "",
 ): ValidationIssue[] {
   const allowed = new Set(allowedFields);
 
   return Object.keys(value)
     .filter((field) => !allowed.has(field))
     .map((field) => ({
-      field,
+      field: path ? `${path}.${field}` : field,
       code: "unknown-field" as const,
       message: `Unknown field "${field}".`,
     }));
@@ -131,17 +132,6 @@ export function invalidRequestBody(): ValidationResult<never> {
       },
     ],
   };
-}
-
-export function unknownFields(
-  input: Record<string, unknown>,
-  allowed: readonly string[],
-  path: string,
-): ValidationIssue[] {
-  return collectUnknownFields(input, allowed).map((issue) => ({
-    ...issue,
-    field: path ? `${path}.${issue.field}` : issue.field,
-  }));
 }
 
 export function validateUuidField(value: unknown, field: string): ValidationIssue | null {
