@@ -51,6 +51,8 @@ export function StagedManifestProvider({
   const [baseModel, setBaseModel] = useState<TokenGraphViewModel>(baseManifest);
   const [draftModel, setDraftModel] = useState<TokenGraphViewModel>(baseManifest);
   const [hasHydratedDraft, setHasHydratedDraft] = useState(false);
+  const [isStaleDraft, setIsStaleDraft] = useState(false);
+  const [draftLoadError, setDraftLoadError] = useState(false);
 
   const { updateRow, applyDraft, discardRow, applyRow, resetDraft } =
     useStagedManifestActions({
@@ -82,16 +84,16 @@ export function StagedManifestProvider({
   }, [projectId, baseManifest]);
 
   useEffect(() => {
-    if (!hasHydratedDraft) return;
+    if (!hasHydratedDraft || draftLoadError) return;
 
     const hasPendingChanges = buildChangedRows(baseModel, draftModel).length > 0;
-    if (!hasPendingChanges) {
-      clearPersistedDraftModel();
+    if (!hasPendingChanges && !isStaleDraft) {
+      clearPersistedDraftModel(projectId);
       return;
     }
 
-    persistDraftModel(draftModel);
-  }, [draftModel, hasHydratedDraft, baseModel]);
+    persistDraftModel(projectId, baseModel, draftModel);
+  }, [draftModel, hasHydratedDraft, baseModel, isStaleDraft, draftLoadError, projectId]);
 
   const changedRows = useMemo(
     () => buildChangedRows(baseModel, draftModel),
