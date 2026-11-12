@@ -51,11 +51,10 @@ export function buildStagedTokenChange(
   const references = diffReferences(before, after);
 
   const nameChanged = before.name !== after.name;
-  const cssVarChanged = before.cssVar !== after.cssVar;
 
   const valueChanged = !areTokenValuesEqual(before.value, after.value);
 
-  if (!nameChanged && !cssVarChanged && !valueChanged && references.length === 0) {
+  if (!nameChanged && !valueChanged && references.length === 0) {
     return null;
   }
 
