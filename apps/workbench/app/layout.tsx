@@ -35,7 +35,11 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider>
-          <StagedManifestProvider baseManifest={model}>
+          <StagedManifestProvider
+            key={workbenchProject.project.id}
+            projectId={workbenchProject.project.id}
+            baseManifest={model}
+          >
             <WorkbenchShell>{children}</WorkbenchShell>
           </StagedManifestProvider>
         </ThemeProvider>
