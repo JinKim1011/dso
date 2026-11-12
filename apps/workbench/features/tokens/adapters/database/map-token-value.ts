@@ -33,12 +33,10 @@ export function mapTokenValue(
       };
 
     case "modes": {
-      const { light, dark } = token.value;
-
       const previewValues =
         category === "color" || category === "shadow"
           ? resolveModeToken(token, tokenType, referenceLookup)
-          : { light, dark };
+          : { light: undefined, dark: undefined };
 
       const lightReference = referenceLookup.find(token.id, "light");
       const darkReference = referenceLookup.find(token.id, "dark");
@@ -48,9 +46,9 @@ export function mapTokenValue(
       };
 
       return {
-        value: token.value,
+        value: { kind: "modes" },
         ...(Object.keys(references).length ? { references } : {}),
-        meta: `${light ?? "-"} / ${dark ?? "-"}`,
+        meta: `${lightReference.kind === "found" ? lightReference.token.name : "unset"} / ${darkReference.kind === "found" ? darkReference.token.name : "unset"}`,
         preview:
           previewValues.light || previewValues.dark
             ? { kind: "modes", ...previewValues }
