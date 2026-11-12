@@ -57,12 +57,10 @@ export function mapTokenValue(
     }
 
     case "typography": {
-      const { fontSize, fontWeight, lineHeight } = token.value;
-
       const previewValues =
         category === "typography"
           ? resolveTypographyToken(token, tokenType, referenceLookup)
-          : { fontSize, fontWeight, lineHeight };
+          : { fontSize: undefined, fontWeight: undefined, lineHeight: undefined };
 
       const fontSizeReference = referenceLookup.find(token.id, "fontSize");
       const fontWeightReference = referenceLookup.find(token.id, "fontWeight");
@@ -81,9 +79,13 @@ export function mapTokenValue(
       };
 
       return {
-        value: token.value,
+        value: { kind: "typography" },
         ...(Object.keys(references).length ? { references } : {}),
-        meta: [fontSize, fontWeight, lineHeight].join(" / "),
+        meta: [fontSizeReference, fontWeightReference, lineHeightReference]
+          .map((reference) =>
+            reference.kind === "found" ? reference.token.name : "unset",
+          )
+          .join(" / "),
         preview:
           previewValues.fontSize && previewValues.fontWeight && previewValues.lineHeight
             ? {
