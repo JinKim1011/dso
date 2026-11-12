@@ -3,6 +3,7 @@ import type {
   TokenReferenceOption,
 } from "@/features/tokens/model/token-graph";
 import { TokenCategory } from "@repo/contracts/validation/enum";
+import { containsCssVariable } from "@repo/contracts/validation/token-value";
 import { useMemo } from "react";
 
 type ModeCategory = Extract<TokenCategory, "color" | "shadow">;
@@ -22,7 +23,7 @@ export function useModeOptions({
         .filter((type) => type.category === category && type.kind === "primitive")
         .flatMap((type) =>
           type.values.flatMap((token) =>
-            token.value.kind === "single"
+            token.value.kind === "single" && !containsCssVariable(token.value.value)
               ? [
                   {
                     value: token.id,
