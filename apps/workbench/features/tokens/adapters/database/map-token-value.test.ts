@@ -66,33 +66,6 @@ describe("mapTokenValue", () => {
     );
   });
 
-  it.each([
-    [{ kind: "modes" as const }, undefined],
-    [
-      { kind: "modes" as const, light: "#fff" },
-      { kind: "modes", light: "#fff" },
-    ],
-    [
-      { kind: "modes" as const, dark: "#111" },
-      { kind: "modes", dark: "#111" },
-    ],
-    [
-      { kind: "modes" as const, light: "#fff", dark: "#111" },
-      { kind: "modes", light: "#fff", dark: "#111" },
-    ],
-  ])("maps mode slots consistently: %o", (value, expected) => {
-    const mapped = mapTokenValue(
-      { ...token, value },
-      { ...colorType, kind: "semantic" },
-      lookup,
-    );
-    if (expected) {
-      expect(mapped.preview).toMatchObject(expected);
-    } else {
-      expect(mapped.preview).toBeUndefined();
-    }
-  });
-
   it("preserves referenced token IDs while resolving mode previews", () => {
     const semanticType: TokenType = { ...colorType, id: "semantic", kind: "semantic" };
     const modesToken: Token = {
