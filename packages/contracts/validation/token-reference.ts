@@ -4,6 +4,7 @@ import {
   supportsTokenReferenceSlot,
   tokenReferenceSlots,
 } from "@repo/contracts/validation/token-reference-slots";
+import { validatePrimitiveTokenValue } from "@repo/contracts/validation/token-value";
 
 export type TokenReferenceValidationError = {
   code:
@@ -16,6 +17,7 @@ export type TokenReferenceValidationError = {
     | "missing-referencing-token-type"
     | "missing-referenced-token-type"
     | "incompatible-referenced-token-type"
+    | "invalid-referenced-token-value"
     | "invalid-referencing-token-kind";
   message: string;
 };
@@ -132,6 +134,16 @@ export function validateTokenReference(
     errors.push({
       code: "incompatible-referenced-token-type",
       message: `The referenced token is not compatible with the "${slot}" slot.`,
+    });
+  }
+
+  if (
+    referencedTokenType.kind === "primitive" &&
+    validatePrimitiveTokenValue(referencedToken.value).length > 0
+  ) {
+    errors.push({
+      code: "invalid-referenced-token-value",
+      message: "Referenced primitive token values cannot contain CSS var() functions.",
     });
   }
 
