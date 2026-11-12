@@ -6,7 +6,6 @@ function resolveTokenReferenceValue(
   token: Token,
   tokenType: TokenType,
   slot: TokenReferenceSlot,
-  value: string | undefined,
   referenceLookup: TokenReferenceLookup,
 ): string | undefined {
   const result = referenceLookup.find(token.id, slot);
@@ -50,28 +49,18 @@ export function resolveTypographyToken(
     throw new Error(`Token "${token.id}" is not a semantic typography token.`);
   }
 
-  const { fontSize, fontWeight, lineHeight } = token.value;
-
   return {
-    fontSize: resolveTokenReferenceValue(
-      token,
-      tokenType,
-      "fontSize",
-      fontSize,
-      referenceLookup,
-    ),
+    fontSize: resolveTokenReferenceValue(token, tokenType, "fontSize", referenceLookup),
     fontWeight: resolveTokenReferenceValue(
       token,
       tokenType,
       "fontWeight",
-      fontWeight,
       referenceLookup,
     ),
     lineHeight: resolveTokenReferenceValue(
       token,
       tokenType,
       "lineHeight",
-      lineHeight,
       referenceLookup,
     ),
   };
@@ -93,19 +82,7 @@ export function resolveModeToken(
   }
 
   return {
-    light: resolveTokenReferenceValue(
-      token,
-      tokenType,
-      "light",
-      token.value.light,
-      referenceLookup,
-    ),
-    dark: resolveTokenReferenceValue(
-      token,
-      tokenType,
-      "dark",
-      token.value.dark,
-      referenceLookup,
-    ),
+    light: resolveTokenReferenceValue(token, tokenType, "light", referenceLookup),
+    dark: resolveTokenReferenceValue(token, tokenType, "dark", referenceLookup),
   };
 }
