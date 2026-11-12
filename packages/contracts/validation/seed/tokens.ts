@@ -6,6 +6,7 @@ import { validateTokenDomain } from "@repo/contracts/validation/token-domain";
 import { validateTokenTypeHierarchy } from "@repo/contracts/validation/token-type-hierarchy";
 import {
   expectedValueKind,
+  validatePrimitiveTokenValue,
   validateTokenValue,
 } from "@repo/contracts/validation/token-value";
 
@@ -137,6 +138,18 @@ export function validateTokens(seed: SeedData): SeedValidationError[] {
 
     if (!tokenType || !("kind" in token.value)) {
       continue;
+    }
+
+    if (tokenType.kind === "primitive") {
+      for (const error of validatePrimitiveTokenValue(token.value)) {
+        errors.push({
+          code: "invalid-field",
+          collection: "tokens",
+          id: token.id,
+          field: error.field,
+          message: error.message,
+        });
+      }
     }
 
     const expectedKind = expectedValueKind(tokenType);
