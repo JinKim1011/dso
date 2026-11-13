@@ -10,7 +10,7 @@ import {
   persistDraftModel,
 } from "@/features/tokens/state/staged-draft-storage";
 import { buildChangedRows } from "@/features/tokens/state/staged-graph-model";
-import { useStagedManifestActions } from "@/features/tokens/state/use-staged-manifest-actions";
+import { useStagedManifestActions } from "@/features/tokens/state/use-staged-actions";
 import {
   createContext,
   ReactNode,
