@@ -1,7 +1,7 @@
 "use client";
 
+import { cn } from "@repo/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "../lib/utils";
 import { Text } from "./Text";
 
 import type React from "react";
