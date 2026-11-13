@@ -1,11 +1,11 @@
 "use client";
 
-import { useStagedManifest } from "@/features/tokens/state/staged-context";
+import { useStagedContext } from "@/features/tokens/state/staged-context";
 import { TerminalLoading, Text } from "@repo/ui";
 import type { ReactNode } from "react";
 
 export function ScreenLock({ children }: { children: ReactNode }) {
-  const { isApplying } = useStagedManifest();
+  const { isApplying } = useStagedContext();
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
 import {
   StagedManifestProvider,
-  useStagedManifest,
+  useStagedContext,
 } from "@/features/tokens/state/staged-context";
 import { findRowById } from "@/features/tokens/state/staged-graph-model";
 import { getDatabasePool } from "@/server/database";
@@ -188,7 +188,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
           }),
         ),
       );
-      const hook = renderHook(() => useStagedManifest(), {
+      const hook = renderHook(() => useStagedContext(), {
         wrapper: ({ children }: { children: ReactNode }) => (
           <StagedManifestProvider projectId={fixture.project.id} baseManifest={model}>
             {children}

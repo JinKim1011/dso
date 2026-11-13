@@ -1,7 +1,7 @@
 "use client";
 
 import { tokenNavigationItems } from "@/features/tokens/options/token-navigation-items";
-import { useStagedManifest } from "@/features/tokens/state/staged-context";
+import { useStagedContext } from "@/features/tokens/state/staged-context";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 import { Button, Text, Tooltip } from "@repo/ui";
 import Link from "next/link";
@@ -14,7 +14,7 @@ type TokensHeaderProps = {
 export function TokensHeader({ stagedHref }: TokensHeaderProps) {
   const path = usePathname();
   const router = useRouter();
-  const { changedRowCount } = useStagedManifest();
+  const { changedRowCount } = useStagedContext();
 
   const wrapperClasses =
     "px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between";

@@ -2,7 +2,7 @@ import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/bu
 import { createTokenDisplayResolver } from "@/features/tokens/model/token-display";
 import {
   StagedManifestProvider,
-  useStagedManifest,
+  useStagedContext,
 } from "@/features/tokens/state/staged-context";
 import { persistDraftModel } from "@/features/tokens/state/staged-draft-storage";
 import { findRowById } from "@/features/tokens/state/staged-graph-model";
@@ -33,7 +33,7 @@ describe("staged draft reload", () => {
 
   it("retains the draft when the save endpoint rejects the request", async () => {
     const token = validSeed.tokens.find((item) => item.name === "surface")!;
-    const current = renderHook(() => useStagedManifest(), { wrapper });
+    const current = renderHook(() => useStagedContext(), { wrapper });
     act(() => current.result.current.updateRow(token.id, { name: "draft edit" }));
     await waitFor(() => expect(current.result.current.changedRowCount).toBe(1));
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(
@@ -75,7 +75,7 @@ describe("staged draft reload", () => {
       const type = baseModel.tokenTypes.find((item) => item.id === token.tokenTypeId)!;
       expect(original.references?.[slot]).toBeDefined();
 
-      const first = renderHook(() => useStagedManifest(), { wrapper });
+      const first = renderHook(() => useStagedContext(), { wrapper });
       await waitFor(() => expect(localStorage.length).toBe(0));
       act(() => {
         first.result.current.updateRow(token.id, {
@@ -85,7 +85,7 @@ describe("staged draft reload", () => {
       await waitFor(() => expect(localStorage.length).toBe(1));
       first.unmount();
 
-      const reloaded = renderHook(() => useStagedManifest(), { wrapper });
+      const reloaded = renderHook(() => useStagedContext(), { wrapper });
       await waitFor(() =>
         expect(
           findRowById(reloaded.result.current.draftModel, token.id)?.references?.[slot],
@@ -107,7 +107,7 @@ describe("staged draft reload", () => {
       act(() => reloaded.result.current.resetDraft());
       await waitFor(() => expect(localStorage.length).toBe(0));
       reloaded.unmount();
-      const fresh = renderHook(() => useStagedManifest(), { wrapper });
+      const fresh = renderHook(() => useStagedContext(), { wrapper });
       expect(
         findRowById(fresh.result.current.draftModel, token.id)?.references?.[slot],
       ).toBe(original.references?.[slot]);
@@ -118,7 +118,7 @@ describe("staged draft reload", () => {
   it("preserves the original baseline and blocks stale drafts until discarded", async () => {
     const token = validSeed.tokens.find((item) => item.name === "surface")!;
     const row = findRowById(baseModel, token.id)!;
-    const first = renderHook(() => useStagedManifest(), { wrapper });
+    const first = renderHook(() => useStagedContext(), { wrapper });
     act(() => first.result.current.updateRow(token.id, { name: "my edit" }));
     await waitFor(() => expect(localStorage.length).toBe(1));
     first.unmount();
@@ -132,7 +132,7 @@ describe("staged draft reload", () => {
         ),
       })),
     };
-    const reloaded = renderHook(() => useStagedManifest(), {
+    const reloaded = renderHook(() => useStagedContext(), {
       wrapper: ({ children }: { children: ReactNode }) => (
         <StagedManifestProvider
           projectId={validSeed.projects[0]!.id}
@@ -174,14 +174,14 @@ describe("staged draft reload", () => {
       })),
     };
     persistDraftModel(otherProject, baseModel, changed);
-    const current = renderHook(() => useStagedManifest(), { wrapper });
+    const current = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(current.result.current.isStaleDraft).toBe(false));
     expect(findRowById(current.result.current.draftModel, token.id)?.name).toBe(
       token.name,
     );
     expect(localStorage.length).toBe(1);
     current.unmount();
-    const other = renderHook(() => useStagedManifest(), {
+    const other = renderHook(() => useStagedContext(), {
       wrapper: ({ children }: { children: ReactNode }) => (
         <StagedManifestProvider projectId={otherProject} baseManifest={baseModel}>
           {children}
@@ -200,7 +200,7 @@ describe("staged draft reload", () => {
     const key = `dso-workbench-staged-draft:${validSeed.projects[0]!.id}`;
     localStorage.setItem(key, "invalid json");
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    const current = renderHook(() => useStagedManifest(), { wrapper });
+    const current = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(current.result.current.draftLoadError).toBe(true));
     expect(localStorage.getItem(key)).toBe("invalid json");
     expect((await current.result.current.applyDraft()).status).toBe(409);
@@ -221,7 +221,7 @@ describe("staged draft reload", () => {
     });
     localStorage.setItem(key, invalid);
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    const current = renderHook(() => useStagedManifest(), { wrapper });
+    const current = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(current.result.current.draftLoadError).toBe(true));
     expect(localStorage.getItem(key)).toBe(invalid);
     current.unmount();

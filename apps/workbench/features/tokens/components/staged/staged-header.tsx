@@ -1,6 +1,6 @@
 "use client";
 
-import { useStagedManifest } from "@/features/tokens/state/staged-context";
+import { useStagedContext } from "@/features/tokens/state/staged-context";
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
 import { Button, Tooltip } from "@repo/ui";
 
@@ -18,7 +18,7 @@ export function StagedHeader({ onBack }: StagedHeaderProps) {
     isApplying,
     canApply,
     outcomeUnknown,
-  } = useStagedManifest();
+  } = useStagedContext();
 
   const handleBulkApply = async () => {
     await applyDraft();

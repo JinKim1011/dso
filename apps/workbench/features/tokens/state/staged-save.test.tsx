@@ -4,7 +4,7 @@ import { StagedRowActions } from "@/features/tokens/components/staged/row/staged
 import { StagedHeader } from "@/features/tokens/components/staged/staged-header";
 import {
   StagedManifestProvider,
-  useStagedManifest,
+  useStagedContext,
 } from "@/features/tokens/state/staged-context";
 import { findRowById } from "@/features/tokens/state/staged-graph-model";
 import type { SaveStagedChangesRequest } from "@repo/contracts/operation";
@@ -68,7 +68,7 @@ describe("staged save reconciliation", () => {
       .mockResolvedValue(
         savedResponse([{ ...surface, name: "saved" }], referencesFor(surface.id)),
       );
-    const hook = renderHook(() => useStagedManifest(), { wrapper });
+    const hook = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(hook.result.current.canApply).toBe(true));
     act(() => {
       hook.result.current.updateRow(surface.id, { name: "saved" });
@@ -99,7 +99,7 @@ describe("staged save reconciliation", () => {
       ),
       validSeed.tokenReferences,
     );
-    const reloaded = renderHook(() => useStagedManifest(), {
+    const reloaded = renderHook(() => useStagedContext(), {
       wrapper: ({ children }: { children: ReactNode }) => (
         <StagedManifestProvider projectId={projectId} baseManifest={savedBase}>
           {children}
@@ -124,7 +124,7 @@ describe("staged save reconciliation", () => {
         [...referencesFor(surface.id), ...referencesFor(other.id)],
       ),
     );
-    const hook = renderHook(() => useStagedManifest(), { wrapper });
+    const hook = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(hook.result.current.canApply).toBe(true));
     act(() => {
       hook.result.current.updateRow(surface.id, { name: "one" });
@@ -147,7 +147,7 @@ describe("staged save reconciliation", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       savedResponse([{ ...primitive, value }], referencesFor(primitive.id)),
     );
-    const hook = renderHook(() => useStagedManifest(), { wrapper });
+    const hook = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(hook.result.current.canApply).toBe(true));
     act(() => {
       hook.result.current.updateRow(primitive.id, { value });
@@ -171,7 +171,7 @@ describe("staged save reconciliation", () => {
       ),
       validSeed.tokenReferences,
     );
-    const reloaded = renderHook(() => useStagedManifest(), {
+    const reloaded = renderHook(() => useStagedContext(), {
       wrapper: ({ children }: { children: ReactNode }) => (
         <StagedManifestProvider projectId={projectId} baseManifest={savedBase}>
           {children}
@@ -188,7 +188,7 @@ describe("staged save reconciliation", () => {
   it("retains edits to the same field and other rows while a request is in flight", async () => {
     const pending = deferred<Response>();
     const fetch = vi.spyOn(globalThis, "fetch").mockReturnValue(pending.promise);
-    const hook = renderHook(() => useStagedManifest(), { wrapper });
+    const hook = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(hook.result.current.canApply).toBe(true));
     act(() => hook.result.current.updateRow(surface.id, { name: "sent" }));
     let request!: Promise<Response>;
@@ -226,7 +226,7 @@ describe("staged save reconciliation", () => {
     vi.spyOn(globalThis, "fetch").mockReturnValue(pending.promise);
     function Controls() {
       const { updateRow, isApplying, canApply, applyRow, discardRow } =
-        useStagedManifest();
+        useStagedContext();
       return (
         <>
           <button onClick={() => updateRow(surface.id, { name: "sent" })}>Edit</button>
@@ -264,7 +264,7 @@ describe("staged save reconciliation", () => {
 
       function Workbench() {
         const { updateRow, applyRow, baseModel, canApply, saveError } =
-          useStagedManifest();
+          useStagedContext();
         return (
           <ScreenLock>
             <button
@@ -314,7 +314,7 @@ describe("staged save reconciliation", () => {
   it("merges later slot edits without restoring previously saved slots", async () => {
     const pending = deferred<Response>();
     vi.spyOn(globalThis, "fetch").mockReturnValue(pending.promise);
-    const hook = renderHook(() => useStagedManifest(), { wrapper });
+    const hook = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(hook.result.current.canApply).toBe(true));
     const original = findRowById(base, surface.id)!;
     act(() =>
@@ -349,7 +349,7 @@ describe("staged save reconciliation", () => {
   it("keeps a later revert as a new staged change after the save completes", async () => {
     const pending = deferred<Response>();
     vi.spyOn(globalThis, "fetch").mockReturnValue(pending.promise);
-    const hook = renderHook(() => useStagedManifest(), { wrapper });
+    const hook = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(hook.result.current.canApply).toBe(true));
     act(() => hook.result.current.updateRow(surface.id, { name: "sent" }));
     let request!: Promise<Response>;
@@ -371,7 +371,7 @@ describe("staged save reconciliation", () => {
 
   it("rejects oversized batches without splitting or sending them", async () => {
     const fetch = vi.spyOn(globalThis, "fetch");
-    const hook = renderHook(() => useStagedManifest(), { wrapper });
+    const hook = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(hook.result.current.canApply).toBe(true));
     act(() => hook.result.current.updateRow(surface.id, { name: "x".repeat(1_000_001) }));
     await act(async () => {
@@ -385,7 +385,7 @@ describe("staged save reconciliation", () => {
   it("blocks further saves and preserves the draft when the outcome is unknown", async () => {
     const fetch = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("network"));
     vi.spyOn(console, "error").mockImplementation(() => {});
-    const hook = renderHook(() => useStagedManifest(), { wrapper });
+    const hook = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(hook.result.current.canApply).toBe(true));
     act(() => hook.result.current.updateRow(surface.id, { name: "draft" }));
     await act(async () => {
@@ -405,7 +405,7 @@ describe("staged save reconciliation", () => {
   it("does not accept an incomplete successful response", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(savedResponse([]));
     vi.spyOn(console, "error").mockImplementation(() => {});
-    const hook = renderHook(() => useStagedManifest(), { wrapper });
+    const hook = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(hook.result.current.canApply).toBe(true));
     act(() => hook.result.current.updateRow(surface.id, { name: "draft" }));
     await act(async () => {
@@ -431,7 +431,7 @@ describe("staged save reconciliation", () => {
         { status: 409 },
       ),
     );
-    const hook = renderHook(() => useStagedManifest(), { wrapper });
+    const hook = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(hook.result.current.canApply).toBe(true));
     act(() => hook.result.current.updateRow(surface.id, { name: "draft" }));
     await act(async () => {

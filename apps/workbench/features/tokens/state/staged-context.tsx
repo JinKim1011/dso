@@ -171,9 +171,9 @@ export function StagedManifestProvider({
   return <StagedContext.Provider value={value}>{children}</StagedContext.Provider>;
 }
 
-export function useStagedManifest() {
+export function useStagedContext() {
   const context = useContext(StagedContext);
   if (!context)
-    throw new Error("useStagedManifest must be used inside StagedManifestProvider");
+    throw new Error("useStagedContext must be used inside StagedManifestProvider");
   return context;
 }
