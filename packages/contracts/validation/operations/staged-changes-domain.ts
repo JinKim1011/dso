@@ -8,7 +8,8 @@ import type {
 } from "@repo/contracts/type";
 import {
   type TokenReferenceValidationError,
-  validateTokenReference,
+  createTokenReferenceLookup,
+  validateTokenReferenceWithLookup,
 } from "@repo/contracts/validation/token-reference";
 import { supportsTokenReferenceSlot } from "@repo/contracts/validation/token-reference-slots";
 import {
@@ -254,13 +255,10 @@ export function validateSaveStagedChanges(
     }
   }
 
+  const lookup = createTokenReferenceLookup(finalTokens, tokenTypes);
+
   for (const reference of finalReferences) {
-    for (const issue of validateTokenReference(
-      reference,
-      finalTokens,
-      tokenTypes,
-      projectId,
-    )) {
+    for (const issue of validateTokenReferenceWithLookup(reference, lookup, projectId)) {
       issues.push({
         ...issue,
         tokenId: reference.referencingTokenId,
