@@ -1,3 +1,4 @@
+import { ScreenLock } from "@/_shared/shell/screen-lock";
 import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
 import { StagedRowActions } from "@/features/tokens/components/staged/row/staged-row-actions";
 import { StagedHeader } from "@/features/tokens/components/staged/staged-header";
@@ -254,6 +255,61 @@ describe("staged save reconciliation", () => {
       await pending.promise;
     });
   });
+
+  it.each(["success", "failure"] as const)(
+    "locks the workbench until an Apply %s response is handled",
+    async (outcome) => {
+      const pending = deferred<Response>();
+      vi.spyOn(globalThis, "fetch").mockReturnValue(pending.promise);
+
+      function Workbench() {
+        const { updateRow, applyRow, baseModel, canApply, saveError } =
+          useStagedManifest();
+        return (
+          <ScreenLock>
+            <button
+              disabled={!canApply}
+              onClick={() => updateRow(surface.id, { name: "sent" })}
+            >
+              Edit
+            </button>
+            <button onClick={() => void applyRow(surface.id)}>Apply</button>
+            <button>Back</button>
+            <span>Base: {findRowById(baseModel, surface.id)?.name}</span>
+            {saveError && <p role="alert">{saveError}</p>}
+          </ScreenLock>
+        );
+      }
+
+      render(<Workbench />, { wrapper });
+      await waitFor(() => expect(screen.getByText("Edit")).toBeEnabled());
+      fireEvent.click(screen.getByText("Edit"));
+      fireEvent.click(screen.getByText("Apply"));
+
+      const content = screen.getByText("Back").parentElement!;
+      expect(content).toHaveAttribute("inert");
+      expect(content).toHaveAttribute("aria-busy", "true");
+      expect(screen.getByRole("status")).toHaveTextContent("Applying changes");
+
+      await act(async () => {
+        pending.resolve(
+          outcome === "success"
+            ? savedResponse([{ ...surface, name: "sent" }], referencesFor(surface.id))
+            : new Response("Save failed", { status: 400 }),
+        );
+        await pending.promise;
+      });
+
+      await waitFor(() => expect(content).not.toHaveAttribute("inert"));
+      expect(content).toHaveAttribute("aria-busy", "false");
+      expect(screen.getByRole("status")).toBeEmptyDOMElement();
+      if (outcome === "success") {
+        expect(screen.getByText("Base: sent")).toBeInTheDocument();
+      } else {
+        expect(screen.getByRole("alert")).toHaveTextContent("Save failed");
+      }
+    },
+  );
 
   it("merges later slot edits without restoring previously saved slots", async () => {
     const pending = deferred<Response>();
