@@ -1,9 +1,18 @@
+import type { ReactNode } from "react";
+import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
+import { findRowById } from "@/features/tokens/state/staged-graph-model";
+import {
+  StagedManifestProvider,
+  useStagedManifest,
+} from "@/features/tokens/state/staged-manifest-context";
 import { getDatabasePool } from "@/server/database";
 import { seedProject } from "@repo/application/fixtures";
 import { listTokenReferencesByProjectId } from "@repo/db/repositories/references";
 import { insertSession } from "@repo/db/repositories/sessions";
+import { listTokenTypesByProjectId } from "@repo/db/repositories/token-types";
 import { listTokensByProjectId } from "@repo/db/repositories/tokens";
 import { closeDatabase, resetDatabase, setupDatabase } from "@repo/db/test/database";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import {
   afterAll,
   afterEach,
@@ -37,7 +46,9 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
     });
 
     afterEach(() => {
+      localStorage.clear();
       vi.unstubAllEnvs();
+      vi.restoreAllMocks();
       vi.resetAllMocks();
     });
 
@@ -153,6 +164,57 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
         [],
       );
       expect((await POST(request(payload, crypto.randomUUID()))).status).toBe(401);
+    });
+
+    it("applies one row from the staged state through the real save route", async () => {
+      const fixture = await seedProject(database, "editor");
+      const sessionId = await createSession(fixture.user.id);
+      const [types, tokens, references] = await Promise.all([
+        listTokenTypesByProjectId(database, fixture.project.id),
+        listTokensByProjectId(database, fixture.project.id),
+        listTokenReferencesByProjectId(database, fixture.project.id),
+      ]);
+      const model = buildTokenGraphViewModel(types, tokens, references);
+      vi.spyOn(globalThis, "fetch").mockImplementation(async (_input, init) =>
+        POST(
+          new Request(`${origin}/api/design-tokens/staged-changes`, {
+            method: "POST",
+            headers: {
+              origin,
+              "content-type": "application/json",
+              cookie: `dso_session=${sessionId}`,
+            },
+            body: init?.body,
+          }),
+        ),
+      );
+      const hook = renderHook(() => useStagedManifest(), {
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <StagedManifestProvider projectId={fixture.project.id} baseManifest={model}>
+            {children}
+          </StagedManifestProvider>
+        ),
+      });
+      await waitFor(() => expect(hook.result.current.canApply).toBe(true));
+      act(() => {
+        hook.result.current.updateRow(fixture.referencedToken.id, { name: "saved" });
+        hook.result.current.updateRow(fixture.referencingToken.id, {
+          name: "still-draft",
+        });
+      });
+      await act(async () => {
+        expect(
+          (await hook.result.current.applyRow(fixture.referencedToken.id)).status,
+        ).toBe(200);
+      });
+      expect(await listTokensByProjectId(database, fixture.project.id)).toContainEqual({
+        ...fixture.referencedToken,
+        name: "saved",
+      });
+      expect(
+        findRowById(hook.result.current.draftModel, fixture.referencingToken.id)?.name,
+      ).toBe("still-draft");
+      expect(hook.result.current.changedRowCount).toBe(1);
     });
   },
 );
