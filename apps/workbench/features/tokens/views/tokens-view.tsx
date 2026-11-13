@@ -35,7 +35,7 @@ type TokensViewProps = {
 };
 
 export function TokensView({ category }: TokensViewProps) {
-  const { baseModel, draftModel, updateRow } = useStagedManifest();
+  const { draftModel, updateRow } = useStagedManifest();
 
   const resolveDisplay = useMemo(
     () => createTokenDisplayResolver(draftModel),
