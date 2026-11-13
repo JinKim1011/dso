@@ -114,12 +114,15 @@ Use cases, terminology, architecture, and first ER model are documented
   - A parent token type must belong to the same project.
   - Cyclic token-type hierarchies are rejected.
   - Primitive color and shadow tokens use a `single` value.
-  - Semantic color and shadow tokens use a `modes` value with `light` and `dark` entries.
+  - Semantic color and shadow tokens use a `modes` value; `light` and `dark` slots are optional.
   - Typography has primitive and semantic token types.
   - Typography primitive type names are `font-size`, `font-weight`, and `line-height`.
   - Typography primitive tokens use a `single` value.
-  - Typography semantic tokens use a `typography` value with `fontSize`,
-    `fontWeight`, and `lineHeight` fields.
+  - Typography semantic tokens use a `typography` value with optional
+    `fontSize`, `fontWeight`, and `lineHeight` slots.
+  - Token-reference rows identify targets by token ID and slot; CSS variables
+    are separate token properties and are not reference identities.
+  - A missing token-reference row means that slot has no assigned reference.
   - A token cannot reference itself.
   - Duplicate token references are rejected for the same referencing token, referenced token, and slot.
   - A token reference slot must be supported by the referencing token value and type.
@@ -190,9 +193,11 @@ This week replaces the current persistence path while preserving the existing st
 
 - Replace filesystem loading in `WorkbenchShell`.
 - Replace JSON persistence in `route.ts`.
-- Preserve `StagedManifestContext` and `useStagedManifestActions`.
+- Preserve `StagedContext` and `useStagedManifestActions`.
 - Convert database records into the existing token graph model.
-- Persist token edits, token references, token-type hierarchy changes, components, templates, and releases.
+- Completed and tested atomic staged token/reference saves with project-lock validation; Apply preserves unrelated edits, and failed saves retain drafts.
+- Keep staged-save API development-only. Require a trusted Origin, valid session, and project write access; disable production writes.
+- Persist token-type hierarchy changes, components, templates, and releases.
 - Implement protected workbench routes for login, logout, session lookup, project reads, resource edits, publishing, API-key creation/revocation, and published-release reads.
 - Wire login/logout/session routes to the configured secure session cookie and map authenticated sessions to the application authorization context.
 - Enforce the role model:

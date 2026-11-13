@@ -1,3 +1,5 @@
+import type { StagedChangesDomainIssue } from "@repo/contracts/validation/operations/staged-changes-domain";
+
 export class AuthenticationRequiredError extends Error {
   readonly code = "authentication-required";
 
@@ -19,6 +21,20 @@ export class DomainValidationError extends Error {
 
   constructor(readonly issues: readonly { code: string; message: string }[]) {
     super("The requested operation is not valid.");
+  }
+}
+
+export class StagedChangesValidationError extends DomainValidationError {
+  constructor(readonly issues: readonly StagedChangesDomainIssue[]) {
+    super(issues);
+  }
+}
+
+export class StagedChangesConflictError extends Error {
+  readonly code = "staged-changes-conflict";
+
+  constructor(readonly issues: readonly StagedChangesDomainIssue[]) {
+    super("The staged changes conflict with current project data.");
   }
 }
 

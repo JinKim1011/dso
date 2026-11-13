@@ -1,13 +1,36 @@
-import type { TokenType } from "@repo/contracts/type";
+import type { TokenType, TokenValue } from "@repo/contracts/type";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import {
   type ValidationIssue,
   isRecord,
   validateLimitedStringField,
 } from "@repo/contracts/validation/operations/common";
+import { isTokenFunction, tokenize } from "@csstools/css-tokenizer";
 
 export function hasTokenValueKind(value: unknown): value is { kind: string } {
   return isRecord(value) && typeof value.kind === "string";
+}
+
+export function containsCssVariable(value: string): boolean {
+  return (
+    /\bvar\s*\(/i.test(value) ||
+    tokenize({ css: value }).some(
+      (token) => isTokenFunction(token) && token[4].value.toLowerCase() === "var",
+    )
+  );
+}
+
+export function validatePrimitiveTokenValue(value: TokenValue): ValidationIssue[] {
+  if (value.kind === "single" && containsCssVariable(value.value)) {
+    return [
+      {
+        field: "value.value",
+        code: "unsupported-value",
+        message: "Primitive token values cannot contain CSS var() functions.",
+      },
+    ];
+  }
+  return [];
 }
 
 export function expectedValueKind(
@@ -79,34 +102,12 @@ export function validateTokenValue(value: unknown): ValidationIssue[] {
       validateValueField("value");
       break;
     case "modes":
-      for (const field of ["light", "dark"] as const) {
-        if (field in value) {
-          validateValueField(field);
-        }
-      }
-      if (
-        Object.keys(value).some((field) => !["kind", "light", "dark"].includes(field))
-      ) {
-        issues.push({
-          field: "value",
-          code: "unknown-field",
-          message: "value contains an unknown field.",
-        });
-      }
-      break;
     case "typography":
-      for (const field of ["fontSize", "fontWeight", "lineHeight"] as const) {
-        validateValueField(field);
-      }
-      if (
-        Object.keys(value).some(
-          (field) => !["kind", "fontSize", "fontWeight", "lineHeight"].includes(field),
-        )
-      ) {
+      if (Object.keys(value).some((field) => field !== "kind")) {
         issues.push({
           field: "value",
           code: "unknown-field",
-          message: "value contains an unknown field.",
+          message: "Semantic slots must be represented by token references.",
         });
       }
       break;

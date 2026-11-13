@@ -12,6 +12,9 @@ type TokenRow = QueryResultRow & {
   value: TokenValue;
 };
 
+type TokenUpdate =
+  { name: string; value?: TokenValue } | { name?: string; value: TokenValue };
+
 function mapTokenRow(row: TokenRow): Token {
   return {
     id: row.id,
@@ -51,4 +54,31 @@ export async function listTokensByProjectId(
   );
 
   return result.rows.map(mapTokenRow);
+}
+
+export async function updateToken(
+  database: Queryable,
+  projectId: string,
+  tokenId: string,
+  update: TokenUpdate,
+): Promise<Token | null> {
+  const result = await database.query<TokenRow>(
+    `
+      UPDATE tokens
+      SET name = COALESCE($1::text, name),
+          value = COALESCE($2::jsonb, value)
+      WHERE project_id = $3
+        AND id = $4
+      RETURNING id, project_id, token_type_id, name, css_var, value
+    `,
+    [
+      update.name ?? null,
+      update.value === undefined ? null : JSON.stringify(update.value),
+      projectId,
+      tokenId,
+    ],
+  );
+
+  const row = result.rows[0];
+  return row ? mapTokenRow(row) : null;
 }

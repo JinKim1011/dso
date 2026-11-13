@@ -19,7 +19,7 @@
 
 - Introduce category routes under `apps/workbench/app/tokens/` for `color`, `typography`, `spacing`, `radius`, `motion`, and `shadow`.
 - Keep `TokensView` for common shell and ReactFlow behavior
-- Move category-specific form components into `tokens/<category>/components` (`TokenColorForm`, `TokenTypographyForm`, `TokenSingleValueForm`).
+- Move category-specific form components into `tokens/<category>/components` (`TokenModesForm`, `TokenTypographyForm`, `TokenSingleForm`).
 - Keep `navigation.ts` pointing to the selected default category entry point in the workbench shell
 
 ## 5. Approach

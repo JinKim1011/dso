@@ -4,6 +4,7 @@ import {
   supportsTokenReferenceSlot,
   tokenReferenceSlots,
 } from "@repo/contracts/validation/token-reference-slots";
+import { validatePrimitiveTokenValue } from "@repo/contracts/validation/token-value";
 
 export type TokenReferenceValidationError = {
   code:
@@ -16,19 +17,34 @@ export type TokenReferenceValidationError = {
     | "missing-referencing-token-type"
     | "missing-referenced-token-type"
     | "incompatible-referenced-token-type"
+    | "invalid-referenced-token-value"
     | "invalid-referencing-token-kind";
   message: string;
 };
 
-export function validateTokenReference(
-  reference: TokenReference,
+type TokenReferenceLookup = {
+  tokenById: ReadonlyMap<string, Token>;
+  tokenTypeById: ReadonlyMap<string, TokenType>;
+};
+
+export function createTokenReferenceLookup(
   tokens: readonly Token[],
   tokenTypes: readonly TokenType[],
+): TokenReferenceLookup {
+  return {
+    tokenById: new Map(tokens.map((token) => [token.id, token])),
+    tokenTypeById: new Map(tokenTypes.map((type) => [type.id, type])),
+  };
+}
+
+export function validateTokenReferenceWithLookup(
+  reference: TokenReference,
+  lookup: TokenReferenceLookup,
   projectId: string,
 ): TokenReferenceValidationError[] {
-  const errors: TokenReferenceValidationError[] = [];
+  const { tokenById, tokenTypeById } = lookup;
 
-  const tokenById = new Map(tokens.map((token) => [token.id, token]));
+  const errors: TokenReferenceValidationError[] = [];
 
   const referencedToken = tokenById.get(reference.referencedTokenId);
 
@@ -51,8 +67,6 @@ export function validateTokenReference(
   if (!referencedToken || !referencingToken) {
     return errors;
   }
-
-  const tokenTypeById = new Map(tokenTypes.map((tokenType) => [tokenType.id, tokenType]));
 
   const referencingTokenType = tokenTypeById.get(referencingToken.tokenTypeId);
 
@@ -135,5 +149,26 @@ export function validateTokenReference(
     });
   }
 
+  if (
+    referencedTokenType.kind === "primitive" &&
+    validatePrimitiveTokenValue(referencedToken.value).length > 0
+  ) {
+    errors.push({
+      code: "invalid-referenced-token-value",
+      message: "Referenced primitive token values cannot contain CSS var() functions.",
+    });
+  }
+
   return errors;
+}
+
+export function validateTokenReference(
+  reference: TokenReference,
+  tokens: readonly Token[],
+  tokenTypes: readonly TokenType[],
+  projectId: string,
+): TokenReferenceValidationError[] {
+  const lookup = createTokenReferenceLookup(tokens, tokenTypes);
+
+  return validateTokenReferenceWithLookup(reference, lookup, projectId);
 }

@@ -39,9 +39,5 @@ export const modeToken = {
   tokenTypeId: fixtureIds.semanticTokenType,
   name: "surface",
   cssVar: "--color-surface",
-  value: {
-    kind: "modes",
-    light: "#ffffff",
-    dark: "#111111",
-  },
+  value: { kind: "modes" },
 } satisfies Token;

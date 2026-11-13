@@ -40,6 +40,52 @@ export async function insertTokenReference(
   return mapTokenReferenceRow(result.rows[0]!);
 }
 
+export async function setTokenReference(
+  database: Queryable,
+  reference: TokenReference,
+): Promise<TokenReference | null> {
+  const result = await database.query<TokenReferenceRow>(
+    `
+      INSERT INTO token_references (referencing_token_id, referenced_token_id, project_id, slot)
+      SELECT id, $2, project_id, $4
+      FROM tokens
+      WHERE id = $1 AND project_id = $3
+      ON CONFLICT (referencing_token_id, slot)
+      DO UPDATE SET referenced_token_id = EXCLUDED.referenced_token_id
+      WHERE token_references.project_id = EXCLUDED.project_id
+      RETURNING referencing_token_id, referenced_token_id, project_id, slot
+    `,
+    [
+      reference.referencingTokenId,
+      reference.referencedTokenId,
+      reference.projectId,
+      reference.slot,
+    ],
+  );
+
+  const row = result.rows[0];
+  return row ? mapTokenReferenceRow(row) : null;
+}
+
+export async function deleteTokenReference(
+  database: Queryable,
+  projectId: string,
+  referencingTokenId: string,
+  slot: TokenReferenceSlot,
+): Promise<boolean> {
+  const result = await database.query(
+    `
+      DELETE FROM token_references
+      WHERE project_id = $1
+        AND referencing_token_id = $2
+        AND slot = $3
+    `,
+    [projectId, referencingTokenId, slot],
+  );
+
+  return result.rowCount === 1;
+}
+
 export async function listTokenReferencesByProjectId(
   database: Queryable,
   projectId: string,

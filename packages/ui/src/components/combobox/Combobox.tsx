@@ -1,7 +1,7 @@
 "use client";
 
 import { autoUpdate, flip, size, useFloating } from "@floating-ui/react";
-import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
+import { ChevronDownIcon, ChevronUpIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
 import {
   type FocusEventHandler,
@@ -102,7 +102,7 @@ export function Combobox({
   };
 
   const handleSelect = (nextValue: string) => {
-    onChange(nextValue);
+    if (nextValue !== "") onChange(nextValue);
     setIsOpen(false);
   };
   const handleClick = () => {
@@ -146,7 +146,21 @@ export function Combobox({
         value={inputValue}
         placeholder={placeholder}
         disabled={disabled}
-        rightIcon={isOpen ? ChevronUpIcon : ChevronDownIcon}
+        rightIcon={value ? undefined : isOpen ? ChevronUpIcon : ChevronDownIcon}
+        rightAction={
+          value ? (
+            <button
+              type="button"
+              aria-label="Clear selection"
+              disabled={disabled}
+              className="text-content-tertiary hover:text-content-primary disabled:text-content-quaternary flex size-3.5 shrink-0 cursor-pointer items-center justify-center disabled:cursor-not-allowed"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => onChange(undefined)}
+            >
+              <Cross2Icon aria-hidden className="size-4" />
+            </button>
+          ) : undefined
+        }
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         aria-haspopup="listbox"

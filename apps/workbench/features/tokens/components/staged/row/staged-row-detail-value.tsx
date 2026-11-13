@@ -1,4 +1,9 @@
-import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
+import type {
+  TokenGraphViewModel,
+  TokenValueViewModel,
+} from "@/features/tokens/model/token-graph";
+import { findRowById } from "@/features/tokens/state/staged-graph-model";
+import type { TokenReferenceSlot } from "@repo/contracts/type";
 import { Text } from "@repo/ui";
 
 type valueRow = {
@@ -13,58 +18,41 @@ type StagedRowDetailValueProps = {
   afterName?: string;
   before?: TokenValueViewModel;
   after?: TokenValueViewModel;
+  baseModel?: TokenGraphViewModel;
+  draftModel?: TokenGraphViewModel;
 };
 
 function renderValueRows(
   item: TokenValueViewModel | undefined,
   compareToItem?: TokenValueViewModel | undefined,
+  model?: TokenGraphViewModel,
 ): valueRow[] {
   if (!item) return [{ label: "Value", value: "-" }];
 
   const value = item.value;
 
-  if (value.kind === "typography") {
-    const previousTypography =
-      compareToItem?.value.kind === "typography" ? compareToItem.value : undefined;
-
-    return [
-      {
-        label: "fontSize",
-        value: value.fontSize,
-        changed: value.fontSize !== previousTypography?.fontSize,
-      },
-      {
-        label: "fontWeight",
-        value: value.fontWeight,
-        changed: value.fontWeight !== previousTypography?.fontWeight,
-      },
-      {
-        label: "lineHeight",
-        value: value.lineHeight,
-        changed: value.lineHeight !== previousTypography?.lineHeight,
-      },
-    ];
-  }
-
-  if (value.kind === "modes") {
-    const previousModes =
-      compareToItem?.value.kind === "modes" ? compareToItem.value : undefined;
-
-    const currentLight = value.light ?? "-";
-    const currentDark = value.dark ?? "-";
-
-    return [
-      {
-        label: "Light",
-        value: currentLight,
-        changed: currentLight !== (previousModes?.light ?? "-"),
-      },
-      {
-        label: "Dark",
-        value: currentDark,
-        changed: currentDark !== (previousModes?.dark ?? "-"),
-      },
-    ];
+  if (value.kind === "typography" || value.kind === "modes") {
+    const slots: { label: string; slot: TokenReferenceSlot }[] =
+      value.kind === "modes"
+        ? [
+            { label: "Light", slot: "light" },
+            { label: "Dark", slot: "dark" },
+          ]
+        : [
+            { label: "fontSize", slot: "fontSize" },
+            { label: "fontWeight", slot: "fontWeight" },
+            { label: "lineHeight", slot: "lineHeight" },
+          ];
+    return slots.map(({ label, slot }) => {
+      const tokenId = item.references?.[slot];
+      return {
+        label,
+        value: tokenId
+          ? (model && findRowById(model, tokenId)?.name) || "Missing token"
+          : "-",
+        changed: tokenId !== compareToItem?.references?.[slot],
+      };
+    });
   }
 
   if (value.kind === "single") {
@@ -89,9 +77,11 @@ export function StagedRowDetailValue({
   afterName,
   before,
   after,
+  baseModel,
+  draftModel,
 }: StagedRowDetailValueProps) {
-  const beforeRows = renderValueRows(before, after);
-  const afterRows = renderValueRows(after, before);
+  const beforeRows = renderValueRows(before, after, baseModel);
+  const afterRows = renderValueRows(after, before, draftModel);
 
   return (
     <div className="gap-micro flex w-full flex-col">

@@ -20,4 +20,19 @@ describe("validSeed", () => {
 
     expect(new Set(ids).size).toBe(ids.length);
   });
+
+  it("stores semantic mode and typography slots only as references", () => {
+    const tokens = validSeed.tokens.filter(
+      (token) => token.value.kind === "modes" || token.value.kind === "typography",
+    );
+    expect(tokens.length).toBeGreaterThan(0);
+    for (const token of tokens) {
+      expect(token.value).toEqual({ kind: token.value.kind });
+      expect(
+        validSeed.tokenReferences.some(
+          (reference) => reference.referencingTokenId === token.id,
+        ),
+      ).toBe(true);
+    }
+  });
 });

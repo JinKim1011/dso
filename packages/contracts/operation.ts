@@ -91,3 +91,44 @@ export type PublishedReleaseSnapshot = {
   components: Component[];
   templates: DocumentTemplate[];
 };
+
+export type ReferenceChange = {
+  slot: TokenReferenceSlot;
+  beforeTokenId: string | null;
+  afterTokenId: string | null;
+};
+
+export type StagedTokenChange = {
+  tokenId: string;
+  name?: {
+    before: string;
+    after: string;
+  };
+  value?: {
+    before: TokenValue;
+    after: TokenValue;
+  };
+  references: ReferenceChange[];
+};
+
+export type SaveStagedChangesRequest = {
+  projectId: string;
+  changes: StagedTokenChange[];
+};
+
+export type SaveStagedChangesResponse =
+  | { ok: true; tokens: Token[]; references: TokenReference[] }
+  | {
+      ok: false;
+      error: {
+        code: string;
+        message: string;
+        issues?: readonly {
+          code: string;
+          message: string;
+          field?: string;
+          tokenId?: string;
+          referencedTokenId?: string;
+        }[];
+      };
+    };

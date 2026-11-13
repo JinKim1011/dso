@@ -55,9 +55,5 @@ export const updateTokenRequest = {
   tokenId: fixtureIds.modeToken,
   name: "surface",
   cssVar: "--color-surface",
-  value: {
-    kind: "modes",
-    light: "#ffffff",
-    dark: "#111111",
-  },
+  value: { kind: "modes" },
 } satisfies UpdateTokenRequest;

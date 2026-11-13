@@ -33,6 +33,9 @@
     "check-types": "tsc --noEmit",
     "check-fixtures": "tsc -p fixtures/tsconfig.fixtures.json"
   },
+  "dependencies": {
+    "@csstools/css-tokenizer": "^3.0.4"
+  },
   "devDependencies": {
     "@repo/typescript-config": "*",
     "@types/node": "^26.6.6",

@@ -1,5 +1,7 @@
 import type { Token, TokenType } from "@repo/contracts/type";
+import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
+import { buildStagedTokenChange } from "@/features/tokens/model/staged/staged-change-diff";
 import { createTokenReferenceLookup } from "./create-token-reference-lookup";
 import { mapTokenValue } from "./map-token-value";
 
@@ -48,37 +50,137 @@ describe("mapTokenValue", () => {
     });
   });
 
-  it("maps mode values, including missing modes", () => {
+  it.each(["spacing", "radius", "motion"] as const)(
+    "round-trips the semantic %s value reference through staging",
+    (category) => {
+      const primitiveType: TokenType = { ...colorType, category };
+      const semanticType: TokenType = {
+        ...primitiveType,
+        id: "semantic",
+        kind: "semantic",
+      };
+      const source: Token = { ...token, id: "source", tokenTypeId: semanticType.id };
+      const replacement: Token = { ...token, id: "replacement" };
+      const reference = {
+        projectId: token.projectId,
+        referencingTokenId: source.id,
+        referencedTokenId: token.id,
+        slot: "value" as const,
+      };
+      const makeRow = (references: (typeof reference)[]) => ({
+        id: source.id,
+        name: source.name,
+        ...mapTokenValue(
+          source,
+          semanticType,
+          createTokenReferenceLookup(
+            [primitiveType, semanticType],
+            [source, token, replacement],
+            references,
+          ),
+        ),
+      });
+      const empty = makeRow([]);
+      const assigned = makeRow([reference]);
+      const replaced = makeRow([{ ...reference, referencedTokenId: replacement.id }]);
+      expect(buildStagedTokenChange(assigned, assigned)).toBeNull();
+      expect(buildStagedTokenChange(empty, assigned)?.references).toEqual([
+        { slot: "value", beforeTokenId: null, afterTokenId: token.id },
+      ]);
+      expect(buildStagedTokenChange(assigned, replaced)?.references).toEqual([
+        { slot: "value", beforeTokenId: token.id, afterTokenId: replacement.id },
+      ]);
+      expect(buildStagedTokenChange(assigned, empty)?.references).toEqual([
+        { slot: "value", beforeTokenId: token.id, afterTokenId: null },
+      ]);
+    },
+  );
+
+  it("treats a mode without references as empty", () => {
     const modesToken: Token = {
       ...token,
-      value: {
-        kind: "modes",
-        light: "#fff",
-      },
+      value: { kind: "modes" },
     };
 
     expect(mapTokenValue(modesToken, { ...colorType, kind: "semantic" }, lookup)).toEqual(
       {
-        value: modesToken.value,
-        meta: "light:#fff dark:-",
-        preview: {
-          kind: "modes",
-          light: "#fff",
-          dark: undefined,
-        },
+        value: { kind: "modes" },
+        meta: "unset / unset",
+        preview: undefined,
       },
     );
   });
 
-  it("maps typography values", () => {
+  it("preserves referenced token IDs while resolving mode previews", () => {
+    const semanticType: TokenType = { ...colorType, id: "semantic", kind: "semantic" };
+    const modesToken: Token = {
+      ...token,
+      id: "surface",
+      tokenTypeId: semanticType.id,
+      value: { kind: "modes" },
+    };
+    const references = [
+      {
+        projectId: token.projectId,
+        referencingTokenId: modesToken.id,
+        referencedTokenId: token.id,
+        slot: "light" as const,
+      },
+    ];
+    const referenceLookup = createTokenReferenceLookup(
+      [colorType, semanticType],
+      [token, modesToken],
+      references,
+    );
+
+    expect(mapTokenValue(modesToken, semanticType, referenceLookup)).toMatchObject({
+      value: { kind: "modes" },
+      references: { light: token.id },
+      meta: "sample / unset",
+      preview: { kind: "modes", light: "oklch(98.5% 0 0)", dark: undefined },
+    });
+  });
+
+  it("resolves shadow modes from referenced primitive values", () => {
+    const primitiveType: TokenType = { ...colorType, category: "shadow" };
+    const semanticType: TokenType = {
+      ...primitiveType,
+      id: "shadow-semantic",
+      kind: "semantic",
+    };
+    const shadow: Token = {
+      ...token,
+      value: { kind: "single", value: "0 1px 2px #000" },
+    };
+    const semantic: Token = {
+      ...token,
+      id: "shadow-surface",
+      tokenTypeId: semanticType.id,
+      value: { kind: "modes" },
+    };
+    const referenceLookup = createTokenReferenceLookup(
+      [primitiveType, semanticType],
+      [shadow, semantic],
+      [
+        {
+          projectId: token.projectId,
+          referencingTokenId: semantic.id,
+          referencedTokenId: shadow.id,
+          slot: "dark",
+        },
+      ],
+    );
+    expect(mapTokenValue(semantic, semanticType, referenceLookup)).toMatchObject({
+      meta: "unset / sample",
+      references: { dark: shadow.id },
+      preview: { kind: "modes", light: undefined, dark: "0 1px 2px #000" },
+    });
+  });
+
+  it("treats typography without references as empty", () => {
     const typographyToken: Token = {
       ...token,
-      value: {
-        kind: "typography",
-        fontSize: "1rem",
-        fontWeight: "400",
-        lineHeight: "1.5",
-      },
+      value: { kind: "typography" },
     };
 
     expect(
@@ -88,18 +190,40 @@ describe("mapTokenValue", () => {
         lookup,
       ),
     ).toEqual({
-      value: typographyToken.value,
-      meta: "1rem / 400 / 1.5",
-      preview: {
-        kind: "typography",
-        typography: {
-          fontSize: "1rem",
-          fontWeight: "400",
-          lineHeight: "1.5",
-        },
-      },
+      value: { kind: "typography" },
+      meta: "unset / unset / unset",
+      preview: undefined,
     });
   });
+
+  it.each(Array.from({ length: 8 }, (_, mask) => mask))(
+    "only previews typography when every slot is present (mask %i)",
+    (mask) => {
+      const body = validSeed.tokens.find(
+        (item) => item.name === "body" && item.value.kind === "typography",
+      )!;
+      const bodyType = validSeed.tokenTypes.find((type) => type.id === body.tokenTypeId)!;
+      const slots = ["fontSize", "fontWeight", "lineHeight"] as const;
+      const references = validSeed.tokenReferences.filter(
+        (reference) =>
+          reference.referencingTokenId === body.id &&
+          slots.some((slot, index) => slot === reference.slot && !!(mask & (1 << index))),
+      );
+      const mapped = mapTokenValue(
+        body,
+        bodyType,
+        createTokenReferenceLookup(validSeed.tokenTypes, validSeed.tokens, references),
+      );
+      expect(mapped.preview).toEqual(
+        mask === 7
+          ? {
+              kind: "typography",
+              typography: { fontSize: "1rem", fontWeight: "400", lineHeight: "1.7" },
+            }
+          : undefined,
+      );
+    },
+  );
 
   it("maps unresolved values", () => {
     const unresolvedToken: Token = {

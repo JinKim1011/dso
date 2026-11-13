@@ -205,7 +205,9 @@ This week replaces the current persistence path while preserving staged editing.
 #### Build
 
 - Replace filesystem persistence with database repositories.
-- Preserve `StagedManifestContext` and `useStagedManifestActions`.
+- Preserve `StagedContext` and `useStagedManifestActions`.
+- Completed and tested atomic staged token/reference saves with project-lock validation; Apply preserves unrelated edits, and failed saves retain drafts.
+- Keep staged-save API development-only. Require a trusted Origin, valid session, and project write access; disable production writes.
 - Wire login/logout/session routes to secure, configured cookies and map authenticated sessions to the application authorization context.
 - Protect project reads, token/reference/hierarchy writes, component/template writes, publishing, API-key creation/revocation, and release reads.
 - Enforce:

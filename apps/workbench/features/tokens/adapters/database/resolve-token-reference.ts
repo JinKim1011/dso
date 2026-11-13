@@ -1,22 +1,18 @@
 import type { TokenReferenceLookup } from "@/features/tokens/adapters/database/create-token-reference-lookup";
 import type { Token, TokenReferenceSlot, TokenType } from "@repo/contracts/type";
 import { isCompatibleReferencedType } from "@repo/contracts/validation/token-reference-compatibility";
+import { validatePrimitiveTokenValue } from "@repo/contracts/validation/token-value";
 
 function resolveTokenReferenceValue(
   token: Token,
   tokenType: TokenType,
   slot: TokenReferenceSlot,
-  value: string | undefined,
   referenceLookup: TokenReferenceLookup,
 ): string | undefined {
   const result = referenceLookup.find(token.id, slot);
 
   if (result.kind === "not-found") {
-    if (value && /\bvar\s*\(/i.test(value)) {
-      throw new Error(`Missing reference for token "${token.id}" and slot "${slot}".`);
-    }
-
-    return value;
+    return undefined;
   }
 
   const target = result.token;
@@ -27,23 +23,10 @@ function resolveTokenReferenceValue(
     target.projectId !== token.projectId ||
     targetType.projectId !== token.projectId ||
     !isCompatibleReferencedType(target, tokenType, targetType, slot) ||
+    validatePrimitiveTokenValue(target.value).length > 0 ||
     target.value.kind !== "single"
   ) {
     throw new Error(`Invalid reference for token "${token.id}" and slot "${slot}".`);
-  }
-
-  const match = value?.match(/^\s*var\(\s*(--[^\s(),]+)\s*\)\s*$/);
-
-  if (!target.cssVar || match?.[1] !== target.cssVar) {
-    throw new Error(
-      `Value and reference disagree for token "${token.id}" and slot "${slot}".`,
-    );
-  }
-
-  if (/\bvar\s*\(/i.test(target.value.value)) {
-    throw new Error(
-      `Referenced token "${target.id}" has an unresolved value for token "${token.id}" and slot "${slot}".`,
-    );
   }
 
   return target.value.value;
@@ -53,7 +36,11 @@ export function resolveTypographyToken(
   token: Token,
   tokenType: TokenType,
   referenceLookup: TokenReferenceLookup,
-): { fontSize: string; fontWeight: string; lineHeight: string } {
+): {
+  fontSize: string | undefined;
+  fontWeight: string | undefined;
+  lineHeight: string | undefined;
+} {
   if (
     token.value.kind !== "typography" ||
     token.tokenTypeId !== tokenType.id ||
@@ -64,26 +51,20 @@ export function resolveTypographyToken(
     throw new Error(`Token "${token.id}" is not a semantic typography token.`);
   }
 
-  const { fontSize, fontWeight, lineHeight } = token.value;
-
-  function resolve(slot: "fontSize" | "fontWeight" | "lineHeight", value: string) {
-    const resolved = resolveTokenReferenceValue(
+  return {
+    fontSize: resolveTokenReferenceValue(token, tokenType, "fontSize", referenceLookup),
+    fontWeight: resolveTokenReferenceValue(
       token,
       tokenType,
-      slot,
-      value,
+      "fontWeight",
       referenceLookup,
-    );
-    if (resolved === undefined) {
-      throw new Error(`Missing value for token "${token.id}" and slot "${slot}".`);
-    }
-    return resolved;
-  }
-
-  return {
-    fontSize: resolve("fontSize", fontSize),
-    fontWeight: resolve("fontWeight", fontWeight),
-    lineHeight: resolve("lineHeight", lineHeight),
+    ),
+    lineHeight: resolveTokenReferenceValue(
+      token,
+      tokenType,
+      "lineHeight",
+      referenceLookup,
+    ),
   };
 }
 
@@ -103,19 +84,7 @@ export function resolveModeToken(
   }
 
   return {
-    light: resolveTokenReferenceValue(
-      token,
-      tokenType,
-      "light",
-      token.value.light,
-      referenceLookup,
-    ),
-    dark: resolveTokenReferenceValue(
-      token,
-      tokenType,
-      "dark",
-      token.value.dark,
-      referenceLookup,
-    ),
+    light: resolveTokenReferenceValue(token, tokenType, "light", referenceLookup),
+    dark: resolveTokenReferenceValue(token, tokenType, "dark", referenceLookup),
   };
 }

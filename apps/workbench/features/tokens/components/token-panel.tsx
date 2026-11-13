@@ -1,11 +1,13 @@
 "use client";
 
-import type { TokenTypographyOptions } from "@/features/tokens/components/form/token-typography-form";
 import { FlowControls } from "@/features/tokens/components/react-flow/flow-controls";
-import {
-  TokenValueDetail,
-  type TokenValueDetailUpdate,
-} from "@/features/tokens/components/token-value/token-value-detail";
+import { TokenValueDetail } from "@/features/tokens/components/token-value/token-value-detail";
+import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
+import type {
+  TokenReferenceOption,
+  TokenValueDetailUpdate,
+  TypographyReferenceOptions,
+} from "@/features/tokens/model/token-graph";
 import { TokenRowViewModel } from "@/features/tokens/model/token-row";
 import { createMotionTransition } from "@repo/ui";
 import { type ReactFlowInstance } from "@xyflow/react";
@@ -17,7 +19,9 @@ type TokenPanelProps = {
   hasNextRow: boolean;
   hasPreviousRow: boolean;
   flowInstance: ReactFlowInstance | null;
-  typographyOptions: TokenTypographyOptions;
+  typographyOptions: TypographyReferenceOptions;
+  modeOptions: TokenReferenceOption[];
+  resolveDisplay: TokenDisplayResolver;
   selectPreviousRow: () => void;
   selectNextRow: () => void;
   handleSaveRow: (rowId: string, update: TokenValueDetailUpdate) => void;
@@ -30,6 +34,8 @@ export function TokenPanel({
   hasPreviousRow,
   flowInstance,
   typographyOptions,
+  modeOptions,
+  resolveDisplay,
   selectPreviousRow,
   selectNextRow,
   handleSaveRow,
@@ -81,6 +87,8 @@ export function TokenPanel({
                 kind={selectedRow.kind}
                 value={selectedRow.value}
                 typographyOptions={typographyOptions}
+                modeOptions={modeOptions}
+                resolveDisplay={resolveDisplay}
                 onSave={handleSaveRow}
                 onClose={clearSelection}
               />

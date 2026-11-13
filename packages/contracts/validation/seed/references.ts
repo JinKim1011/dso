@@ -1,15 +1,19 @@
 import type { SeedData } from "@repo/contracts/seed";
 import type { SeedValidationError } from "@repo/contracts/validation/seed/types";
-import { validateTokenReference } from "@repo/contracts/validation/token-reference";
+import {
+  createTokenReferenceLookup,
+  validateTokenReferenceWithLookup,
+} from "@repo/contracts/validation/token-reference";
 
 export function validateTokenReferences(seed: SeedData): SeedValidationError[] {
   const errors: SeedValidationError[] = [];
 
+  const lookup = createTokenReferenceLookup(seed.tokens, seed.tokenTypes);
+
   for (const reference of seed.tokenReferences) {
-    const referenceErrors = validateTokenReference(
+    const referenceErrors = validateTokenReferenceWithLookup(
       reference,
-      seed.tokens,
-      seed.tokenTypes,
+      lookup,
       reference.projectId,
     );
 

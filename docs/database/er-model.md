@@ -147,6 +147,9 @@ erDiagram
 - A token can also be referenced by zero or many other tokens.
   - Both directions are represented by `TOKEN_REFERENCES`.
   - `referencing_token_id` is the source and `referenced_token_id` is the target.
+  - References are identified by target token ID and slot, independently of
+    token names and CSS variables.
+  - A supported slot may have no reference.
 - A component can have zero or many document templates.
   - Each document template belongs to exactly one component.
 
@@ -157,6 +160,33 @@ erDiagram
 - `admin`: may edit project resources, publish releases, and manage API keys.
 
 Project ownership and release-publishing permission are inferred from `project_members`; the schema does not add `projects.owner_id` or `releases.published_by`. The application records the user who performs a publish action in `audit_events`.
+
+### Token graph writes
+
+The staged-save service expects an already parsed request and an authenticated
+application context. It checks project membership and the editor role, then uses a
+`READ COMMITTED` transaction to lock the project row before reading the token
+graph. It checks submitted `before` values and validates the proposed final graph
+before writing. Errors roll back the entire batch.
+
+The save request contains only changed token names/values and reference slots.
+It does not update `cssVar`. An omitted slot change leaves the current reference
+unchanged, a token ID assigns or replaces it, and `null` removes it. Empty
+batches and no-op changes are valid. Semantic mode slots may be independently
+empty; a typography preview is available only when all three reference slots
+resolve, while each populated mode slot can be previewed independently.
+
+Token, token-type, and reference writers that can run against an existing project
+must use the same project transaction protocol. The lock only coordinates writers
+that participate in it; repository calls and direct SQL do not acquire it
+automatically. The development-only request boundary parses requests, checks the
+session and trusted origin, and invokes the service. Login and production CSRF
+protection remain unfinished; production writes are disabled.
+
+Workbench Apply one sends the selected row, while Apply all sends one atomic batch.
+On success the saved rows update the baseline and edits made after submission remain
+staged. If the save outcome is unknown, the draft is retained and another Apply is
+blocked until the page is reloaded and the current data can be compared.
 
 ### Audit-event scope
 

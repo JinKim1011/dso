@@ -1,8 +1,8 @@
 "use client";
 
+import { cn } from "@repo/ui/lib/utils";
 import { motion } from "framer-motion";
 import { HTMLAttributes, useCallback, useEffect, useRef, useState } from "react";
-import { cn } from "../../lib/utils";
 import { createMotionTransition } from "../../types/motion";
 import { ListItem, type ListItemProps } from "./ListItem";
 

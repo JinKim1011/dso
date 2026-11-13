@@ -194,17 +194,13 @@ const semanticColorValues = [
 ] as const;
 
 const semanticColorTokens: Token[] = semanticColorValues.map(
-  ([name, lightPrimitiveName, darkPrimitiveName, tokenTypeId]) => ({
+  ([name, , , tokenTypeId]) => ({
     id: tokenId(),
     projectId: seedIds.project,
     tokenTypeId,
     name,
     cssVar: `--color-${name}`,
-    value: {
-      kind: "modes",
-      light: `var(--base-${lightPrimitiveName})`,
-      dark: `var(--base-${darkPrimitiveName})`,
-    },
+    value: { kind: "modes" },
   }),
 );
 
@@ -263,21 +259,14 @@ const typographySemanticValues = [
   ["label-small", "micro", "regular", "tight"],
 ] as const;
 
-const typographySemanticTokens: Token[] = typographySemanticValues.map(
-  ([name, fontSize, fontWeight, lineHeight]) => ({
-    id: tokenId(),
-    projectId: seedIds.project,
-    tokenTypeId: semanticTypographyTypeId,
-    name,
-    cssVar: null,
-    value: {
-      kind: "typography",
-      fontSize: `var(--text-${fontSize})`,
-      fontWeight: `var(--font-${fontWeight})`,
-      lineHeight: `var(--leading-${lineHeight})`,
-    },
-  }),
-);
+const typographySemanticTokens: Token[] = typographySemanticValues.map(([name]) => ({
+  id: tokenId(),
+  projectId: seedIds.project,
+  tokenTypeId: semanticTypographyTypeId,
+  name,
+  cssVar: null,
+  value: { kind: "typography" },
+}));
 
 const motionValues = [
   ["ease-in-quad", "cubic-bezier(0.55, 0.085, 0.68, 0.53)"],

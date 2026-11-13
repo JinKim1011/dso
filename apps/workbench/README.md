@@ -24,7 +24,7 @@ npm run dev
 ```
 app/
 ├── _shared/              # Shared context and shell components
-│   ├── context/          # StagedManifestContext, WorkbenchShellContext
+│   ├── context/          # StagedContext, WorkbenchShellContext
 │   └── shell/            # Header, Navigation, WorkbenchShell layout
 ├── _config/              # Navigation and app configuration
 ├── api/                  # API routes (manifest endpoints)
@@ -67,15 +67,20 @@ Define and inspect token schema structures, including intent, axes, context, and
 
 ### Staged View
 
-Review and manage token changes before applying them to your manifest. Useful for testing multiple changes together.
+Review and manage token changes before applying them to PostgreSQL. Apply one
+changed token or submit all staged token changes as one atomic batch.
 
 ### Persistence & Configuration
 
-The staged editor persists changes by calling the internal manifest-save route currently exposed at `/api/design-tokens/manifest`. This endpoint is for local DSO workbench use only; it is not a public API for consumer apps or production runtime use.
+PostgreSQL is the source of truth for saved workbench token data. Unapplied
+changes are kept as a browser draft. The development-only staged-save endpoint
+requires a configured trusted Origin, a valid session, and project write
+permission; production writes remain disabled until the workbench authentication
+and security routes are complete.
 
-DSO persists design tokens and the manifest as versioned files in the repository, such as JSON or TypeScript outputs. It does not require a database. The output location should be defined by a repo-level config file that is checked into source control, so teams can keep the storage path aligned with their project layout without relying on ad hoc environment-specific settings.
-
-By default, the workbench writes to the repository root `design-tokens-manifest.json`, but that location should remain configurable through the repo config as the implementation evolves.
+For semantic color and shadow modes, each assigned slot is previewed
+independently. A semantic typography preview is shown only when its
+`fontSize`, `fontWeight`, and `lineHeight` references all resolve.
 
 ## Future Direction
 
@@ -125,8 +130,8 @@ graph TB
   end
 
   subgraph "Data Layer"
-    Manifest["Design Tokens<br/>Manifest"]
-    Context["Manifest Context<br/>State Management"]
+    Database["PostgreSQL<br/>Source of Truth"]
+    Context["Staged Context<br/>Base and Draft State"]
   end
 
   subgraph "UI Components"
@@ -142,15 +147,15 @@ graph TB
   TM --> TF
   TF --> TV
   TF --> Schema
-  TV --> Manifest
-  Manifest --> Context
+  TV --> Database
+  Database --> Context
   Context --> TM
   Context --> Schema
   Context --> Tree
   Tree --> TM
   Schema --> Staged
 
-  Manifest -.-> AIAgent
+  Database -.-> AIAgent
   AIAgent -.-> Inference
   Inference -.-> TF
 

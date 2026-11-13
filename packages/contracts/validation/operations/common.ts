@@ -23,6 +23,8 @@ export type ValidationIssue = {
 export type ValidationResult<T> =
   { success: true; value: T } | { success: false; issues: ValidationIssue[] };
 
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function mapIdentifierErrorCode(
   code: "not-string" | "empty" | "unsafe-character" | "too-long" | "invalid-segment",
 ): ValidationIssue["code"] {
@@ -60,13 +62,14 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 export function collectUnknownFields(
   value: Record<string, unknown>,
   allowedFields: readonly string[],
+  path = "",
 ): ValidationIssue[] {
   const allowed = new Set(allowedFields);
 
   return Object.keys(value)
     .filter((field) => !allowed.has(field))
     .map((field) => ({
-      field,
+      field: path ? `${path}.${field}` : field,
       code: "unknown-field" as const,
       message: `Unknown field "${field}".`,
     }));
@@ -127,6 +130,25 @@ export function invalidRequestBody(): ValidationResult<never> {
         code: "invalid-type",
         message: "Request body must be an object.",
       },
+    ],
+  };
+}
+
+export function validateUuidField(value: unknown, field: string): ValidationIssue | null {
+  const issue = validateIdentifierField(value, field);
+  if (issue) return issue;
+
+  if (typeof value !== "string" || !UUID_PATTERN.test(value)) {
+    return { field, code: "invalid-format", message: `${field} must be a UUID.` };
+  }
+  return null;
+}
+
+export function invalidObject(path: string): ValidationResult<never> {
+  return {
+    success: false,
+    issues: [
+      { field: path, code: "invalid-type", message: `${path} must be an object.` },
     ],
   };
 }

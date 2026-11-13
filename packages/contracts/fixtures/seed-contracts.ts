@@ -79,11 +79,7 @@ export const seedModeTokenFixture = {
   tokenTypeId: fixtureIds.semanticTokenType,
   name: "surface",
   cssVar: "--color-surface",
-  value: {
-    kind: "modes",
-    light: "var(--color-white)",
-    dark: "var(--color-black)",
-  },
+  value: { kind: "modes" },
 } satisfies Token;
 
 export const seedTokenReferenceFixture = {

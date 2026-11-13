@@ -19,4 +19,26 @@ describe("UpdateTokenRequest operation parsers", () => {
       issues: [{ field: "value.value", code: "invalid-type" }],
     });
   });
+
+  it.each([
+    { kind: "modes", light: "#fff" },
+    { kind: "modes", dark: "var(--old)" },
+    { kind: "typography", fontSize: "1rem" },
+    { kind: "typography", fontWeight: "400" },
+    { kind: "typography", lineHeight: "1.5" },
+  ])("rejects semantic slot values: %o", (value) => {
+    expect(parseUpdateTokenRequest({ ...updateTokenRequest, value })).toMatchObject({
+      success: false,
+      issues: [{ field: "value", code: "unknown-field" }],
+    });
+  });
+
+  it.each([{ kind: "modes" }, { kind: "typography" }])(
+    "accepts empty semantic values: %o",
+    (value) => {
+      expect(parseUpdateTokenRequest({ ...updateTokenRequest, value })).toMatchObject({
+        success: true,
+      });
+    },
+  );
 });

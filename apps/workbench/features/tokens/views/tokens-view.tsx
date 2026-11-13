@@ -7,11 +7,16 @@ import {
   mapTokenGraphToFlow,
   type TokenTypeNodeData,
 } from "@/features/tokens/graph/map-to-flow";
+import {
+  buildTokenDisplayModel,
+  createTokenDisplayResolver,
+} from "@/features/tokens/model/token-display";
 import { TokenRowViewModel } from "@/features/tokens/model/token-row";
 import { useRowNavigation } from "@/features/tokens/navigation/use-row-navigation";
 import { useRowSelection } from "@/features/tokens/navigation/use-row-selection";
+import { useModeOptions } from "@/features/tokens/options/use-mode-options";
 import { useTypographyOptions } from "@/features/tokens/options/use-typography-options";
-import { useStagedManifest } from "@/features/tokens/state/staged-manifest-context";
+import { useStagedContext } from "@/features/tokens/state/staged-context";
 import {
   ReactFlow,
   type Node as FlowNode,
@@ -30,35 +35,48 @@ type TokensViewProps = {
 };
 
 export function TokensView({ category }: TokensViewProps) {
-  const { draftModel, updateRow } = useStagedManifest();
+  const { draftModel, updateRow } = useStagedContext();
+
+  const resolveDisplay = useMemo(
+    () => createTokenDisplayResolver(draftModel),
+    [draftModel],
+  );
+  const displayModel = useMemo(
+    () => buildTokenDisplayModel(draftModel, resolveDisplay),
+    [draftModel, resolveDisplay],
+  );
 
   const filteredModel = useMemo(() => {
-    if (!category) return draftModel;
+    if (!category) return displayModel;
 
     return {
-      ...draftModel,
-      categories: draftModel.categories.filter((c) => c.category === category),
-      tokenTypes: draftModel.tokenTypes.filter((t) => t.category === category),
+      ...displayModel,
+      categories: displayModel.categories.filter((c) => c.category === category),
+      tokenTypes: displayModel.tokenTypes.filter((t) => t.category === category),
     };
-  }, [draftModel, category]);
+  }, [displayModel, category]);
+
   const flowBase = useMemo(() => {
     return mapTokenGraphToFlow(filteredModel);
   }, [filteredModel]);
+
   const rows = useMemo<TokenRowViewModel[]>(() => {
-    return filteredModel.tokenTypes.flatMap((tokenType) =>
-      tokenType.values.map((valueItem) => ({
-        id: valueItem.id,
-        name: valueItem.name,
-        cssVar: valueItem.cssVar,
-        meta: valueItem.meta,
-        preview: valueItem.preview,
-        category: tokenType.category,
-        kind: tokenType.kind,
-        value: valueItem,
-      })),
-    );
-  }, [filteredModel]);
-  const typographyOptions = useTypographyOptions({ draftModel });
+    return displayModel.tokenTypes
+      .filter((type) => !category || type.category === category)
+      .flatMap((tokenType) =>
+        tokenType.values.map((valueItem) => ({
+          id: valueItem.id,
+          name: valueItem.name,
+          cssVar: valueItem.cssVar,
+          meta: valueItem.meta,
+          preview: valueItem.preview,
+          category: tokenType.category,
+          kind: tokenType.kind,
+          value: valueItem,
+        })),
+      );
+  }, [displayModel, category]);
+
   const rowById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
 
   const { selectedRowId, toggleRowSelection, clearSelection } = useRowSelection({
@@ -100,6 +118,17 @@ export function TokensView({ category }: TokensViewProps) {
     });
   }, [flowBase.nodes, selectedRowId, toggleRowSelection]);
 
+  const typographyOptions = useTypographyOptions(draftModel);
+  const colorOptions = useModeOptions({ draftModel, category: "color" });
+  const shadowOptions = useModeOptions({ draftModel, category: "shadow" });
+
+  const modeOptions =
+    selectedRow?.category === "color"
+      ? colorOptions
+      : selectedRow?.category === "shadow"
+        ? shadowOptions
+        : [];
+
   return (
     <div className="bg-dot-pattern rounded-mini border-stroke-secondary relative flex h-full w-full overflow-hidden border">
       <ReactFlow
@@ -127,6 +156,8 @@ export function TokensView({ category }: TokensViewProps) {
         hasPreviousRow={hasPreviousRow}
         flowInstance={flowInstance}
         typographyOptions={typographyOptions}
+        modeOptions={modeOptions}
+        resolveDisplay={resolveDisplay}
         selectPreviousRow={selectPreviousRow}
         selectNextRow={selectNextRow}
         handleSaveRow={(rowId, update) => {

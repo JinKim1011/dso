@@ -57,8 +57,13 @@ export async function seedProject(
     tokenTypeId: primitiveType.id,
   };
 
+  const semanticSeedToken = seed.tokens.find(
+    (token) => token.tokenTypeId === seed.tokenTypes[1]!.id,
+  );
+  if (!semanticSeedToken) throw new Error("Missing semantic seed token.");
+
   const referencingToken = {
-    ...seed.tokens[1]!,
+    ...semanticSeedToken,
     id: crypto.randomUUID(),
     projectId: project.id,
     tokenTypeId: semanticType.id,

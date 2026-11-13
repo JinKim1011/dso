@@ -47,19 +47,11 @@ export function supportsTokenReferenceSlot(
   }
 
   if (tokenType.category === "color" || tokenType.category === "shadow") {
-    return (
-      tokenType.kind === "semantic" &&
-      token.value.kind === "modes" &&
-      typeof token.value[slot as "light" | "dark"] === "string"
-    );
+    return tokenType.kind === "semantic" && token.value.kind === "modes";
   }
 
   if (tokenType.category === "typography") {
-    return (
-      token.value.kind === "typography" &&
-      isTypographySlot(slot) &&
-      typeof token.value[slot] === "string"
-    );
+    return token.value.kind === "typography" && isTypographySlot(slot);
   }
 
   if (!hasTokenValueKind(token.value)) {

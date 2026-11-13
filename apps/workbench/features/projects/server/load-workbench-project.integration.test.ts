@@ -122,8 +122,6 @@ describe("loadWorkbenchProject database pipeline", () => {
     ).toMatchObject({
       value: {
         kind: "modes",
-        light: "var(--base-neutral-0)",
-        dark: "var(--base-neutral-900)",
       },
       preview: {
         kind: "modes",
@@ -157,9 +155,6 @@ describe("loadWorkbenchProject database pipeline", () => {
       name: "body",
       value: {
         kind: "typography",
-        fontSize: "var(--text-regular)",
-        fontWeight: "var(--font-regular)",
-        lineHeight: "var(--leading-relaxed)",
       },
       preview: {
         kind: "typography",

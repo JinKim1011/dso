@@ -4,7 +4,7 @@ import { StagedRowActions } from "@/features/tokens/components/staged/row/staged
 import { StagedRowDetail } from "@/features/tokens/components/staged/row/staged-row-detail";
 import { StagedFilter } from "@/features/tokens/components/staged/staged-filter";
 import { useRowSelection } from "@/features/tokens/navigation/use-row-selection";
-import { useStagedManifest } from "@/features/tokens/state/staged-manifest-context";
+import { useStagedContext } from "@/features/tokens/state/staged-context";
 import { useFilterState } from "@/features/tokens/views/staged/hooks/use-filter-state";
 import { useRowActions } from "@/features/tokens/views/staged/hooks/use-row-actions";
 import { useStagedRowKeyboardNavigation } from "@/features/tokens/views/staged/hooks/use-staged-row-keyboard-navigation";
@@ -12,14 +12,26 @@ import { List, Text } from "@repo/ui";
 import { useEffect, useMemo, useRef } from "react";
 
 export function StagedView() {
-  const { changedRows, discardRow, applyRow } = useStagedManifest();
+  const {
+    baseModel,
+    draftModel,
+    changedRows,
+    discardRow,
+    applyRow,
+    isStaleDraft,
+    draftLoadError,
+    canApply,
+    isApplying,
+    saveError,
+    outcomeUnknown,
+  } = useStagedContext();
   const { activeFilter, setActiveFilter, filteredCategories } = useFilterState({
     changedRows,
   });
   const { selectedRowId, toggleRowSelection } = useRowSelection({
     resetTrigger: activeFilter,
   });
-  const { isApplying, handleRowApply, handleRowDiscard } = useRowActions({
+  const { handleRowApply, handleRowDiscard } = useRowActions({
     applyRow,
     discardRow,
   });
@@ -62,6 +74,7 @@ export function StagedView() {
       <StagedRowActions
         rowId={row.rowId}
         isApplying={isApplying}
+        canApply={canApply}
         onDiscard={handleRowDiscard}
         onApply={handleRowApply}
       />
@@ -81,6 +94,25 @@ export function StagedView() {
 
   return (
     <section className="flex h-full w-full flex-col">
+      {/* // will be replaced by toaster later */}
+      {isStaleDraft && (
+        <p role="alert" className="text-content-error p-small">
+          Project data changed since this draft was created. Your edits are preserved, but
+          applying is disabled. Discard all changes to use the current project data.
+        </p>
+      )}
+      {draftLoadError && (
+        <p role="alert" className="text-content-error p-small">
+          The saved draft could not be restored. Applying is disabled. Discard all to
+          remove it and start from the current project data.
+        </p>
+      )}
+      {saveError && (
+        <p role="alert" className="text-content-error p-small">
+          {saveError}
+          {outcomeUnknown && " Reload the page to compare with current project data."}
+        </p>
+      )}
       {rowsLength === 0 && (
         <div className="bg-dot-pattern rounded-mini border-stroke-secondary flex h-full w-full items-center justify-center overflow-hidden border">
           <Text
@@ -111,6 +143,9 @@ export function StagedView() {
                 afterName={selectedRow.nameAfter}
                 before={selectedRow.before}
                 after={selectedRow.after}
+                references={selectedRow.change.references}
+                baseModel={baseModel}
+                draftModel={draftModel}
               />
             )}
             {!selectedRow && (

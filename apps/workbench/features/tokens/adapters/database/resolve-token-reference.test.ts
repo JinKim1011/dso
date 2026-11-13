@@ -13,7 +13,9 @@ const body = validSeed.tokens.find(
   (token) => token.name === "body" && token.value.kind === "typography",
 )!;
 const bodyType = validSeed.tokenTypes.find((type) => type.id === body.tokenTypeId)!;
-const neutral = validSeed.tokens.find((token) => token.cssVar === "--base-neutral-0")!;
+const neutral = validSeed.tokens.find(
+  (token) => token.id === "00000000-0000-4000-8000-000000000106",
+)!;
 const lookup = createTokenReferenceLookup(
   validSeed.tokenTypes,
   validSeed.tokens,
@@ -46,11 +48,7 @@ describe("token preview resolvers", () => {
       light: "oklch(98.5% 0 0)",
       dark: "oklch(14.5% 0 0)",
     });
-    expect(surface.value).toEqual({
-      kind: "modes",
-      light: "var(--base-neutral-0)",
-      dark: "var(--base-neutral-900)",
-    });
+    expect(surface.value).toEqual({ kind: "modes" });
   });
 
   it("resolves seeded typography slots to their primitive values", () => {
@@ -59,57 +57,57 @@ describe("token preview resolvers", () => {
       fontWeight: "400",
       lineHeight: "1.7",
     });
-    expect(body.value).toEqual({
-      kind: "typography",
-      fontSize: "var(--text-regular)",
-      fontWeight: "var(--font-regular)",
-      lineHeight: "var(--leading-relaxed)",
-    });
+    expect(body.value).toEqual({ kind: "typography" });
   });
 
-  it("preserves literal and absent values without references", () => {
+  it("treats missing references as empty, even with legacy slot values", () => {
     const emptyLookup = createTokenReferenceLookup([], [], []);
     expect(
       resolveModeToken(
-        { ...surface, value: { kind: "modes", light: "#fff" } },
+        { ...surface, value: { kind: "modes" } },
         surfaceType,
         emptyLookup,
       ),
-    ).toEqual({ light: "#fff", dark: undefined });
+    ).toEqual({ light: undefined, dark: undefined });
     expect(
       resolveTypographyToken(
         {
           ...body,
           value: {
             kind: "typography",
-            fontSize: "1rem",
-            fontWeight: "400",
-            lineHeight: "1.5",
           },
         },
         bodyType,
         emptyLookup,
       ),
-    ).toEqual({ fontSize: "1rem", fontWeight: "400", lineHeight: "1.5" });
+    ).toEqual({ fontSize: undefined, fontWeight: undefined, lineHeight: undefined });
   });
 
-  it("reports references missing for expressions, including typography", () => {
+  it("ignores legacy expressions when the reference is absent", () => {
     const emptyLookup = createTokenReferenceLookup([], [], []);
-    expect(() => resolveModeToken(surface, surfaceType, emptyLookup)).toThrow(
-      `Missing reference for token "${surface.id}" and slot "light".`,
-    );
-    expect(() => resolveTypographyToken(body, bodyType, emptyLookup)).toThrow(
-      `Missing reference for token "${body.id}" and slot "fontSize".`,
-    );
+    expect(
+      resolveModeToken(
+        { ...surface, value: { kind: "modes" } },
+        surfaceType,
+        emptyLookup,
+      ),
+    ).toEqual({ light: undefined, dark: undefined });
+    expect(
+      resolveTypographyToken(
+        { ...body, value: { kind: "typography" } },
+        bodyType,
+        emptyLookup,
+      ),
+    ).toEqual({ fontSize: undefined, fontWeight: undefined, lineHeight: undefined });
   });
 
-  it("rejects mismatched values and permits whitespace around a simple reference", () => {
+  it("resolves references by ID regardless of the token value expression", () => {
     const neutralType = validSeed.tokenTypes.find(
       (type) => type.id === neutral.tokenTypeId,
     )!;
     const onlyLight = {
       ...surface,
-      value: { kind: "modes" as const, light: " var( --base-neutral-0 ) " },
+      value: { kind: "modes" as const, light: "var(--other)" },
     };
     expect(
       resolveModeToken(onlyLight, surfaceType, lookupFor(neutral, neutralType)),
@@ -117,22 +115,15 @@ describe("token preview resolvers", () => {
       light: "oklch(98.5% 0 0)",
       dark: undefined,
     });
-    expect(() =>
-      resolveModeToken(
-        { ...onlyLight, value: { kind: "modes", light: "var(--other)" } },
-        surfaceType,
-        lookupFor(neutral, neutralType),
-      ),
-    ).toThrow(`Value and reference disagree for token "${surface.id}" and slot "light".`);
   });
 
-  it("rejects an incompatible referenced token and unresolved primitive value", () => {
+  it("rejects an incompatible referenced token and primitive CSS variables", () => {
     const neutralType = validSeed.tokenTypes.find(
       (type) => type.id === neutral.tokenTypeId,
     )!;
     const onlyLight: Token = {
       ...surface,
-      value: { kind: "modes", light: "var(--base-neutral-0)" },
+      value: { kind: "modes" },
     };
     expect(() =>
       resolveModeToken(
@@ -150,11 +141,13 @@ describe("token preview resolvers", () => {
           neutralType,
         ),
       ),
-    ).toThrow(`Referenced token "${neutral.id}" has an unresolved value`);
+    ).toThrow(`Invalid reference for token "${surface.id}" and slot "light".`);
   });
 
   it("validates typography references against their slot", () => {
-    const weight = validSeed.tokens.find((token) => token.cssVar === "--font-regular")!;
+    const weight = validSeed.tokens.find(
+      (token) => token.id === "00000000-0000-4000-8000-00000000023b",
+    )!;
     const weightType = validSeed.tokenTypes.find(
       (type) => type.id === weight.tokenTypeId,
     )!;

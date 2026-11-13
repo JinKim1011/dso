@@ -11,6 +11,21 @@ import {
 import { describe, expect, it } from "vitest";
 
 describe("validateTokens", () => {
+  it("rejects CSS variables in primitive seed values", () => {
+    const seed = createSeedData({
+      projects: [seedProjectFixture],
+      tokenTypes: [seedTokenTypeFixture],
+      tokens: [{ ...seedTokenFixture, value: { kind: "single", value: "var(--x)" } }],
+    });
+    expect(validateTokens(seed)).toContainEqual(
+      expect.objectContaining({
+        code: "invalid-field",
+        id: seedTokenFixture.id,
+        field: "value.value",
+      }),
+    );
+  });
+
   it("accepts a valid token domain", () => {
     const seed = createSeedData({
       projects: [seedProjectFixture],

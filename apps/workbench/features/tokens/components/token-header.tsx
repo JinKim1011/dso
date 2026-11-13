@@ -1,7 +1,7 @@
 "use client";
 
 import { tokenNavigationItems } from "@/features/tokens/options/token-navigation-items";
-import { useStagedManifest } from "@/features/tokens/state/staged-manifest-context";
+import { useStagedContext } from "@/features/tokens/state/staged-context";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 import { Button, Text, Tooltip } from "@repo/ui";
 import Link from "next/link";
@@ -14,15 +14,14 @@ type TokensHeaderProps = {
 export function TokensHeader({ stagedHref }: TokensHeaderProps) {
   const path = usePathname();
   const router = useRouter();
-  const { changedRowCount, addedManifestLineCount, deletedManifestLineCount } =
-    useStagedManifest();
+  const { changedRowCount } = useStagedContext();
 
   const wrapperClasses =
     "px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between";
   const leftwrapperClasses =
     "flex-1 gap-mini p-mini pointer-events-none inline-flex items-center justify-start";
   const centerWrapperClasses = "flex-1 gap-micro flex justify-center";
-  const rightWrapperClasses = "flex-1 gap-microPlus flex justify-end";
+  const rightWrapperClasses = "flex-1 flex justify-end";
 
   const overrideLinkButtonBGClass =
     "bg-transparent hover:bg-transparent active:bg-transparent";
@@ -39,11 +38,9 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
   ].join(" ");
 
   const displayLabel =
-    changedRowCount != null && changedRowCount > 1
-      ? `${String(changedRowCount)} TOKENS CHANGED`
-      : changedRowCount === 1
-        ? "1 TOKEN CHANGED"
-        : "NO TOKENS CHANGED";
+    changedRowCount != null && changedRowCount >= 1
+      ? `${String(changedRowCount)} CHANGED`
+      : "NO CHANGES";
 
   return (
     <div className={wrapperClasses}>
@@ -55,7 +52,7 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
           |
         </Text>
         <Text variant="label-xxs" as="span" className="text-content-tertiary/70">
-          DESIGN TOKEN MANAGER
+          AGENT DOCS MANAGER
         </Text>
       </div>
       <div className={centerWrapperClasses}>
@@ -77,16 +74,6 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
         })}
       </div>
       <div className={rightWrapperClasses}>
-        {addedManifestLineCount > 0 ? (
-          <Text variant="label-xs" className="text-content-success pointer-events-none">
-            +{String(addedManifestLineCount)}
-          </Text>
-        ) : null}
-        {deletedManifestLineCount > 0 ? (
-          <Text variant="label-xs" className="text-content-error pointer-events-none">
-            -{String(deletedManifestLineCount)}
-          </Text>
-        ) : null}
         <Button
           size="sm"
           label={displayLabel}

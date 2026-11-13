@@ -300,6 +300,15 @@ describe("Authentication service integration", () => {
     });
   });
 
+  it.each(["not-a-uuid", "00000000-0000-0000-0000-00000000000z"])(
+    "rejects malformed session IDs without querying PostgreSQL",
+    async (sessionId) => {
+      await expect(
+        authenticateSession(getTestDatabase(), sessionId),
+      ).rejects.toBeInstanceOf(SessionExpiredError);
+    },
+  );
+
   it("logout removes the session", async () => {
     const database = getTestDatabase();
     const userId = crypto.randomUUID();
