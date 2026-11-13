@@ -151,7 +151,6 @@ export function Combobox({
           value ? (
             <button
               type="button"
-              tabIndex={-1}
               aria-label="Clear selection"
               disabled={disabled}
               className="text-content-tertiary hover:text-content-primary disabled:text-content-quaternary flex size-3.5 shrink-0 cursor-pointer items-center justify-center disabled:cursor-not-allowed"
