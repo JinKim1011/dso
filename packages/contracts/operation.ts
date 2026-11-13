@@ -115,3 +115,20 @@ export type SaveStagedChangesRequest = {
   projectId: string;
   changes: StagedTokenChange[];
 };
+
+export type SaveStagedChangesResponse =
+  | { ok: true; tokens: Token[]; references: TokenReference[] }
+  | {
+      ok: false;
+      error: {
+        code: string;
+        message: string;
+        issues?: readonly {
+          code: string;
+          message: string;
+          field?: string;
+          tokenId?: string;
+          referencedTokenId?: string;
+        }[];
+      };
+    };
