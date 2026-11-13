@@ -48,16 +48,9 @@ function sameValue(left: TokenValue, right: TokenValue): boolean {
     case "single":
       return right.kind === "single" && left.value === right.value;
     case "modes":
-      return (
-        right.kind === "modes" && left.light === right.light && left.dark === right.dark
-      );
+      return right.kind === "modes";
     case "typography":
-      return (
-        right.kind === "typography" &&
-        left.fontSize === right.fontSize &&
-        left.fontWeight === right.fontWeight &&
-        left.lineHeight === right.lineHeight
-      );
+      return right.kind === "typography";
     case "unresolved":
       return right.kind === "unresolved";
   }
