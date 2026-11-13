@@ -6,6 +6,8 @@ export { Combobox } from "./components/combobox/Combobox";
 export { Input } from "./components/input/Input";
 export { List } from "./components/List/List";
 export { ListItem } from "./components/List/ListItem";
+export { TerminalLoading } from "./components/loading/terminal-loading";
+export { WaveLoading } from "./components/loading/wave-loading";
 export { SegmentedControl } from "./components/SegmentedControl";
 export { Text } from "./components/Text";
 export { Tooltip } from "./components/Tooltip";
