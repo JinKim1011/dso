@@ -1,11 +1,11 @@
 import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
 import { createTokenDisplayResolver } from "@/features/tokens/model/token-display";
-import { findRowById } from "@/features/tokens/state/staged-graph-model";
-import { persistDraftModel } from "@/features/tokens/state/staged-draft-storage";
 import {
   StagedManifestProvider,
   useStagedManifest,
-} from "@/features/tokens/state/staged-manifest-context";
+} from "@/features/tokens/state/staged-context";
+import { persistDraftModel } from "@/features/tokens/state/staged-draft-storage";
+import { findRowById } from "@/features/tokens/state/staged-graph-model";
 import { validSeed } from "@repo/seed-data/valid-seed";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";

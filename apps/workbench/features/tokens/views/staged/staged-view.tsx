@@ -4,7 +4,7 @@ import { StagedRowActions } from "@/features/tokens/components/staged/row/staged
 import { StagedRowDetail } from "@/features/tokens/components/staged/row/staged-row-detail";
 import { StagedFilter } from "@/features/tokens/components/staged/staged-filter";
 import { useRowSelection } from "@/features/tokens/navigation/use-row-selection";
-import { useStagedManifest } from "@/features/tokens/state/staged-manifest-context";
+import { useStagedManifest } from "@/features/tokens/state/staged-context";
 import { useFilterState } from "@/features/tokens/views/staged/hooks/use-filter-state";
 import { useRowActions } from "@/features/tokens/views/staged/hooks/use-row-actions";
 import { useStagedRowKeyboardNavigation } from "@/features/tokens/views/staged/hooks/use-staged-row-keyboard-navigation";

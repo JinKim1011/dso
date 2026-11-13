@@ -1,11 +1,11 @@
 import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
 import { StagedRowActions } from "@/features/tokens/components/staged/row/staged-row-actions";
 import { StagedHeader } from "@/features/tokens/components/staged/staged-header";
-import { findRowById } from "@/features/tokens/state/staged-graph-model";
 import {
   StagedManifestProvider,
   useStagedManifest,
-} from "@/features/tokens/state/staged-manifest-context";
+} from "@/features/tokens/state/staged-context";
+import { findRowById } from "@/features/tokens/state/staged-graph-model";
 import type { SaveStagedChangesRequest } from "@repo/contracts/operation";
 import type { Token, TokenReference } from "@repo/contracts/type";
 import { validSeed } from "@repo/seed-data/valid-seed";

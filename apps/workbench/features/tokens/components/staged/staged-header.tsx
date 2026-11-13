@@ -1,6 +1,6 @@
 "use client";
 
-import { useStagedManifest } from "@/features/tokens/state/staged-manifest-context";
+import { useStagedManifest } from "@/features/tokens/state/staged-context";
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
 import { Button, Tooltip } from "@repo/ui";
 

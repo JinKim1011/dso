@@ -1,7 +1,7 @@
 "use client";
 
 import { tokenNavigationItems } from "@/features/tokens/options/token-navigation-items";
-import { useStagedManifest } from "@/features/tokens/state/staged-manifest-context";
+import { useStagedManifest } from "@/features/tokens/state/staged-context";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 import { Button, Text, Tooltip } from "@repo/ui";
 import Link from "next/link";

@@ -16,7 +16,7 @@ import { useRowNavigation } from "@/features/tokens/navigation/use-row-navigatio
 import { useRowSelection } from "@/features/tokens/navigation/use-row-selection";
 import { useModeOptions } from "@/features/tokens/options/use-mode-options";
 import { useTypographyOptions } from "@/features/tokens/options/use-typography-options";
-import { useStagedManifest } from "@/features/tokens/state/staged-manifest-context";
+import { useStagedManifest } from "@/features/tokens/state/staged-context";
 import {
   ReactFlow,
   type Node as FlowNode,
