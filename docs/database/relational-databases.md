@@ -195,7 +195,9 @@ This week replaces the current persistence path while preserving the existing st
 - Replace JSON persistence in `route.ts`.
 - Preserve `StagedManifestContext` and `useStagedManifestActions`.
 - Convert database records into the existing token graph model.
-- Persist token edits, token references, token-type hierarchy changes, components, templates, and releases.
+- Completed and tested atomic staged token/reference saves with project-lock validation; Apply preserves unrelated edits, and failed saves retain drafts.
+- Keep staged-save API development-only. Require a trusted Origin, valid session, and project write access; disable production writes.
+- Persist token-type hierarchy changes, components, templates, and releases.
 - Implement protected workbench routes for login, logout, session lookup, project reads, resource edits, publishing, API-key creation/revocation, and published-release reads.
 - Wire login/logout/session routes to the configured secure session cookie and map authenticated sessions to the application authorization context.
 - Enforce the role model:
