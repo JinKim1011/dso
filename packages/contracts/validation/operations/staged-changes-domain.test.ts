@@ -266,40 +266,6 @@ describe("validateSaveStagedChanges", () => {
     expect(result).not.toHaveProperty("tokens");
   });
 
-  it.each([
-    {
-      value: { kind: "modes", light: "white" },
-      before: { kind: "modes", light: "black" },
-    },
-    {
-      value: { kind: "typography", fontSize: "16px" },
-      before: { kind: "typography", fontSize: "14px" },
-    },
-  ] satisfies Array<{ value: TokenValue; before: TokenValue }>)(
-    "detects stale optional fields in $value.kind token values",
-    ({ value, before }) => {
-      const token: Token = { ...modeToken, value };
-      const result = validate(
-        {
-          projectId: fixtureIds.project,
-          changes: [
-            {
-              tokenId: token.id,
-              value: { before, after: value },
-              references: [],
-            },
-          ],
-        },
-        [token, baseColorToken, otherTarget],
-      );
-
-      expect(result).toMatchObject({
-        success: false,
-        issues: [{ code: "conflict", field: "value" }],
-      });
-    },
-  );
-
   it("compares UUIDs case-insensitively", () => {
     const source = { ...modeToken, id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" };
     const target = { ...baseColorToken, id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb" };

@@ -312,12 +312,12 @@ describe("token previews across database, editor and staged models", () => {
     const bodyRow = rowIn(baseModel, body.id);
     const legacySurface = withRow(baseModel, {
       ...row,
-      value: { kind: "modes", light: "#fff", dark: "var(--old)" },
+      value: { kind: "modes" },
       references: { ...row.references, light: undefined },
     });
     const legacy = withRow(legacySurface, {
       ...bodyRow,
-      value: { kind: "typography", fontSize: "var(--old)", fontWeight: "400" },
+      value: { kind: "typography" },
       references: { ...bodyRow.references, fontSize: undefined },
     });
     localStorage.setItem(

@@ -96,13 +96,10 @@ describe("mapTokenValue", () => {
     },
   );
 
-  it("treats a mode without references as empty, including legacy values", () => {
+  it("treats a mode without references as empty", () => {
     const modesToken: Token = {
       ...token,
-      value: {
-        kind: "modes",
-        light: "#fff",
-      },
+      value: { kind: "modes" },
     };
 
     expect(mapTokenValue(modesToken, { ...colorType, kind: "semantic" }, lookup)).toEqual(
@@ -120,7 +117,7 @@ describe("mapTokenValue", () => {
       ...token,
       id: "surface",
       tokenTypeId: semanticType.id,
-      value: { kind: "modes", light: "var(--sample)", dark: "#111" },
+      value: { kind: "modes" },
     };
     const references = [
       {
@@ -180,15 +177,10 @@ describe("mapTokenValue", () => {
     });
   });
 
-  it("ignores legacy typography slot values without references", () => {
+  it("treats typography without references as empty", () => {
     const typographyToken: Token = {
       ...token,
-      value: {
-        kind: "typography",
-        fontSize: "1rem",
-        fontWeight: "400",
-        lineHeight: "1.5",
-      },
+      value: { kind: "typography" },
     };
 
     expect(

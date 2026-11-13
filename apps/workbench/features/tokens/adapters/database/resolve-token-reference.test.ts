@@ -64,7 +64,7 @@ describe("token preview resolvers", () => {
     const emptyLookup = createTokenReferenceLookup([], [], []);
     expect(
       resolveModeToken(
-        { ...surface, value: { kind: "modes", light: "#fff" } },
+        { ...surface, value: { kind: "modes" } },
         surfaceType,
         emptyLookup,
       ),
@@ -75,9 +75,6 @@ describe("token preview resolvers", () => {
           ...body,
           value: {
             kind: "typography",
-            fontSize: "1rem",
-            fontWeight: "400",
-            lineHeight: "1.5",
           },
         },
         bodyType,
@@ -90,14 +87,14 @@ describe("token preview resolvers", () => {
     const emptyLookup = createTokenReferenceLookup([], [], []);
     expect(
       resolveModeToken(
-        { ...surface, value: { kind: "modes", light: "var(--missing)" } },
+        { ...surface, value: { kind: "modes" } },
         surfaceType,
         emptyLookup,
       ),
     ).toEqual({ light: undefined, dark: undefined });
     expect(
       resolveTypographyToken(
-        { ...body, value: { kind: "typography", lineHeight: "var(--missing)" } },
+        { ...body, value: { kind: "typography" } },
         bodyType,
         emptyLookup,
       ),
