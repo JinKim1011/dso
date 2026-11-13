@@ -72,7 +72,7 @@ export async function authenticateSession(
   database: Pool,
   sessionId: string,
 ): Promise<AuthorizationContext> {
-  if (sessionId.length !== 36 || UUID_PATTERN.test(sessionId)) {
+  if (!UUID_PATTERN.test(sessionId)) {
     throw new SessionExpiredError();
   }
 
