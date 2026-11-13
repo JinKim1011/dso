@@ -48,8 +48,11 @@ export function StagedManifestProvider({
   baseManifest: TokenGraphViewModel;
   children: ReactNode;
 }) {
-  const [baseModel, setBaseModel] = useState<TokenGraphViewModel>(baseManifest);
-  const [draftModel, setDraftModel] = useState<TokenGraphViewModel>(baseManifest);
+  const [models, setModels] = useState({
+    baseModel: baseManifest,
+    draftModel: baseManifest,
+  });
+  const { baseModel, draftModel } = models;
   const [hasHydratedDraft, setHasHydratedDraft] = useState(false);
   const [isStaleDraft, setIsStaleDraft] = useState(false);
   const [draftLoadError, setDraftLoadError] = useState(false);
@@ -67,8 +70,10 @@ export function StagedManifestProvider({
     try {
       const persistedDraft = loadPersistedDraftModel(projectId);
       if (persistedDraft) {
-        setBaseModel(persistedDraft.baseModel);
-        setDraftModel(persistedDraft.draftModel);
+        setModels({
+          baseModel: persistedDraft.baseModel,
+          draftModel: persistedDraft.draftModel,
+        });
         setIsStaleDraft(
           JSON.stringify(persistedDraft.baseModel) !== JSON.stringify(baseManifest),
         );
@@ -119,8 +124,7 @@ export function StagedManifestProvider({
       resetDraft: () => {
         if (isStaleDraft || draftLoadError) {
           clearPersistedDraftModel(projectId);
-          setBaseModel(baseManifest);
-          setDraftModel(baseManifest);
+          setModels({ baseModel: baseManifest, draftModel: baseManifest });
           setIsStaleDraft(false);
           setDraftLoadError(false);
         } else {
