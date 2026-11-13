@@ -55,6 +55,13 @@ The receiving side should not automatically trust data.
 
 ### Browser -> Workbench API
 
+- The staged token save route is currently available only when `NODE_ENV` is `development`.
+- It requires an active session cookie and editor project membership, and rejects mutations unless their `Origin` exactly matches the explicitly configured `DSO_WORKBENCH_ORIGIN`.
+- It does not derive the trusted origin from request headers.
+- The development route fails closed if the origin is not configured.
+- Login and CSRF-token issuance routes are not implemented yet.
+- Origin checking is the temporary development CSRF control. (production writes remain disabled)
+
 ```text
 Browser
   -> HTTPS request
