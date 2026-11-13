@@ -7,16 +7,15 @@ import {
   ProjectAccessDeniedError,
   ResourceNotFoundError,
 } from "@repo/application/errors";
+import { withProjectTransaction } from "@repo/application/services/project-transaction";
 import type { AuthorizationContext } from "@repo/application/types";
 import type { ChangeTokenTypeParentRequest } from "@repo/contracts/operation";
 import type { TokenType } from "@repo/contracts/type";
 import { validateChangeParentOperation } from "@repo/contracts/validation/operations/relationship-domain";
-import { lockProjectForUpdate } from "@repo/db/repositories/projects";
 import {
   listTokenTypesByProjectId,
   updateTokenTypeParent,
 } from "@repo/db/repositories/token-types";
-import { withTransaction } from "@repo/db/transaction";
 import type { Pool } from "pg";
 
 export async function changeTokenTypeParent(
@@ -36,13 +35,7 @@ export async function changeTokenTypeParent(
 
   requiredProjectRole(membership, request.projectId, "editor");
 
-  return withTransaction(database, async (client) => {
-    const projectLocked = await lockProjectForUpdate(client, request.projectId);
-
-    if (!projectLocked) {
-      throw new ResourceNotFoundError();
-    }
-
+  return withProjectTransaction(database, request.projectId, async (client) => {
     const tokenTypes = await listTokenTypesByProjectId(client, request.projectId);
 
     const errors = validateChangeParentOperation(request, tokenTypes);
