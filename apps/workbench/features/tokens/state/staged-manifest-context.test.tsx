@@ -31,15 +31,29 @@ function wrapper({ children }: { children: ReactNode }) {
 describe("staged draft reload", () => {
   afterEach(() => localStorage.clear());
 
-  it("does not call legacy apply or clear staged changes when saving is unavailable", async () => {
+  it("retains the draft when the save endpoint rejects the request", async () => {
     const token = validSeed.tokens.find((item) => item.name === "surface")!;
     const current = renderHook(() => useStagedManifest(), { wrapper });
     act(() => current.result.current.updateRow(token.id, { name: "draft edit" }));
     await waitFor(() => expect(current.result.current.changedRowCount).toBe(1));
-    const fetchSpy = vi.spyOn(globalThis, "fetch");
-    expect((await current.result.current.applyDraft()).status).toBe(503);
-    expect((await current.result.current.applyRow(token.id)).status).toBe(503);
-    expect(fetchSpy).not.toHaveBeenCalled();
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      Response.json(
+        {
+          ok: false,
+          error: {
+            code: "authentication-required",
+            message: "Authentication is required.",
+          },
+        },
+        { status: 401 },
+      ),
+    );
+    await act(async () => {
+      expect((await current.result.current.applyDraft()).status).toBe(401);
+    });
+    expect(fetchSpy).toHaveBeenCalledOnce();
+    expect(fetchSpy.mock.calls[0]?.[0]).toBe("/api/design-tokens/staged-changes");
+    expect(current.result.current.saveError).toContain("Authentication is required");
     expect(findRowById(current.result.current.draftModel, token.id)?.name).toBe(
       "draft edit",
     );
