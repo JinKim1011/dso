@@ -20,6 +20,10 @@ export function StagedView() {
     applyRow,
     isStaleDraft,
     draftLoadError,
+    canApply,
+    isApplying,
+    saveError,
+    outcomeUnknown,
   } = useStagedManifest();
   const { activeFilter, setActiveFilter, filteredCategories } = useFilterState({
     changedRows,
@@ -27,7 +31,7 @@ export function StagedView() {
   const { selectedRowId, toggleRowSelection } = useRowSelection({
     resetTrigger: activeFilter,
   });
-  const { isApplying, handleRowApply, handleRowDiscard } = useRowActions({
+  const { handleRowApply, handleRowDiscard } = useRowActions({
     applyRow,
     discardRow,
   });
@@ -70,6 +74,7 @@ export function StagedView() {
       <StagedRowActions
         rowId={row.rowId}
         isApplying={isApplying}
+        canApply={canApply}
         onDiscard={handleRowDiscard}
         onApply={handleRowApply}
       />
@@ -100,6 +105,12 @@ export function StagedView() {
         <p role="alert" className="text-content-error p-small">
           The saved draft could not be restored. Applying is disabled. Discard all to
           remove it and start from the current project data.
+        </p>
+      )}
+      {saveError && (
+        <p role="alert" className="text-content-error p-small">
+          {saveError}
+          {outcomeUnknown && " Reload the page to compare with current project data."}
         </p>
       )}
       {rowsLength === 0 && (
