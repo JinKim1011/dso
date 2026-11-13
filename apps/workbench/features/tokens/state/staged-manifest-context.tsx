@@ -28,6 +28,10 @@ type StagedContextType = {
   changedRowCount: number;
   isStaleDraft: boolean;
   draftLoadError: boolean;
+  canApply: boolean;
+  isApplying: boolean;
+  saveError: string | null;
+  outcomeUnknown: boolean;
   addedManifestLineCount: number;
   deletedManifestLineCount: number;
   updateRow: (rowId: string, update: TokenRowUpdate) => void;
@@ -57,13 +61,21 @@ export function StagedManifestProvider({
   const [isStaleDraft, setIsStaleDraft] = useState(false);
   const [draftLoadError, setDraftLoadError] = useState(false);
 
-  const { updateRow, applyDraft, discardRow, applyRow, resetDraft } =
-    useStagedManifestActions({
-      canApply: hasHydratedDraft && !isStaleDraft && !draftLoadError,
-      baseModel,
-      draftModel,
-      setDraftModel,
-    });
+  const {
+    updateRow,
+    applyDraft,
+    discardRow,
+    applyRow,
+    resetDraft,
+    isApplying,
+    saveError,
+    outcomeUnknown,
+  } = useStagedManifestActions({
+    projectId,
+    canApply: hasHydratedDraft && !isStaleDraft && !draftLoadError,
+    models,
+    setModels,
+  });
 
   useEffect(() => {
     discardLegacyDraft();
@@ -90,13 +102,22 @@ export function StagedManifestProvider({
     if (!hasHydratedDraft || draftLoadError) return;
 
     const hasPendingChanges = buildChangedRows(baseModel, draftModel).length > 0;
-    if (!hasPendingChanges && !isStaleDraft) {
+    if (!hasPendingChanges && !isStaleDraft && !isApplying && !outcomeUnknown) {
       clearPersistedDraftModel(projectId);
       return;
     }
 
     persistDraftModel(projectId, baseModel, draftModel);
-  }, [draftModel, hasHydratedDraft, baseModel, isStaleDraft, draftLoadError, projectId]);
+  }, [
+    draftModel,
+    hasHydratedDraft,
+    baseModel,
+    isStaleDraft,
+    draftLoadError,
+    projectId,
+    isApplying,
+    outcomeUnknown,
+  ]);
 
   const changedRows = useMemo(
     () => buildChangedRows(baseModel, draftModel),
@@ -118,6 +139,10 @@ export function StagedManifestProvider({
       changedRowCount: changedRows.length,
       isStaleDraft,
       draftLoadError,
+      canApply: hasHydratedDraft && !isStaleDraft && !draftLoadError && !outcomeUnknown,
+      isApplying,
+      saveError,
+      outcomeUnknown,
       addedManifestLineCount: addedLines,
       deletedManifestLineCount: deletedLines,
       updateRow,
@@ -141,6 +166,10 @@ export function StagedManifestProvider({
       changedRows,
       isStaleDraft,
       draftLoadError,
+      hasHydratedDraft,
+      isApplying,
+      saveError,
+      outcomeUnknown,
       projectId,
       baseManifest,
       addedLines,
