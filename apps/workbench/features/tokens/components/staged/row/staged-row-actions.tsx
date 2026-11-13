@@ -33,7 +33,7 @@ export function StagedRowActions({
           disabled={isApplying}
         />
       </Tooltip>
-      <Tooltip content="APPLY">
+      <Tooltip content="PUSH">
         <Button
           size="sm"
           iconOnly={true}
