@@ -9,14 +9,27 @@
     },
     "lint": {
       "dependsOn": ["^lint"],
-      "env": ["NODE_ENV", "DSO_MANIFEST_PATH", "DSO_WORKBENCH_PROJECT_ID"]
+      "env": [
+        "NODE_ENV",
+        "DSO_MANIFEST_PATH",
+        "DSO_WORKBENCH_PROJECT_ID",
+        "TEST_DATABASE_URL"
+      ]
     },
     "check-types": {
       "dependsOn": ["^check-types"]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "passThroughEnv": [
+        "DATABASE_URL",
+        "DB_POOL_MAX",
+        "DSO_WORKBENCH_ORIGIN",
+        "DSO_WORKBENCH_PROJECT_ID",
+        "DSO_MANIFEST_PATH",
+        "SESSION_COOKIE_NAME"
+      ]
     }
   }
 }
