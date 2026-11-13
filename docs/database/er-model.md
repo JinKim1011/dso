@@ -147,6 +147,9 @@ erDiagram
 - A token can also be referenced by zero or many other tokens.
   - Both directions are represented by `TOKEN_REFERENCES`.
   - `referencing_token_id` is the source and `referenced_token_id` is the target.
+  - References are identified by target token ID and slot, independently of
+    token names and CSS variables.
+  - A supported slot may have no reference.
 - A component can have zero or many document templates.
   - Each document template belongs to exactly one component.
 
@@ -165,6 +168,13 @@ application context. It checks project membership and the editor role, then uses
 `READ COMMITTED` transaction to lock the project row before reading the token
 graph. It checks submitted `before` values and validates the proposed final graph
 before writing. Errors roll back the entire batch.
+
+The save request contains only changed token names/values and reference slots.
+It does not update `cssVar`. An omitted slot change leaves the current reference
+unchanged, a token ID assigns or replaces it, and `null` removes it. Empty
+batches and no-op changes are valid. Semantic mode slots may be independently
+empty; a typography preview is available only when all three reference slots
+resolve, while each populated mode slot can be previewed independently.
 
 Token, token-type, and reference writers that can run against an existing project
 must use the same project transaction protocol. The lock only coordinates writers
