@@ -14,15 +14,14 @@ type TokensHeaderProps = {
 export function TokensHeader({ stagedHref }: TokensHeaderProps) {
   const path = usePathname();
   const router = useRouter();
-  const { changedRowCount, addedManifestLineCount, deletedManifestLineCount } =
-    useStagedManifest();
+  const { changedRowCount } = useStagedManifest();
 
   const wrapperClasses =
     "px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between";
   const leftwrapperClasses =
     "flex-1 gap-mini p-mini pointer-events-none inline-flex items-center justify-start";
   const centerWrapperClasses = "flex-1 gap-micro flex justify-center";
-  const rightWrapperClasses = "flex-1 gap-microPlus flex justify-end";
+  const rightWrapperClasses = "flex-1 flex justify-end";
 
   const overrideLinkButtonBGClass =
     "bg-transparent hover:bg-transparent active:bg-transparent";
@@ -75,16 +74,6 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
         })}
       </div>
       <div className={rightWrapperClasses}>
-        {addedManifestLineCount > 0 ? (
-          <Text variant="label-xs" className="text-content-success pointer-events-none">
-            +{String(addedManifestLineCount)}
-          </Text>
-        ) : null}
-        {deletedManifestLineCount > 0 ? (
-          <Text variant="label-xs" className="text-content-error pointer-events-none">
-            -{String(deletedManifestLineCount)}
-          </Text>
-        ) : null}
         <Button
           size="sm"
           label={displayLabel}
