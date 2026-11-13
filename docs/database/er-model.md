@@ -158,6 +158,20 @@ erDiagram
 
 Project ownership and release-publishing permission are inferred from `project_members`; the schema does not add `projects.owner_id` or `releases.published_by`. The application records the user who performs a publish action in `audit_events`.
 
+### Token graph writes
+
+The staged-save service expects an already parsed request and an authenticated
+application context. It checks project membership and the editor role, then uses a
+`READ COMMITTED` transaction to lock the project row before reading the token
+graph. It checks submitted `before` values and validates the proposed final graph
+before writing. Errors roll back the entire batch.
+
+Token, token-type, and reference writers that can run against an existing project
+must use the same project transaction protocol. The lock only coordinates writers
+that participate in it; repository calls and direct SQL do not acquire it
+automatically. Request parsing, HTTP authentication and CSRF protection remain the
+responsibility of the future request boundary.
+
 ### Audit-event scope
 
 `audit_events.user_id` is required because the current audited actions are performed by an identified user. `project_id` and `resource_id` are optional to support account-level events such as login.
