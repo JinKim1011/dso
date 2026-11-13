@@ -1,8 +1,9 @@
-import { requireProjectAccess } from "@repo/application/authorization";
 import {
-  DomainValidationError,
-  ProjectAccessDeniedError,
-} from "@repo/application/errors";
+  requiredProjectRole,
+  requireProjectAccess,
+} from "@repo/application/authorization";
+import { DomainValidationError } from "@repo/application/errors";
+import { withProjectTransaction } from "@repo/application/services/project-transaction";
 import type { AuthorizationContext } from "@repo/application/types";
 import type { AddTokenReferenceRequest } from "@repo/contracts/operation";
 import type { TokenReference } from "@repo/contracts/type";
@@ -18,37 +19,27 @@ export async function addTokenReference(
   context: AuthorizationContext,
   request: AddTokenReferenceRequest,
 ): Promise<TokenReference> {
-  const membership = await requireProjectAccess(
-    database,
-    context.userId,
-    request.projectId,
-  );
+  const projectId = request.projectId.toLowerCase();
+  const membership = await requireProjectAccess(database, context.userId, projectId);
+  requiredProjectRole(membership, projectId, "editor");
 
-  if (!membership) {
-    throw new ProjectAccessDeniedError();
-  }
+  return withProjectTransaction(database, projectId, async (client) => {
+    const tokens = await listTokensByProjectId(client, projectId);
+    const tokenTypes = await listTokenTypesByProjectId(client, projectId);
 
-  if (!["editor", "publisher", "admin"].includes(membership.role)) {
-    throw new Error("Unreachable role configuration.");
-  }
+    const reference: TokenReference = {
+      projectId,
+      referencingTokenId: request.referencingTokenId.toLowerCase(),
+      referencedTokenId: request.referencedTokenId.toLowerCase(),
+      slot: request.slot,
+    };
 
-  const [tokens, tokenTypes] = await Promise.all([
-    listTokensByProjectId(database, request.projectId),
-    listTokenTypesByProjectId(database, request.projectId),
-  ]);
+    const issues = validateTokenReference(reference, tokens, tokenTypes, projectId);
 
-  const reference: TokenReference = {
-    projectId: request.projectId,
-    referencingTokenId: request.referencingTokenId,
-    referencedTokenId: request.referencedTokenId,
-    slot: request.slot,
-  };
+    if (issues.length > 0) {
+      throw new DomainValidationError(issues);
+    }
 
-  const issues = validateTokenReference(reference, tokens, tokenTypes, request.projectId);
-
-  if (issues.length > 0) {
-    throw new DomainValidationError(issues);
-  }
-
-  return insertTokenReference(database, reference);
+    return insertTokenReference(client, reference);
+  });
 }
