@@ -38,7 +38,7 @@ type StagedContextType = {
   applyRow: (rowId: string) => Promise<Response>;
 };
 
-const StagedManifestContext = createContext<StagedContextType | undefined>(undefined);
+const StagedContext = createContext<StagedContextType | undefined>(undefined);
 
 export function StagedManifestProvider({
   projectId,
@@ -168,15 +168,11 @@ export function StagedManifestProvider({
     ],
   );
 
-  return (
-    <StagedManifestContext.Provider value={value}>
-      {children}
-    </StagedManifestContext.Provider>
-  );
+  return <StagedContext.Provider value={value}>{children}</StagedContext.Provider>;
 }
 
 export function useStagedManifest() {
-  const context = useContext(StagedManifestContext);
+  const context = useContext(StagedContext);
   if (!context)
     throw new Error("useStagedManifest must be used inside StagedManifestProvider");
   return context;

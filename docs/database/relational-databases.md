@@ -193,7 +193,7 @@ This week replaces the current persistence path while preserving the existing st
 
 - Replace filesystem loading in `WorkbenchShell`.
 - Replace JSON persistence in `route.ts`.
-- Preserve `StagedManifestContext` and `useStagedManifestActions`.
+- Preserve `StagedContext` and `useStagedManifestActions`.
 - Convert database records into the existing token graph model.
 - Completed and tested atomic staged token/reference saves with project-lock validation; Apply preserves unrelated edits, and failed saves retain drafts.
 - Keep staged-save API development-only. Require a trusted Origin, valid session, and project write access; disable production writes.

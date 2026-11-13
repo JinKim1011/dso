@@ -24,7 +24,7 @@ npm run dev
 ```
 app/
 ├── _shared/              # Shared context and shell components
-│   ├── context/          # StagedManifestContext, WorkbenchShellContext
+│   ├── context/          # StagedContext, WorkbenchShellContext
 │   └── shell/            # Header, Navigation, WorkbenchShell layout
 ├── _config/              # Navigation and app configuration
 ├── api/                  # API routes (manifest endpoints)
