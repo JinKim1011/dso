@@ -2,7 +2,7 @@ import { WorkbenchShell } from "@/_shared/shell/workbench-shell";
 import { ThemeProvider } from "@/_shared/theme/theme-provider";
 import { loadWorkbenchProject } from "@/features/projects/server/load-workbench-project";
 import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
-import { StagedManifestProvider } from "@/features/tokens/state/staged-context";
+import { StagedContextProvider } from "@/features/tokens/state/staged-context";
 import { getDatabasePool } from "@/server/database";
 import { getWorkbenchProjectId } from "@/server/workbench-config";
 import "@repo/ui/index.css";
@@ -35,13 +35,13 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider>
-          <StagedManifestProvider
+          <StagedContextProvider
             key={workbenchProject.project.id}
             projectId={workbenchProject.project.id}
             baseManifest={model}
           >
             <WorkbenchShell>{children}</WorkbenchShell>
-          </StagedManifestProvider>
+          </StagedContextProvider>
         </ThemeProvider>
       </body>
     </html>

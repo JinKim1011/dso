@@ -40,7 +40,7 @@ type StagedContextType = {
 
 const StagedContext = createContext<StagedContextType | undefined>(undefined);
 
-export function StagedManifestProvider({
+export function StagedContextProvider({
   projectId,
   baseManifest,
   children,
@@ -174,6 +174,6 @@ export function StagedManifestProvider({
 export function useStagedContext() {
   const context = useContext(StagedContext);
   if (!context)
-    throw new Error("useStagedContext must be used inside StagedManifestProvider");
+    throw new Error("useStagedContext must be used inside StagedContextProvider");
   return context;
 }

@@ -3,7 +3,7 @@ import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/bu
 import { StagedRowActions } from "@/features/tokens/components/staged/row/staged-row-actions";
 import { StagedHeader } from "@/features/tokens/components/staged/staged-header";
 import {
-  StagedManifestProvider,
+  StagedContextProvider,
   useStagedContext,
 } from "@/features/tokens/state/staged-context";
 import { findRowById } from "@/features/tokens/state/staged-graph-model";
@@ -32,9 +32,9 @@ const other = validSeed.tokens.find((token) => token.name === "surface-muted")!;
 
 function wrapper({ children }: { children: ReactNode }) {
   return (
-    <StagedManifestProvider projectId={projectId} baseManifest={base}>
+    <StagedContextProvider projectId={projectId} baseManifest={base}>
       {children}
-    </StagedManifestProvider>
+    </StagedContextProvider>
   );
 }
 
@@ -101,9 +101,9 @@ describe("staged save reconciliation", () => {
     );
     const reloaded = renderHook(() => useStagedContext(), {
       wrapper: ({ children }: { children: ReactNode }) => (
-        <StagedManifestProvider projectId={projectId} baseManifest={savedBase}>
+        <StagedContextProvider projectId={projectId} baseManifest={savedBase}>
           {children}
-        </StagedManifestProvider>
+        </StagedContextProvider>
       ),
     });
     await waitFor(() => expect(reloaded.result.current.canApply).toBe(true));
@@ -173,9 +173,9 @@ describe("staged save reconciliation", () => {
     );
     const reloaded = renderHook(() => useStagedContext(), {
       wrapper: ({ children }: { children: ReactNode }) => (
-        <StagedManifestProvider projectId={projectId} baseManifest={savedBase}>
+        <StagedContextProvider projectId={projectId} baseManifest={savedBase}>
           {children}
-        </StagedManifestProvider>
+        </StagedContextProvider>
       ),
     });
     await waitFor(() => expect(reloaded.result.current.canApply).toBe(true));

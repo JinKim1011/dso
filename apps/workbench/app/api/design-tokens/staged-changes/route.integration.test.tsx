@@ -1,6 +1,6 @@
 import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
 import {
-  StagedManifestProvider,
+  StagedContextProvider,
   useStagedContext,
 } from "@/features/tokens/state/staged-context";
 import { findRowById } from "@/features/tokens/state/staged-graph-model";
@@ -190,9 +190,9 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
       );
       const hook = renderHook(() => useStagedContext(), {
         wrapper: ({ children }: { children: ReactNode }) => (
-          <StagedManifestProvider projectId={fixture.project.id} baseManifest={model}>
+          <StagedContextProvider projectId={fixture.project.id} baseManifest={model}>
             {children}
-          </StagedManifestProvider>
+          </StagedContextProvider>
         ),
       });
       await waitFor(() => expect(hook.result.current.canApply).toBe(true));

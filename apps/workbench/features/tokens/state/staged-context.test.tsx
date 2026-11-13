@@ -1,7 +1,7 @@
 import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
 import { createTokenDisplayResolver } from "@/features/tokens/model/token-display";
 import {
-  StagedManifestProvider,
+  StagedContextProvider,
   useStagedContext,
 } from "@/features/tokens/state/staged-context";
 import { persistDraftModel } from "@/features/tokens/state/staged-draft-storage";
@@ -19,12 +19,9 @@ const baseModel = buildTokenGraphViewModel(
 
 function wrapper({ children }: { children: ReactNode }) {
   return (
-    <StagedManifestProvider
-      projectId={validSeed.projects[0]!.id}
-      baseManifest={baseModel}
-    >
+    <StagedContextProvider projectId={validSeed.projects[0]!.id} baseManifest={baseModel}>
       {children}
-    </StagedManifestProvider>
+    </StagedContextProvider>
   );
 }
 
@@ -134,12 +131,12 @@ describe("staged draft reload", () => {
     };
     const reloaded = renderHook(() => useStagedContext(), {
       wrapper: ({ children }: { children: ReactNode }) => (
-        <StagedManifestProvider
+        <StagedContextProvider
           projectId={validSeed.projects[0]!.id}
           baseManifest={newerBase}
         >
           {children}
-        </StagedManifestProvider>
+        </StagedContextProvider>
       ),
     });
     await waitFor(() => expect(reloaded.result.current.isStaleDraft).toBe(true));
@@ -183,9 +180,9 @@ describe("staged draft reload", () => {
     current.unmount();
     const other = renderHook(() => useStagedContext(), {
       wrapper: ({ children }: { children: ReactNode }) => (
-        <StagedManifestProvider projectId={otherProject} baseManifest={baseModel}>
+        <StagedContextProvider projectId={otherProject} baseManifest={baseModel}>
           {children}
-        </StagedManifestProvider>
+        </StagedContextProvider>
       ),
     });
     await waitFor(() =>
