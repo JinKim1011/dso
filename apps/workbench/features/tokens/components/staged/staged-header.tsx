@@ -3,28 +3,25 @@
 import { useStagedManifest } from "@/features/tokens/state/staged-manifest-context";
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
 import { Button, Tooltip } from "@repo/ui";
-import { useState } from "react";
 
 type StagedHeaderProps = {
   onBack: () => void;
 };
 
 export function StagedHeader({ onBack }: StagedHeaderProps) {
-  const { applyDraft, resetDraft, changedRowCount, isStaleDraft, draftLoadError } =
-    useStagedManifest();
-  const [isApplying, setIsApplying] = useState(false);
+  const {
+    applyDraft,
+    resetDraft,
+    changedRowCount,
+    isStaleDraft,
+    draftLoadError,
+    isApplying,
+    canApply,
+    outcomeUnknown,
+  } = useStagedManifest();
 
   const handleBulkApply = async () => {
-    setIsApplying(true);
-
-    try {
-      const response = await applyDraft();
-      if (!response.ok) {
-        console.error("Failed to apply manifest(bulk)");
-      }
-    } finally {
-      setIsApplying(false);
-    }
+    await applyDraft();
   };
 
   const wrapperClasses =
@@ -58,6 +55,7 @@ export function StagedHeader({ onBack }: StagedHeaderProps) {
               label="DISCARD ALL"
               variant="void"
               onClick={resetDraft}
+              disabled={isApplying || outcomeUnknown}
               overrideBgClass="bg-transparent hover:bg-surface-error active:bg-surface-error"
               overrideTextColorClass="text-content-error hover:text-content-error active:text-content-error"
             />
@@ -67,7 +65,7 @@ export function StagedHeader({ onBack }: StagedHeaderProps) {
           >
             <Button
               size="sm"
-              disabled
+              disabled={isApplying || !canApply || changedRowCount === 0}
               label={isApplying ? "PUSHING..." : "PUSH ALL"}
               variant="void"
               onClick={handleBulkApply}
