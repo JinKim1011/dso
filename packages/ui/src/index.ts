@@ -12,9 +12,6 @@ export { SegmentedControl } from "./components/SegmentedControl";
 export { Text } from "./components/Text";
 export { Tooltip } from "./components/Tooltip";
 
-// lib
-export { cn } from "./lib/utils";
-
 // motion
 export { createMotionTransition, MotionSettings } from "./types/motion";
 export type { MotionEaseKey, MotionSpeedKey } from "./types/motion";
