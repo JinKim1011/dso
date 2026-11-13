@@ -169,8 +169,14 @@ before writing. Errors roll back the entire batch.
 Token, token-type, and reference writers that can run against an existing project
 must use the same project transaction protocol. The lock only coordinates writers
 that participate in it; repository calls and direct SQL do not acquire it
-automatically. Request parsing, HTTP authentication and CSRF protection remain the
-responsibility of the future request boundary.
+automatically. The development-only request boundary parses requests, checks the
+session and trusted origin, and invokes the service. Login and production CSRF
+protection remain unfinished; production writes are disabled.
+
+Workbench Apply one sends the selected row, while Apply all sends one atomic batch.
+On success the saved rows update the baseline and edits made after submission remain
+staged. If the save outcome is unknown, the draft is retained and another Apply is
+blocked until the page is reloaded and the current data can be compared.
 
 ### Audit-event scope
 
