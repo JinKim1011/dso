@@ -10,7 +10,6 @@ import {
   persistDraftModel,
 } from "@/features/tokens/state/staged-draft-storage";
 import { buildChangedRows } from "@/features/tokens/state/staged-graph-model";
-import { getManifestLineChangeStats } from "@/features/tokens/state/staged-manifest-model";
 import { useStagedManifestActions } from "@/features/tokens/state/use-staged-manifest-actions";
 import {
   createContext,
@@ -32,8 +31,6 @@ type StagedContextType = {
   isApplying: boolean;
   saveError: string | null;
   outcomeUnknown: boolean;
-  addedManifestLineCount: number;
-  deletedManifestLineCount: number;
   updateRow: (rowId: string, update: TokenRowUpdate) => void;
   resetDraft: () => void;
   applyDraft: () => Promise<Response>;
@@ -124,13 +121,6 @@ export function StagedManifestProvider({
     [baseModel, draftModel],
   );
 
-  const manifestLineChangeStats = useMemo(
-    () => getManifestLineChangeStats(baseModel, draftModel),
-    [baseModel, draftModel],
-  );
-
-  const { addedLines, deletedLines } = manifestLineChangeStats;
-
   const value = useMemo(
     () => ({
       baseModel,
@@ -143,8 +133,6 @@ export function StagedManifestProvider({
       isApplying,
       saveError,
       outcomeUnknown,
-      addedManifestLineCount: addedLines,
-      deletedManifestLineCount: deletedLines,
       updateRow,
       resetDraft: () => {
         if (isStaleDraft || draftLoadError) {
@@ -172,8 +160,6 @@ export function StagedManifestProvider({
       outcomeUnknown,
       projectId,
       baseManifest,
-      addedLines,
-      deletedLines,
       updateRow,
       resetDraft,
       applyDraft,
