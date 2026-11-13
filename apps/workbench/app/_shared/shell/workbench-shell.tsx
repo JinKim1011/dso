@@ -1,5 +1,6 @@
 import { Footer } from "@/_shared/shell/footer";
 import { Header } from "@/_shared/shell/header";
+import { ScreenLock } from "@/_shared/shell/screen-lock";
 import type { ReactNode } from "react";
 import { Suspense } from "react";
 
@@ -9,14 +10,16 @@ function HeaderFallback() {
 
 export function WorkbenchShell({ children }: { children: ReactNode }) {
   return (
-    <div className="flex h-screen flex-col">
-      <Suspense fallback={<HeaderFallback />}>
-        <Header />
-      </Suspense>
+    <ScreenLock>
+      <div className="flex h-screen flex-col">
+        <Suspense fallback={<HeaderFallback />}>
+          <Header />
+        </Suspense>
 
-      <main className="mx-mini flex-1 overflow-hidden">{children}</main>
+        <main className="mx-mini flex-1 overflow-hidden">{children}</main>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </ScreenLock>
   );
 }
