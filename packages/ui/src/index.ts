@@ -7,6 +7,7 @@ export { Tooltip } from "./components/Tooltip";
 // field
 export { Combobox } from "./components/combobox/Combobox";
 export { Input } from "./components/input/Input";
+export { InputBase } from "./components/input/InputBase";
 
 // card
 export { Card } from "./components/Card/Card";
