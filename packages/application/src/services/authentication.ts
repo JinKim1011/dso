@@ -17,7 +17,8 @@ import { Pool } from "pg";
 
 const SESSION_DURATION_MS = 8 * 60 * 60 * 1_000;
 
-const DUMMY_PASSWORD_HASH = "$argon2id$v=19$m=19456,t=2,p=1$...";
+const DUMMY_PASSWORD_HASH =
+  "$argon2id$v=19$m=19456,t=2,p=1$x5h/y1TFYlw7YoeIQgkpBA$0gxTp8Jcnw1AQKI9Mlj4K3ePnsZNapFhtJNxJQ+iCu8";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
