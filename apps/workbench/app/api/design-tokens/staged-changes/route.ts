@@ -56,7 +56,7 @@ export async function POST(request: Request): Promise<Response> {
       return failure(401, "authentication-required", "Authentication is required.");
     }
     const database = getDatabasePool();
-    const context = await authenticateSession(database, sessionId);
+    const authContext = await authenticateSession(database, sessionId);
 
     const body = await readJsonBody(request);
     const parsed = parseSaveStagedChangesRequest(body);
@@ -77,7 +77,7 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    const result = await saveStagedChanges(database, context, parsed.value);
+    const result = await saveStagedChanges(database, authContext, parsed.value);
     return Response.json({ ok: true, ...result } satisfies SaveStagedChangesResponse, {
       headers: { "Cache-Control": "no-store" },
     });
