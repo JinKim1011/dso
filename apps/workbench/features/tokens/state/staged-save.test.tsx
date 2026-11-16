@@ -289,7 +289,7 @@ describe("staged save reconciliation", () => {
       const content = screen.getByText("Back").parentElement!;
       expect(content).toHaveAttribute("inert");
       expect(content).toHaveAttribute("aria-busy", "true");
-      expect(screen.getByRole("status")).toHaveTextContent("Applying changes");
+      expect(screen.getByRole("status")).toHaveTextContent("APPLYING CHANGES...");
 
       await act(async () => {
         pending.resolve(
