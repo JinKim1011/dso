@@ -1,7 +1,7 @@
 import { InvalidCredentialsError, SessionExpiredError } from "@repo/application/errors";
 import { verifyPassword } from "@repo/application/services/passwords";
 import type { AuthorizationContext, LoginResult } from "@repo/application/types";
-import { LoginRequest } from "@repo/contracts/operation";
+import type { AuthenticatedUser, LoginRequest } from "@repo/contracts/operation";
 import { insertAuditEvent } from "@repo/db/repositories/audit-events";
 import {
   deleteSession,
@@ -11,6 +11,7 @@ import {
 import {
   canonicalizeEmail,
   findUserByEmail,
+  findUserProfileById,
 } from "@repo/db/repositories/users";
 import { withTransaction } from "@repo/db/transaction";
 import { Pool } from "pg";
@@ -87,6 +88,17 @@ export async function authenticateSession(
     userId: session.userId,
     sessionId: session.id,
   };
+}
+
+export async function getAuthenticatedUser(
+  database: Pool,
+  context: AuthorizationContext,
+): Promise<AuthenticatedUser> {
+  const user = await findUserProfileById(database, context.userId);
+  if (!user) {
+    throw new Error("Authenticated user not found.");
+  }
+  return user;
 }
 
 export async function logout(
