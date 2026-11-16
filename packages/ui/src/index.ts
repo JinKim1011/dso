@@ -4,6 +4,8 @@ export { Toaster } from "./components/notification/toaster";
 export { SegmentedControl } from "./components/SegmentedControl";
 export { Text } from "./components/Text";
 export { Tooltip } from "./components/Tooltip";
+export { DropdownMenu } from "./components/menu/dropdown-menu";
+export type { MenuItem } from "./components/menu/menu-item";
 
 // field
 export { Combobox } from "./components/combobox/Combobox";
