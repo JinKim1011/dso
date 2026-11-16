@@ -1,4 +1,5 @@
 import { WorkbenchShell } from "@/_shared/shell/workbench-shell";
+import { listAccessibleProjects } from "@/features/projects/server/list-accessible-projects";
 import { loadWorkbenchProject } from "@/features/projects/server/load-workbench-project";
 import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
 import { StagedContextProvider } from "@/features/tokens/state/staged-context";
@@ -39,7 +40,10 @@ export default async function WorkbenchLayout({
     workbenchProject.references,
   );
 
-  const user = await getAuthenticatedUser(getDatabasePool(), context);
+  const [user, projects] = await Promise.all([
+    getAuthenticatedUser(getDatabasePool(), context),
+    listAccessibleProjects(getDatabasePool(), context),
+  ]);
 
   return (
     <StagedContextProvider
@@ -47,7 +51,14 @@ export default async function WorkbenchLayout({
       projectId={workbenchProject.project.id}
       baseManifest={model}
     >
-      <WorkbenchShell email={user.email} projectName={workbenchProject.project.name}>
+      <WorkbenchShell
+        email={user.email}
+        currentProject={{
+          id: workbenchProject.project.id,
+          name: workbenchProject.project.name,
+        }}
+        projects={projects.map(({ id, name }) => ({ id, name }))}
+      >
         {children}
       </WorkbenchShell>
     </StagedContextProvider>
