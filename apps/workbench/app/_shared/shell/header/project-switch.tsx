@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckIcon, ChevronDownIcon } from "@radix-ui/react-icons";
+import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { DropdownMenu, type MenuItem } from "@repo/ui";
 
 type Project = { id: string; name: string };
@@ -25,6 +25,6 @@ export function ProjectSwitch({
   });
 
   return (
-    <DropdownMenu label={currentProject.name} rightIcon={ChevronDownIcon} items={items} />
+    <DropdownMenu label={currentProject.name} rightIcon={CaretSortIcon} items={items} />
   );
 }
