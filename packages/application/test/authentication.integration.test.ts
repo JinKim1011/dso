@@ -1,6 +1,7 @@
 import { SessionExpiredError } from "@repo/application/errors";
 import {
   authenticateSession,
+  getAuthenticatedUser,
   login,
   logout,
 } from "@repo/application/services/authentication";
@@ -266,6 +267,38 @@ describe("Authentication service integration", () => {
       userId,
       sessionId,
     });
+  });
+
+  it("returns only safe user details for an authenticated session", async () => {
+    const database = getTestDatabase();
+    const user = await insertUser(database, {
+      id: crypto.randomUUID(),
+      email: "User@Example.Test",
+      passwordHash: await hashPassword("test-password"),
+      createdAt: new Date().toISOString(),
+    });
+    const sessionId = crypto.randomUUID();
+    await insertSession(database, {
+      id: sessionId,
+      userId: user.id,
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+    });
+
+    const context = await authenticateSession(database, sessionId);
+    await expect(getAuthenticatedUser(database, context)).resolves.toEqual({
+      id: user.id,
+      email: "user@example.test",
+    });
+  });
+
+  it("reports an unexpected missing authenticated user", async () => {
+    await expect(
+      getAuthenticatedUser(getTestDatabase(), {
+        userId: crypto.randomUUID(),
+        sessionId: crypto.randomUUID(),
+      }),
+    ).rejects.toThrow("Authenticated user not found.");
   });
 
   it("rejects an expired session", async () => {
