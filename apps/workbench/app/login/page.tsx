@@ -1,8 +1,8 @@
 "use client";
 
-import { Button, Input, InputBase, Text } from "@repo/ui";
+import { Button, Input, InputBase, Text, Toaster } from "@repo/ui";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +12,17 @@ export default function LoginPage() {
 
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("reason") !== "project-authentication-required") return;
+
+    url.searchParams.delete("reason");
+    window.history.replaceState(window.history.state, "", url);
+    Toaster.toast.warning("Log in to access the project.", {
+      id: "project-authentication-required",
+    });
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -48,6 +59,7 @@ export default function LoginPage() {
 
   return (
     <main className="px-mini bg-dot-pattern flex min-h-dvh w-full items-center justify-center">
+      <Toaster />
       <form
         className="gap-regularPlus flex w-full max-w-60 flex-col"
         onSubmit={handleSubmit}
