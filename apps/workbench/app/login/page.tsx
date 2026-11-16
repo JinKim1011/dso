@@ -67,7 +67,7 @@ export default function LoginPage() {
         <Text
           as="h1"
           variant="heading-md"
-          className="text-content-accent text0- w-full text-center"
+          className="text-content-primary w-full text-center"
         >
           log in to DSO
         </Text>
