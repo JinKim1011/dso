@@ -1,3 +1,4 @@
+import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
 import {
   getTrustedMutationOrigin,
