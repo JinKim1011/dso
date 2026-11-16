@@ -59,6 +59,23 @@ export async function findProjectById(
   return row ? mapProjectRow(row) : null;
 }
 
+export async function listProjectsByUserId(
+  database: Queryable,
+  userId: string,
+): Promise<Project[]> {
+  const result = await database.query<ProjectRow>(
+    `
+      SELECT p.id, p.name, p.slug, p.created_at
+      FROM projects p
+      JOIN project_members m ON m.project_id = p.id
+      WHERE m.user_id = $1
+      ORDER BY p.name, p.id
+    `,
+    [userId],
+  );
+  return result.rows.map(mapProjectRow);
+}
+
 export async function lockProjectForUpdate(
   database: Queryable,
   projectId: string,
