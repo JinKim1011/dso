@@ -1,4 +1,6 @@
 import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
+import { requireProjectAccess } from "@repo/application/authorization";
+import { ProjectAccessDeniedError } from "@repo/application/errors";
 import { listComponentsByProjectId } from "@repo/db/repositories/components";
 import { findProjectById } from "@repo/db/repositories/projects";
 import { listTokenReferencesByProjectId } from "@repo/db/repositories/references";
@@ -10,6 +12,9 @@ import { validSeed } from "@repo/seed-data/valid-seed";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loadWorkbenchProject } from "./load-workbench-project";
 
+vi.mock("@repo/application/authorization", () => ({
+  requireProjectAccess: vi.fn(),
+}));
 vi.mock("@repo/db/repositories/components", () => ({
   listComponentsByProjectId: vi.fn(),
 }));
@@ -35,6 +40,7 @@ vi.mock("@repo/db/repositories/tokens", () => ({
 describe("loadWorkbenchProject database pipeline", () => {
   const database = { query: vi.fn() };
   const project = validSeed.projects[0]!;
+  const context = { userId: validSeed.users[0]!.id, sessionId: crypto.randomUUID() };
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -66,8 +72,9 @@ describe("loadWorkbenchProject database pipeline", () => {
   });
 
   it("loads repository records and builds the graph view model consumed by layout", async () => {
-    const workbenchProject = await loadWorkbenchProject(database, project.id);
+    const workbenchProject = await loadWorkbenchProject(database, context, project.id);
 
+    expect(requireProjectAccess).toHaveBeenCalledWith(database, context.userId, project.id);
     expect(findProjectById).toHaveBeenCalledWith(database, project.id);
     expect(listTokenTypesByProjectId).toHaveBeenCalledWith(database, project.id);
     expect(listTokensByProjectId).toHaveBeenCalledWith(database, project.id);
@@ -161,5 +168,20 @@ describe("loadWorkbenchProject database pipeline", () => {
         typography: { fontSize: "1rem", fontWeight: "400", lineHeight: "1.7" },
       },
     });
+
+  });
+
+  it("does not read project data when membership is denied", async () => {
+    vi.mocked(requireProjectAccess).mockRejectedValue(new ProjectAccessDeniedError());
+    await expect(loadWorkbenchProject(database, context, project.id)).rejects.toBeInstanceOf(
+      ProjectAccessDeniedError,
+    );
+    expect(findProjectById).not.toHaveBeenCalled();
+    expect(listTokenTypesByProjectId).not.toHaveBeenCalled();
+    expect(listTokensByProjectId).not.toHaveBeenCalled();
+    expect(listTokenReferencesByProjectId).not.toHaveBeenCalled();
+    expect(listComponentsByProjectId).not.toHaveBeenCalled();
+    expect(listDocumentTemplatesByProjectId).not.toHaveBeenCalled();
+    expect(listPublishedReleasesByProjectId).not.toHaveBeenCalled();
   });
 });
