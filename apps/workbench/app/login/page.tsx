@@ -48,7 +48,7 @@ export default function LoginPage() {
       }
 
       setPassword("");
-      router.replace("/tokens/color");
+      router.replace("/projects");
       router.refresh();
     } catch {
       setError("Unable to log in. Please try again.");
