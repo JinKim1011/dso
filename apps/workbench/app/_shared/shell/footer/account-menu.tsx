@@ -1,17 +1,15 @@
 "use client";
 
 import { CaretSortIcon, ExitIcon } from "@radix-ui/react-icons";
-import type { ProjectMemberRole } from "@repo/contracts/validation/enum";
 import { DropdownMenu, Toaster, type MenuItem } from "@repo/ui";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type AccountMenuProps = {
   email: string;
-  role: ProjectMemberRole;
 };
 
-export function AccountMenu({ email, role }: AccountMenuProps) {
+export function AccountMenu({ email }: AccountMenuProps) {
   const [loggingOut, setLoggingOut] = useState(false);
   const router = useRouter();
 
