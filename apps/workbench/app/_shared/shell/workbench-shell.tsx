@@ -1,5 +1,5 @@
 import { Footer } from "@/_shared/shell/footer/footer";
-import { Header } from "@/_shared/shell/header";
+import { Header } from "@/_shared/shell/header/header";
 import { ScreenLock } from "@/_shared/shell/screen-lock";
 import type { ReactNode } from "react";
 import { Suspense } from "react";
