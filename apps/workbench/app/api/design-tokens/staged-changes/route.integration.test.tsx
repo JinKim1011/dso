@@ -166,6 +166,30 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
       expect((await POST(request(payload, crypto.randomUUID()))).status).toBe(401);
     });
 
+    it("rejects malformed, missing, and expired sessions", async () => {
+      const fixture = await seedProject(database, "editor");
+      const now = Date.now();
+      const expiredId = crypto.randomUUID();
+      await insertSession(database, {
+        id: expiredId,
+        userId: fixture.user.id,
+        createdAt: new Date(now - 120_000).toISOString(),
+        expiresAt: new Date(now - 60_000).toISOString(),
+      });
+      const payload = { projectId: fixture.project.id, changes: [] };
+      for (const id of ["invalid", crypto.randomUUID(), expiredId]) {
+        const response = await POST(request(payload, id));
+        expect(response.status).toBe(401);
+        expect(await response.json()).toEqual({
+          ok: false,
+          error: {
+            code: "authentication-required",
+            message: "Authentication is required.",
+          },
+        });
+      }
+    });
+
     it("applies one row from the staged state through the real save route", async () => {
       const fixture = await seedProject(database, "editor");
       const sessionId = await createSession(fixture.user.id);
