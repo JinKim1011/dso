@@ -34,7 +34,9 @@ export function Footer({ email }: FooterProps) {
     <>
       <Toaster />
       <div className="px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between">
-        <AccountMenu email={email} />
+        <div className="-ml-mini">
+          <AccountMenu email={email} />
+        </div>
 
         {mounted ? (
           <SegmentedControl
