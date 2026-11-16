@@ -1,12 +1,12 @@
 import {
-  requiredProjectRole,
-  requireProjectAccess,
-} from "@repo/application/authorization";
-import {
   DomainValidationError,
   ProjectAccessDeniedError,
   ResourceNotFoundError,
 } from "@repo/application/errors";
+import {
+  requiredProjectRole,
+  requireProjectAccess,
+} from "@repo/application/services/authorization";
 import { withProjectTransaction } from "@repo/application/services/project-transaction";
 import type { AuthorizationContext } from "@repo/application/types";
 import type { ChangeTokenTypeParentRequest } from "@repo/contracts/operation";

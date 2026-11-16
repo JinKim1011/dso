@@ -1,6 +1,6 @@
 import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
-import { requireProjectAccess } from "@repo/application/authorization";
 import { ProjectAccessDeniedError } from "@repo/application/errors";
+import { requireProjectAccess } from "@repo/application/services/authorization";
 import { listComponentsByProjectId } from "@repo/db/repositories/components";
 import { findProjectById } from "@repo/db/repositories/projects";
 import { listTokenReferencesByProjectId } from "@repo/db/repositories/references";
@@ -74,7 +74,11 @@ describe("loadWorkbenchProject database pipeline", () => {
   it("loads repository records and builds the graph view model consumed by layout", async () => {
     const workbenchProject = await loadWorkbenchProject(database, context, project.id);
 
-    expect(requireProjectAccess).toHaveBeenCalledWith(database, context.userId, project.id);
+    expect(requireProjectAccess).toHaveBeenCalledWith(
+      database,
+      context.userId,
+      project.id,
+    );
     expect(findProjectById).toHaveBeenCalledWith(database, project.id);
     expect(listTokenTypesByProjectId).toHaveBeenCalledWith(database, project.id);
     expect(listTokensByProjectId).toHaveBeenCalledWith(database, project.id);
@@ -168,14 +172,13 @@ describe("loadWorkbenchProject database pipeline", () => {
         typography: { fontSize: "1rem", fontWeight: "400", lineHeight: "1.7" },
       },
     });
-
   });
 
   it("does not read project data when membership is denied", async () => {
     vi.mocked(requireProjectAccess).mockRejectedValue(new ProjectAccessDeniedError());
-    await expect(loadWorkbenchProject(database, context, project.id)).rejects.toBeInstanceOf(
-      ProjectAccessDeniedError,
-    );
+    await expect(
+      loadWorkbenchProject(database, context, project.id),
+    ).rejects.toBeInstanceOf(ProjectAccessDeniedError);
     expect(findProjectById).not.toHaveBeenCalled();
     expect(listTokenTypesByProjectId).not.toHaveBeenCalled();
     expect(listTokensByProjectId).not.toHaveBeenCalled();

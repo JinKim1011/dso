@@ -1,8 +1,4 @@
 import {
-  requiredProjectRole,
-  requireProjectAccess,
-} from "@repo/application/authorization";
-import {
   ProjectAccessDeniedError,
   ResourceNotFoundError,
 } from "@repo/application/errors";
@@ -11,6 +7,10 @@ import {
   generateOpaqueApiKeySecret,
   hashApiKey,
 } from "@repo/application/security/api-keys";
+import {
+  requiredProjectRole,
+  requireProjectAccess,
+} from "@repo/application/services/authorization";
 import { AuthorizationContext } from "@repo/application/types";
 import type {
   CreateApiKeyRequest,

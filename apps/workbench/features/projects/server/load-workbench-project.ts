@@ -1,4 +1,4 @@
-import { requireProjectAccess } from "@repo/application/authorization";
+import { requireProjectAccess } from "@repo/application/services/authorization";
 import type { AuthorizationContext } from "@repo/application/types";
 import type {
   Component,
