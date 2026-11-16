@@ -1,5 +1,6 @@
 // components
 export { Button } from "./components/Button";
+export { Toaster } from "./components/notification/toaster";
 export { SegmentedControl } from "./components/SegmentedControl";
 export { Text } from "./components/Text";
 export { Tooltip } from "./components/Tooltip";
