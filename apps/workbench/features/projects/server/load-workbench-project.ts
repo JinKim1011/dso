@@ -1,7 +1,5 @@
-// WIP:
-// This loade is not yet production-safe
-// until it recevies authorization cotnext.
-
+import { requireProjectAccess } from "@repo/application/authorization";
+import type { AuthorizationContext } from "@repo/application/types";
 import type {
   Component,
   DocumentTemplate,
@@ -32,8 +30,11 @@ export type WorkbenchProjectData = {
 
 export async function loadWorkbenchProject(
   database: Pick<Pool, "query">,
+  context: AuthorizationContext,
   projectId: string,
 ): Promise<WorkbenchProjectData> {
+  await requireProjectAccess(database, context.userId, projectId);
+
   const project = await findProjectById(database, projectId);
 
   if (!project) {
