@@ -9,6 +9,7 @@ import type {
   TokenReference,
   TokenType,
 } from "@repo/contracts/type";
+import { ProjectMemberRole } from "@repo/contracts/validation/enum";
 import { listComponentsByProjectId } from "@repo/db/repositories/components";
 import { findProjectById } from "@repo/db/repositories/projects";
 import { listTokenReferencesByProjectId } from "@repo/db/repositories/references";
@@ -20,6 +21,7 @@ import type { Pool } from "pg";
 
 export type WorkbenchProjectData = {
   project: Project;
+  role: ProjectMemberRole;
   tokenTypes: TokenType[];
   tokens: Token[];
   references: TokenReference[];
@@ -33,7 +35,7 @@ export async function loadWorkbenchProject(
   context: AuthorizationContext,
   projectId: string,
 ): Promise<WorkbenchProjectData> {
-  await requireProjectAccess(database, context.userId, projectId);
+  const membership = await requireProjectAccess(database, context.userId, projectId);
 
   const project = await findProjectById(database, projectId);
 
@@ -53,6 +55,7 @@ export async function loadWorkbenchProject(
 
   return {
     project,
+    role: membership.role,
     tokenTypes,
     tokens,
     references,
