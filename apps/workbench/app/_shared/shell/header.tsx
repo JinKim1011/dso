@@ -6,7 +6,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const STAGED_PATH = "/tokens/staged";
 
-export function Header() {
+type HeaderProps = {
+  projectName: string;
+};
+
+export function Header({ projectName }: HeaderProps) {
   const path = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -26,6 +30,6 @@ export function Header() {
   return path === STAGED_PATH ? (
     <StagedHeader onBack={handleBack} />
   ) : (
-    <TokensHeader stagedHref={stagedHref} />
+    <TokensHeader stagedHref={stagedHref} projectName={projectName} />
   );
 }
