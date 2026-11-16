@@ -20,6 +20,10 @@ function failure(status: number, code: string, message: string): Response {
 }
 
 export async function POST(request: Request): Promise<Response> {
+  if (process.env.NODE_ENV !== "development") {
+    return failure(404, "not-found", "Not found.");
+  }
+
   try {
     const trustedOrigin = getTrustedMutationOrigin(process.env);
     if (!hasTrustedMutationOrigin(request, trustedOrigin)) {
