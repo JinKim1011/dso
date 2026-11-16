@@ -9,9 +9,10 @@ import { usePathname, useRouter } from "next/navigation";
 
 type TokensHeaderProps = {
   stagedHref: string;
+  projectName: string;
 };
 
-export function TokensHeader({ stagedHref }: TokensHeaderProps) {
+export function TokensHeader({ stagedHref, projectName }: TokensHeaderProps) {
   const path = usePathname();
   const router = useRouter();
   const { changedRowCount } = useStagedContext();
@@ -52,7 +53,7 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
           |
         </Text>
         <Text variant="label-xxs" as="span" className="text-content-tertiary/70">
-          AGENT DOCS MANAGER
+          {projectName}
         </Text>
       </div>
       <div className={centerWrapperClasses}>
