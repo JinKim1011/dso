@@ -25,7 +25,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
     beforeAll(async () => { database = await setupDatabase(); });
     beforeEach(async () => {
       await resetDatabase(database);
-      vi.stubEnv("NODE_ENV", "test");
+      vi.stubEnv("NODE_ENV", "development");
       vi.stubEnv("DSO_WORKBENCH_ORIGIN", origin);
       vi.stubEnv("SESSION_COOKIE_NAME", "test_session");
       vi.mocked(getDatabasePool).mockReturnValue(database);

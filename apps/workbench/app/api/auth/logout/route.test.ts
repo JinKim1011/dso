@@ -28,6 +28,7 @@ function request(requestOrigin: string | null = origin): Request {
 describe("logout request boundary", () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("DSO_WORKBENCH_ORIGIN", origin);
     vi.mocked(getCurrentSession).mockResolvedValue(context);
     vi.mocked(logout).mockResolvedValue(undefined);
@@ -36,6 +37,24 @@ describe("logout request boundary", () => {
     vi.unstubAllEnvs();
     vi.restoreAllMocks();
   });
+
+  it.each(["production", "test", "", undefined])(
+    "is unavailable outside development: %s",
+    async (env) => {
+      vi.stubEnv("NODE_ENV", env);
+      const response = await POST(request());
+      expect(response.status).toBe(404);
+      expect(response.headers.get("cache-control")).toBe("no-store");
+      expect(response.headers.get("set-cookie")).toBeNull();
+      expect(await response.json()).toEqual({
+        ok: false,
+        error: { code: "not-found", message: "Not found." },
+      });
+      expect(getCurrentSession).not.toHaveBeenCalled();
+      expect(getDatabasePool).not.toHaveBeenCalled();
+      expect(logout).not.toHaveBeenCalled();
+    },
+  );
 
   it("deletes the session and expires the configured cookie", async () => {
     const incoming = request();
