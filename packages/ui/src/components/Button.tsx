@@ -61,7 +61,7 @@ const buttonVariants = cva(
         variant: "fill",
         selected: false,
         class:
-          "border-transparent bg-surface-primary text-content-tertiary hover:border-transparent hover:bg-surface-secondary hover:text-content-primary active:border-transparent active:bg-surface-quaternary active:text-content-primary",
+          "border-transparent bg-surface-primary text-content-tertiary hover:border-transparent hover:bg-surface-tertiary hover:text-content-primary active:border-transparent active:bg-surface-quaternary active:text-content-primary",
       },
       {
         variant: "fill",
