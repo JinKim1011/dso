@@ -131,7 +131,7 @@ type ButtonVariant = NonNullable<VariantProps<typeof buttonVariants>["variant"]>
 type ButtonSize = NonNullable<VariantProps<typeof buttonVariants>["size"]>;
 
 export interface ButtonProps extends Omit<
-  React.ComponentPropsWithoutRef<"button">,
+  React.ComponentPropsWithRef<"button">,
   "className"
 > {
   className?: string;
