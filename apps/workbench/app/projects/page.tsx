@@ -1,7 +1,7 @@
 // work-in-progress
 
-import { ProjectList } from "@/features/projects/components/project-list";
 import { listAccessibleProjects } from "@/features/projects/server/list-accessible-projects";
+import { ProjectsView } from "@/features/projects/views/projects-view";
 import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
 import { getWorkbenchProjectId } from "@/server/workbench-config";
@@ -20,5 +20,5 @@ export default async function ProjectsPage() {
     projects.find((project) => project.id.toLowerCase() === configuredProjectId)?.id ??
     null;
 
-  return <ProjectList projects={projects} configuredProjectId={availableProjectId} />;
+  return <ProjectsView projects={projects} configuredProjectId={availableProjectId} />;
 }
