@@ -7,19 +7,25 @@ import { Suspense } from "react";
 type WorkbenchShellProps = {
   children: ReactNode;
   email: string;
-  projectName: string;
+  currentProject: { id: string; name: string };
+  projects: { id: string; name: string }[];
 };
 
 function HeaderFallback() {
   return <div className="h-10 w-full" aria-hidden="true" />;
 }
 
-export function WorkbenchShell({ children, email, projectName }: WorkbenchShellProps) {
+export function WorkbenchShell({
+  children,
+  email,
+  currentProject,
+  projects,
+}: WorkbenchShellProps) {
   return (
     <ScreenLock>
       <div className="flex h-screen flex-col">
         <Suspense fallback={<HeaderFallback />}>
-          <Header projectName={projectName} />
+          <Header currentProject={currentProject} projects={projects} />
         </Suspense>
 
         <main className="mx-mini flex-1 overflow-hidden">{children}</main>
