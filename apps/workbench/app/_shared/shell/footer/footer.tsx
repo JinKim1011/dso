@@ -3,7 +3,6 @@
 import { AccountMenu } from "@/_shared/shell/footer/account-menu";
 import { useTheme, type ThemeMode } from "@/_shared/theme/use-theme";
 import { LaptopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
-import type { ProjectMemberRole } from "@repo/contracts/validation/enum";
 import { SegmentedControl, Toaster } from "@repo/ui";
 import { useEffect, useState } from "react";
 
@@ -15,10 +14,9 @@ const themeOptions = [
 
 type FooterProps = {
   email: string;
-  role: ProjectMemberRole;
 };
 
-export function Footer({ email, role }: FooterProps) {
+export function Footer({ email }: FooterProps) {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
@@ -36,7 +34,7 @@ export function Footer({ email, role }: FooterProps) {
     <>
       <Toaster />
       <div className="px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between">
-        <AccountMenu email={email} role={role} />
+        <AccountMenu email={email} />
 
         {mounted ? (
           <SegmentedControl
