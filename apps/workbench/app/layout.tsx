@@ -1,10 +1,4 @@
-import { WorkbenchShell } from "@/_shared/shell/workbench-shell";
 import { ThemeProvider } from "@/_shared/theme/theme-provider";
-import { loadWorkbenchProject } from "@/features/projects/server/load-workbench-project";
-import { buildTokenGraphViewModel } from "@/features/tokens/adapters/database/build-token-graph-view-model";
-import { StagedContextProvider } from "@/features/tokens/state/staged-context";
-import { getDatabasePool } from "@/server/database";
-import { getWorkbenchProjectId } from "@/server/workbench-config";
 import "@repo/ui/index.css";
 import "@xyflow/react/dist/style.css";
 import type { Metadata } from "next";
@@ -15,34 +9,15 @@ export const metadata: Metadata = {
   description: "Visual git for design token management",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const workbenchProject = await loadWorkbenchProject(
-    getDatabasePool(),
-    getWorkbenchProjectId(),
-  );
-
-  const model = buildTokenGraphViewModel(
-    workbenchProject.tokenTypes,
-    workbenchProject.tokens,
-    workbenchProject.references,
-  );
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ThemeProvider>
-          <StagedContextProvider
-            key={workbenchProject.project.id}
-            projectId={workbenchProject.project.id}
-            baseManifest={model}
-          >
-            <WorkbenchShell>{children}</WorkbenchShell>
-          </StagedContextProvider>
-        </ThemeProvider>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

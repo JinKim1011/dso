@@ -1,7 +1,7 @@
 import { InvalidCredentialsError, SessionExpiredError } from "@repo/application/errors";
 import { verifyPassword } from "@repo/application/services/passwords";
 import type { AuthorizationContext, LoginResult } from "@repo/application/types";
-import { LoginRequest } from "@repo/contracts/operation";
+import type { AuthenticatedUser, LoginRequest } from "@repo/contracts/operation";
 import { insertAuditEvent } from "@repo/db/repositories/audit-events";
 import {
   deleteSession,
@@ -11,13 +11,15 @@ import {
 import {
   canonicalizeEmail,
   findUserByEmail,
+  findUserProfileById,
 } from "@repo/db/repositories/users";
 import { withTransaction } from "@repo/db/transaction";
 import { Pool } from "pg";
 
 const SESSION_DURATION_MS = 8 * 60 * 60 * 1_000;
 
-const DUMMY_PASSWORD_HASH = "$argon2id$v=19$m=19456,t=2,p=1$...";
+const DUMMY_PASSWORD_HASH =
+  "$argon2id$v=19$m=19456,t=2,p=1$x5h/y1TFYlw7YoeIQgkpBA$0gxTp8Jcnw1AQKI9Mlj4K3ePnsZNapFhtJNxJQ+iCu8";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -86,6 +88,17 @@ export async function authenticateSession(
     userId: session.userId,
     sessionId: session.id,
   };
+}
+
+export async function getAuthenticatedUser(
+  database: Pool,
+  context: AuthorizationContext,
+): Promise<AuthenticatedUser> {
+  const user = await findUserProfileById(database, context.userId);
+  if (!user) {
+    throw new Error("Authenticated user not found.");
+  }
+  return user;
 }
 
 export async function logout(

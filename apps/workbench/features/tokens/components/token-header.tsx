@@ -6,20 +6,21 @@ import { ChevronRightIcon } from "@radix-ui/react-icons";
 import { Button, Text, Tooltip } from "@repo/ui";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import type { ReactNode } from "react";
 
 type TokensHeaderProps = {
   stagedHref: string;
+  projectSwitch: ReactNode;
 };
 
-export function TokensHeader({ stagedHref }: TokensHeaderProps) {
+export function TokensHeader({ stagedHref, projectSwitch }: TokensHeaderProps) {
   const path = usePathname();
   const router = useRouter();
   const { changedRowCount } = useStagedContext();
 
   const wrapperClasses =
     "px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between";
-  const leftwrapperClasses =
-    "flex-1 gap-mini p-mini pointer-events-none inline-flex items-center justify-start";
+  const leftwrapperClasses = "flex-1 p-mini inline-flex items-center justify-start";
   const centerWrapperClasses = "flex-1 gap-micro flex justify-center";
   const rightWrapperClasses = "flex-1 flex justify-end";
 
@@ -48,12 +49,10 @@ export function TokensHeader({ stagedHref }: TokensHeaderProps) {
         <Text variant="label-sm" as="span">
           DS0
         </Text>
-        <Text variant="label-xxs" as="span" className="text-content-tertiary/30">
+        <Text variant="label-xxs" as="span" className="text-content-tertiary/30 ml-mini">
           |
         </Text>
-        <Text variant="label-xxs" as="span" className="text-content-tertiary/70">
-          AGENT DOCS MANAGER
-        </Text>
+        {projectSwitch}
       </div>
       <div className={centerWrapperClasses}>
         {tokenNavigationItems.map((menu) => {

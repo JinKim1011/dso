@@ -124,6 +124,16 @@ describe("staged changes request boundary", () => {
     expect(saveStagedChanges).not.toHaveBeenCalled();
   });
 
+  it("returns an internal error for session lookup failures without exposing details", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(authenticateSession).mockRejectedValue(new Error(`database failure ${sessionId}`));
+    const response = await POST(request());
+    expect(response.status).toBe(500);
+    expect(await response.text()).not.toContain(sessionId);
+    expect(log).toHaveBeenCalledWith("Staged changes request failed.", { errorType: "Error" });
+    expect(saveStagedChanges).not.toHaveBeenCalled();
+  });
+
   it("rejects invalid JSON and parser errors", async () => {
     expect((await POST(request("{"))).status).toBe(400);
     const response = await POST(

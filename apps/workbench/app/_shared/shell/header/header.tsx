@@ -1,12 +1,18 @@
 "use client";
 
+import { ProjectSwitch } from "@/_shared/shell/header/project-switch";
 import { StagedHeader } from "@/features/tokens/components/staged/staged-header";
 import { TokensHeader } from "@/features/tokens/components/token-header";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const STAGED_PATH = "/tokens/staged";
 
-export function Header() {
+type HeaderProps = {
+  currentProject: { id: string; name: string };
+  projects: { id: string; name: string }[];
+};
+
+export function Header({ currentProject, projects }: HeaderProps) {
   const path = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -26,6 +32,9 @@ export function Header() {
   return path === STAGED_PATH ? (
     <StagedHeader onBack={handleBack} />
   ) : (
-    <TokensHeader stagedHref={stagedHref} />
+    <TokensHeader
+      stagedHref={stagedHref}
+      projectSwitch={<ProjectSwitch currentProject={currentProject} projects={projects} />}
+    />
   );
 }

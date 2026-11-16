@@ -1,19 +1,16 @@
+import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
-import { loadSecurityEnvironment } from "@/server/env";
 import {
   getTrustedMutationOrigin,
   hasTrustedMutationOrigin,
 } from "@/server/mutation-origin";
 import { readJsonBody, RequestBodyError } from "@/server/request-body";
-import { getSessionCookie } from "@/server/session-cookie";
 import {
   ProjectAccessDeniedError,
   ResourceNotFoundError,
-  SessionExpiredError,
   StagedChangesConflictError,
   StagedChangesValidationError,
 } from "@repo/application/errors";
-import { authenticateSession } from "@repo/application/services/authentication";
 import { saveStagedChanges } from "@repo/application/services/staged-changes";
 import type { SaveStagedChangesResponse } from "@repo/contracts/operation";
 import { parseSaveStagedChangesRequest } from "@repo/contracts/validation/operations/staged-changes";
@@ -50,13 +47,11 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    const environment = loadSecurityEnvironment(process.env);
-    const sessionId = getSessionCookie(request, environment.sessionCookieName);
-    if (!sessionId) {
+    const authContext = await getCurrentSession(request);
+    if (!authContext) {
       return failure(401, "authentication-required", "Authentication is required.");
     }
     const database = getDatabasePool();
-    const context = await authenticateSession(database, sessionId);
 
     const body = await readJsonBody(request);
     const parsed = parseSaveStagedChangesRequest(body);
@@ -77,7 +72,7 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    const result = await saveStagedChanges(database, context, parsed.value);
+    const result = await saveStagedChanges(database, authContext, parsed.value);
     return Response.json({ ok: true, ...result } satisfies SaveStagedChangesResponse, {
       headers: { "Cache-Control": "no-store" },
     });
@@ -88,10 +83,6 @@ export async function POST(request: Request): Promise<Response> {
         error.code,
         error.message,
       );
-    }
-
-    if (error instanceof SessionExpiredError) {
-      return failure(401, "authentication-required", "Authentication is required.");
     }
 
     if (error instanceof ProjectAccessDeniedError) {

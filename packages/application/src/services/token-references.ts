@@ -1,8 +1,8 @@
+import { DomainValidationError } from "@repo/application/errors";
 import {
   requiredProjectRole,
   requireProjectAccess,
-} from "@repo/application/authorization";
-import { DomainValidationError } from "@repo/application/errors";
+} from "@repo/application/services/authorization";
 import { withProjectTransaction } from "@repo/application/services/project-transaction";
 import type { AuthorizationContext } from "@repo/application/types";
 import type { AddTokenReferenceRequest } from "@repo/contracts/operation";

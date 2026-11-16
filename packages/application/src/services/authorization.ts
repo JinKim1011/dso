@@ -25,7 +25,7 @@ export function requiredProjectRole(
 }
 
 export async function requireProjectAccess(
-  database: Pool,
+  database: Pick<Pool, "query">,
   userId: string,
   projectId: string,
 ): Promise<ProjectMember> {

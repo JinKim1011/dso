@@ -1,5 +1,5 @@
-import { requireProjectAccess } from "@repo/application/authorization";
 import { ResourceNotFoundError } from "@repo/application/errors";
+import { requireProjectAccess } from "@repo/application/services/authorization";
 import { AuthorizationContext } from "@repo/application/types";
 import { PublishedReleaseResponse } from "@repo/contracts/operation";
 import { findReleaseSnapshot } from "@repo/db/repositories/release-snapshots";

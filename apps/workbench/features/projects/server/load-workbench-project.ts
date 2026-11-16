@@ -1,7 +1,5 @@
-// WIP:
-// This loade is not yet production-safe
-// until it recevies authorization cotnext.
-
+import { requireProjectAccess } from "@repo/application/services/authorization";
+import type { AuthorizationContext } from "@repo/application/types";
 import type {
   Component,
   DocumentTemplate,
@@ -11,6 +9,7 @@ import type {
   TokenReference,
   TokenType,
 } from "@repo/contracts/type";
+import { ProjectMemberRole } from "@repo/contracts/validation/enum";
 import { listComponentsByProjectId } from "@repo/db/repositories/components";
 import { findProjectById } from "@repo/db/repositories/projects";
 import { listTokenReferencesByProjectId } from "@repo/db/repositories/references";
@@ -22,6 +21,7 @@ import type { Pool } from "pg";
 
 export type WorkbenchProjectData = {
   project: Project;
+  role: ProjectMemberRole;
   tokenTypes: TokenType[];
   tokens: Token[];
   references: TokenReference[];
@@ -32,8 +32,11 @@ export type WorkbenchProjectData = {
 
 export async function loadWorkbenchProject(
   database: Pick<Pool, "query">,
+  context: AuthorizationContext,
   projectId: string,
 ): Promise<WorkbenchProjectData> {
+  const membership = await requireProjectAccess(database, context.userId, projectId);
+
   const project = await findProjectById(database, projectId);
 
   if (!project) {
@@ -52,6 +55,7 @@ export async function loadWorkbenchProject(
 
   return {
     project,
+    role: membership.role,
     tokenTypes,
     tokens,
     references,

@@ -61,7 +61,7 @@ const buttonVariants = cva(
         variant: "fill",
         selected: false,
         class:
-          "border-transparent bg-surface-primary text-content-tertiary hover:border-transparent hover:bg-surface-secondary hover:text-content-primary active:border-transparent active:bg-surface-quaternary active:text-content-primary",
+          "border-transparent bg-surface-primary text-content-tertiary hover:border-transparent hover:bg-surface-tertiary hover:text-content-primary active:border-transparent active:bg-surface-quaternary active:text-content-primary",
       },
       {
         variant: "fill",
@@ -131,7 +131,7 @@ type ButtonVariant = NonNullable<VariantProps<typeof buttonVariants>["variant"]>
 type ButtonSize = NonNullable<VariantProps<typeof buttonVariants>["size"]>;
 
 export interface ButtonProps extends Omit<
-  React.ComponentPropsWithoutRef<"button">,
+  React.ComponentPropsWithRef<"button">,
   "className"
 > {
   className?: string;

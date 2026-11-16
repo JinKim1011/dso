@@ -1,8 +1,9 @@
 "use client";
 
+import { AccountMenu } from "@/_shared/shell/footer/account-menu";
 import { useTheme, type ThemeMode } from "@/_shared/theme/use-theme";
 import { LaptopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
-import { Button, SegmentedControl } from "@repo/ui";
+import { SegmentedControl, Toaster } from "@repo/ui";
 import { useEffect, useState } from "react";
 
 const themeOptions = [
@@ -11,7 +12,11 @@ const themeOptions = [
   { value: "system", iconName: LaptopIcon, ariaLabel: "System mode" },
 ];
 
-export function Footer() {
+type FooterProps = {
+  email: string;
+};
+
+export function Footer({ email }: FooterProps) {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
@@ -26,23 +31,25 @@ export function Footer() {
   };
 
   return (
-    <div className="px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between">
-      {mounted ? (
-        <SegmentedControl
-          options={themeOptions}
-          size="sm"
-          iconOnly
-          onChange={handleThemeChange}
-          value={theme}
-        />
-      ) : (
-        <div className="h-7.5 w-22" aria-hidden="true" />
-      )}
+    <>
+      <Toaster />
+      <div className="px-mini py-mini text-content-primary flex h-10 w-full items-center justify-between">
+        <div className="-ml-mini">
+          <AccountMenu email={email} />
+        </div>
 
-      <div className="gap-mini flex">
-        <Button variant="void" size="sm" label="GITHUB" />
-        <Button variant="void" size="sm" label="DOCS" />
+        {mounted ? (
+          <SegmentedControl
+            options={themeOptions}
+            size="sm"
+            iconOnly
+            onChange={handleThemeChange}
+            value={theme}
+          />
+        ) : (
+          <div className="h-7.5 w-22" aria-hidden="true" />
+        )}
       </div>
-    </div>
+    </>
   );
 }

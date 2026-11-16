@@ -1,11 +1,11 @@
 import {
-  requiredProjectRole,
-  requireProjectAccess,
-} from "@repo/application/authorization";
-import {
   ProjectAccessDeniedError,
   ResourceNotFoundError,
 } from "@repo/application/errors";
+import {
+  requiredProjectRole,
+  requireProjectAccess,
+} from "@repo/application/services/authorization";
 import { AuthorizationContext } from "@repo/application/types";
 import type { PublishReleaseRequest } from "@repo/contracts/operation";
 import type { Release } from "@repo/contracts/type";

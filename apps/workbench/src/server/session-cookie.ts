@@ -1,4 +1,7 @@
-export function getSessionCookie(request: Request, name: string): string | null {
+export function getSessionCookie(
+  request: { headers: Pick<Headers, "get"> },
+  name: string,
+): string | null {
   const cookies = request.headers.get("cookie")?.split(";") ?? [];
   const values = cookies.flatMap((cookie) => {
     const separator = cookie.indexOf("=");

@@ -15,12 +15,18 @@ export type LoginRequest = {
   password: string;
 };
 
+export type AuthenticatedUser = {
+  id: string;
+  email: string;
+};
+
 export type LoginResponse = {
-  user: {
-    id: string;
-    email: string;
-  };
+  user: AuthenticatedUser;
   expiresAt: string;
+};
+
+export type SessionLookupResponse = {
+  user: AuthenticatedUser;
 };
 
 export type UpdateTokenRequest = {
