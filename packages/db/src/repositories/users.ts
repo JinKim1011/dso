@@ -55,3 +55,19 @@ export async function findUserByEmail(
 
   return row ? mapUserRow(row) : null;
 }
+
+export async function findUserProfileById(
+  database: Queryable,
+  userId: string,
+): Promise<Pick<User, "id" | "email"> | null> {
+  const result = await database.query<Pick<User, "id" | "email">>(
+    `
+      SELECT id, email
+      FROM users
+      WHERE id = $1
+    `,
+    [userId],
+  );
+
+  return result.rows[0] ?? null;
+}
