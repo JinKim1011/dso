@@ -46,13 +46,8 @@ export default function LoginPage() {
     }
   }
 
-  const overrideButtonBGClass =
-    "bg-surface-accent hover:bg-surface-accent active:bg-surface-accent";
-  const overrideButtonTextClass =
-    "text-content-accentStrong hover:text-content-accent active:text-content-accent";
-
   return (
-    <main className="px-mini flex min-h-dvh w-full items-center justify-center">
+    <main className="px-mini bg-dot-pattern flex min-h-dvh w-full items-center justify-center">
       <form
         className="gap-regularPlus flex w-full max-w-60 flex-col"
         onSubmit={handleSubmit}
@@ -60,9 +55,9 @@ export default function LoginPage() {
         <Text
           as="h1"
           variant="heading-md"
-          className="text-content-primary w-full text-center"
+          className="text-content-accent text0- w-full text-center"
         >
-          Log in to DSO
+          log in to DSO
         </Text>
         <div className="gap-mini flex flex-col">
           <Input
@@ -93,9 +88,7 @@ export default function LoginPage() {
         </div>
         <Button
           type="submit"
-          label={pending ? "Logging in..." : "Log in"}
-          overrideBgClass={overrideButtonBGClass}
-          overrideTextColorClass={overrideButtonTextClass}
+          label={pending ? "LOGGING IN..." : "LOG IN"}
           className="rounded-micro"
           disabled={pending}
           fullWidth
