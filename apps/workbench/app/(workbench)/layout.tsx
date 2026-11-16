@@ -47,7 +47,7 @@ export default async function WorkbenchLayout({
       projectId={workbenchProject.project.id}
       baseManifest={model}
     >
-      <WorkbenchShell email={user.email} role={workbenchProject.role}>
+      <WorkbenchShell email={user.email} projectName={workbenchProject.project.name}>
         {children}
       </WorkbenchShell>
     </StagedContextProvider>
