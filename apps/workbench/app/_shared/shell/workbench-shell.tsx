@@ -1,4 +1,4 @@
-import { Footer } from "@/_shared/shell/footer";
+import { Footer } from "@/_shared/shell/footer/footer";
 import { Header } from "@/_shared/shell/header";
 import { ScreenLock } from "@/_shared/shell/screen-lock";
 import { ProjectMemberRole } from "@repo/contracts/validation/enum";
