@@ -12,7 +12,7 @@ import { validSeed } from "@repo/seed-data/valid-seed";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loadWorkbenchProject } from "./load-workbench-project";
 
-vi.mock("@repo/application/authorization", () => ({
+vi.mock("@repo/application/services/authorization", () => ({
   requireProjectAccess: vi.fn(),
 }));
 vi.mock("@repo/db/repositories/components", () => ({
