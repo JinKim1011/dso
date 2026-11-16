@@ -6,6 +6,7 @@ import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
 import { getWorkbenchProjectId } from "@/server/workbench-config";
 import { ProjectAccessDeniedError } from "@repo/application/errors";
+import { getAuthenticatedUser } from "@repo/application/services/authentication";
 import { redirect } from "next/navigation";
 
 export default async function WorkbenchLayout({
@@ -38,13 +39,17 @@ export default async function WorkbenchLayout({
     workbenchProject.references,
   );
 
+  const user = await getAuthenticatedUser(getDatabasePool(), context);
+
   return (
     <StagedContextProvider
       key={workbenchProject.project.id}
       projectId={workbenchProject.project.id}
       baseManifest={model}
     >
-      <WorkbenchShell>{children}</WorkbenchShell>
+      <WorkbenchShell email={user.email} role={workbenchProject.role}>
+        {children}
+      </WorkbenchShell>
     </StagedContextProvider>
   );
 }
