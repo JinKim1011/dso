@@ -24,6 +24,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("login HTTP and PostgreSQL integ
   });
   beforeEach(async () => {
     await resetDatabase(database);
+    vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("DSO_WORKBENCH_ORIGIN", origin);
     vi.mocked(getDatabasePool).mockReturnValue(database);
   });
