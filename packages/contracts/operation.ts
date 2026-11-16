@@ -25,6 +25,10 @@ export type LoginResponse = {
   expiresAt: string;
 };
 
+export type SessionLookupResponse = {
+  user: AuthenticatedUser;
+};
+
 export type UpdateTokenRequest = {
   projectId: string;
   tokenId: string;
