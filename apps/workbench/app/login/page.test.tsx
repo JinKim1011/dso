@@ -16,9 +16,9 @@ afterEach(() => {
 
 async function fillForm() {
   const user = userEvent.setup();
-  await user.type(screen.getByLabelText("Email"), "user@example.test");
-  await user.type(screen.getByLabelText("Password"), "password");
-  await user.click(screen.getByRole("button", { name: "Sign in" }));
+  await user.type(screen.getByPlaceholderText("Email"), "user@example.test");
+  await user.type(screen.getByPlaceholderText("Password"), "password");
+  await user.click(screen.getByRole("button", { name: "LOG IN" }));
 }
 
 describe("login page", () => {
@@ -27,9 +27,9 @@ describe("login page", () => {
     vi.stubGlobal("fetch", fetchMock);
     render(<LoginPage />);
 
-    expect(screen.getByLabelText("Password")).toHaveAttribute("type", "password");
+    expect(screen.getByPlaceholderText("Password")).toHaveAttribute("type", "password");
     await fillForm();
-    await waitFor(() => expect(replace).toHaveBeenCalledWith("/tokens/color"));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/projects"));
     expect(refresh).toHaveBeenCalled();
     expect(fetchMock).toHaveBeenCalledWith("/api/auth/login", {
       method: "POST",
@@ -50,8 +50,8 @@ describe("login page", () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network error")));
     render(<LoginPage />);
     await fillForm();
-    expect(await screen.findByRole("alert")).toHaveTextContent("Unable to sign in.");
-    expect(screen.getByRole("button", { name: "Sign in" })).toBeEnabled();
+    expect(await screen.findByRole("alert")).toHaveTextContent("Unable to log in. Please try again.");
+    expect(screen.getByRole("button", { name: "LOG IN" })).toBeEnabled();
     expect(replace).not.toHaveBeenCalled();
   });
 });
