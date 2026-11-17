@@ -1,3 +1,4 @@
+import { mapApiError } from "@/server/api-error";
 import { SESSION_COOKIE } from "@/server/auth-session-cookie";
 import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
@@ -37,9 +38,6 @@ export async function POST(request: Request): Promise<Response> {
     response.cookies.set(SESSION_COOKIE.name, "", { ...SESSION_COOKIE, maxAge: 0 });
     return response;
   } catch (error) {
-    console.error("Logout request failed.", {
-      errorType: error instanceof Error ? error.name : typeof error,
-    });
-    return failure(500, "internal-error", "The request could not be completed.");
+    return mapApiError(error);
   }
 }
