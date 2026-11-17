@@ -33,11 +33,12 @@ Published release API response
 
 ## Authentication
 
-> **Current delivery status:** The published-release response contract is
-> defined in W3, and session-authenticated workbench reads are delivered in
-> W4. CLI API-key authentication for this endpoint is deferred to W5 with
-> release signing and the CLI. Until W5 is implemented, this endpoint must
-> not expose release downloads through API keys.
+> **Current delivery status:** The response contract is defined in W3 and the
+> `getPublishedRelease` service (session-authorized, published releases only)
+> exists, but the `GET /api/releases/:releaseId` route is not implemented yet.
+> Both session-authenticated workbench reads and CLI API-key authentication are
+> delivered in W5 with release signing and the CLI. Until then, this endpoint
+> must not expose release downloads through API keys.
 
 The target endpoint accepts either:
 
