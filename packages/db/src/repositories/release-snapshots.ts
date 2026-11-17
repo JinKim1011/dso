@@ -85,11 +85,8 @@ export async function createReleaseSnapshot(
 ): Promise<void> {
   const tokenTypes = await listTokenTypesByProjectId(database, projectId);
   const tokens = await listTokensByProjectId(database, projectId);
-
   const references = await listTokenReferencesByProjectId(database, projectId);
-
   const components = await listComponentsByProjectId(database, projectId);
-
   const templates = await listDocumentTemplatesByProjectId(database, projectId);
 
   const snapshot: PublishedReleaseSnapshot = {

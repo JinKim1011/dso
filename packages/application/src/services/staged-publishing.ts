@@ -1,4 +1,7 @@
-import { DomainValidationError } from "@repo/application/errors";
+import {
+  DomainValidationError,
+  PublicationRequestConflictError,
+} from "@repo/application/errors";
 import {
   requiredProjectRole,
   requireProjectAccess,
@@ -6,21 +9,23 @@ import {
 import { withProjectTransaction } from "@repo/application/services/project-transaction";
 import { hashRequest } from "@repo/application/services/publication-request-hash";
 import { publishRelease } from "@repo/application/services/releases";
-import {
-  saveStagedChanges,
-  type SaveStagedChangesResult,
-} from "@repo/application/services/staged-changes";
+import { saveStagedChanges } from "@repo/application/services/staged-changes";
 import type { AuthorizationContext } from "@repo/application/types";
-import type { SaveStagedChangesRequest } from "@repo/contracts/operation";
-import type { Release } from "@repo/contracts/type";
+import type {
+  PublishStagedChangesResult,
+  SaveStagedChangesRequest,
+} from "@repo/contracts/operation";
+import {
+  findPublicationRequest,
+  insertPublicationRequest,
+} from "@repo/db/repositories/publication-requests";
 import { insertRelease, nextReleaseVersion } from "@repo/db/repositories/releases";
 import type { Pool } from "pg";
-
-export type PublishStagedChangesResult = SaveStagedChangesResult & { release: Release };
 
 export async function publishStagedChanges(
   database: Pool,
   context: AuthorizationContext,
+  requestId: string,
   request: SaveStagedChangesRequest,
 ): Promise<PublishStagedChangesResult> {
   const projectId = request.projectId.toLowerCase();
