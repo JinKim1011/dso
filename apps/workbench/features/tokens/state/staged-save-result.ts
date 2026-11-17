@@ -12,7 +12,12 @@ import type {
   TokenReferenceSlot,
   TokenType,
 } from "@repo/contracts/type";
-import { isRecord } from "@repo/contracts/validation/operations/common";
+import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
+import {
+  isRecord,
+  validateUuidField,
+} from "@repo/contracts/validation/operations/common";
+import { validateTimestamp } from "@repo/contracts/validation/timestamp";
 import { tokenReferenceSlots } from "@repo/contracts/validation/token-reference-slots";
 import { validateTokenValue } from "@repo/contracts/validation/token-value";
 
@@ -72,7 +77,7 @@ export function parsePublishedRows(
     !Array.isArray(input.references) ||
     !input.references.every(isReference)
   ) {
-    throw new Error("Invalid save response.");
+    throw new Error("Invalid publication response.");
   }
   const expected = new Set(request.changes.map((change) => change.tokenId.toLowerCase()));
   const ids = new Set<string>();
