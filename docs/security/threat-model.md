@@ -94,6 +94,17 @@ Session and role checks remain separate. SameSite cookies add protection. This
 policy does not prevent XSS or authenticate clients that can forge headers.
 Use HTTPS in deployment.
 
+#### Security headers
+
+Workbench responses use these browser protections:
+
+- `X-Content-Type-Options: nosniff` prevents MIME type guessing.
+- `X-Frame-Options: DENY` prevents embedding and clickjacking.
+- `Referrer-Policy: strict-origin-when-cross-origin` limits referrer disclosure.
+- `Strict-Transport-Security` requires HTTPS after a secure connection.
+- `Permissions-Policy` disables camera, microphone, and geolocation access.
+- Content Security Policy restricts resource loading and script execution.
+
 ### Workbench API -> PostgreSQL
 
 ```text
