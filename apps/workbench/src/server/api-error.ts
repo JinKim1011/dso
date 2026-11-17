@@ -3,6 +3,7 @@ import {
   AuthenticationRequiredError,
   DomainValidationError,
   InvalidCredentialsError,
+  PublicationRequestConflictError,
   ProjectAccessDeniedError,
   ResourceNotFoundError,
   SessionExpiredError,
@@ -54,6 +55,10 @@ export function mapApiError(error: unknown): Response {
       message: error.message,
       issues: error.issues,
     });
+  }
+
+  if (error instanceof PublicationRequestConflictError) {
+    return failure(409, { code: error.code, message: error.message });
   }
 
   if (error instanceof DomainValidationError) {
