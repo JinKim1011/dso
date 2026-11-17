@@ -214,7 +214,7 @@ This week replaces the current persistence path while preserving staged editing.
   - Editor: read and edit project resources
   - Publisher: editor permissions plus release publishing
   - Admin: publisher permissions plus API-key management
-- Add CSRF protection to cookie-based mutations and add security headers.
+- Apply the [CSRF policy](./threat-model.md#csrf-policy) to workbench mutations and add security headers.
 - Return generic production errors without stacks or secrets.
 - Create audit events for login, publishing, API-key creation, and revocation.
 - W4 published-release reads use authenticated workbench sessions. The CLI `release:read` API-key flow is deferred to W5.
