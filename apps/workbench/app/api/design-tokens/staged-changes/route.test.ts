@@ -33,6 +33,7 @@ function request(
     headers: {
       origin,
       "content-type": "application/json",
+      "x-dso-csrf": "1",
       cookie: `dso_session=${sessionId}`,
       ...headers,
     },
@@ -67,6 +68,23 @@ describe("staged changes request boundary", () => {
       changes: [],
     });
   });
+
+  it.each(["missing-header", "cross-site"] as const)(
+    "rejects CSRF policy failure before saving: %s",
+    async (failure) => {
+      const incoming = request();
+      if (failure === "missing-header") incoming.headers.delete("x-dso-csrf");
+      else incoming.headers.set("sec-fetch-site", "cross-site");
+      const response = await POST(incoming);
+      expect(response.status).toBe(403);
+      expect(await response.json()).toEqual({
+        ok: false,
+        error: { code: "request-rejected", message: "The request was rejected." },
+      });
+      expect(authenticateSession).not.toHaveBeenCalled();
+      expect(saveStagedChanges).not.toHaveBeenCalled();
+    },
+  );
 
   it.each(["production", "test", ""])(
     "is unavailable outside development: %s",
@@ -175,6 +193,7 @@ describe("staged changes request boundary", () => {
         headers: {
           origin,
           "content-type": "application/json",
+          "x-dso-csrf": "1",
           cookie: `dso_session=${sessionId}`,
         },
         body: new ReadableStream<Uint8Array>({
