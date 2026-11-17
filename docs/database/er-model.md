@@ -203,11 +203,10 @@ The database does not use `resource_id` as a foreign key because it refers to
 different resource types. Application validation must check the target.
 The repository validates batch metadata; direct SQL bypasses that validation.
 
-### Planned audit event catalogue
+### Audit event catalogue
 
-The schema supports the following contract; some service integration remains. Each event has a
-unique ID, an action, and a creation timestamp. The actor is the authenticated
-user, except for failed login attempts.
+Each event has a unique ID, an action, and a creation timestamp. The actor is
+the authenticated user, except for failed login attempts.
 
 | Action | Actor | Project | Resource type | Resource ID | Metadata |
 | --- | --- | --- | --- | --- | --- |
@@ -232,6 +231,7 @@ Commit successful actions and their audit records in the same transaction. If
 the audit write fails, roll back the action. Commit a failed-login event before
 returning the authentication failure; do not roll it back with the rejection.
 If that audit write fails, log a safe server error and return a generic 500.
+Logout is recorded only when the authenticated user's session is deleted.
 
 ## Constraint enforcement
 
