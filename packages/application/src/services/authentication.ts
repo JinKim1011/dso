@@ -105,5 +105,19 @@ export async function logout(
   database: Pool,
   context: AuthorizationContext,
 ): Promise<void> {
-  await deleteSession(database, context.sessionId);
+  await withTransaction(database, async (client) => {
+    const deleted = await deleteSession(client, context.sessionId, context.userId);
+
+    if (!deleted) return;
+
+    await insertAuditEvent(client, {
+      id: crypto.randomUUID(),
+      userId: context.userId,
+      projectId: null,
+      action: "logout",
+      resourceType: "account",
+      resourceId: null,
+      createdAt: new Date().toISOString(),
+    });
+  });
 }
