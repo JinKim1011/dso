@@ -1,3 +1,4 @@
+import { insertAuditEvent } from "@repo/db/repositories/audit-events";
 import { findProjectById, insertProject } from "@repo/db/repositories/projects";
 import {
   insertTokenReference,
@@ -15,7 +16,10 @@ import {
   listTokenTypesByProjectId,
 } from "@repo/db/repositories/token-types";
 import { insertToken, listTokensByProjectId } from "@repo/db/repositories/tokens";
+import { insertUser } from "@repo/db/repositories/users";
 import { getTestDatabase } from "@repo/db/test/setup";
+import type { AuditEvent } from "@repo/contracts/type";
+import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import { seedIds } from "@repo/seed-data/ids";
 import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
@@ -47,6 +51,109 @@ function findToken(seed: typeof validSeed, name: string, tokenTypeId: string) {
 
   return token;
 }
+
+describe("database audit events repository", () => {
+  const userId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const tokenId = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+
+  async function seedAuditScope() {
+    const database = getTestDatabase();
+    await insertUser(database, {
+      id: userId,
+      email: "audit@example.test",
+      passwordHash: "test-hash",
+      createdAt: "2026-01-01T00:00:00.000Z",
+    });
+    await insertProject(database, validSeed.projects[0]!);
+  }
+
+  function batch(): AuditEvent {
+    return {
+      id: crypto.randomUUID(),
+      userId,
+      projectId: validSeed.projects[0]!.id,
+      action: "token.batch_saved",
+      resourceType: "token_batch",
+      resourceId: null,
+      metadata: { tokenIds: [tokenId] },
+      createdAt: "2026-01-01T00:00:00.000Z",
+    };
+  }
+
+  it("persists batch metadata and a failed login with an unknown actor", async () => {
+    await seedAuditScope();
+    const database = getTestDatabase();
+    const saved = batch();
+    expect(await insertAuditEvent(database, saved)).toEqual(saved);
+
+    const failedLogin: AuditEvent = {
+      id: crypto.randomUUID(),
+      userId: null,
+      projectId: null,
+      action: "login.failed",
+      resourceType: "account",
+      resourceId: userId,
+      createdAt: "2026-01-01T00:00:00.000Z",
+    };
+    expect(await insertAuditEvent(database, failedLogin)).toEqual(failedLogin);
+  });
+
+  it("accepts the maximum number of unique token IDs", async () => {
+    await seedAuditScope();
+    const saved = batch();
+    saved.metadata = {
+      tokenIds: Array.from({ length: CONTRACT_LIMITS.collectionItems }, () =>
+        crypto.randomUUID(),
+      ),
+    };
+    expect(await insertAuditEvent(getTestDatabase(), saved)).toEqual(saved);
+  });
+
+  it("rejects malformed, oversized, duplicate, or sensitive metadata before insertion", async () => {
+    await seedAuditScope();
+    const database = getTestDatabase();
+    const invalidMetadata: unknown[] = [
+      null,
+      {},
+      [],
+      "not-an-object",
+      42,
+      { tokenIds: null },
+      { tokenIds: "not-an-array" },
+      { tokenIds: [] },
+      { tokenIds: [null] },
+      { tokenIds: [42] },
+      { tokenIds: ["not-a-uuid"] },
+      { tokenIds: [tokenId, tokenId.toUpperCase()] },
+      { tokenIds: [tokenId], password: "secret" },
+      {
+        tokenIds: Array.from({ length: CONTRACT_LIMITS.collectionItems + 1 }, () =>
+          crypto.randomUUID(),
+        ),
+      },
+    ];
+    for (const metadata of invalidMetadata) {
+      const event = batch();
+      Reflect.set(event, "metadata", metadata);
+      await expect(insertAuditEvent(database, event)).rejects.toThrow("Invalid audit token IDs.");
+    }
+    const result = await database.query("SELECT COUNT(*)::int AS count FROM audit_events");
+    expect(result.rows[0].count).toBe(0);
+  });
+
+  it("rejects metadata on other audit actions", async () => {
+    await seedAuditScope();
+    const event: AuditEvent = {
+      ...batch(),
+      projectId: null,
+      action: "login.succeeded",
+      resourceType: "account",
+    };
+    await expect(insertAuditEvent(getTestDatabase(), event)).rejects.toThrow(
+      "Metadata is not allowed for this audit action.",
+    );
+  });
+});
 
 describe("database projects repository", () => {
   it("inserts and reads a project", async () => {
