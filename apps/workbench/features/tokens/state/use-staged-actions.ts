@@ -35,7 +35,7 @@ type UseStagedManifestActionsProps = {
   setModels: Dispatch<SetStateAction<StagedModels>>;
 };
 
-export function useStagedManifestActions({
+export function useStagedActions({
   projectId,
   canApply,
   models,

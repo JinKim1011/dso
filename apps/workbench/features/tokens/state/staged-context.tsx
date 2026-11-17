@@ -10,7 +10,7 @@ import {
   persistDraftModel,
 } from "@/features/tokens/state/staged-draft-storage";
 import { buildChangedRows } from "@/features/tokens/state/staged-graph-model";
-import { useStagedManifestActions } from "@/features/tokens/state/use-staged-actions";
+import { useStagedActions } from "@/features/tokens/state/use-staged-actions";
 import {
   createContext,
   ReactNode,
@@ -65,7 +65,7 @@ export function StagedContextProvider({
     isApplying,
     saveError,
     outcomeUnknown,
-  } = useStagedManifestActions({
+  } = useStagedActions({
     projectId,
     canApply: hasHydratedDraft && !isStaleDraft && !draftLoadError,
     models,
