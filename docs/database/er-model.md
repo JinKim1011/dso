@@ -22,7 +22,7 @@ erDiagram
     COMPONENTS ||--o{ DOCUMENT_TEMPLATES : has
     USERS ||--o{ SESSIONS : has
     USERS ||--o{ PROJECT_MEMBERS : joins
-    USERS ||--o{ AUDIT_EVENTS : performs
+    USERS o|--o{ AUDIT_EVENTS : performs
 
     PROJECTS {
         uuid id PK
@@ -77,6 +77,7 @@ erDiagram
         text action
         text resource_type
         uuid resource_id
+        jsonb metadata
         timestamp created_at
     }
 
@@ -137,6 +138,7 @@ erDiagram
   per user.
 - A project can have zero or many project-scoped API keys.
 - A user can perform zero or many audit events.
+- A failed login event has no identified actor.
 - A project can contain zero or many project-scoped audit events.
 - An audit event may belong to zero or one project.
 - An account-level audit event may have no project or resource.
@@ -190,19 +192,18 @@ blocked until the page is reloaded and the current data can be compared.
 
 ### Audit-event scope
 
-`audit_events.user_id` is required because the current audited actions are performed by an identified user. `project_id` and `resource_id` are optional to support account-level events such as login.
+`audit_events.user_id` is null only for failed logins. Account events have no
+project; a failed login may identify its target account in `resource_id`.
+Project events require a project ID. Release and API-key events also require a
+resource ID; token batches use metadata instead.
 
-Examples:
-
-- A successful login has a user, but no project or resource.
-- A published release has a user, project, and release resource.
-- API-key creation or revocation has a user, project, and API-key resource.
-
-For project-scoped actions, application validation must require the relevant project and resource identifiers. The database schema does not use `resource_id` as a foreign key because it can refer to different resource tables according to `resource_type`.
+The database does not use `resource_id` as a foreign key because it refers to
+different resource types. Application validation must check the target.
+The repository validates batch metadata; direct SQL bypasses that validation.
 
 ### Planned audit event catalogue
 
-The following contract requires schema and service changes. Each event has a
+The schema supports the following contract; service integration remains. Each event has a
 unique ID, an action, and a creation timestamp. The actor is the authenticated
 user, except for failed login attempts.
 
@@ -261,7 +262,8 @@ If that audit write fails, log a safe server error and return a generic 500.
 | API-key identifier is unique                                 | Yes                              |                    Yes | Use a unique constraint                                                                                                                         |
 | API-key scope is valid                                       | Yes                              |                    Yes | The first release allows `release:read`                                                                                                         |
 | Session and API-key expiry follow creation                   | Yes                              |                    Yes | Enforce `expires_at > created_at`                                                                                                               |
-| Account-level audit events can omit project and resource     | Yes                              |                    Yes | Allow null `project_id` and `resource_id` for login events; require them for project-scoped actions                                             |
+| Audit event scope matches its action                         | Yes                              |                    Yes | Failed logins have no actor; token batches have no single resource ID                                                                           |
+| Audit metadata contains only allowed values                  | Limited                          |                    Yes | Batch token IDs must be unique UUIDs within the request limit; direct SQL bypasses detailed validation                                          |
 | User is authorized to modify the project                     | No                               |                    Yes | This is an application authorization rule                                                                                                       |
 | Published releases contain valid complete data               | No                               |                    Yes | Validate before publishing                                                                                                                      |
 | Request body has valid shape and size                        | No                               |                    Yes | Enforce through API schemas and request limits                                                                                                  |
