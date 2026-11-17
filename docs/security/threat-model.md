@@ -106,6 +106,12 @@ Workbench responses use these browser protections:
 - `Permissions-Policy` disables camera, microphone, and geolocation access.
 - Content Security Policy restricts resource loading and script execution.
 
+#### Audit trail
+
+Record important actions and failed logins. Restrict access to audit records
+and exclude credentials, session IDs, token names, and token values. See the
+[audit event catalogue](../database/er-model.md#planned-audit-event-catalogue).
+
 ### Workbench API -> PostgreSQL
 
 ```text
