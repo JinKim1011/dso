@@ -28,11 +28,12 @@ export type ProjectMember = {
 
 export type AuditEvent = {
   id: string;
-  userId: string;
+  userId: string | null;
   projectId: string | null;
   action: string;
   resourceType: string;
   resourceId: string | null;
+  metadata?: { tokenIds: readonly string[] };
   createdAt: string;
 };
 
