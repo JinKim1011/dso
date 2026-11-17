@@ -33,7 +33,7 @@ describe("login page", () => {
     expect(refresh).toHaveBeenCalled();
     expect(fetchMock).toHaveBeenCalledWith("/api/auth/login", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-DSO-CSRF": "1" },
       body: JSON.stringify({ email: "user@example.test", password: "password" }),
     });
   });
