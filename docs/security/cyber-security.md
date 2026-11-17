@@ -2,7 +2,7 @@
 
 DSO is a web workbench backed by PostgreSQL. The workbench edits and publishes design-system resources. An authenticated CLI downloads published releases through the API and generates files locally.
 
-This plan implements the security work alongside `implementation-plans/relational-databases.md`.
+This plan implements the security work alongside [relational-databases.md](../database/relational-databases.md).
 
 ## Scope
 
@@ -200,25 +200,29 @@ all application database access goes through tested repositories.
 
 ### W4: Workbench integration and web security
 
-This week replaces the current persistence path while preserving staged editing.
+This week replaces the legacy manifest persistence path with PostgreSQL while preserving staged editing.
 
 #### Build
 
-- Replace filesystem persistence with database repositories.
-- Preserve `StagedContext` and `useStagedManifestActions`.
-- Completed and tested atomic staged token/reference saves with project-lock validation; Apply preserves unrelated edits, and failed saves retain drafts.
-- Keep staged-save API development-only. Require a trusted Origin, valid session, and project write access; disable production writes.
-- Wire login/logout/session routes to secure, configured cookies and map authenticated sessions to the application authorization context.
-- Protect project reads, token/reference/hierarchy writes, component/template writes, publishing, API-key creation/revocation, and release reads.
-- Enforce:
-  - Editor: read and edit project resources
-  - Publisher: editor permissions plus release publishing
-  - Admin: publisher permissions plus API-key management
-- Apply the [CSRF policy](./threat-model.md#csrf-policy) to workbench mutations and add security headers.
-- CSP is report-only. Resolve violations before enforcing it.
-- Return generic production errors without stacks or secrets.
-- Create audit events for login, publishing, API-key creation, and revocation.
-- W4 published-release reads use authenticated workbench sessions. The CLI `release:read` API-key flow is deferred to W5.
+Delivered:
+
+- Workbench data comes from PostgreSQL through authenticated, project-scoped loading. The legacy manifest is no longer read or written.
+- Staged token/reference saving and release publication are one atomic operation (`POST /api/releases/publish`): session, CSRF policy, publisher role, project lock, final-state validation, and audit events in one transaction. There is no standalone save endpoint.
+- Login, logout, and session routes use the configured session cookie and map sessions to the application authorization context. Pages redirect unauthenticated users; APIs return `401`.
+- Roles: editor reads project resources and edits client-side drafts; publisher adds saving and publishing; admin adds API-key management (service level). Cross-project access is rejected by membership checks.
+- The [CSRF policy](./threat-model.md#csrf-policy) applies to login, logout, and publishing. Security headers are set and the CSP is report-only.
+- Production errors are generic and include a correlation ID for unexpected failures.
+- Audit events: login success/failure, logout, token batch saves, release publication, API-key creation, and revocation.
+- Development login uses a seeded user whose password hash comes from `DSO_SEED_USER_PASSWORD`; no password is committed.
+
+Deferred:
+
+- Production enablement: login, logout, and publishing work only in development.
+- W6: rate limiting, CSP enforcement, and CSP violation reporting.
+- W5: published-release reads, API-key create/revoke routes, and the CLI `release:read` API-key flow. Services exist but no HTTP routes yet.
+- After W5: workbench persistence for token-type hierarchy, components, and templates, including React Flow updates.
+- Request-ID duplicate-publish protection (see below).
+- Editor-only saving without publishing.
 
 #### Known issue: Lost publication responses
 
@@ -231,15 +235,13 @@ and preserved by the client across retries.
 
 #### Tests
 
-- Unauthenticated requests return `401`.
-- Cross-project access and insufficient roles fail.
-- CSRF-protected mutations reject invalid requests.
-- Security headers and audit events are present.
-- Staged editing remains functional and PostgreSQL is the source of truth.
+- Covered by existing tests (not re-run during this review): unauthenticated `401`, insufficient roles, CSRF rejection, audit events, atomic rollback, and staged editing.
+- Not asserted: security-header presence, cross-project access on every route, and rate limits.
+- PostgreSQL is the source of truth and the manifest file is unused.
 
 #### Done When
 
-An authenticated user can edit only authorized projects, role restrictions are enforced, and a user can publish through the workbench.
+An authenticated user can edit only authorized projects, role restrictions are enforced, and a publisher can publish through the workbench in development. Production enablement and the deferred items remain open.
 
 ### W5: Release signing, CLI, and generation
 
@@ -247,14 +249,14 @@ This week delivers the complete publish-to-generation vertical slice.
 
 #### Build
 
-- Create a published-release API containing token definitions, references,
+- Add the `GET /api/releases/:releaseId` route (session-authenticated) and a published-release API containing token definitions, references,
   token-type hierarchy data, components, and templates.
 - Keep source-code component-token usage claims out of release data.
 - Canonicalize release JSON and sign it with Ed25519.
 - Create `apps/cli` with `dso pull` and `dso generate`.
 - Add the deferred API-key-authenticated published-release download flow for
   the CLI, including project, scope, expiration, and revocation checks.
-- Return API-key secrets only once and store only hashes.
+- Add admin-only API-key create/revoke routes (CSRF-protected, audited). Return API-key secrets only once and store only hashes.
 - Validate API-key identifier, hash, project, scope, expiration, and revocation.
 - Require HTTPS outside local development; the CLI must never connect to
   PostgreSQL.
