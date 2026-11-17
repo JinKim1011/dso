@@ -187,34 +187,42 @@ Authenticated and authorized repository operations work against PostgreSQL, the 
 
 ### W4: Workbench integration and web security
 
-This week replaces the current persistence path while preserving the existing staged-editing experience.
+This week replaces the legacy manifest persistence path with PostgreSQL while preserving the existing staged-editing experience.
 
 #### Build
 
-- Replace filesystem loading in `WorkbenchShell`.
-- Replace JSON persistence in `route.ts`.
-- Preserve `StagedContext` and `useStagedManifestActions`.
-- Convert database records into the existing token graph model.
-- Completed and tested atomic staged token/reference saves with project-lock validation; Apply preserves unrelated edits, and failed saves retain drafts.
-- Keep staged-save API development-only. Require a trusted Origin, valid session, and project write access; disable production writes.
-- Persist token-type hierarchy changes, components, templates, and releases.
-- Implement protected workbench routes for login, logout, session lookup, project reads, resource edits, publishing, API-key creation/revocation, and published-release reads.
-- Wire login/logout/session routes to the configured secure session cookie and map authenticated sessions to the application authorization context.
-- Enforce the role model:
-  - Editor: read and edit project resources.
-  - Publisher: editor permissions plus release publishing.
-  - Admin: publisher permissions plus API-key management.
-- Add project authorization, CSRF protection for cookie mutations, security headers, generic production errors, and audit events.
-- Keep published-release reads session-authenticated for W4. The CLI `release:read` API-key path is implemented in W5.
+Delivered:
+
+- `loadWorkbenchProject` loads project records in the workbench layout and an adapter converts them into the token graph model.
+- `StagedContext` and `useStagedActions` are preserved. Drafts stay on the client until the user pushes them.
+- A single operation, `POST /api/releases/publish`, saves staged token/reference changes and publishes a release atomically. It uses a project-locked `READ COMMITTED` transaction, validates the final project state, assigns the next sequential version, and rolls back everything on failure. Empty batches are rejected. The standalone save API and per-row push were removed.
+- Login, logout, and session lookup routes use the configured session cookie and map the session to the application authorization context. The workbench layout and project list redirect unauthenticated users to `/login` (project access is checked before project data is returned.)
+- Role model:
+  - Editor: read project resources and edit client-side drafts.
+  - Publisher: editor permissions plus saving and publishing. Because saving and publishing are one operation, persisting edits requires this role.
+  - Admin: publisher permissions plus API-key management (service level).
+- Every cookie-based mutation (login, logout, publish) applies the shared CSRF policy. Responses carry security headers (the Content Security Policy is report-only.)
+- API errors go through one mapper. Expected errors return stable status codes; unexpected errors return a generic 500 with a correlation ID.
+- Audit events: `login.succeeded`, `login.failed`, `logout`, `token.batch_saved`, `release.published`, `api_key.created`, `api_key.revoked`. Saves and publishes record events in the same transaction.
+- The seed script hashes `DSO_SEED_USER_PASSWORD` for the development user so the documented setup can log in.
+
+Deferred:
+
+- Production enablement. Login, logout, and publishing work only in development, so W4 is not production-ready until this is enabled and verified.
+- Rate limiting, enforcing the CSP, and a CSP report collection endpoint (W6).
+- Published-release read API (`GET /api/releases/:releaseId`), API-key create/revoke routes, and the CLI `release:read` flow (W5). The services and audit events exist, but there are no HTTP routes or UI yet.
+- Persisting token-type hierarchy, component, and template changes through the workbench. These need routes and UI, and hierarchy edits also require React Flow logic updates. They are outside the remaining W4 scope and are tracked as post-W5 work.
+- Request-ID based duplicate-publish protection. A lost publication response cannot be matched to its request; see the security plan.
+- Editor-only saving without publishing.
 
 #### Tests and evidence
 
-- Verify unauthenticated requests, cross-project access, insufficient roles, CSRF failures, security headers, audit events, and staged editing.
-- Demonstrate that PostgreSQL is the source of truth and normal workbench usage no longer reads or writes `design-tokens-manifest.json`.
+- Verified: unauthenticated requests, CSRF failures, insufficient roles, atomic rollback, audit events, and staged editing, as covered by the existing workbench and PostgreSQL integration tests (not re-run during the W4 documentation review). Not every plan item has a dedicated test; for example, security-header presence is not asserted.
+- PostgreSQL is the source of truth and normal workbench usage does not read or write `design-tokens-manifest.json`.
 
 #### Done when
 
-An authenticated user can edit only authorized projects, role restrictions are enforced, and a user can publish through the workbench.
+An authenticated user can edit only authorized projects, role restrictions are enforced, and a publisher can save and publish through the workbench in development. Production enablement and the deferred items above remain open.
 
 ### W5: Release signing, CLI, and generation
 
@@ -222,7 +230,7 @@ This week delivers the complete publish-to-generation vertical slice.
 
 #### Build
 
-- Create an authenticated published-release API containing token definitions,
+- Add the `GET /api/releases/:releaseId` route (session-authenticated) and an authenticated published-release API containing token definitions,
   references, token-type hierarchy data, components, and templates.
 - Add the deferred CLI `release:read` path: accept project-scoped API keys,
   verify the key against the release project and published status, and return
@@ -232,7 +240,7 @@ This week delivers the complete publish-to-generation vertical slice.
 - Create `apps/cli` with `dso pull` and `dso generate`.
 - Implement project-scoped API-key validation for identifier, hash, project,
   scope, expiration, and revocation.
-- Return API-key secrets only once and store only hashes.
+- Add admin-only API-key create/revoke routes (CSRF-protected, audited). Return API-key secrets only once and store only hashes.
 - Require HTTPS outside local development and keep the CLI dependent on the
   API, never PostgreSQL.
 - Verify release signatures before generation and stop on failure.
