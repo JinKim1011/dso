@@ -7,6 +7,7 @@ import {
   useStagedContext,
 } from "@/features/tokens/state/staged-context";
 import { findRowById } from "@/features/tokens/state/staged-graph-model";
+import { StagedView } from "@/features/tokens/views/staged/staged-view";
 import type { SaveStagedChangesRequest } from "@repo/contracts/operation";
 import type { Token, TokenReference } from "@repo/contracts/type";
 import { validSeed } from "@repo/seed-data/valid-seed";
@@ -39,7 +40,7 @@ function wrapper({ children }: { children: ReactNode }) {
 }
 
 function savedResponse(tokens: Token[], references: TokenReference[] = []) {
-  return Response.json({ ok: true, tokens, references });
+  return Response.json({ ok: true, release: validSeed.releases[0], tokens, references });
 }
 
 function referencesFor(tokenId: string) {
@@ -60,58 +61,6 @@ describe("staged save reconciliation", () => {
   afterEach(() => {
     localStorage.clear();
     vi.restoreAllMocks();
-  });
-
-  it("applies one row and preserves unrelated changes", async () => {
-    const fetch = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue(
-        savedResponse([{ ...surface, name: "saved" }], referencesFor(surface.id)),
-      );
-    const hook = renderHook(() => useStagedContext(), { wrapper });
-    await waitFor(() => expect(hook.result.current.canApply).toBe(true));
-    act(() => {
-      hook.result.current.updateRow(surface.id, { name: "saved" });
-      hook.result.current.updateRow(other.id, { name: "not-saved" });
-    });
-    await act(async () => {
-      expect((await hook.result.current.applyRow(surface.id)).status).toBe(200);
-    });
-    const payload: SaveStagedChangesRequest = JSON.parse(
-      String(fetch.mock.calls[0]?.[1]?.body),
-    );
-    expect(payload.changes).toHaveLength(1);
-    expect(payload.changes[0]).toMatchObject({
-      tokenId: surface.id,
-      name: { before: surface.name, after: "saved" },
-    });
-    expect(findRowById(hook.result.current.baseModel, surface.id)?.name).toBe("saved");
-    expect(findRowById(hook.result.current.draftModel, surface.id)?.name).toBe("saved");
-    expect(findRowById(hook.result.current.baseModel, other.id)?.name).toBe(other.name);
-    expect(findRowById(hook.result.current.draftModel, other.id)?.name).toBe("not-saved");
-    expect(hook.result.current.changedRowCount).toBe(1);
-    await waitFor(() => expect(localStorage.length).toBe(1));
-    hook.unmount();
-    const savedBase = buildTokenGraphViewModel(
-      validSeed.tokenTypes,
-      validSeed.tokens.map((token) =>
-        token.id === surface.id ? { ...token, name: "saved" } : token,
-      ),
-      validSeed.tokenReferences,
-    );
-    const reloaded = renderHook(() => useStagedContext(), {
-      wrapper: ({ children }: { children: ReactNode }) => (
-        <StagedContextProvider projectId={projectId} baseManifest={savedBase}>
-          {children}
-        </StagedContextProvider>
-      ),
-    });
-    await waitFor(() => expect(reloaded.result.current.canApply).toBe(true));
-    expect(reloaded.result.current.isStaleDraft).toBe(false);
-    expect(findRowById(reloaded.result.current.draftModel, other.id)?.name).toBe(
-      "not-saved",
-    );
-    expect(reloaded.result.current.changedRowCount).toBe(1);
   });
 
   it("applies all rows and clears persisted draft after success", async () => {
@@ -136,25 +85,131 @@ describe("staged save reconciliation", () => {
     const payload: SaveStagedChangesRequest = JSON.parse(
       String(fetch.mock.calls[0]?.[1]?.body),
     );
+    expect(fetch.mock.calls[0]?.[0]).toBe("/api/releases/publish");
+    const headers = new Headers(fetch.mock.calls[0]?.[1]?.headers);
+    expect(headers.get("x-dso-csrf")).toBe("1");
+    expect(headers.has("idempotency-key")).toBe(false);
     expect(payload.changes).toHaveLength(2);
     expect(hook.result.current.changedRowCount).toBe(0);
     await waitFor(() => expect(localStorage.length).toBe(0));
   });
 
+  it("only offers bulk push while preserving individual and bulk discard", async () => {
+    function StagedScreen() {
+      const { updateRow, canApply } = useStagedContext();
+      return (
+        <>
+          <button
+            disabled={!canApply}
+            onClick={() => {
+              updateRow(surface.id, { name: "first edit" });
+              updateRow(other.id, { name: "second edit" });
+            }}
+          >
+            Edit rows
+          </button>
+          <StagedHeader onBack={() => {}} />
+          <StagedView />
+        </>
+      );
+    }
+
+    render(<StagedScreen />, { wrapper });
+    await waitFor(() => expect(screen.getByText("Edit rows")).toBeEnabled());
+    fireEvent.click(screen.getByText("Edit rows"));
+    expect(screen.getAllByLabelText("discard-row")).toHaveLength(2);
+    expect(screen.queryByLabelText("apply-row")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "PUSH ALL" })).toBeEnabled();
+
+    fireEvent.click(screen.getAllByLabelText("discard-row")[0]!);
+    expect(screen.getAllByLabelText("discard-row")).toHaveLength(1);
+    fireEvent.click(screen.getByRole("button", { name: "DISCARD ALL" }));
+    expect(screen.getByText("No staged changes")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "PUSH ALL" })).not.toBeInTheDocument();
+  });
+
+  it("clears a known push error when the draft is discarded", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      Response.json(
+        { ok: false, error: { message: "The staged changes conflict." } },
+        { status: 409 },
+      ),
+    );
+    function StagedScreen() {
+      const { updateRow, canApply } = useStagedContext();
+      return (
+        <>
+          <button
+            disabled={!canApply}
+            onClick={() => updateRow(surface.id, { name: "edit" })}
+          >
+            Edit
+          </button>
+          <StagedHeader onBack={() => {}} />
+          <StagedView />
+        </>
+      );
+    }
+    render(<StagedScreen />, { wrapper });
+    await waitFor(() => expect(screen.getByText("Edit")).toBeEnabled());
+    fireEvent.click(screen.getByText("Edit"));
+    fireEvent.click(screen.getByRole("button", { name: "PUSH ALL" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "The staged changes conflict.",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "DISCARD ALL" }));
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.getByText("No staged changes")).toBeInTheDocument();
+  });
+
+  it("preserves the draft and disables both discards when the push outcome is unknown", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("network"));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    function StagedScreen() {
+      const { updateRow, canApply } = useStagedContext();
+      return (
+        <>
+          <button
+            disabled={!canApply}
+            onClick={() => updateRow(surface.id, { name: "edit" })}
+          >
+            Edit
+          </button>
+          <StagedHeader onBack={() => {}} />
+          <StagedView />
+        </>
+      );
+    }
+    render(<StagedScreen />, { wrapper });
+    await waitFor(() => expect(screen.getByText("Edit")).toBeEnabled());
+    fireEvent.click(screen.getByText("Edit"));
+    fireEvent.click(screen.getByRole("button", { name: "PUSH ALL" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Push outcome is unknown. Your draft was preserved; check the published releases before trying again.",
+    );
+    expect(screen.getByLabelText("discard-row")).toBeDisabled();
+    expect(screen.getByRole("button", { name: "DISCARD ALL" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "PUSH ALL" })).toBeDisabled();
+  });
+
   it("rebuilds dependent previews and restores the remaining draft after reload", async () => {
     const primitive = validSeed.tokens.find((token) => token.name === "neutral-0")!;
     const value = { kind: "single", value: "#123456" } as const;
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      savedResponse([{ ...primitive, value }], referencesFor(primitive.id)),
-    );
+    const pending = deferred<Response>();
+    vi.spyOn(globalThis, "fetch").mockReturnValue(pending.promise);
     const hook = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(hook.result.current.canApply).toBe(true));
+    act(() => hook.result.current.updateRow(primitive.id, { value }));
+    let request!: Promise<Response>;
     act(() => {
-      hook.result.current.updateRow(primitive.id, { value });
-      hook.result.current.updateRow(other.id, { name: "remaining" });
+      request = hook.result.current.applyDraft();
     });
+    act(() => hook.result.current.updateRow(other.id, { name: "remaining" }));
     await act(async () => {
-      await hook.result.current.applyRow(primitive.id);
+      pending.resolve(
+        savedResponse([{ ...primitive, value }], referencesFor(primitive.id)),
+      );
+      await request;
     });
     expect(findRowById(hook.result.current.baseModel, surface.id)?.preview).toMatchObject(
       {
@@ -193,7 +248,7 @@ describe("staged save reconciliation", () => {
     act(() => hook.result.current.updateRow(surface.id, { name: "sent" }));
     let request!: Promise<Response>;
     act(() => {
-      request = hook.result.current.applyRow(surface.id);
+      request = hook.result.current.applyDraft();
     });
 
     expect(hook.result.current.isApplying).toBe(true);
@@ -221,31 +276,29 @@ describe("staged save reconciliation", () => {
     expect(hook.result.current.isApplying).toBe(false);
   });
 
-  it("disables Apply controls while a request is in flight", async () => {
+  it("disables push and discard controls while a request is in flight", async () => {
     const pending = deferred<Response>();
     vi.spyOn(globalThis, "fetch").mockReturnValue(pending.promise);
     function Controls() {
-      const { updateRow, isApplying, canApply, applyRow, discardRow } =
-        useStagedContext();
+      const { updateRow, isApplying, outcomeUnknown, discardRow } = useStagedContext();
       return (
         <>
           <button onClick={() => updateRow(surface.id, { name: "sent" })}>Edit</button>
           <StagedHeader onBack={() => {}} />
           <StagedRowActions
             rowId={surface.id}
-            isApplying={isApplying}
-            canApply={canApply}
-            onApply={applyRow}
+            disabled={isApplying || outcomeUnknown}
             onDiscard={discardRow}
           />
         </>
       );
     }
     render(<Controls />, { wrapper });
-    await waitFor(() => expect(screen.getByLabelText("apply-row")).toBeEnabled());
+    await waitFor(() => expect(screen.getByLabelText("discard-row")).toBeEnabled());
     fireEvent.click(screen.getByText("Edit"));
-    fireEvent.click(screen.getByLabelText("apply-row"));
-    expect(screen.getByLabelText("apply-row")).toBeDisabled();
+    expect(screen.queryByLabelText("apply-row")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "PUSH ALL" }));
+    expect(screen.getByLabelText("discard-row")).toBeDisabled();
     expect(screen.getByRole("button", { name: "PUSHING..." })).toBeDisabled();
     expect(screen.getByRole("button", { name: "DISCARD ALL" })).toBeDisabled();
     await act(async () => {
@@ -263,7 +316,7 @@ describe("staged save reconciliation", () => {
       vi.spyOn(globalThis, "fetch").mockReturnValue(pending.promise);
 
       function Workbench() {
-        const { updateRow, applyRow, baseModel, canApply, saveError } =
+        const { updateRow, applyDraft, baseModel, canApply, saveError } =
           useStagedContext();
         return (
           <ScreenLock>
@@ -273,7 +326,7 @@ describe("staged save reconciliation", () => {
             >
               Edit
             </button>
-            <button onClick={() => void applyRow(surface.id)}>Apply</button>
+            <button onClick={() => void applyDraft()}>Apply</button>
             <button>Back</button>
             <span>Base: {findRowById(baseModel, surface.id)?.name}</span>
             {saveError && <p role="alert">{saveError}</p>}
@@ -289,7 +342,7 @@ describe("staged save reconciliation", () => {
       const content = screen.getByText("Back").parentElement!;
       expect(content).toHaveAttribute("inert");
       expect(content).toHaveAttribute("aria-busy", "true");
-      expect(screen.getByRole("status")).toHaveTextContent("APPLYING CHANGES...");
+      expect(screen.getByRole("status")).toHaveTextContent("PUSHING CHANGES...");
 
       await act(async () => {
         pending.resolve(
@@ -306,7 +359,7 @@ describe("staged save reconciliation", () => {
       if (outcome === "success") {
         expect(screen.getByText("Base: sent")).toBeInTheDocument();
       } else {
-        expect(screen.getByRole("alert")).toHaveTextContent("Save failed");
+        expect(screen.getByRole("alert")).toHaveTextContent("Push failed");
       }
     },
   );
@@ -324,7 +377,7 @@ describe("staged save reconciliation", () => {
     );
     let request!: Promise<Response>;
     act(() => {
-      request = hook.result.current.applyRow(surface.id);
+      request = hook.result.current.applyDraft();
     });
     act(() =>
       hook.result.current.updateRow(surface.id, {
@@ -354,7 +407,7 @@ describe("staged save reconciliation", () => {
     act(() => hook.result.current.updateRow(surface.id, { name: "sent" }));
     let request!: Promise<Response>;
     act(() => {
-      request = hook.result.current.applyRow(surface.id);
+      request = hook.result.current.applyDraft();
     });
     act(() => hook.result.current.updateRow(surface.id, { name: surface.name }));
     await act(async () => {
@@ -379,7 +432,7 @@ describe("staged save reconciliation", () => {
     });
     expect(fetch).not.toHaveBeenCalled();
     expect(hook.result.current.changedRowCount).toBe(1);
-    expect(hook.result.current.saveError).toContain("save limit");
+    expect(hook.result.current.saveError).toContain("push limit");
   });
 
   it("blocks further saves and preserves the draft when the outcome is unknown", async () => {
@@ -399,11 +452,32 @@ describe("staged save reconciliation", () => {
     expect(findRowById(hook.result.current.draftModel, surface.id)?.name).toBe("draft");
     expect((await hook.result.current.applyDraft()).status).toBe(409);
     expect(fetch).toHaveBeenCalledOnce();
+    act(() => hook.result.current.updateRow(surface.id, { name: "later edit" }));
+    expect(hook.result.current.saveError).toContain("Push outcome is unknown");
     await waitFor(() => expect(localStorage.length).toBe(1));
   });
 
   it("does not accept an incomplete successful response", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(savedResponse([]));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const hook = renderHook(() => useStagedContext(), { wrapper });
+    await waitFor(() => expect(hook.result.current.canApply).toBe(true));
+    act(() => hook.result.current.updateRow(surface.id, { name: "draft" }));
+    await act(async () => {
+      await hook.result.current.applyDraft();
+    });
+    expect(hook.result.current.outcomeUnknown).toBe(true);
+    expect(hook.result.current.changedRowCount).toBe(1);
+  });
+
+  it("does not clear the draft if a successful response has no published release", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      Response.json({
+        ok: true,
+        tokens: [{ ...surface, name: "draft" }],
+        references: referencesFor(surface.id),
+      }),
+    );
     vi.spyOn(console, "error").mockImplementation(() => {});
     const hook = renderHook(() => useStagedContext(), { wrapper });
     await waitFor(() => expect(hook.result.current.canApply).toBe(true));
@@ -444,5 +518,8 @@ describe("staged save reconciliation", () => {
       surface.name,
     );
     expect(findRowById(hook.result.current.draftModel, surface.id)?.name).toBe("draft");
+    act(() => hook.result.current.discardRow(surface.id));
+    expect(hook.result.current.saveError).toBeNull();
+    expect(hook.result.current.changedRowCount).toBe(0);
   });
 });
