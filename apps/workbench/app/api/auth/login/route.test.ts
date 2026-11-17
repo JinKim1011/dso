@@ -143,7 +143,19 @@ describe("login request boundary", () => {
     const response = await POST(request());
     expect(response.status).toBe(500);
     expect(response.headers.get("set-cookie")).toBeNull();
-    expect(await response.text()).not.toContain("sensitive database error");
-    expect(log).toHaveBeenCalled();
+    const body = await response.json();
+    expect(body).toEqual({
+      ok: false,
+      error: {
+        code: "internal-error",
+        message: "The request could not be completed.",
+        correlationId: expect.any(String),
+      },
+    });
+    expect(log).toHaveBeenCalledWith("Unhandled API error.", {
+      correlationId: body.error.correlationId,
+      errorType: "Error",
+    });
+    expect(JSON.stringify({ body, logs: log.mock.calls })).not.toContain("sensitive");
   });
 });
