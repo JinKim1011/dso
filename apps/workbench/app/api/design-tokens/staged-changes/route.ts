@@ -1,13 +1,8 @@
+import { mapApiError } from "@/server/api-error";
 import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
 import { isTrustedMutationRequest } from "@/server/csrf";
-import { readJsonBody, RequestBodyError } from "@/server/request-body";
-import {
-  ProjectAccessDeniedError,
-  ResourceNotFoundError,
-  StagedChangesConflictError,
-  StagedChangesValidationError,
-} from "@repo/application/errors";
+import { readJsonBody } from "@/server/request-body";
 import { saveStagedChanges } from "@repo/application/services/staged-changes";
 import type { SaveStagedChangesResponse } from "@repo/contracts/operation";
 import { parseSaveStagedChangesRequest } from "@repo/contracts/validation/operations/staged-changes";
@@ -73,42 +68,6 @@ export async function POST(request: Request): Promise<Response> {
       headers: { "Cache-Control": "no-store" },
     });
   } catch (error) {
-    if (error instanceof RequestBodyError) {
-      return failure(
-        error.code === "body-too-large" ? 413 : 400,
-        error.code,
-        error.message,
-      );
-    }
-
-    if (error instanceof ProjectAccessDeniedError) {
-      return failure(403, error.code, error.message);
-    }
-
-    if (error instanceof ResourceNotFoundError) {
-      return failure(404, error.code, error.message);
-    }
-
-    if (
-      error instanceof StagedChangesConflictError ||
-      error instanceof StagedChangesValidationError
-    ) {
-      return Response.json(
-        {
-          ok: false,
-          error: { code: error.code, message: error.message, issues: error.issues },
-        } satisfies SaveStagedChangesResponse,
-        {
-          status: error instanceof StagedChangesConflictError ? 409 : 422,
-          headers: { "Cache-Control": "no-store" },
-        },
-      );
-    }
-
-    console.error("Staged changes request failed.", {
-      errorType: error instanceof Error ? error.name : typeof error,
-    });
-
-    return failure(500, "internal-error", "The request could not be completed.");
+    return mapApiError(error);
   }
 }
