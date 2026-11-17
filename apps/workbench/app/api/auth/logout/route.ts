@@ -1,10 +1,7 @@
 import { SESSION_COOKIE } from "@/server/auth-session-cookie";
 import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
-import {
-  getTrustedMutationOrigin,
-  hasTrustedMutationOrigin,
-} from "@/server/mutation-origin";
+import { isTrustedMutationRequest } from "@/server/csrf";
 import { logout } from "@repo/application/services/authentication";
 import { NextResponse } from "next/server";
 
@@ -23,9 +20,8 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   try {
-    const trustedOrigin = getTrustedMutationOrigin(process.env);
-    if (!hasTrustedMutationOrigin(request, trustedOrigin)) {
-      return failure(403, "invalid-origin", "Request origin is not allowed.");
+    if (!isTrustedMutationRequest(request, process.env)) {
+      return failure(403, "request-rejected", "The request was rejected.");
     }
 
     const context = await getCurrentSession(request);
