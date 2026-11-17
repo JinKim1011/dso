@@ -88,7 +88,7 @@ Show one realistic JSON example.
   "release": {
     "id": "release_001",
     "projectId": "project_001",
-    "version": "1.0.0",
+    "version": "1",
     "status": "published",
     "publishedAt": "2026-10-08T09:00:00Z"
   },
@@ -277,7 +277,7 @@ Metadata for the immutable published snapshot:
 
 - `id`: stable release identifier
 - `projectId`: project that owns the release
-- `version`: project-facing release version
+- `version`: server-assigned project release sequence, represented as a string
 - `status`: must be `"published"` in a successful response
 - `publishedAt`: ISO 8601 timestamp for publication
 
@@ -458,7 +458,6 @@ the authorization policy, an unauthorized release may therefore be returned as
 
 ## Open decisions
 
-- Should `release.version` be semantic versioning or an arbitrary project version?
 - Should projects be allowed to define additional mode names beyond `light` and `dark`?
 - Should an unresolved token value be publishable, or should publication reject it?
 - Which placeholder variables should the first generator contract support?
