@@ -4,6 +4,7 @@ import {
   requireProjectAccess,
 } from "@repo/application/services/authorization";
 import { withProjectTransaction } from "@repo/application/services/project-transaction";
+import { hashRequest } from "@repo/application/services/publication-request-hash";
 import { publishRelease } from "@repo/application/services/releases";
 import {
   saveStagedChanges,
@@ -29,6 +30,18 @@ export async function publishStagedChanges(
   requiredProjectRole(membership, projectId, "publisher");
 
   return withProjectTransaction(database, projectId, async (client) => {
+    const requestHash = hashRequest({ ...request, projectId });
+
+    const previous = await findPublicationRequest(client, projectId, requestId);
+
+    if (previous) {
+      if (previous.request_hash !== requestHash) {
+        throw new PublicationRequestConflictError();
+      }
+
+      return previous.response;
+    }
+
     const saved = await saveStagedChanges(client, context, request);
 
     if (saved.changedTokenIds.length === 0) {
