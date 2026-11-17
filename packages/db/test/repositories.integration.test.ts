@@ -280,7 +280,7 @@ describe("database releases repository", () => {
     await insertRelease(database, {
       ...validSeed.releases[0]!,
       id: crypto.randomUUID(),
-      version: "2.0.0",
+      version: "2",
       status: "draft",
       publishedAt: null,
     });
