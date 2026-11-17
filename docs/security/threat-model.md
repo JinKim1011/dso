@@ -55,18 +55,13 @@ The receiving side should not automatically trust data.
 
 ### Browser -> Workbench API
 
-- The staged token save route is currently available only when `NODE_ENV` is `development`.
-- It requires an active session cookie and editor project membership, and rejects mutations unless their `Origin` exactly matches the explicitly configured `DSO_WORKBENCH_ORIGIN`.
-- It does not derive the trusted origin from request headers.
-- The development route fails closed if the origin is not configured.
-- Login and CSRF-token issuance routes are not implemented yet.
-- Origin checking is the temporary development CSRF control. (production writes remain disabled)
+- Staged token save requires a session and at least the editor role.
 
 ```text
 Browser
-  -> HTTPS request
-     - session cookie
-     - CSRF token for mutations
+  -> HTTPS request in deployment
+     - session cookie for authenticated requests
+     - CSRF headers for mutations
      - project/resource changes
   -> Workbench API
 ```
@@ -80,6 +75,24 @@ Browser
   - reject invalid requests
   - return generic errors
   - do not persist partial changes
+
+#### CSRF policy
+
+Apply the shared check to every workbench mutation, including login:
+
+- Set `DSO_WORKBENCH_ORIGIN` to the public origin without a path. Require
+  `Origin` to match it exactly; reject missing or `null` origins. Do not derive
+  the trusted origin from request headers.
+- Require `X-DSO-CSRF: 1`. It is not a secret or token. Do not allow untrusted
+  origins to send it through CORS.
+- Require `Sec-Fetch-Site: same-origin` when the header is present. If absent,
+  require the Origin and custom-header checks.
+- Return a generic 403 for rejected requests. Invalid or missing origin
+  configuration fails closed with a server error.
+
+Session and role checks remain separate. SameSite cookies add protection. This
+policy does not prevent XSS or authenticate clients that can forge headers.
+Use HTTPS in deployment.
 
 ### Workbench API -> PostgreSQL
 
@@ -448,7 +461,7 @@ implementation work. They are not treated as completed Week 1 evidence:
 - Invalid request bodies are rejected.
 - Unknown fields, invalid identifiers, and oversized collections are rejected.
 - Oversized request bodies are rejected.
-- Invalid CSRF tokens are rejected for cookie-based mutations.
+- Mutations reject invalid Origin, custom header, and Fetch Metadata values.
 - Requests without required CSRF protection are rejected.
 - Security headers are present on web responses.
 - User-controlled token, component, and template content cannot execute as unintended browser script.
