@@ -22,6 +22,7 @@ const context = { sessionId, userId: "00000000-0000-4000-8000-000000000002" };
 function request(requestOrigin: string | null = origin): Request {
   const headers = new Headers();
   if (requestOrigin !== null) headers.set("origin", requestOrigin);
+  headers.set("x-dso-csrf", "1");
   return new Request(`${origin}/api/auth/logout`, { method: "POST", headers });
 }
 
@@ -81,6 +82,23 @@ describe("logout request boundary", () => {
       expect(response.status).toBe(403);
       expect(response.headers.get("cache-control")).toBe("no-store");
       expect(response.headers.get("set-cookie")).toBeNull();
+      expect(getCurrentSession).not.toHaveBeenCalled();
+      expect(logout).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each(["missing-header", "cross-site"] as const)(
+    "rejects CSRF policy failure before logout: %s",
+    async (failure) => {
+      const incoming = request();
+      if (failure === "missing-header") incoming.headers.delete("x-dso-csrf");
+      else incoming.headers.set("sec-fetch-site", "cross-site");
+      const response = await POST(incoming);
+      expect(response.status).toBe(403);
+      expect(await response.json()).toEqual({
+        ok: false,
+        error: { code: "request-rejected", message: "The request was rejected." },
+      });
       expect(getCurrentSession).not.toHaveBeenCalled();
       expect(logout).not.toHaveBeenCalled();
     },
