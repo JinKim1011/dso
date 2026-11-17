@@ -215,6 +215,7 @@ This week replaces the current persistence path while preserving staged editing.
   - Publisher: editor permissions plus release publishing
   - Admin: publisher permissions plus API-key management
 - Apply the [CSRF policy](./threat-model.md#csrf-policy) to workbench mutations and add security headers.
+- CSP is report-only. Resolve violations before enforcing it.
 - Return generic production errors without stacks or secrets.
 - Create audit events for login, publishing, API-key creation, and revocation.
 - W4 published-release reads use authenticated workbench sessions. The CLI `release:read` API-key flow is deferred to W5.
