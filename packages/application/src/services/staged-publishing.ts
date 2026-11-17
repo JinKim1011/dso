@@ -1,13 +1,9 @@
-import {
-  DomainValidationError,
-  PublicationRequestConflictError,
-} from "@repo/application/errors";
+import { DomainValidationError } from "@repo/application/errors";
 import {
   requiredProjectRole,
   requireProjectAccess,
 } from "@repo/application/services/authorization";
 import { withProjectTransaction } from "@repo/application/services/project-transaction";
-import { hashRequest } from "@repo/application/services/publication-request-hash";
 import { publishRelease } from "@repo/application/services/releases";
 import { saveStagedChanges } from "@repo/application/services/staged-changes";
 import type { AuthorizationContext } from "@repo/application/types";
@@ -15,17 +11,12 @@ import type {
   PublishStagedChangesResult,
   SaveStagedChangesRequest,
 } from "@repo/contracts/operation";
-import {
-  findPublicationRequest,
-  insertPublicationRequest,
-} from "@repo/db/repositories/publication-requests";
 import { insertRelease, nextReleaseVersion } from "@repo/db/repositories/releases";
 import type { Pool } from "pg";
 
 export async function publishStagedChanges(
   database: Pool,
   context: AuthorizationContext,
-  requestId: string,
   request: SaveStagedChangesRequest,
 ): Promise<PublishStagedChangesResult> {
   const projectId = request.projectId.toLowerCase();
@@ -35,18 +26,6 @@ export async function publishStagedChanges(
   requiredProjectRole(membership, projectId, "publisher");
 
   return withProjectTransaction(database, projectId, async (client) => {
-    const requestHash = hashRequest({ ...request, projectId });
-
-    const previous = await findPublicationRequest(client, projectId, requestId);
-
-    if (previous) {
-      if (previous.request_hash !== requestHash) {
-        throw new PublicationRequestConflictError();
-      }
-
-      return previous.response;
-    }
-
     const saved = await saveStagedChanges(client, context, request);
 
     if (saved.changedTokenIds.length === 0) {
@@ -69,14 +48,10 @@ export async function publishStagedChanges(
       releaseId: release.id,
     });
 
-    const result = {
+    return {
       release: published,
       tokens: saved.tokens,
       references: saved.references,
     };
-
-    await insertPublicationRequest(client, projectId, requestId, requestHash, result);
-
-    return result;
   });
 }
