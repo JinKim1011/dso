@@ -93,8 +93,10 @@ export function useStagedManifestActions({
       if (!canApply || outcomeUnknown) {
         return new Response("Draft is not ready to apply.", { status: 409 });
       }
+
       if (busy.current)
         return new Response("A save is already in progress.", { status: 409 });
+
       const changed = buildChangedRows(models.baseModel, models.draftModel);
       const rows = rowId ? changed.filter((row) => row.rowId === rowId) : changed;
       if (rows.length === 0) {
@@ -102,6 +104,7 @@ export function useStagedManifestActions({
         setSaveError(message);
         return new Response(message, { status: 400 });
       }
+
       const request: SaveStagedChangesRequest = {
         projectId,
         changes: rows.map((row) => row.change),
@@ -116,17 +119,22 @@ export function useStagedManifestActions({
         setSaveError(message);
         return new Response(message, { status: 413 });
       }
+
       busy.current = true;
+
       setIsApplying(true);
+
       setSaveError(null);
+
       try {
         const response = await fetch("/api/design-tokens/staged-changes", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "X-DSO-CSRF": "1" },
           body,
         });
         if (!response.ok) {
           let message = `Save failed (${response.status}). Your draft was preserved.`;
+
           try {
             const payload: unknown = await response.clone().json();
             if (
@@ -135,6 +143,7 @@ export function useStagedManifestActions({
               typeof payload.error.message === "string"
             ) {
               message = `${payload.error.message} Your draft was preserved.`;
+
               if (Array.isArray(payload.error.issues)) {
                 const details = payload.error.issues
                   .filter(isRecord)
@@ -148,6 +157,7 @@ export function useStagedManifestActions({
                       .join(": "),
                   )
                   .filter(Boolean);
+
                 if (details.length) message += ` ${details.join("; ")}`;
               }
             }
@@ -161,8 +171,10 @@ export function useStagedManifestActions({
           setSaveError(message);
           return response;
         }
+
         const payload: unknown = await response.clone().json();
         const result = parseSavedRows(payload, request, models.baseModel);
+
         reconcileSavedRows(
           models.baseModel,
           models.draftModel,
@@ -170,6 +182,7 @@ export function useStagedManifestActions({
           projectId,
           result,
         );
+
         setModels((current) =>
           reconcileSavedRows(
             current.baseModel,
@@ -179,16 +192,21 @@ export function useStagedManifestActions({
             result,
           ),
         );
+
         return response;
       } catch (error) {
         console.error("Save request or response failed.", error);
+
         setOutcomeUnknown(true);
+
         setSaveError(
           "Save outcome is unknown. Your draft was preserved; reload before applying again.",
         );
+
         return new Response("Save outcome is unknown.", { status: 503 });
       } finally {
         setIsApplying(false);
+
         setCompletion((current) => current + 1);
       }
     },
@@ -196,7 +214,9 @@ export function useStagedManifestActions({
   );
 
   const applyDraft = useCallback(() => apply(), [apply]);
+
   const applyRow = useCallback((rowId: string) => apply(rowId), [apply]);
+
   return {
     updateRow,
     discardRow,
