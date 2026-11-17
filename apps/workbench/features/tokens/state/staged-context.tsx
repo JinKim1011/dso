@@ -35,7 +35,6 @@ type StagedContextType = {
   resetDraft: () => void;
   applyDraft: () => Promise<Response>;
   discardRow: (rowId: string) => void;
-  applyRow: (rowId: string) => Promise<Response>;
 };
 
 const StagedContext = createContext<StagedContextType | undefined>(undefined);
@@ -62,7 +61,6 @@ export function StagedContextProvider({
     updateRow,
     applyDraft,
     discardRow,
-    applyRow,
     resetDraft,
     isApplying,
     saveError,
@@ -135,18 +133,16 @@ export function StagedContextProvider({
       outcomeUnknown,
       updateRow,
       resetDraft: () => {
+        resetDraft();
         if (isStaleDraft || draftLoadError) {
           clearPersistedDraftModel(projectId);
           setModels({ baseModel: baseManifest, draftModel: baseManifest });
           setIsStaleDraft(false);
           setDraftLoadError(false);
-        } else {
-          resetDraft();
         }
       },
       applyDraft,
       discardRow,
-      applyRow,
     }),
     [
       baseModel,
@@ -164,7 +160,6 @@ export function StagedContextProvider({
       resetDraft,
       applyDraft,
       discardRow,
-      applyRow,
     ],
   );
 
