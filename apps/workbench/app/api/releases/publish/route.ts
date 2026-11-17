@@ -5,7 +5,6 @@ import { getDatabasePool } from "@/server/database";
 import { readJsonBody } from "@/server/request-body";
 import { publishStagedChanges } from "@repo/application/services/staged-publishing";
 import type { PublishStagedChangesResponse } from "@repo/contracts/operation";
-import { validateUuidField } from "@repo/contracts/validation/operations/common";
 import { parseSaveStagedChangesRequest } from "@repo/contracts/validation/operations/staged-changes";
 
 export const runtime = "nodejs";
@@ -43,13 +42,6 @@ export async function POST(request: Request): Promise<Response> {
       return failure(401, "authentication-required", "Authentication is required.");
     }
 
-    const requestId = request.headers.get("idempotency-key");
-    const requestIdIssue = validateUuidField(requestId, "Idempotency-Key");
-
-    if (requestIdIssue || requestId === null) {
-      return failure(400, "invalid-request", "Idempotency-Key must be a UUID.");
-    }
-
     const parsed = parseSaveStagedChangesRequest(await readJsonBody(request));
 
     if (!parsed.success) {
@@ -66,12 +58,7 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    const result = await publishStagedChanges(
-      getDatabasePool(),
-      context,
-      requestId,
-      parsed.value,
-    );
+    const result = await publishStagedChanges(getDatabasePool(), context, parsed.value);
 
     return Response.json({ ok: true, ...result } satisfies PublishStagedChangesResponse, {
       headers: { "Cache-Control": "no-store" },
