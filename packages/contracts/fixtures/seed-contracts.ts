@@ -40,7 +40,7 @@ export const seedProjectMemberFixture = {
 export const seedReleaseFixture = {
   id: fixtureIds.release,
   projectId: fixtureIds.project,
-  version: "1.0.0",
+  version: "1",
   status: "published",
   createdAt: fixtureTimestamp,
   publishedAt: fixtureTimestamp,
