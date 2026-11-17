@@ -31,6 +31,16 @@ export async function login(database: Pool, request: LoginRequest): Promise<Logi
   const passwordMatches = await verifyPassword(passwordHash, request.password);
 
   if (!user || !passwordMatches) {
+    await insertAuditEvent(database, {
+      id: crypto.randomUUID(),
+      userId: null,
+      projectId: null,
+      action: "login.failed",
+      resourceType: "account",
+      resourceId: user?.id ?? null,
+      createdAt: new Date().toISOString(),
+    });
+
     throw new InvalidCredentialsError();
   }
 
