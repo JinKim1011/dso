@@ -55,7 +55,8 @@ The receiving side should not automatically trust data.
 
 ### Browser -> Workbench API
 
-- Staged token save requires a session and at least the editor role.
+- Staged token save and release publication are one operation. It requires a
+  session and the publisher role. There is no standalone save endpoint.
 
 ```text
 Browser
@@ -110,7 +111,7 @@ Workbench responses use these browser protections:
 
 Record important actions and failed logins. Restrict access to audit records
 and exclude credentials, session IDs, token names, and token values. See the
-[audit event catalogue](../database/er-model.md#planned-audit-event-catalogue).
+[audit event catalogue](../database/er-model.md#audit-event-catalogue).
 
 ### Workbench API -> PostgreSQL
 
