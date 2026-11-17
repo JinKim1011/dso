@@ -64,6 +64,14 @@ export async function publishStagedChanges(
       releaseId: release.id,
     });
 
-    return { release: published, tokens: saved.tokens, references: saved.references };
+    const result = {
+      release: published,
+      tokens: saved.tokens,
+      references: saved.references,
+    };
+
+    await insertPublicationRequest(client, projectId, requestId, requestHash, result);
+
+    return result;
   });
 }
