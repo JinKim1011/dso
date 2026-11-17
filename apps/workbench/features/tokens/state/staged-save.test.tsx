@@ -6,11 +6,13 @@ import {
   StagedContextProvider,
   useStagedContext,
 } from "@/features/tokens/state/staged-context";
+import { persistDraftModel } from "@/features/tokens/state/staged-draft-storage";
 import { findRowById } from "@/features/tokens/state/staged-graph-model";
 import { StagedView } from "@/features/tokens/views/staged/staged-view";
 import type { SaveStagedChangesRequest } from "@repo/contracts/operation";
 import type { Token, TokenReference } from "@repo/contracts/type";
 import { validSeed } from "@repo/seed-data/valid-seed";
+import { Toaster } from "@repo/ui";
 import {
   act,
   fireEvent,
@@ -19,7 +21,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const projectId = validSeed.projects[0]!.id;
@@ -35,6 +37,7 @@ function wrapper({ children }: { children: ReactNode }) {
   return (
     <StagedContextProvider projectId={projectId} baseManifest={base}>
       {children}
+      <Toaster />
     </StagedContextProvider>
   );
 }
@@ -158,8 +161,103 @@ describe("staged save reconciliation", () => {
       "The staged changes conflict.",
     );
     fireEvent.click(screen.getByRole("button", { name: "DISCARD ALL" }));
-    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole("alert")).not.toBeInTheDocument());
     expect(screen.getByText("No staged changes")).toBeInTheDocument();
+  });
+
+  it("shows a persistent toast for a stale draft until it is discarded", async () => {
+    const updatedBase = {
+      ...base,
+      tokenTypes: base.tokenTypes.map((type) => ({
+        ...type,
+        values: type.values.map((row) =>
+          row.id === surface.id ? { ...row, name: "server edit" } : row,
+        ),
+      })),
+    };
+    const draft = {
+      ...base,
+      tokenTypes: base.tokenTypes.map((type) => ({
+        ...type,
+        values: type.values.map((row) =>
+          row.id === surface.id ? { ...row, name: "draft edit" } : row,
+        ),
+      })),
+    };
+    persistDraftModel(projectId, base, draft);
+    const toast = vi.spyOn(Toaster.toast, "error");
+    render(
+      <StagedContextProvider projectId={projectId} baseManifest={updatedBase}>
+        <StagedHeader onBack={() => {}} />
+        <StagedView />
+        <Toaster />
+      </StagedContextProvider>,
+    );
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Project data changed since this draft was created.");
+    expect(alert.closest("[data-sonner-toast]")).toHaveAttribute(
+      "data-dismissible",
+      "false",
+    );
+    expect(toast).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ duration: Infinity, dismissible: false }),
+    );
+    expect(screen.getByRole("button", { name: "PUSH ALL" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "DISCARD ALL" }));
+    await waitFor(() => expect(screen.queryByRole("alert")).not.toBeInTheDocument());
+  });
+
+  it("shows a draft restoration error until the invalid draft is discarded", async () => {
+    localStorage.setItem(`dso-workbench-staged-draft:${projectId}`, "invalid json");
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    render(
+      <>
+        <StagedHeader onBack={() => {}} />
+        <StagedView />
+      </>,
+      { wrapper },
+    );
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "The saved draft could not be restored.",
+    );
+    expect(screen.getByRole("button", { name: "PUSH ALL" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "DISCARD ALL" }));
+    await waitFor(() => expect(screen.queryByRole("alert")).not.toBeInTheDocument());
+  });
+
+  it("recreates an active error toast when the staged view is reopened", async () => {
+    localStorage.setItem(`dso-workbench-staged-draft:${projectId}`, "invalid json");
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    const toast = vi.spyOn(Toaster.toast, "error");
+    const dismiss = vi.spyOn(Toaster.toast, "dismiss");
+    function StagedScreen() {
+      const [showStaged, setShowStaged] = useState(true);
+      return (
+        <>
+          <button onClick={() => setShowStaged((show) => !show)}>Toggle staged</button>
+          {showStaged && <StagedView />}
+        </>
+      );
+    }
+
+    render(<StagedScreen />, { wrapper });
+    const firstAlert = await screen.findByRole("alert");
+    expect(firstAlert).toHaveTextContent("The saved draft could not be restored.");
+    const firstId = toast.mock.results[0]!.value;
+    fireEvent.click(screen.getByText("Toggle staged"));
+    expect(dismiss).toHaveBeenCalledWith(firstId);
+    fireEvent.click(screen.getByText("Toggle staged"));
+    expect(toast).toHaveBeenCalledTimes(2);
+    const secondId = toast.mock.results[1]!.value;
+    expect(secondId).not.toBe(firstId);
+    await waitFor(() => expect(firstAlert).not.toBeInTheDocument());
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "The saved draft could not be restored.",
+    );
+    expect(Toaster.toast.getToasts().some((item) => item.id === secondId)).toBe(true);
   });
 
   it("preserves the draft and disables both discards when the push outcome is unknown", async () => {
@@ -180,7 +278,8 @@ describe("staged save reconciliation", () => {
         </>
       );
     }
-    render(<StagedScreen />, { wrapper });
+    const dismiss = vi.spyOn(Toaster.toast, "dismiss");
+    const { unmount } = render(<StagedScreen />, { wrapper });
     await waitFor(() => expect(screen.getByText("Edit")).toBeEnabled());
     fireEvent.click(screen.getByText("Edit"));
     fireEvent.click(screen.getByRole("button", { name: "PUSH ALL" }));
@@ -190,6 +289,8 @@ describe("staged save reconciliation", () => {
     expect(screen.getByLabelText("discard-row")).toBeDisabled();
     expect(screen.getByRole("button", { name: "DISCARD ALL" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "PUSH ALL" })).toBeDisabled();
+    unmount();
+    expect(dismiss).toHaveBeenCalledWith(expect.anything());
   });
 
   it("rebuilds dependent previews and restores the remaining draft after reload", async () => {
