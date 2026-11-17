@@ -80,7 +80,7 @@ describe("Authentication service integration", () => {
     ]);
   });
 
-  it("does not create a session or audit event for invalid credentials", async () => {
+  it("audits rejected credentials without treating the attempted account as the actor", async () => {
     const database = getTestDatabase();
 
     const user = await insertUser(database, {
@@ -98,6 +98,14 @@ describe("Authentication service integration", () => {
     ).rejects.toMatchObject({
       code: "invalid-credentials",
     });
+    await expect(
+      login(database, {
+        email: "missing@example.test",
+        password: "wrong-password",
+      }),
+    ).rejects.toMatchObject({
+      code: "invalid-credentials",
+    });
 
     const sessions = await database.query(
       `
@@ -110,15 +118,63 @@ describe("Authentication service integration", () => {
 
     const auditEvents = await database.query(
       `
-        SELECT COUNT(*)::int AS count
+        SELECT user_id, project_id, action, resource_type, resource_id, metadata
         FROM audit_events
-        WHERE user_id = $1
+        ORDER BY resource_id NULLS FIRST
       `,
-      [user.id],
     );
 
     expect(sessions.rows[0].count).toBe(0);
-    expect(auditEvents.rows[0].count).toBe(0);
+    expect(auditEvents.rows).toEqual([
+      {
+        user_id: null,
+        project_id: null,
+        action: "login.failed",
+        resource_type: "account",
+        resource_id: null,
+        metadata: null,
+      },
+      {
+        user_id: null,
+        project_id: null,
+        action: "login.failed",
+        resource_type: "account",
+        resource_id: user.id,
+        metadata: null,
+      },
+    ]);
+  });
+
+  it("propagates failed-login audit errors instead of reporting invalid credentials", async () => {
+    const database = getTestDatabase();
+    await database.query(`
+      CREATE FUNCTION fail_rejected_login_audit_insert()
+      RETURNS trigger AS $$
+      BEGIN
+        IF NEW.action = 'login.failed' THEN
+          RAISE EXCEPTION 'forced failed-login audit failure';
+        END IF;
+        RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql
+    `);
+    await database.query(`
+      CREATE TRIGGER fail_rejected_login_audit
+      BEFORE INSERT ON audit_events
+      FOR EACH ROW EXECUTE FUNCTION fail_rejected_login_audit_insert()
+    `);
+    try {
+      await expect(
+        login(database, { email: "missing@example.test", password: "wrong-password" }),
+      ).rejects.toThrow("forced failed-login audit failure");
+      expect((await database.query("SELECT id FROM sessions")).rows).toEqual([]);
+      expect((await database.query("SELECT id FROM audit_events")).rows).toEqual([]);
+    } finally {
+      await database.query(
+        "DROP TRIGGER IF EXISTS fail_rejected_login_audit ON audit_events",
+      );
+      await database.query("DROP FUNCTION IF EXISTS fail_rejected_login_audit_insert()");
+    }
   });
 
   it("rolls back session creation when login auditing fails", async () => {
@@ -342,7 +398,7 @@ describe("Authentication service integration", () => {
     },
   );
 
-  it("logout removes the session", async () => {
+  it("logout removes the session and records the authenticated actor once", async () => {
     const database = getTestDatabase();
     const userId = crypto.randomUUID();
     const sessionId = crypto.randomUUID();
@@ -361,16 +417,29 @@ describe("Authentication service integration", () => {
       expiresAt: new Date(Date.now() + 60_000).toISOString(),
     });
 
-    await logout(database, {
-      userId,
-      sessionId,
-    });
+    await Promise.all([
+      logout(database, { userId, sessionId }),
+      logout(database, { userId, sessionId }),
+    ]);
 
     const result = await database.query("SELECT id FROM sessions WHERE id = $1", [
       sessionId,
     ]);
 
     expect(result.rows).toHaveLength(0);
+    const audit = await database.query(
+      "SELECT user_id, project_id, action, resource_type, resource_id, metadata FROM audit_events",
+    );
+    expect(audit.rows).toEqual([
+      {
+        user_id: userId,
+        project_id: null,
+        action: "logout",
+        resource_type: "account",
+        resource_id: null,
+        metadata: null,
+      },
+    ]);
   });
 
   it("logout is safe when the session is already removed", async () => {
@@ -382,6 +451,75 @@ describe("Authentication service integration", () => {
         sessionId: crypto.randomUUID(),
       }),
     ).resolves.toBeUndefined();
+    expect((await database.query("SELECT id FROM audit_events")).rows).toEqual([]);
+  });
+
+  it("does not remove or audit a session owned by a different user", async () => {
+    const database = getTestDatabase();
+    const user = await insertUser(database, {
+      id: crypto.randomUUID(),
+      email: "user@example.test",
+      passwordHash: await hashPassword("test-password"),
+      createdAt: new Date().toISOString(),
+    });
+    const sessionId = crypto.randomUUID();
+    await insertSession(database, {
+      id: sessionId,
+      userId: user.id,
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+    });
+
+    await logout(database, { userId: crypto.randomUUID(), sessionId });
+    expect((await database.query("SELECT id FROM sessions")).rows).toEqual([
+      { id: sessionId },
+    ]);
+    expect((await database.query("SELECT id FROM audit_events")).rows).toEqual([]);
+  });
+
+  it("rolls back session deletion when logout auditing fails", async () => {
+    const database = getTestDatabase();
+    const user = await insertUser(database, {
+      id: crypto.randomUUID(),
+      email: "user@example.test",
+      passwordHash: await hashPassword("test-password"),
+      createdAt: new Date().toISOString(),
+    });
+    const sessionId = crypto.randomUUID();
+    await insertSession(database, {
+      id: sessionId,
+      userId: user.id,
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+    });
+    await database.query(`
+      CREATE FUNCTION fail_logout_audit_insert()
+      RETURNS trigger AS $$
+      BEGIN
+        IF NEW.action = 'logout' THEN
+          RAISE EXCEPTION 'forced logout audit failure';
+        END IF;
+        RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql
+    `);
+    await database.query(`
+      CREATE TRIGGER fail_logout_audit
+      BEFORE INSERT ON audit_events
+      FOR EACH ROW EXECUTE FUNCTION fail_logout_audit_insert()
+    `);
+    try {
+      await expect(logout(database, { userId: user.id, sessionId })).rejects.toThrow(
+        "forced logout audit failure",
+      );
+      expect((await database.query("SELECT id FROM sessions")).rows).toEqual([
+        { id: sessionId },
+      ]);
+      expect((await database.query("SELECT id FROM audit_events")).rows).toEqual([]);
+    } finally {
+      await database.query("DROP TRIGGER IF EXISTS fail_logout_audit ON audit_events");
+      await database.query("DROP FUNCTION IF EXISTS fail_logout_audit_insert()");
+    }
   });
 
   it("rejects an unauthenticated session", async () => {
