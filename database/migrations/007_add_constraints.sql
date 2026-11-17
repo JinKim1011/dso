@@ -128,21 +128,42 @@ ADD CONSTRAINT api_keys_time_stamp_check CHECK (expires_at > created_at);
 ALTER TABLE audit_events
 ADD CONSTRAINT audit_events_scope_check CHECK (
   (
-    action = 'login.succeeded'
+    action IN ('login.succeeded', 'logout')
+    AND user_id IS NOT NULL
     AND resource_type = 'account'
     AND project_id IS NULL
     AND resource_id IS NULL
+    AND metadata IS NULL
+  )
+  OR (
+    action = 'login.failed'
+    AND user_id IS NULL
+    AND resource_type = 'account'
+    AND project_id IS NULL
+    AND metadata IS NULL
+  )
+  OR (
+    action = 'token.batch_saved'
+    AND user_id IS NOT NULL
+    AND resource_type = 'token_batch'
+    AND project_id IS NOT NULL
+    AND resource_id IS NULL
+    AND metadata IS NOT NULL
   )
   OR (
     action = 'release.published'
+    AND user_id IS NOT NULL
     AND resource_type = 'release'
     AND project_id IS NOT NULL
     AND resource_id IS NOT NULL
+    AND metadata IS NULL
   )
   OR (
     action IN ('api_key.created', 'api_key.revoked')
+    AND user_id IS NOT NULL
     AND resource_type = 'api_key'
     AND project_id IS NOT NULL
     AND resource_id IS NOT NULL
+    AND metadata IS NULL
   )
 );
