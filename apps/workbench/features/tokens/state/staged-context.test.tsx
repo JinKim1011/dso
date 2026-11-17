@@ -50,6 +50,7 @@ describe("staged draft reload", () => {
     });
     expect(fetchSpy).toHaveBeenCalledOnce();
     expect(fetchSpy.mock.calls[0]?.[0]).toBe("/api/design-tokens/staged-changes");
+    expect(new Headers(fetchSpy.mock.calls[0]?.[1]?.headers).get("x-dso-csrf")).toBe("1");
     expect(current.result.current.saveError).toContain("Authentication is required");
     expect(findRowById(current.result.current.draftModel, token.id)?.name).toBe(
       "draft edit",
