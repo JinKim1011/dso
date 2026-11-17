@@ -463,7 +463,7 @@ export const validSeed: SeedData = {
     {
       id: seedIds.release,
       projectId: seedIds.project,
-      version: "1.0.0",
+      version: "1",
       status: "published",
       publishedAt: "2026-10-27T10:00:00.000Z",
       createdAt: "2026-10-27T10:00:00.000Z",
