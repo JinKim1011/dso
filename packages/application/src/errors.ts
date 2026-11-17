@@ -38,6 +38,14 @@ export class StagedChangesConflictError extends Error {
   }
 }
 
+export class PublicationRequestConflictError extends Error {
+  readonly code = "publication-request-conflict";
+
+  constructor() {
+    super("The request ID has already been used for a different request.");
+  }
+}
+
 export class ResourceNotFoundError extends Error {
   readonly code = "resource-not-found";
 
