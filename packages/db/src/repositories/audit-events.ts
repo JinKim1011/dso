@@ -15,6 +15,8 @@ type AuditEventRow = QueryResultRow & {
 };
 
 function mapAuditEventRow(row: AuditEventRow): AuditEvent {
+  const metadata = validateMetadata(row.action, row.metadata);
+
   return {
     id: row.id,
     userId: row.user_id,
@@ -22,6 +24,7 @@ function mapAuditEventRow(row: AuditEventRow): AuditEvent {
     action: row.action,
     resourceType: row.resource_type,
     resourceId: row.resource_id ?? null,
+    ...(metadata && { metadata }),
     createdAt: row.created_at.toISOString(),
   };
 }
