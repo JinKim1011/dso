@@ -7,8 +7,22 @@ import { useRowSelection } from "@/features/tokens/navigation/use-row-selection"
 import { useStagedContext } from "@/features/tokens/state/staged-context";
 import { useFilterState } from "@/features/tokens/views/staged/hooks/use-filter-state";
 import { useStagedRowKeyboardNavigation } from "@/features/tokens/views/staged/hooks/use-staged-row-keyboard-navigation";
-import { List, Text } from "@repo/ui";
+import { List, Text, Toaster } from "@repo/ui";
 import { useEffect, useMemo, useRef } from "react";
+
+function useErrorToast(message: string | null) {
+  useEffect(() => {
+    if (!message) return;
+
+    const id = Toaster.toast.error(<span role="alert">{message}</span>, {
+      duration: Infinity,
+      dismissible: false,
+    });
+    return () => {
+      Toaster.toast.dismiss(id);
+    };
+  }, [message]);
+}
 
 export function StagedView() {
   const {
@@ -22,6 +36,18 @@ export function StagedView() {
     saveError,
     outcomeUnknown,
   } = useStagedContext();
+  useErrorToast(
+    isStaleDraft
+      ? "Project data changed since this draft was created. Your edits are preserved, but pushing is disabled. Discard all changes to use the current project data."
+      : null,
+  );
+  useErrorToast(
+    draftLoadError
+      ? "The saved draft could not be restored. Pushing is disabled. Discard all to remove it and start from the current project data."
+      : null,
+  );
+  useErrorToast(saveError);
+
   const { activeFilter, setActiveFilter, filteredCategories } = useFilterState({
     changedRows,
   });
@@ -84,24 +110,6 @@ export function StagedView() {
 
   return (
     <section className="flex h-full w-full flex-col">
-      {/* // will be replaced by toaster later */}
-      {isStaleDraft && (
-        <p role="alert" className="text-content-error p-small">
-          Project data changed since this draft was created. Your edits are preserved, but
-          pushing is disabled. Discard all changes to use the current project data.
-        </p>
-      )}
-      {draftLoadError && (
-        <p role="alert" className="text-content-error p-small">
-          The saved draft could not be restored. Pushing is disabled. Discard all to
-          remove it and start from the current project data.
-        </p>
-      )}
-      {saveError && (
-        <p role="alert" className="text-content-error p-small">
-          {saveError}
-        </p>
-      )}
       {rowsLength === 0 && (
         <div className="bg-dot-pattern rounded-mini border-stroke-secondary flex h-full w-full items-center justify-center overflow-hidden border">
           <Text
