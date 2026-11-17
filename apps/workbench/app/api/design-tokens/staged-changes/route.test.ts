@@ -147,8 +147,20 @@ describe("staged changes request boundary", () => {
     vi.mocked(authenticateSession).mockRejectedValue(new Error(`database failure ${sessionId}`));
     const response = await POST(request());
     expect(response.status).toBe(500);
-    expect(await response.text()).not.toContain(sessionId);
-    expect(log).toHaveBeenCalledWith("Staged changes request failed.", { errorType: "Error" });
+    const body = await response.json();
+    expect(body).toEqual({
+      ok: false,
+      error: {
+        code: "internal-error",
+        message: "The request could not be completed.",
+        correlationId: expect.any(String),
+      },
+    });
+    expect(log).toHaveBeenCalledWith("Unhandled API error.", {
+      correlationId: body.error.correlationId,
+      errorType: "Error",
+    });
+    expect(JSON.stringify({ body, logs: log.mock.calls })).not.toContain(sessionId);
     expect(saveStagedChanges).not.toHaveBeenCalled();
   });
 
@@ -239,7 +251,9 @@ describe("staged changes request boundary", () => {
     vi.mocked(saveStagedChanges).mockRejectedValue(error);
     const response = await POST(request());
     expect(response.status).toBe(status);
-    expect(await response.json()).toMatchObject({ ok: false, error: { code } });
+    const body = await response.json();
+    expect(body).toMatchObject({ ok: false, error: { code, message: error.message } });
+    if ("issues" in error) expect(body.error.issues).toEqual(error.issues);
   });
 
   it("does not leak unexpected database errors", async () => {
