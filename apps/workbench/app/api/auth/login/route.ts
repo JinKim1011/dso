@@ -1,8 +1,8 @@
+import { mapApiError } from "@/server/api-error";
 import { SESSION_COOKIE } from "@/server/auth-session-cookie";
 import { getDatabasePool } from "@/server/database";
 import { isTrustedMutationRequest } from "@/server/csrf";
-import { readJsonBody, RequestBodyError } from "@/server/request-body";
-import { InvalidCredentialsError } from "@repo/application/errors";
+import { readJsonBody } from "@/server/request-body";
 import { login } from "@repo/application/services/authentication";
 import { parseLoginRequest } from "@repo/contracts/validation/operations/authentication";
 import { NextResponse } from "next/server";
@@ -53,16 +53,6 @@ export async function POST(request: Request): Promise<Response> {
     response.cookies.set(SESSION_COOKIE.name, result.sessionId, SESSION_COOKIE);
     return response;
   } catch (error) {
-    if (error instanceof RequestBodyError) {
-      return failure(error.code === "body-too-large" ? 413 : 400, error.code, error.message);
-    }
-    if (error instanceof InvalidCredentialsError) {
-      return failure(401, error.code, error.message);
-    }
-
-    console.error("Login request failed.", {
-      errorType: error instanceof Error ? error.name : typeof error,
-    });
-    return failure(500, "internal-error", "The request could not be completed.");
+    return mapApiError(error);
   }
 }
