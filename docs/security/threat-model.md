@@ -74,6 +74,7 @@ Browser
 - Failure behavior
   - reject invalid requests
   - return generic errors
+  - log unexpected API errors with a correlation ID and include it in the response
   - do not persist partial changes
 
 #### CSRF policy
