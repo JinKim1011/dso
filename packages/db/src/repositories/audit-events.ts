@@ -5,11 +5,12 @@ type Queryable = Pick<Pool, "query"> | Pick<PoolClient, "query">;
 
 type AuditEventRow = QueryResultRow & {
   id: string;
-  user_id: string;
+  user_id: string | null;
   project_id: string | null;
   action: string;
   resource_type: string;
   resource_id: string | null;
+  metadata: unknown;
   created_at: Date;
 };
 
