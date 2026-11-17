@@ -23,17 +23,14 @@ export async function publishRelease(
   context: AuthorizationContext,
   request: PublishReleaseRequest,
 ): Promise<Release> {
-  const membership = await requireProjectAccess(
-    database,
-    context.userId,
-    request.projectId,
-  );
+  const projectId = request.projectId.toLowerCase();
+  const membership = await requireProjectAccess(database, context.userId, projectId);
 
   if (!membership) {
     throw new ProjectAccessDeniedError();
   }
 
-  requiredProjectRole(membership, request.projectId, "publisher");
+  requiredProjectRole(membership, projectId, "publisher");
 
   return withTransaction(database, async (client) => {
     const release = await findDraftReleaseForUpdate(
