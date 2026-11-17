@@ -220,6 +220,15 @@ This week replaces the current persistence path while preserving staged editing.
 - Create audit events for login, publishing, API-key creation, and revocation.
 - W4 published-release reads use authenticated workbench sessions. The CLI `release:read` API-key flow is deferred to W5.
 
+#### Known issue: Lost publication responses
+
+If publication commits but the response is lost, the workbench cannot determine whether that specific request succeeded. The draft is preserved and the UI does not automatically retry. Check the release and audit records before retrying; the workbench does not yet provide a release-history view. These records may help an investigation but cannot always link a release to the specific request.
+
+The staged `before` checks reject many stale retries but do not guarantee
+deduplication if project data later returns to its earlier state. A future
+improvement can use a stable request ID recorded atomically with publication
+and preserved by the client across retries.
+
 #### Tests
 
 - Unauthenticated requests return `401`.
