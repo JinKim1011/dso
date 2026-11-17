@@ -129,6 +129,7 @@ export type SaveStagedChangesResponse =
       error: {
         code: string;
         message: string;
+        correlationId?: string;
         issues?: readonly {
           code: string;
           message: string;
