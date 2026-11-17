@@ -1,4 +1,9 @@
 import type { AuditEvent } from "@repo/contracts/type";
+import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
+import {
+  isRecord,
+  validateUuidField,
+} from "@repo/contracts/validation/operations/common";
 import type { Pool, PoolClient, QueryResultRow } from "pg";
 
 type Queryable = Pick<Pool, "query"> | Pick<PoolClient, "query">;
@@ -13,6 +18,43 @@ type AuditEventRow = QueryResultRow & {
   metadata: unknown;
   created_at: Date;
 };
+
+function validateMetadata(action: string, value: unknown): AuditEvent["metadata"] {
+  if (action !== "token.batch_saved") {
+    if (value !== null && value !== undefined) {
+      throw new Error("Metadata is not allowed for this audit action.");
+    }
+
+    return undefined;
+  }
+
+  if (
+    !isRecord(value) ||
+    Object.keys(value).length !== 1 ||
+    !Object.hasOwn(value, "tokenIds") ||
+    !Array.isArray(value.tokenIds) ||
+    value.tokenIds.length === 0 ||
+    value.tokenIds.length > CONTRACT_LIMITS.collectionItems
+  ) {
+    throw new Error("Invalid audit token IDs.");
+  }
+
+  const tokenIds: string[] = [];
+
+  const seen = new Set<string>();
+
+  for (const tokenId of value.tokenIds) {
+    if (typeof tokenId !== "string" || validateUuidField(tokenId, "tokenId")) {
+      throw new Error("Invalid audit token IDs.");
+    }
+    const normalized = tokenId.toLowerCase();
+    if (seen.has(normalized)) throw new Error("Invalid audit token IDs.");
+    seen.add(normalized);
+    tokenIds.push(tokenId);
+  }
+
+  return { tokenIds };
+}
 
 function mapAuditEventRow(row: AuditEventRow): AuditEvent {
   const metadata = validateMetadata(row.action, row.metadata);
