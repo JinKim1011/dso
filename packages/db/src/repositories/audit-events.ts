@@ -33,11 +33,13 @@ export async function insertAuditEvent(
   database: Queryable,
   auditEvent: AuditEvent,
 ): Promise<AuditEvent> {
+  const metadata = validateMetadata(auditEvent.action, auditEvent.metadata);
+
   const result = await database.query<AuditEventRow>(
     `
-      INSERT INTO audit_events (id, user_id, project_id, action, resource_type, resource_id, created_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING id, user_id, project_id, action, resource_type, resource_id, created_at
+      INSERT INTO audit_events (id, user_id, project_id, action, resource_type, resource_id, metadata, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING id, user_id, project_id, action, resource_type, resource_id, metadata, created_at
     `,
     [
       auditEvent.id,
@@ -46,6 +48,7 @@ export async function insertAuditEvent(
       auditEvent.action,
       auditEvent.resourceType,
       auditEvent.resourceId,
+      metadata ?? null,
       auditEvent.createdAt,
     ],
   );
