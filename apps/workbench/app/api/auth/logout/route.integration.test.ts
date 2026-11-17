@@ -39,7 +39,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
     function request(cookie: string, requestOrigin = origin): Request {
       return new Request(`${origin}/api/auth/logout`, {
         method: "POST",
-        headers: { origin: requestOrigin, cookie },
+        headers: { origin: requestOrigin, cookie, "x-dso-csrf": "1" },
       });
     }
 
