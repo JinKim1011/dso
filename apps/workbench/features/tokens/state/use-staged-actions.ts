@@ -8,7 +8,7 @@ import {
   replaceRowInModel,
 } from "@/features/tokens/state/staged-graph-model";
 import {
-  parseSavedRows,
+  parsePublishedRows,
   reconcileSavedRows,
 } from "@/features/tokens/state/staged-save-result";
 import type { SaveStagedChangesRequest } from "@repo/contracts/operation";
@@ -96,11 +96,11 @@ export function useStagedManifestActions({
 
   const applyDraft = useCallback(async (): Promise<Response> => {
     if (!canApply || outcomeUnknown) {
-      return new Response("Draft is not ready to apply.", { status: 409 });
+      return new Response("Draft is not ready to push.", { status: 409 });
     }
 
     if (busy.current)
-      return new Response("A save is already in progress.", { status: 409 });
+      return new Response("A push is already in progress.", { status: 409 });
 
     const rows = buildChangedRows(models.baseModel, models.draftModel);
     if (rows.length === 0) {
@@ -125,20 +125,17 @@ export function useStagedManifestActions({
     }
 
     busy.current = true;
-
     setIsApplying(true);
-
     setSaveError(null);
 
     try {
-      const response = await fetch("/api/design-tokens/staged-changes", {
+      const response = await fetch("/api/releases/publish", {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-DSO-CSRF": "1" },
         body,
       });
       if (!response.ok) {
         let message = `Push failed (${response.status}). Your draft was preserved.`;
-
         try {
           const payload: unknown = await response.clone().json();
           if (
@@ -147,7 +144,6 @@ export function useStagedManifestActions({
             typeof payload.error.message === "string"
           ) {
             message = `${payload.error.message} Your draft was preserved.`;
-
             if (Array.isArray(payload.error.issues)) {
               const details = payload.error.issues
                 .filter(isRecord)
@@ -161,7 +157,6 @@ export function useStagedManifestActions({
                     .join(": "),
                 )
                 .filter(Boolean);
-
               if (details.length) message += ` ${details.join("; ")}`;
             }
           }
@@ -171,15 +166,14 @@ export function useStagedManifestActions({
         if (response.status === 408 || response.status >= 500) {
           setOutcomeUnknown(true);
           message +=
-            " The push outcome is unknown; reload to compare with current project data.";
+            " The push outcome is unknown; check the published releases before trying again.";
         }
         setSaveError(message);
         return response;
       }
 
       const payload: unknown = await response.clone().json();
-      const result = parseSavedRows(payload, request, models.baseModel);
-
+      const result = parsePublishedRows(payload, request, models.baseModel);
       reconcileSavedRows(
         models.baseModel,
         models.draftModel,
@@ -187,7 +181,6 @@ export function useStagedManifestActions({
         projectId,
         result,
       );
-
       setModels((current) =>
         reconcileSavedRows(
           current.baseModel,
@@ -197,17 +190,13 @@ export function useStagedManifestActions({
           result,
         ),
       );
-
       return response;
     } catch (error) {
       console.error("Push request or response failed.", error);
-
       setOutcomeUnknown(true);
-
       setSaveError(
-        "Push outcome is unknown. Your draft was preserved; reload to compare with current project data.",
+        "Push outcome is unknown. Your draft was preserved; check the published releases before trying again.",
       );
-
       return new Response("Push outcome is unknown.", { status: 503 });
     } finally {
       setIsApplying(false);
