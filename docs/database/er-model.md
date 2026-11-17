@@ -200,6 +200,36 @@ Examples:
 
 For project-scoped actions, application validation must require the relevant project and resource identifiers. The database schema does not use `resource_id` as a foreign key because it can refer to different resource tables according to `resource_type`.
 
+### Planned audit event catalogue
+
+The following contract requires schema and service changes. Each event has a
+unique ID, an action, and a creation timestamp. The actor is the authenticated
+user, except for failed login attempts.
+
+| Action | Actor | Project | Resource type | Resource ID | Metadata |
+| --- | --- | --- | --- | --- | --- |
+| `login.succeeded` | User | None | `account` | None | None |
+| `login.failed` | Unknown | None | `account` | Target user ID, if found | None |
+| `logout` | User | None | `account` | None | None |
+| `token.batch_saved` | User | Required | `token_batch` | None | `tokenIds` |
+| `release.published` | User | Required | `release` | Release ID | None |
+| `api_key.created` | User | Required | `api_key` | API key ID | None |
+| `api_key.revoked` | User | Required | `api_key` | API key ID | None |
+
+`login.failed` records rejected credentials, not malformed requests. A target
+user ID identifies the attempted account, not the actor. Return the same
+authentication failure whether the account exists or not.
+
+`tokenIds` contains 1–1,000 unique IDs of tokens actually changed. Do not
+record an event when a save changes nothing. No other metadata is allowed.
+Never record passwords, entered emails, session IDs, API key secrets or hashes,
+token names, or token values. Restrict access to audit records.
+
+Commit successful actions and their audit records in the same transaction. If
+the audit write fails, roll back the action. Commit a failed-login event before
+returning the authentication failure; do not roll it back with the rejection.
+If that audit write fails, log a safe server error and return a generic 500.
+
 ## Constraint enforcement
 
 | Rule                                                         | PostgreSQL                       | Application validation | Notes                                                                                                                                           |
