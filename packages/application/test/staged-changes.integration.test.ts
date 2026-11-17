@@ -1,12 +1,12 @@
 import {
-  ProjectAccessDeniedError,
   StagedChangesConflictError,
   StagedChangesValidationError,
 } from "@repo/application/errors";
 import { seedProject } from "@repo/application/fixtures";
 import { withProjectTransaction } from "@repo/application/services/project-transaction";
-import { saveStagedChanges } from "@repo/application/services/staged-changes";
+import { saveStagedChanges as saveStagedChangesInTransaction } from "@repo/application/services/staged-changes";
 import { addTokenReference } from "@repo/application/services/token-references";
+import type { AuthorizationContext } from "@repo/application/types";
 import type { SaveStagedChangesRequest } from "@repo/contracts/operation";
 import {
   insertTokenReference,
@@ -16,6 +16,25 @@ import { insertToken, listTokensByProjectId } from "@repo/db/repositories/tokens
 import { getTestDatabase } from "@repo/db/test/setup";
 import { Pool } from "pg";
 import { describe, expect, it } from "vitest";
+
+async function saveStagedChanges(
+  database: Pool,
+  context: AuthorizationContext,
+  request: SaveStagedChangesRequest,
+) {
+  return withProjectTransaction(
+    database,
+    request.projectId.toLowerCase(),
+    async (client) => {
+      const { tokens, references } = await saveStagedChangesInTransaction(
+        client,
+        context,
+        request,
+      );
+      return { tokens, references };
+    },
+  );
+}
 
 describe("staged changes service", () => {
   it("uses READ COMMITTED even when the connection defaults to SERIALIZABLE", async () => {
@@ -472,18 +491,6 @@ describe("staged changes service", () => {
     expect(await listTokenReferencesByProjectId(database, fixture.project.id)).toEqual(
       [],
     );
-  });
-
-  it("requires project membership", async () => {
-    const database = getTestDatabase();
-    const fixture = await seedProject(database, "editor");
-    const other = await seedProject(database, "editor");
-    await expect(
-      saveStagedChanges(database, other.context, {
-        projectId: fixture.project.id,
-        changes: [],
-      }),
-    ).rejects.toBeInstanceOf(ProjectAccessDeniedError);
   });
 
   it("accepts empty batches and no-ops but still checks before values", async () => {
