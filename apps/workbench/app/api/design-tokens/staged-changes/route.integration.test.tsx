@@ -74,6 +74,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
         headers: {
           origin,
           "content-type": "application/json",
+          "x-dso-csrf": "1",
           cookie: `dso_session=${sessionId}`,
         },
         body: JSON.stringify(body),
@@ -203,11 +204,11 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
         POST(
           new Request(`${origin}/api/design-tokens/staged-changes`, {
             method: "POST",
-            headers: {
+            headers: new Headers({
+              ...Object.fromEntries(new Headers(init?.headers)),
               origin,
-              "content-type": "application/json",
               cookie: `dso_session=${sessionId}`,
-            },
+            }),
             body: init?.body,
           }),
         ),
