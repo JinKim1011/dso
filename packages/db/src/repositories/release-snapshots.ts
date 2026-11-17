@@ -12,7 +12,7 @@ type ReleaseSnapshotRow = QueryResultRow & {
   release_id: string;
   token_types: PublishedReleaseSnapshot["tokenTypes"];
   tokens: PublishedReleaseSnapshot["tokens"];
-  references: PublishedReleaseSnapshot["references"];
+  reference_data: PublishedReleaseSnapshot["references"];
   components: PublishedReleaseSnapshot["components"];
   templates: PublishedReleaseSnapshot["templates"];
 };
@@ -72,7 +72,7 @@ export async function findReleaseSnapshot(
   return {
     tokenTypes: row.token_types,
     tokens: row.tokens,
-    references: row.references,
+    references: row.reference_data,
     components: row.components,
     templates: row.templates,
   };
@@ -83,13 +83,14 @@ export async function createReleaseSnapshot(
   releaseId: string,
   projectId: string,
 ): Promise<void> {
-  const [tokenTypes, tokens, references, components, templates] = await Promise.all([
-    listTokenTypesByProjectId(database, projectId),
-    listTokensByProjectId(database, projectId),
-    listTokenReferencesByProjectId(database, projectId),
-    listComponentsByProjectId(database, projectId),
-    listDocumentTemplatesByProjectId(database, projectId),
-  ]);
+  const tokenTypes = await listTokenTypesByProjectId(database, projectId);
+  const tokens = await listTokensByProjectId(database, projectId);
+
+  const references = await listTokenReferencesByProjectId(database, projectId);
+
+  const components = await listComponentsByProjectId(database, projectId);
+
+  const templates = await listDocumentTemplatesByProjectId(database, projectId);
 
   const snapshot: PublishedReleaseSnapshot = {
     tokenTypes,
