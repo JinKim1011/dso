@@ -129,8 +129,20 @@ describe("logout request boundary", () => {
       expect(response.status).toBe(500);
       expect(response.headers.get("cache-control")).toBe("no-store");
       expect(response.headers.get("set-cookie")).toBeNull();
-      expect(await response.text()).not.toContain(sessionId);
-      expect(log).toHaveBeenCalledWith("Logout request failed.", { errorType: "Error" });
+      const body = await response.json();
+      expect(body).toEqual({
+        ok: false,
+        error: {
+          code: "internal-error",
+          message: "The request could not be completed.",
+          correlationId: expect.any(String),
+        },
+      });
+      expect(log).toHaveBeenCalledWith("Unhandled API error.", {
+        correlationId: body.error.correlationId,
+        errorType: "Error",
+      });
+      expect(JSON.stringify({ body, logs: log.mock.calls })).not.toContain(sessionId);
     },
   );
 
