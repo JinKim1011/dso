@@ -18,7 +18,10 @@ export function AccountMenu({ email }: AccountMenuProps) {
     setLoggingOut(true);
 
     try {
-      const response = await fetch("/api/auth/logout", { method: "POST" });
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: { "X-DSO-CSRF": "1" },
+      });
       if (!response.ok && response.status !== 401) {
         Toaster.toast.error("Unable to log out. Please try again.");
         return;
