@@ -1,3 +1,4 @@
+import { mapApiError } from "@/server/api-error";
 import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
 import { getAuthenticatedUser } from "@repo/application/services/authentication";
@@ -26,9 +27,6 @@ export async function GET(request: Request): Promise<Response> {
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
-    console.error("Session lookup failed.", {
-      errorType: error instanceof Error ? error.name : typeof error,
-    });
-    return failure(500, "internal-error", "The request could not be completed.");
+    return mapApiError(error);
   }
 }
