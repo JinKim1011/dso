@@ -6,7 +6,6 @@ import { StagedFilter } from "@/features/tokens/components/staged/staged-filter"
 import { useRowSelection } from "@/features/tokens/navigation/use-row-selection";
 import { useStagedContext } from "@/features/tokens/state/staged-context";
 import { useFilterState } from "@/features/tokens/views/staged/hooks/use-filter-state";
-import { useRowActions } from "@/features/tokens/views/staged/hooks/use-row-actions";
 import { useStagedRowKeyboardNavigation } from "@/features/tokens/views/staged/hooks/use-staged-row-keyboard-navigation";
 import { List, Text } from "@repo/ui";
 import { useEffect, useMemo, useRef } from "react";
@@ -17,10 +16,8 @@ export function StagedView() {
     draftModel,
     changedRows,
     discardRow,
-    applyRow,
     isStaleDraft,
     draftLoadError,
-    canApply,
     isApplying,
     saveError,
     outcomeUnknown,
@@ -31,11 +28,6 @@ export function StagedView() {
   const { selectedRowId, toggleRowSelection } = useRowSelection({
     resetTrigger: activeFilter,
   });
-  const { handleRowApply, handleRowDiscard } = useRowActions({
-    applyRow,
-    discardRow,
-  });
-
   const filteredRows = useMemo(() => {
     return changedRows.filter(
       (row) => activeFilter === "ALL" || row.category.toUpperCase() === activeFilter,
@@ -73,10 +65,8 @@ export function StagedView() {
     children: (
       <StagedRowActions
         rowId={row.rowId}
-        isApplying={isApplying}
-        canApply={canApply}
-        onDiscard={handleRowDiscard}
-        onApply={handleRowApply}
+        disabled={isApplying || outcomeUnknown}
+        onDiscard={discardRow}
       />
     ),
     onSelect: () => toggleRowSelection(row.rowId),
@@ -98,19 +88,18 @@ export function StagedView() {
       {isStaleDraft && (
         <p role="alert" className="text-content-error p-small">
           Project data changed since this draft was created. Your edits are preserved, but
-          applying is disabled. Discard all changes to use the current project data.
+          pushing is disabled. Discard all changes to use the current project data.
         </p>
       )}
       {draftLoadError && (
         <p role="alert" className="text-content-error p-small">
-          The saved draft could not be restored. Applying is disabled. Discard all to
+          The saved draft could not be restored. Pushing is disabled. Discard all to
           remove it and start from the current project data.
         </p>
       )}
       {saveError && (
         <p role="alert" className="text-content-error p-small">
           {saveError}
-          {outcomeUnknown && " Reload the page to compare with current project data."}
         </p>
       )}
       {rowsLength === 0 && (
