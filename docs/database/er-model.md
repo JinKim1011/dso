@@ -170,6 +170,8 @@ application context. It checks project membership and the editor role, then uses
 `READ COMMITTED` transaction to lock the project row before reading the token
 graph. It checks submitted `before` values and validates the proposed final graph
 before writing. Errors roll back the entire batch.
+The same transaction records the IDs of tokens actually changed, without token
+names or values. Empty and no-op saves create no audit event.
 
 The save request contains only changed token names/values and reference slots.
 It does not update `cssVar`. An omitted slot change leaves the current reference
@@ -203,7 +205,7 @@ The repository validates batch metadata; direct SQL bypasses that validation.
 
 ### Planned audit event catalogue
 
-The schema supports the following contract; service integration remains. Each event has a
+The schema supports the following contract; some service integration remains. Each event has a
 unique ID, an action, and a creation timestamp. The actor is the authenticated
 user, except for failed login attempts.
 
