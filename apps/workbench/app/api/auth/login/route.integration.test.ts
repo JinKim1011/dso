@@ -39,7 +39,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("login HTTP and PostgreSQL integ
   function request(email: string, password: string): Request {
     return new Request(`${origin}/api/auth/login`, {
       method: "POST",
-      headers: { origin, "content-type": "application/json" },
+      headers: { origin, "content-type": "application/json", "x-dso-csrf": "1" },
       body: JSON.stringify({ email, password }),
     });
   }
