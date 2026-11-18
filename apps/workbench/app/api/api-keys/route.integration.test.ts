@@ -14,6 +14,7 @@ import {
   vi,
 } from "vitest";
 import { GET as getRelease } from "../releases/[releaseId]/route";
+import { POST as revokeApiKeyRoute } from "./[apiKeyId]/revoke/route";
 import { POST } from "./route";
 
 vi.mock("@/server/database", () => ({ getDatabasePool: vi.fn() }));
@@ -137,5 +138,74 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
         });
       },
     );
+
+    it("revokes an API key through HTTP and immediately blocks release access", async () => {
+      const fixture = await seedProject(database, "admin");
+      const sessionId = await createSession(fixture.user.id);
+      const { release } = await publishStagedChanges(database, fixture.context, {
+        projectId: fixture.project.id,
+        changes: [
+          {
+            tokenId: fixture.referencedToken.id,
+            name: { before: fixture.referencedToken.name, after: "published" },
+            references: [],
+          },
+        ],
+      });
+
+      const createdResponse = await POST(request(fixture, sessionId));
+      const createdBody = await createdResponse.json();
+
+      const revokedResponse = await revokeApiKeyRoute(
+        new Request(`${origin}/api/api-keys/${createdBody.apiKey.id}/revoke`, {
+          method: "POST",
+          headers: {
+            origin,
+            "content-type": "application/json",
+            "x-dso-csrf": "1",
+            cookie: `dso_session=${sessionId}`,
+          },
+          body: JSON.stringify({ projectId: fixture.project.id }),
+        }),
+        { params: Promise.resolve({ apiKeyId: createdBody.apiKey.id }) },
+      );
+      const revokedBody = await revokedResponse.json();
+
+      expect(revokedResponse.status).toBe(200);
+      expect(revokedBody).toMatchObject({
+        ok: true,
+        apiKey: {
+          id: createdBody.apiKey.id,
+          projectId: fixture.project.id,
+          revokedAt: expect.any(String),
+        },
+      });
+      expect(revokedBody.apiKey).not.toHaveProperty("keyHash");
+
+      const releaseResponse = await getRelease(
+        new Request(`${origin}/api/releases/${release.id}`, {
+          headers: { authorization: `Bearer ${createdBody.credential}` },
+        }),
+        { params: Promise.resolve({ releaseId: release.id }) },
+      );
+
+      expect(releaseResponse.status).toBe(401);
+
+      const audit = await database.query(
+        `
+          SELECT action, resource_id
+          FROM audit_events
+          WHERE action = 'api_key.revoked'
+            AND resource_id = $1
+        `,
+        [createdBody.apiKey.id],
+      );
+      expect(audit.rows).toEqual([
+        {
+          action: "api_key.revoked",
+          resource_id: createdBody.apiKey.id,
+        },
+      ]);
+    });
   },
 );
