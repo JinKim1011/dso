@@ -3,6 +3,7 @@ import {
   revokeApiKeyRequest,
 } from "@repo/contracts/fixtures/operation-contracts";
 import {
+  parseRevokeApiKeyBody,
   parseCreateApiKeyRequest,
   parseRevokeApiKeyRequest,
 } from "@repo/contracts/validation/operations/api-keys";
@@ -43,6 +44,23 @@ describe("RevokeApiKeyRequest and CreateApiKeyRequest operation parsers", () => 
     ).toMatchObject({
       success: false,
       issues: [{ field: "expiresAt", code: "invalid-format" }],
+    });
+  });
+
+  it("parses only the project ID from a revoke route body", () => {
+    expect(
+      parseRevokeApiKeyBody({
+        projectId: revokeApiKeyRequest.projectId,
+        apiKeyId: revokeApiKeyRequest.apiKeyId,
+      }),
+    ).toMatchObject({
+      success: false,
+      issues: [{ field: "apiKeyId", code: "unknown-field" }],
+    });
+
+    expect(parseRevokeApiKeyBody({ projectId: revokeApiKeyRequest.projectId })).toEqual({
+      success: true,
+      value: { projectId: revokeApiKeyRequest.projectId },
     });
   });
 });
