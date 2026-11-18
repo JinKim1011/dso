@@ -1,7 +1,9 @@
 import { RequestBodyError } from "@/server/request-body";
 import {
+  ApiKeyScopeDeniedError,
   AuthenticationRequiredError,
   DomainValidationError,
+  InvalidApiKeyCredentialError,
   InvalidCredentialsError,
   ProjectAccessDeniedError,
   ResourceNotFoundError,
@@ -35,12 +37,16 @@ export function mapApiError(error: unknown): Response {
   if (
     error instanceof AuthenticationRequiredError ||
     error instanceof InvalidCredentialsError ||
+    error instanceof InvalidApiKeyCredentialError ||
     error instanceof SessionExpiredError
   ) {
     return failure(401, { code: error.code, message: error.message });
   }
 
-  if (error instanceof ProjectAccessDeniedError) {
+  if (
+    error instanceof ProjectAccessDeniedError ||
+    error instanceof ApiKeyScopeDeniedError
+  ) {
     return failure(403, { code: error.code, message: error.message });
   }
 
