@@ -77,7 +77,7 @@ export async function createApiKey(
         scope: apiKey.scope,
         expiresAt: apiKey.expiresAt,
       },
-      secret,
+      credential: `dso_${keyIdentifier}_${secret}`,
     };
   });
 }
