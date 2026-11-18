@@ -1,6 +1,6 @@
 ## Project direction
 
-DSO is a database-backed workbench for authoring and publisihg agent-first web design system resources. It stores token contracts, component registration, and markdown document templates. An authenticated CLI installs a published resource version into a team repository and locally generates agent-readable component decuments and design-token.json.
+DSO is a database-backed workbench for authoring and publishing agent-first web design-system resources. It stores token contracts, component registration, and Markdown document templates. An authenticated CLI installs a published release into a team repository and generates `tokens.json` and `tokens.css`.
 
 ## Outline
 
@@ -224,29 +224,44 @@ Deferred:
 
 An authenticated user can edit only authorized projects, role restrictions are enforced, and a publisher can save and publish through the workbench in development. Production enablement and the deferred items above remain open.
 
-### W5: Release signing, CLI, and generation
+### W5: Signed token release, CLI, and generation
 
-This week delivers the complete publish-to-generation vertical slice.
+This week delivers the complete publish-to-token-artifact vertical slice. Components and templates stay in the immutable release snapshot for forward compatibility, but won't consume them for generation.
 
 #### Build
 
-- Add the `GET /api/releases/:releaseId` route (session-authenticated) and an authenticated published-release API containing token definitions, references, token-type hierarchy data, components, and templates.
-- Add the deferred CLI `release:read` path: accept project-scoped API keys, verify the key against the release project and published status, and return only the published release snapshot.
-- Keep source-code component-token usage claims out of the release snapshot.
-- Canonicalize release JSON and sign it with Ed25519.
-- Create `apps/cli` with `dso pull` and `dso generate`.
-- Implement project-scoped API-key validation for identifier, hash, project, scope, expiration, and revocation.
-- Add admin-only API-key create/revoke routes (CSRF-protected, audited). Return API-key secrets only once and store only hashes.
-- Require HTTPS outside local development and keep the CLI dependent on the API, never PostgreSQL.
-- Verify release signatures before generation and stop on failure.
-- Generate `tokens.json`, `tokens.css`, and component Markdown.
-- Resolve portable component document paths below a configured local output root; reject absolute paths, `..` traversal, unsafe separators, and shell execution based on release data.
-- Make generated output deterministic and keep credentials out of output.
+##### Day 1: API-key and release boundary
+
+- Add `GET /api/releases/:releaseId` for an authorized session or project-scoped CLI API key.
+- Return the full existing snapshot contract, including token types, tokens, references, components, and templates. Only token definitions, hierarchy, and references are W5 generator inputs.
+- Add admin-only API-key create/revoke routes with CSRF protection and audit events.
+- Issue one combined credential in the form `dso_<keyIdentifier>_<secret>`. The user sees it only once, and the database stores only its hash.
+- Read the credential from `DSO_API_KEY`. Parse the identifier, verify the hash and then enforce project, `release:read` scope, expiration, revocation, and published status.
+
+##### Day 2: Shared signing protocol and `dso pull`
+
+- Add a database-independent `@repo/release-protocol` package for stable canonicalization, Ed25519 signing, and verification.
+- Sign the canonical release payload while excluding the signature envelope.
+- Add `apps/cli` with `dso pull`; require HTTPS outside local development and keep PostgreSQL entirely behind the API.
+- Read trusted public keys and key IDs from a local CLI trust file. Multiple key IDs may be trusted during rotation, but a key supplied by the release response is not a trust authority.
+- Reject unknown schema versions, signatures, or key IDs without changing the verified cache.
+
+##### Day 3: Deterministic token generation
+
+- Add `@repo/generator` and `dso generate` for `tokens.json` and `tokens.css`.
+- Resolve semantic references into their primitive token values and use stable ordering and formatting.
+- Do not generate component Markdown, render templates, or interpret component `documentPath` values.
+- Ask before replacing existing generated artifacts in an interactive run. Require `--force` to replace them without a prompt.
+- In non-interactive runs, fail on conflicts unless `--force` is supplied.
+- Limit overwrite to `tokens.json` and `tokens.css`, preserve unrelated files, stage both artifacts, and commit them together so generation cannot leave a partial result.
 
 #### Tests and evidence
 
 - Verify invalid, expired, revoked, wrong-scope, and wrong-project keys.
-- Verify invalid signatures stop generation, valid releases work under different output roots, unsafe paths fail, output is deterministic, and the CLI never connects to PostgreSQL.
+- Verify modified payloads, invalid signatures, and unknown signing-key IDs stop before cache or output changes.
+- Verify identical releases generate byte-identical token artifacts under different output roots.
+- Verify confirmation, `--force`, non-interactive failure, unrelated-file preservation, all-or-nothing replacement, and safe generation failures.
+- Verify no secret appears in logs or generated files and the CLI has no PostgreSQL dependency.
 
 #### Done when
 
@@ -255,7 +270,17 @@ This workflow succeeds:
 ```text
 Workbench publish -> signed release API -> dso pull
 -> signature verification -> dso generate
+-> deterministic tokens.json and tokens.css
 ```
+
+#### Not in W5
+
+- Component Markdown generation and template placeholders.
+- Component `documentPath` consumption or release-driven path traversal concerns.
+- Workbench edits for hierarchy, components, or templates.
+- Source-code scanning and automatic component-token usage discovery.
+- API-key management UI, rate limiting, CSP enforcement, production enablement,
+  HSMs, or automatic signing-key infrastructure.
 
 ### W6: Performance, deployment security, documentation, and final verification
 
