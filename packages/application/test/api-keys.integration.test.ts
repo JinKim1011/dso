@@ -1,7 +1,7 @@
 import { seedProject } from "@repo/application/fixtures";
 import { hashApiKey } from "@repo/application/security/api-keys";
+import { parseApiKeyCredential } from "@repo/application/security/api-key-credentials";
 import { createApiKey, revokeApiKey } from "@repo/application/services/api-keys";
-import { parseApiKeyCredential } from "@repo/contracts/validation/operations/api-key-credential";
 import {
   findActiveApiKeyByIdentifier,
   findApiKeyById,
