@@ -120,7 +120,9 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
         expiresAt: futureExpiration,
         scope: "release:read",
       });
-      const invalid = `${created.credential.slice(0, -1)}A`;
+      const invalid = `${created.credential.slice(0, -1)}${
+        created.credential.endsWith("A") ? "B" : "A"
+      }`;
 
       for (const incoming of [
         request(release.id),
