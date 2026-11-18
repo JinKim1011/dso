@@ -18,6 +18,7 @@ export default defineConfig({
     globals: true,
 
     environment: "jsdom",
+    fileParallelism: false,
 
     setupFiles: ["./test/setup.ts"],
 
