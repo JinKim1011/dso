@@ -1,5 +1,7 @@
 import { hashPassword } from "@repo/application/services/passwords";
 import type { SeedData } from "@repo/contracts/seed";
+import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
+import { validateLimitedStringField } from "@repo/contracts/validation/operations/common";
 import { validateSeedData } from "@repo/contracts/validation/seed";
 import { closeDatabasePool, createDatabasePool } from "@repo/db/client";
 import { runMigrations } from "@repo/db/migrations/index";
@@ -10,9 +12,17 @@ async function withSeedUserPasswords(seed: SeedData): Promise<SeedData> {
   const password = process.env.DSO_SEED_USER_PASSWORD;
 
   if (!password) {
-    throw new Error(
-      "DSO_SEED_USER_PASSWORD is required so the seeded user can log in.",
-    );
+    throw new Error("DSO_SEED_USER_PASSWORD is required so the seeded user can log in.");
+  }
+
+  const passwordIssue = validateLimitedStringField(
+    password,
+    "DSO_SEED_USER_PASSWORD",
+    CONTRACT_LIMITS.password,
+  );
+
+  if (passwordIssue) {
+    throw new Error(passwordIssue.message);
   }
 
   const passwordHash = await hashPassword(password);
