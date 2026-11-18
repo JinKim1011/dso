@@ -11,9 +11,12 @@ available to the CLI. The response must represent:
 - token definitions
 - token-type hierarchy
 - token references
-- registered components
-- component document templates
+- registered components retained for compatibility
+- component document templates retained for compatibility
 - release metadata
+- Ed25519 signature metadata
+
+CLI generation consumes token types, tokens, and token references. It does not generate component Markdown or interpret component document paths.
 
 ## Endpoint
 
@@ -34,7 +37,7 @@ Published release API response
 ## Authentication
 
 > **Current delivery status:** The response contract is defined in W3 and the
-> `getPublishedRelease` service (session-authorized, published releases only)
+> `getPublishedReleaseForSession` service (session-authorized, published releases only)
 > exists, but the `GET /api/releases/:releaseId` route is not implemented yet.
 > Both session-authenticated workbench reads and CLI API-key authentication are
 > delivered in W5 with release signing and the CLI. Until then, this endpoint
@@ -73,11 +76,19 @@ assembling a CLI response.
 
 The response does not include a `publishedBy` field. The application records the user who performs a publish action in `audit_events`.
 
-The CLI sends the key using:
+Administrators receive one combined credential only when the key is created:
+
+```text
+dso_<keyIdentifier>_<secret>
+```
+
+The server stores only a hash of the secret portion. The CLI reads the complete credential from `DSO_API_KEY` and sends it as:
 
 ```http
-Authorization: Bearer <api-key>
+Authorization: Bearer dso_<keyIdentifier>_<secret>
 ```
+
+Rotation is create-then-revoke: issue a replacement, update the consuming environment, verify it, and explicitly revoke the previous key.
 
 ## Success response
 
@@ -260,7 +271,12 @@ Show one realistic JSON example.
       "name": "Modal documentation",
       "content": "# Modal\n\n## Purpose\n\n{{description}}\n\n## Usage\n\nUse Modal for a focused task that requires the user's attention.\n\n## Anatomy\n\nDocument the Modal regions and slots here.\n\n## States\n\nDocument the supported Modal states here.\n"
     }
-  ]
+  ],
+  "signature": {
+    "algorithm": "Ed25519",
+    "keyId": "release-key-2026-01",
+    "value": "<base64url-signature>"
+  }
 }
 ```
 
@@ -284,6 +300,18 @@ Metadata for the immutable published snapshot:
 
 The release metadata identifies the snapshot; it does not describe the current
 mutable project state.
+
+### `signature`
+
+The signature protects the canonical representation of the complete response except for the `signature` object itself.
+
+- `algorithm`: always `Ed25519` in schema version 1.
+- `keyId`: identifies the public key in the CLI's independently distributed local trust file.
+- `value`: base64url-encoded Ed25519 signature.
+
+The CLI must reject an unknown key ID, unsupported algorithm, modified payload, or invalid signature. The release API must not be used as the authority for the public key trust decision. A trust file may contain multiple key IDs so old and new signing keys can overlap during rotation.
+
+Signature failure stops `dso pull` or `dso generate` before cache or generated output is changed.
 
 ### `tokenTypes`
 
@@ -337,24 +365,11 @@ property.
 
 ### `components`
 
-Registered components included in the release. Each component contains its
-portable `documentPath`, which is relative to the output root selected by the
-CLI or consuming repository.
-
-The path identifies the generated document location. It does not identify
-component source files and does not claim that DSO has discovered token usage
-from source code.
+Registered components retained in the immutable release for compatibility. Each component contains its portable `documentPath`. The path identifies the generated document location. It does not identify component source files and does not claim that DSO has discovered token usage from source code.
 
 ### `documentTemplates`
 
-Per-component Markdown templates. The first release supports Markdown only, so
-the template format is defined by the contract rather than stored as a
-per-row field. Each template is linked to a component by `componentId` and
-contains the content used by the generator.
-
-The template content may use documented generator placeholders such as
-`{{description}}`. The placeholder syntax and supported variables are part of
-the generator contract and must be validated before publication.
+Per-component Markdown templates. The first release supports Markdown only, so the template format is defined by the contract. Each template is linked to a component by `componentId` and contains the content used by the generator.
 
 ## Resource relationships
 
@@ -408,10 +423,12 @@ separators and must not be absolute or contain `..` path segments.
 ## Excluded data
 
 The response does not claim to contain automatic source-code analysis of which
-components use which tokens. That analysis is outside the first-release scope.
+components use which tokens. That analysis is outside the first release scope.
 It also does not contain an absolute or machine-specific output directory.
 Legacy source manifest kinds such as `class-union` and `unknown` are not part of
 the published domain contract; seed normalization will exclude or reject them.
+
+The first CLI version also does not use release component registrations or document templates to determine local files. Its owned outputs are only `tokens.json` and `tokens.css`.
 
 ## Errors
 
@@ -456,10 +473,13 @@ the authorization policy, an unauthorized release may therefore be returned as
   version or an explicitly compatible migration.
 - `documentPath` remains relative to the CLI-selected output root. A release
   must never encode an absolute machine-specific output directory.
+- The first version CLI does not interpret `documentPath`; component generation remains a later feature.
+- CLI trust keys come from a local trust file independently of this response.
+- The canonicalization and verification rules are shared between the server and CLI through a database-independent release-protocol package.
 
 ## Open decisions
 
 - Should projects be allowed to define additional mode names beyond `light` and `dark`?
 - Should an unresolved token value be publishable, or should publication reject it?
-- Which placeholder variables should the first generator contract support?
-- Should one component have exactly one document template in the first release?
+- Which placeholder variables should a future component generator support?
+- Should a future component generator require exactly one template per component?

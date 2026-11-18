@@ -1,5 +1,6 @@
 import { seedProject } from "@repo/application/fixtures";
 import { hashApiKey } from "@repo/application/security/api-keys";
+import { parseApiKeyCredential } from "@repo/application/security/api-key-credentials";
 import { createApiKey, revokeApiKey } from "@repo/application/services/api-keys";
 import {
   findActiveApiKeyByIdentifier,
@@ -10,7 +11,7 @@ import { getTestDatabase } from "@repo/db/test/setup";
 import { describe, expect, it } from "vitest";
 
 describe("Create API keys service integration", () => {
-  it("returns the secret only during creation", async () => {
+  it("returns the combined credential only during creation", async () => {
     const database = getTestDatabase();
 
     const fixture = await seedProject(database, "admin");
@@ -21,20 +22,25 @@ describe("Create API keys service integration", () => {
       scope: "release:read",
     });
 
-    expect(response.secret).toEqual(expect.any(String));
+    const parsed = parseApiKeyCredential(response.credential);
+    expect(parsed).toMatchObject({ success: true });
+    if (!parsed.success) {
+      throw new Error("Expected a valid API-key credential.");
+    }
 
-    const stored = await database.query(
-      `SELECT key_hash, key_identifier
-     FROM api_keys
-     WHERE id = $1`,
-      [response.apiKey.id],
+    expect(parsed.value.keyIdentifier).toBe(response.apiKey.keyIdentifier);
+    expect(response).not.toHaveProperty("secret");
+
+    const stored = await findActiveApiKeyByIdentifier(
+      database,
+      parsed.value.keyIdentifier,
     );
 
-    expect(stored.rows[0]).not.toHaveProperty("secret");
-    expect(stored.rows[0].key_hash).toBeTruthy();
-    expect(stored.rows[0].key_hash).not.toBe(response.secret);
-
-    expect(stored.rows[0].key_hash).toBe(hashApiKey(response.secret));
+    expect(stored).toMatchObject({
+      id: response.apiKey.id,
+      keyIdentifier: response.apiKey.keyIdentifier,
+    });
+    expect(stored?.keyHash).toBe(hashApiKey(parsed.value.secret));
   });
 
   it("rejects an editor from creating an API key", async () => {
@@ -343,9 +349,15 @@ describe("Revoke API keys service integration", () => {
     });
 
     const stored = await findApiKeyById(database, result.apiKey.id);
+    const parsed = parseApiKeyCredential(result.credential);
 
+    expect(parsed).toMatchObject({ success: true });
+    if (!parsed.success) {
+      throw new Error("Expected a valid API-key credential.");
+    }
     expect(stored?.keyHash).toEqual(expect.any(String));
-    expect(stored?.keyHash).not.toBe(result.secret);
+    expect(stored?.keyHash).not.toBe(parsed.value.secret);
+    expect(stored?.keyHash).toBe(hashApiKey(parsed.value.secret));
     expect(result.apiKey).not.toHaveProperty("keyHash");
   });
 });

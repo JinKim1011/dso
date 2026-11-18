@@ -45,6 +45,7 @@ describe("loadWorkbenchProject database pipeline", () => {
   beforeEach(() => {
     vi.resetAllMocks();
 
+    vi.mocked(requireProjectAccess).mockResolvedValue(validSeed.projectMembers[0]!);
     vi.mocked(findProjectById).mockResolvedValue(project);
     vi.mocked(listTokenTypesByProjectId).mockResolvedValue(
       [...validSeed.tokenTypes].sort((a, b) => a.id.localeCompare(b.id)),

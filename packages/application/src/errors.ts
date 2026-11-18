@@ -61,3 +61,19 @@ export class SessionExpiredError extends Error {
     super("The session is expired or invalid.");
   }
 }
+
+export class InvalidApiKeyCredentialError extends Error {
+  readonly code = "invalid-api-key-credential";
+
+  constructor() {
+    super("The API-key credential is invalid.");
+  }
+}
+
+export class ApiKeyScopeDeniedError extends Error {
+  readonly code = "api-key-scope-denied";
+
+  constructor() {
+    super("The API key does not have the required scope.");
+  }
+}

@@ -5,7 +5,7 @@ import {
   collectUnknownFields,
   invalidRequestBody,
   isRecord,
-  validateIdentifierField,
+  validateUuidField,
 } from "@repo/contracts/validation/operations/common";
 import { validateTimestamp } from "@repo/contracts/validation/timestamp";
 
@@ -20,6 +20,10 @@ const REVOKE_API_KEY_FIELDS = [
   "apiKeyId",
 ] as const satisfies readonly (keyof RevokeApiKeyRequest)[];
 
+const REVOKE_API_KEY_BODY_FIELDS = [
+  "projectId",
+] as const satisfies readonly (keyof RevokeApiKeyRequest)[];
+
 export function parseCreateApiKeyRequest(
   input: unknown,
 ): ValidationResult<CreateApiKeyRequest> {
@@ -28,16 +32,27 @@ export function parseCreateApiKeyRequest(
   }
 
   const issues = collectUnknownFields(input, CREATE_API_KEY_FIELDS);
-  const projectIssue = validateIdentifierField(input.projectId, "projectId");
-  const dateIssue = validateTimestamp(input.expiresAt, "expiresAt");
-  const scope = input.scope;
+
+  const projectIssue = validateUuidField(input.projectId, "projectId");
 
   if (projectIssue) {
     issues.push(projectIssue);
   }
+
+  const dateIssue = validateTimestamp(input.expiresAt, "expiresAt");
+
   if (dateIssue) {
     issues.push(dateIssue);
+  } else if (Date.parse(input.expiresAt as string) <= Date.now()) {
+    issues.push({
+      field: "expiresAt",
+      code: "invalid-format",
+      message: "expiresAt must be in the future.",
+    });
   }
+
+  const scope = input.scope;
+
   if (!isSupportedApiKeyScope(scope)) {
     issues.push({
       field: "scope",
@@ -69,7 +84,7 @@ export function parseRevokeApiKeyRequest(
 
   const issues = collectUnknownFields(input, REVOKE_API_KEY_FIELDS);
   for (const field of ["projectId", "apiKeyId"] as const) {
-    const issue = validateIdentifierField(input[field], field);
+    const issue = validateUuidField(input[field], field);
     if (issue) {
       issues.push(issue);
     }
@@ -84,6 +99,32 @@ export function parseRevokeApiKeyRequest(
     value: {
       projectId: input.projectId as string,
       apiKeyId: input.apiKeyId as string,
+    },
+  };
+}
+
+export function parseRevokeApiKeyBody(
+  input: unknown,
+): ValidationResult<Pick<RevokeApiKeyRequest, "projectId">> {
+  if (!isRecord(input)) {
+    return invalidRequestBody();
+  }
+
+  const issues = collectUnknownFields(input, REVOKE_API_KEY_BODY_FIELDS);
+  const projectIssue = validateUuidField(input.projectId, "projectId");
+
+  if (projectIssue) {
+    issues.push(projectIssue);
+  }
+
+  if (issues.length > 0) {
+    return { success: false, issues };
+  }
+
+  return {
+    success: true,
+    value: {
+      projectId: input.projectId as string,
     },
   };
 }

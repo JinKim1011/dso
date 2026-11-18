@@ -5,6 +5,7 @@ import type {
   AddTokenReferenceRequest,
   ChangeTokenTypeParentRequest,
   CreateApiKeyRequest,
+  CreateApiKeyResponse,
   DownloadReleaseRequest,
   LoginRequest,
   PublishReleaseRequest,
@@ -35,11 +36,30 @@ export const publishRequest = {
   releaseId: fixtureIds.release,
 } satisfies PublishReleaseRequest;
 
+const futureApiKeyExpiration = new Date(
+  Date.now() + 365 * 24 * 60 * 60 * 1000,
+).toISOString();
+
 export const createApiKeyRequest = {
   projectId: fixtureIds.project,
-  expiresAt: "2026-11-27T10:00:00.000Z",
+  expiresAt: futureApiKeyExpiration,
   scope: "release:read",
 } satisfies CreateApiKeyRequest;
+
+export const apiKeyKeyIdentifier = "0011223344556677";
+export const apiKeySecret = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+export const apiKeyCredential = `dso_${apiKeyKeyIdentifier}_${apiKeySecret}` as const;
+
+export const createApiKeyResponse = {
+  apiKey: {
+    id: fixtureIds.apiKey,
+    projectId: fixtureIds.project,
+    keyIdentifier: apiKeyKeyIdentifier,
+    scope: "release:read",
+    expiresAt: createApiKeyRequest.expiresAt,
+  },
+  credential: apiKeyCredential,
+} satisfies CreateApiKeyResponse;
 
 export const revokeApiKeyRequest = {
   projectId: fixtureIds.project,

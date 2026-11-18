@@ -8,6 +8,7 @@ const SENSITIVE_FIELDS = new Set([
   "authorization",
   "cookie",
   "sessionId",
+  "credential",
 ]);
 
 export function redactSensitiveFields(

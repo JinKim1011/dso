@@ -20,7 +20,7 @@
   - A shared asset at the DSO-to-consumer boundary
   - DSO is responsible for
     - validating release data
-    - preventing unsafe paths
+    - preventing unsafe writes to its owned token artifacts
     - verifying signatures
     - generating deterministic output
   - consumer repository is responsible for
@@ -39,6 +39,7 @@
 - Published-release API: need to protect release downloads and prevent unpublished access.
 - CLI commands: need to protect local machine and generated files
 - API-key configuration: need to protect the credential lifecycle
+- CLI signing-key trust file: need to keep key trust independent of the release API
 - Local output path used by generation: need to protect path traversal
 - Database connection: need to protect the database and enforce data integrity
 
@@ -49,7 +50,7 @@ The receiving side should not automatically trust data.
 - Browser -> Workbench API : API validates browser input before saving it.
 - Workbench API -> PostgreSQL : use parameterized queries and constraints.
 - Published-release API -> CLI : verifies release signatures before generation.
-- CLI -> Local repository : validates document paths before writing files.
+- CLI -> Local repository : validates fixed output paths, verifies signatures, and applies all-or-nothing replacement.
 
 ## Data flows
 
@@ -177,7 +178,7 @@ PostgreSQL does not communicate directly with the CLI. The Published-release API
 
 ```text
 CLI -> API
-  - API key
+  - combined API key from DSO_API_KEY
   - project or release request
 
 API -> CLI
@@ -193,14 +194,21 @@ API -> CLI
   - replay or stale-release issues
   - secret leakage
   - denial of service through large releases
+  - replacing trusted signing keys through the same compromised channel as the release
 - Failure behavior
   - Reject missing, invalid, expired, revoked, or incorrectly scoped API keys.
   - Stop when HTTPS is required but unavailable.
   - Stop when the API returns an unauthorized, invalid, incomplete, or oversized release.
   - Stop generation when signature verification fails.
-  - Do not write a release or generated files after a failed verification.
+  - Do not update cache or generated files after a failed verification.
   - Display safe errors without printing API keys or authorization headers.
   - Handle timeouts and network failures without exposing response contents or secrets.
+
+The API-key string is `dso_<keyIdentifier>_<secret>`. The CLI reads the complete value from `DSO_API_KEY` and does not accept it as a command-line argument.
+
+The server looks up `keyIdentifier` and verifies a hash of `secret`; it never stores the combined value or plaintext secret. Operators rotate keys by issuing a replacement and explicitly revoking the previous key.
+
+The CLI trust file is independent of the release API. It maps trusted signing key IDs to public keys and may temporarily contain both old and new keys during rotation. The server response cannot establish trust in its own key.
 
 ### CLI -> Local repository
 
@@ -218,12 +226,17 @@ CLI
   - secret leakage
   - partial or inconsistent generation
 - Failure behavior
-  - Reject invalid, absolute, traversal, or unsafe output paths.
+  - Only permits the fixed owned artifact names `tokens.json` and `tokens.css` under the configured output root.
   - Stop before writing files if any path fails validation.
   - Do not execute commands or interpret release data as shell input.
-  - Avoid leaving partially generated output after a failed generation.
+  - Stage both files and commit them together; do not leave partial output.
   - Report file permission, disk, and repository errors without exposing secrets.
-  - Require explicit confirmation or a safe policy before overwriting existing files.
+  - In an interactive run, confirm before overwriting either owned artifact.
+    `--force` replaces only those artifacts without prompting.
+  - In a non-interactive run, fail on conflicts unless `--force` is present.
+  - Preserve all unrelated files in the output directory.
+
+Component document paths remain stored release data, but the first release version does not use them to choose local output files. Component Markdown and template rendering are therefore outside this threat boundary.
 
 ## Initial mitigations
 
@@ -244,14 +257,17 @@ CLI
   - Add security headers and generic production errors.
 
 - API keys and releases:
-  - Store only API-key hashes.
-  - Support scopes, expiration, revocation, and rotation.
+  - Show a combined `dso_<keyIdentifier>_<secret>` API key once and store only a
+    hash of the secret.
+  - Support project scope, expiration, revocation, and create-then-revoke rotation.
   - Sign published releases with Ed25519.
   - Verify signatures before CLI generation.
+  - Load trusted public keys from a local trust file with multiple key IDs.
 
 - File generation:
-  - Require an approved local output root.
-  - Reject absolute paths, `..` segments, unsafe separators, and shell execution.
+  - Generate only fixed `tokens.json` and `tokens.css` paths below an approved output root.
+  - Preserve unrelated files, confirm interactive overwrite, and require `--force` for non-interactive replacement.
+  - Replace both generated artifacts atomically.
   - Prevent secrets from entering generated files.
 
 - Database and operations:
@@ -305,7 +321,7 @@ Protects the behavior and interfaces of Workbench, API, CLI, and generator.
 - CSRF protection for cookie-based mutations.
 - Security headers and generic production errors.
 - Release-signature verification before CLI generation.
-- Output-path validation and path-traversal prevention.
+- Fixed output-path validation and all-or-nothing artifact replacement.
 - No shell execution based on release data.
 
 ### Database and data security
@@ -334,7 +350,8 @@ Protects the system throughout its lifecycle, including development, deployment,
 - Keeping credentials and signing keys out of source control.
 - Injecting secrets through deployment configuration.
 - Session expiration and credential rotation.
-- API-key and signing-key revocation or rotation procedures.
+- API-key create-then-revoke rotation and multi-key signing-key overlap
+  procedures.
 - Request, login, mutation, and release-download rate limits.
 - Redacted logs and operational error review.
 - Database backups and restore procedures.
@@ -431,8 +448,8 @@ recorded separately in `migration-verification.md`.
 - **Planned:** Deployment configuration injects secrets without committing them
   to source control.
 - **Planned:** Session expiration and API-key revocation are verified.
-- **Planned:** Signing-key rotation and trust of signing-key identifiers are
-  documented and tested.
+- **Planned:** Local trust-file loading, multiple signing-key IDs, and
+  signing-key rotation overlap are documented and tested.
 - **Planned:** Login, mutation, API-key, and release-download rate limits are
   configured and verified.
 - **Planned:** Logs are checked to confirm that credentials, authorization
@@ -444,18 +461,14 @@ recorded separately in `migration-verification.md`.
 - **Planned:** Incident-response limitations and recovery responsibilities are
   documented.
 
-## Cross-document follow-up decisions
+## Resolved cross-document decisions
 
-The following items are intentionally recorded for later architecture and
-implementation work. They are not treated as completed Week 1 evidence:
+The following decisions are now fixed by the completed schemas and the W5 plan:
 
-- Define the published-release response fields for the Ed25519 signature and
-  signing-key identifier.
-- Decide how immutable release contents are represented and associated with a
-  release in the data model.
-- Add the security schema for users, sessions, project membership, API keys,
-  and audit events to the ER model and migration verification when the W2
-  security migrations are implemented.
+- The published-release response includes an Ed25519 algorithm, signing-key ID,
+  and signature. The trust decision uses a local CLI trust file.
+- Immutable release contents are stored in `release_snapshots` and associated one-to-one with `releases`.
+- The security schema for users, sessions, project membership, API keys, and audit events is represented in the ER model and migrations.
 - Token references intentionally require uniqueness on
   `(referencing_token_id, slot)` in addition to the reference identity key.
   A token may reference only one target per slot, while supporting multiple
@@ -520,6 +533,7 @@ implementation work. They are not treated as completed Week 1 evidence:
 - Modified release content fails signature verification.
 - Invalid release signatures stop CLI processing.
 - Unknown or untrusted signing-key identifiers are rejected.
+- A release cannot replace or modify the CLI trust file.
 - Oversized releases are rejected safely.
 - API rate and response-size limits are enforced.
 - Network timeouts fail without exposing secrets.
@@ -528,14 +542,14 @@ implementation work. They are not treated as completed Week 1 evidence:
 ### CLI and local repository security
 
 - The CLI requires HTTPS outside local development.
-- Absolute output paths are rejected.
-- `..` traversal paths are rejected.
-- Unsafe path separators are rejected.
-- Output paths cannot escape the approved local output root.
+- Generated artifact paths are restricted to `tokens.json` and `tokens.css` below the approved local output root.
 - Release data cannot cause shell commands to execute.
 - Invalid release data stops generation before files are written.
 - A failed generation does not leave partial output.
-- Existing files are not overwritten unexpectedly.
+- Interactive generation asks before replacing either owned artifact.
+- `--force` replaces only the two owned artifacts.
+- Non-interactive conflicts fail unless `--force` is provided.
+- Unrelated output-directory files are preserved.
 - File permission and disk errors produce safe failures.
 - Generated files contain no passwords, API keys, database credentials, or signing keys.
 - Generation succeeds under different local output roots.
