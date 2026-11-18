@@ -7,6 +7,7 @@ import {
   generateOpaqueApiKeySecret,
   hashApiKey,
 } from "@repo/application/security/api-keys";
+import { formatApiKeyCredential } from "@repo/application/security/api-key-credentials";
 import {
   requiredProjectRole,
   requireProjectAccess,
@@ -77,7 +78,7 @@ export async function createApiKey(
         scope: apiKey.scope,
         expiresAt: apiKey.expiresAt,
       },
-      credential: `dso_${keyIdentifier}_${secret}`,
+      credential: formatApiKeyCredential(keyIdentifier, secret),
     };
   });
 }
