@@ -28,16 +28,27 @@ export function parseCreateApiKeyRequest(
   }
 
   const issues = collectUnknownFields(input, CREATE_API_KEY_FIELDS);
+
   const projectIssue = validateIdentifierField(input.projectId, "projectId");
-  const dateIssue = validateTimestamp(input.expiresAt, "expiresAt");
-  const scope = input.scope;
 
   if (projectIssue) {
     issues.push(projectIssue);
   }
+
+  const dateIssue = validateTimestamp(input.expiresAt, "expiresAt");
+
   if (dateIssue) {
     issues.push(dateIssue);
+  } else if (Date.parse(input.expiresAt as string) <= Date.now()) {
+    issues.push({
+      field: "expiresAt",
+      code: "invalid-format",
+      message: "expiresAt must be in the future.",
+    });
   }
+
+  const scope = input.scope;
+
   if (!isSupportedApiKeyScope(scope)) {
     issues.push({
       field: "scope",
