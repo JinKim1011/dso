@@ -20,6 +20,10 @@ const REVOKE_API_KEY_FIELDS = [
   "apiKeyId",
 ] as const satisfies readonly (keyof RevokeApiKeyRequest)[];
 
+const REVOKE_API_KEY_BODY_FIELDS = [
+  "projectId",
+] as const satisfies readonly (keyof RevokeApiKeyRequest)[];
+
 export function parseCreateApiKeyRequest(
   input: unknown,
 ): ValidationResult<CreateApiKeyRequest> {
@@ -95,6 +99,32 @@ export function parseRevokeApiKeyRequest(
     value: {
       projectId: input.projectId as string,
       apiKeyId: input.apiKeyId as string,
+    },
+  };
+}
+
+export function parseRevokeApiKeyBody(
+  input: unknown,
+): ValidationResult<Pick<RevokeApiKeyRequest, "projectId">> {
+  if (!isRecord(input)) {
+    return invalidRequestBody();
+  }
+
+  const issues = collectUnknownFields(input, REVOKE_API_KEY_BODY_FIELDS);
+  const projectIssue = validateIdentifierField(input.projectId, "projectId");
+
+  if (projectIssue) {
+    issues.push(projectIssue);
+  }
+
+  if (issues.length > 0) {
+    return { success: false, issues };
+  }
+
+  return {
+    success: true,
+    value: {
+      projectId: input.projectId as string,
     },
   };
 }
