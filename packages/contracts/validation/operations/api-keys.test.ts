@@ -33,4 +33,16 @@ describe("RevokeApiKeyRequest and CreateApiKeyRequest operation parsers", () => 
       ],
     });
   });
+
+  it("rejects an expiration date that is not in the future", () => {
+    expect(
+      parseCreateApiKeyRequest({
+        ...createApiKeyRequest,
+        expiresAt: "2020-01-01T00:00:00.000Z",
+      }),
+    ).toMatchObject({
+      success: false,
+      issues: [{ field: "expiresAt", code: "invalid-format" }],
+    });
+  });
 });
