@@ -204,7 +204,7 @@ Delivered:
 - Every cookie-based mutation (login, logout, publish) applies the shared CSRF policy. Responses carry security headers (the Content Security Policy is report-only.)
 - API errors go through one mapper. Expected errors return stable status codes; unexpected errors return a generic 500 with a correlation ID.
 - Audit events: `login.succeeded`, `login.failed`, `logout`, `token.batch_saved`, `release.published`, `api_key.created`, `api_key.revoked`. Saves and publishes record events in the same transaction.
-- The seed script hashes `DSO_SEED_USER_PASSWORD` for the development user so the documented setup can log in.
+- The seed script hashes `DSO_SEED_USER_PASSWORD` for all development users so the documented role accounts can log in.
 
 Deferred:
 
