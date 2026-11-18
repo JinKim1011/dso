@@ -213,7 +213,7 @@ Delivered:
 - The [CSRF policy](./threat-model.md#csrf-policy) applies to login, logout, and publishing. Security headers are set and the CSP is report-only.
 - Production errors are generic and include a correlation ID for unexpected failures.
 - Audit events: login success/failure, logout, token batch saves, release publication, API-key creation, and revocation.
-- Development login uses a seeded user whose password hash comes from `DSO_SEED_USER_PASSWORD`; no password is committed.
+- Development login uses seeded role accounts whose password hashes come from `DSO_SEED_USER_PASSWORD`; no password is committed.
 
 Deferred:
 
