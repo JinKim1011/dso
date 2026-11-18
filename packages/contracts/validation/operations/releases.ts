@@ -8,6 +8,7 @@ import {
   invalidRequestBody,
   isRecord,
   validateIdentifierField,
+  validateUuidField,
 } from "@repo/contracts/validation/operations/common";
 
 const PUBLISH_RELEASE_FIELDS = [
@@ -55,7 +56,7 @@ export function parseDownloadReleaseRequest(
   }
 
   const issues = collectUnknownFields(input, DOWNLOAD_RELEASE_FIELDS);
-  const releaseIssue = validateIdentifierField(input.releaseId, "releaseId");
+  const releaseIssue = validateUuidField(input.releaseId, "releaseId");
   if (releaseIssue) {
     issues.push(releaseIssue);
   }
