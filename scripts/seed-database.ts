@@ -12,7 +12,7 @@ async function withSeedUserPasswords(seed: SeedData): Promise<SeedData> {
   const password = process.env.DSO_SEED_USER_PASSWORD;
 
   if (!password) {
-    throw new Error("DSO_SEED_USER_PASSWORD is required so the seeded user can log in.");
+    throw new Error("DSO_SEED_USER_PASSWORD is required so the seeded users can log in.");
   }
 
   const passwordIssue = validateLimitedStringField(
