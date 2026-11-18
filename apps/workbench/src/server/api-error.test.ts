@@ -1,6 +1,8 @@
 import {
+  ApiKeyScopeDeniedError,
   AuthenticationRequiredError,
   DomainValidationError,
+  InvalidApiKeyCredentialError,
   InvalidCredentialsError,
   ProjectAccessDeniedError,
   ResourceNotFoundError,
@@ -20,8 +22,10 @@ describe("API error mapper", () => {
     [new RequestBodyError("body-too-large", "Request body is too large."), 413],
     [new AuthenticationRequiredError(), 401],
     [new InvalidCredentialsError(), 401],
+    [new InvalidApiKeyCredentialError(), 401],
     [new SessionExpiredError(), 401],
     [new ProjectAccessDeniedError(), 403],
+    [new ApiKeyScopeDeniedError(), 403],
     [new ResourceNotFoundError(), 404],
   ])("maps known errors to stable responses: %s", async (error, status) => {
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -68,7 +72,9 @@ describe("API error mapper", () => {
   });
 
   it.each([
-    new Error("sensitive database failure"),
+    new Error(
+      "database failure: credential dso_0011223344556677_secret authorization Bearer token key hash abcdef detail query failed",
+    ),
     { password: "secret", message: "sensitive database failure" },
     "sensitive database failure",
   ])("logs a correlation ID without exposing unexpected errors", async (error) => {
@@ -96,7 +102,7 @@ describe("API error mapper", () => {
       errorType: error instanceof Error ? "Error" : typeof error,
     });
     expect(JSON.stringify({ body, logs: log.mock.calls })).not.toMatch(
-      /sensitive|secret|password/,
+      /credential|authorization|key.?hash|database failure|detail|sensitive|secret|password/i,
     );
   });
 
