@@ -2,12 +2,12 @@ import {
   ProjectAccessDeniedError,
   ResourceNotFoundError,
 } from "@repo/application/errors";
+import { formatApiKeyCredential } from "@repo/application/security/api-key-credentials";
 import {
   generateKeyIdentifier,
   generateOpaqueApiKeySecret,
   hashApiKey,
 } from "@repo/application/security/api-keys";
-import { formatApiKeyCredential } from "@repo/application/security/api-key-credentials";
 import {
   requiredProjectRole,
   requireProjectAccess,
@@ -19,10 +19,7 @@ import type {
   RevokeApiKeyRequest,
 } from "@repo/contracts/operation";
 import { ApiKey } from "@repo/contracts/type";
-import {
-  insertApiKey,
-  revokeApiKey as revokeStoredApiKey,
-} from "@repo/db/repositories/api-keys";
+import { insertApiKey, revokeStoredApiKey } from "@repo/db/repositories/api-keys";
 import { insertAuditEvent } from "@repo/db/repositories/audit-events";
 import { withTransaction } from "@repo/db/transaction";
 import { Pool } from "pg";
