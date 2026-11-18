@@ -26,10 +26,11 @@ CREATE TABLE api_keys (
 
 CREATE TABLE audit_events (
   id UUID PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES users (id),
+  user_id UUID REFERENCES users (id),
   project_id UUID REFERENCES projects (id),
   action TEXT NOT NULL,
   resource_type TEXT NOT NULL,
   resource_id UUID,
+  metadata JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

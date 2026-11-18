@@ -43,10 +43,19 @@ docker exec dso-postgres createdb -U postgres dso
 
 ## 3. Seed the Database
 
-Run migrations and insert the current seed:
+Run migrations and insert the current seed. The seed creates:
+
+- `editor@example.test` with the `editor` role
+- `publisher@example.test` with the `publisher` role
+- `admin@example.test` with the `admin` role
+- `nonmember@example.test` without project membership
+
+Choose one development password. The script applies the same Argon2id hash to
+all four seeded users and refuses to run without a password:
 
 ```bash
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso \
+DSO_SEED_USER_PASSWORD='<choose-a-dev-password>' \
 npm run db:seed
 ```
 
@@ -70,9 +79,14 @@ Edit [`apps/workbench/.env.local`](../../apps/workbench/.env.local):
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso
 DB_POOL_MAX=10
 DSO_WORKBENCH_PROJECT_ID=<project-id>
+DSO_WORKBENCH_ORIGIN=http://localhost:3000
 ```
 
 Replace `<project-id>` with the UUID returned in the previous step.
+`DSO_WORKBENCH_ORIGIN` is the trusted origin for the
+[CSRF policy](../security/threat-model.md#csrf-policy). It must be an origin
+without a path, and mutation requests fail without it. Login, logout, and
+publishing work only in development (`npm run dev`).
 
 ## 6. Start the Workbench
 
@@ -80,7 +94,8 @@ Replace `<project-id>` with the UUID returned in the previous step.
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) and log in with the seeded
+email and the password you chose.
 
 Restart the dev server whenever `.env.local` changes.
 
@@ -116,6 +131,7 @@ docker exec dso-postgres dropdb -U postgres --if-exists dso
 docker exec dso-postgres createdb -U postgres dso
 
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso \
+DSO_SEED_USER_PASSWORD='<choose-a-dev-password>' \
 npm run db:seed
 
 docker exec dso-postgres \

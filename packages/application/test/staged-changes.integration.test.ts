@@ -1,12 +1,12 @@
 import {
-  ProjectAccessDeniedError,
   StagedChangesConflictError,
   StagedChangesValidationError,
 } from "@repo/application/errors";
 import { seedProject } from "@repo/application/fixtures";
 import { withProjectTransaction } from "@repo/application/services/project-transaction";
-import { saveStagedChanges } from "@repo/application/services/staged-changes";
+import { saveStagedChanges as saveStagedChangesInTransaction } from "@repo/application/services/staged-changes";
 import { addTokenReference } from "@repo/application/services/token-references";
+import type { AuthorizationContext } from "@repo/application/types";
 import type { SaveStagedChangesRequest } from "@repo/contracts/operation";
 import {
   insertTokenReference,
@@ -16,6 +16,25 @@ import { insertToken, listTokensByProjectId } from "@repo/db/repositories/tokens
 import { getTestDatabase } from "@repo/db/test/setup";
 import { Pool } from "pg";
 import { describe, expect, it } from "vitest";
+
+async function saveStagedChanges(
+  database: Pool,
+  context: AuthorizationContext,
+  request: SaveStagedChangesRequest,
+) {
+  return withProjectTransaction(
+    database,
+    request.projectId.toLowerCase(),
+    async (client) => {
+      const { tokens, references } = await saveStagedChangesInTransaction(
+        client,
+        context,
+        request,
+      );
+      return { tokens, references };
+    },
+  );
+}
 
 describe("staged changes service", () => {
   it("uses READ COMMITTED even when the connection defaults to SERIALIZABLE", async () => {
@@ -104,6 +123,89 @@ describe("staged changes service", () => {
     expect(await listTokenReferencesByProjectId(database, fixture.project.id)).toEqual(
       result.references,
     );
+    const audit = await database.query(
+      `SELECT user_id, project_id, action, resource_type, resource_id, metadata
+       FROM audit_events WHERE project_id = $1`,
+      [fixture.project.id],
+    );
+    expect(audit.rows).toEqual([
+      {
+        user_id: fixture.user.id,
+        project_id: fixture.project.id,
+        action: "token.batch_saved",
+        resource_type: "token_batch",
+        resource_id: null,
+        metadata: { tokenIds: expect.arrayContaining([primitive.id, semantic.id]) },
+      },
+    ]);
+    expect(audit.rows[0].metadata.tokenIds).toHaveLength(2);
+  });
+
+  it("audits only changed tokens in a batch containing no-ops", async () => {
+    const database = getTestDatabase();
+    const fixture = await seedProject(database, "editor");
+    const primitive = fixture.referencedToken;
+    const semantic = fixture.referencingToken;
+    await insertTokenReference(database, {
+      projectId: fixture.project.id,
+      referencingTokenId: semantic.id,
+      referencedTokenId: primitive.id,
+      slot: "light",
+    });
+
+    const result = await saveStagedChanges(database, fixture.context, {
+      projectId: fixture.project.id,
+      changes: [
+        {
+          tokenId: primitive.id.toUpperCase(),
+          name: { before: primitive.name, after: "renamed" },
+          value: { before: primitive.value, after: primitive.value },
+          references: [],
+        },
+        {
+          tokenId: semantic.id,
+          name: { before: semantic.name, after: semantic.name },
+          value: { before: semantic.value, after: semantic.value },
+          references: [
+            {
+              slot: "light",
+              beforeTokenId: primitive.id.toUpperCase(),
+              afterTokenId: primitive.id,
+            },
+            { slot: "dark", beforeTokenId: null, afterTokenId: null },
+          ],
+        },
+      ],
+    });
+    expect(result.tokens).toHaveLength(2);
+    const audit = await database.query(
+      "SELECT metadata FROM audit_events WHERE project_id = $1 AND action = $2",
+      [fixture.project.id, "token.batch_saved"],
+    );
+    expect(audit.rows).toEqual([{ metadata: { tokenIds: [primitive.id] } }]);
+  });
+
+  it("audits a value-only change without recording the value", async () => {
+    const database = getTestDatabase();
+    const fixture = await seedProject(database, "editor");
+    const token = fixture.referencedToken;
+
+    await saveStagedChanges(database, fixture.context, {
+      projectId: fixture.project.id,
+      changes: [
+        {
+          tokenId: token.id,
+          value: { before: token.value, after: { kind: "single", value: "#123" } },
+          references: [],
+        },
+      ],
+    });
+
+    const audit = await database.query(
+      "SELECT metadata FROM audit_events WHERE project_id = $1 AND action = $2",
+      [fixture.project.id, "token.batch_saved"],
+    );
+    expect(audit.rows).toEqual([{ metadata: { tokenIds: [token.id] } }]);
   });
 
   it("replaces and clears selected slots while returning unchanged slots", async () => {
@@ -175,6 +277,14 @@ describe("staged changes service", () => {
     });
     expect(clearResult.references).toEqual([
       expect.objectContaining({ slot: "dark", referencedTokenId: target.id }),
+    ]);
+    const audit = await database.query(
+      "SELECT metadata FROM audit_events WHERE project_id = $1 AND action = $2",
+      [fixture.project.id, "token.batch_saved"],
+    );
+    expect(audit.rows).toEqual([
+      { metadata: { tokenIds: [fixture.referencingToken.id] } },
+      { metadata: { tokenIds: [fixture.referencingToken.id] } },
     ]);
   });
 
@@ -258,6 +368,11 @@ describe("staged changes service", () => {
     expect(await listTokensByProjectId(database, fixture.project.id)).toContainEqual(
       fixture.referencingToken,
     );
+    const audit = await database.query(
+      "SELECT id FROM audit_events WHERE project_id = $1",
+      [fixture.project.id],
+    );
+    expect(audit.rows).toEqual([]);
     const repaired = await saveStagedChanges(database, fixture.context, {
       projectId: fixture.project.id,
       changes: [
@@ -378,18 +493,6 @@ describe("staged changes service", () => {
     );
   });
 
-  it("requires project membership", async () => {
-    const database = getTestDatabase();
-    const fixture = await seedProject(database, "editor");
-    const other = await seedProject(database, "editor");
-    await expect(
-      saveStagedChanges(database, other.context, {
-        projectId: fixture.project.id,
-        changes: [],
-      }),
-    ).rejects.toBeInstanceOf(ProjectAccessDeniedError);
-  });
-
   it("accepts empty batches and no-ops but still checks before values", async () => {
     const database = getTestDatabase();
     const fixture = await seedProject(database, "editor");
@@ -412,6 +515,37 @@ describe("staged changes service", () => {
         ],
       }),
     ).toEqual({ tokens: [token], references: [] });
+    await insertTokenReference(database, {
+      projectId: fixture.project.id,
+      referencingTokenId: token.id,
+      referencedTokenId: fixture.referencedToken.id,
+      slot: "light",
+    });
+    const noOp = await saveStagedChanges(database, fixture.context, {
+      projectId: fixture.project.id,
+      changes: [
+        {
+          tokenId: fixture.referencedToken.id,
+          value: {
+            before: fixture.referencedToken.value,
+            after: fixture.referencedToken.value,
+          },
+          references: [],
+        },
+        {
+          tokenId: token.id,
+          references: [
+            {
+              slot: "light",
+              beforeTokenId: fixture.referencedToken.id,
+              afterTokenId: fixture.referencedToken.id.toUpperCase(),
+            },
+          ],
+        },
+      ],
+    });
+    expect(noOp.tokens).toHaveLength(2);
+    expect(noOp.references).toHaveLength(1);
     await expect(
       saveStagedChanges(database, fixture.context, {
         projectId: fixture.project.id,
@@ -424,6 +558,70 @@ describe("staged changes service", () => {
         ],
       }),
     ).rejects.toBeInstanceOf(StagedChangesConflictError);
+    const audit = await database.query(
+      "SELECT id FROM audit_events WHERE project_id = $1",
+      [fixture.project.id],
+    );
+    expect(audit.rows).toEqual([]);
+  });
+
+  it("rolls back token and reference changes when audit insertion fails", async () => {
+    const database = getTestDatabase();
+    const fixture = await seedProject(database, "editor");
+    await database.query(`
+      CREATE FUNCTION fail_staged_audit_insert()
+      RETURNS trigger AS $$
+      BEGIN
+        IF NEW.action = 'token.batch_saved' THEN
+          RAISE EXCEPTION 'forced staged audit failure';
+        END IF;
+        RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql
+    `);
+    await database.query(`
+      CREATE TRIGGER fail_staged_audit
+      BEFORE INSERT ON audit_events
+      FOR EACH ROW EXECUTE FUNCTION fail_staged_audit_insert()
+    `);
+    try {
+      await expect(
+        saveStagedChanges(database, fixture.context, {
+          projectId: fixture.project.id,
+          changes: [
+            {
+              tokenId: fixture.referencedToken.id,
+              name: { before: fixture.referencedToken.name, after: "not-saved" },
+              references: [],
+            },
+            {
+              tokenId: fixture.referencingToken.id,
+              references: [
+                {
+                  slot: "light",
+                  beforeTokenId: null,
+                  afterTokenId: fixture.referencedToken.id,
+                },
+              ],
+            },
+          ],
+        }),
+      ).rejects.toThrow("forced staged audit failure");
+      expect(await listTokensByProjectId(database, fixture.project.id)).toEqual(
+        expect.arrayContaining([fixture.referencedToken, fixture.referencingToken]),
+      );
+      expect(await listTokenReferencesByProjectId(database, fixture.project.id)).toEqual(
+        [],
+      );
+      const audit = await database.query(
+        "SELECT id FROM audit_events WHERE project_id = $1",
+        [fixture.project.id],
+      );
+      expect(audit.rows).toEqual([]);
+    } finally {
+      await database.query("DROP TRIGGER IF EXISTS fail_staged_audit ON audit_events");
+      await database.query("DROP FUNCTION IF EXISTS fail_staged_audit_insert()");
+    }
   });
 
   it("rolls back earlier writes if a later database write fails", async () => {

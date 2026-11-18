@@ -1,7 +1,9 @@
 import { seedProject } from "@repo/application/fixtures";
 import { getPublishedRelease } from "@repo/application/services/published-releases";
-import { publishRelease } from "@repo/application/services/releases";
-import { findReleaseById, insertRelease } from "@repo/db/repositories/releases";
+import { publishStagedChanges } from "@repo/application/services/staged-publishing";
+import { listTokenReferencesByProjectId } from "@repo/db/repositories/references";
+import { insertRelease } from "@repo/db/repositories/releases";
+import { listTokensByProjectId } from "@repo/db/repositories/tokens";
 import { getTestDatabase } from "@repo/db/test/setup";
 import { describe, expect, it } from "vitest";
 
@@ -14,7 +16,7 @@ describe("Publising release service integration", () => {
     const draft = {
       id: crypto.randomUUID(),
       projectId: fixture.project.id,
-      version: "2.0.0",
+      version: "2",
       status: "draft" as const,
       createdAt: new Date().toISOString(),
       publishedAt: null,
@@ -29,88 +31,347 @@ describe("Publising release service integration", () => {
     });
   });
 
-  it("creates a release publication audit event", async () => {
-    const database = getTestDatabase();
+  describe("staged publishing service integration", () => {
+    it("saves changes, publishes their snapshot, and records both audit events", async () => {
+      const database = getTestDatabase();
+      const fixture = await seedProject(database, "publisher");
+      const primitive = fixture.referencedToken;
+      const semantic = fixture.referencingToken;
 
-    const fixture = await seedProject(database, "publisher");
+      const result = await publishStagedChanges(database, fixture.context, {
+        projectId: fixture.project.id.toUpperCase(),
+        changes: [
+          {
+            tokenId: primitive.id,
+            name: { before: primitive.name, after: "published-name" },
+            references: [],
+          },
+          {
+            tokenId: semantic.id,
+            references: [
+              { slot: "light", beforeTokenId: null, afterTokenId: primitive.id },
+            ],
+          },
+        ],
+      });
 
-    const release = await insertRelease(database, {
-      id: crypto.randomUUID(),
-      projectId: fixture.project.id,
-      version: "1.0.0",
-      status: "draft",
-      createdAt: new Date().toISOString(),
-      publishedAt: null,
+      expect(result.release).toMatchObject({
+        projectId: fixture.project.id,
+        version: "1",
+        status: "published",
+        publishedAt: expect.any(String),
+      });
+      expect(result.tokens).toContainEqual({ ...primitive, name: "published-name" });
+      expect(result.references).toEqual([
+        {
+          projectId: fixture.project.id,
+          referencingTokenId: semantic.id,
+          referencedTokenId: primitive.id,
+          slot: "light",
+        },
+      ]);
+      const snapshot = await getPublishedRelease(
+        database,
+        fixture.context,
+        result.release.id,
+      );
+      expect(snapshot.tokens).toContainEqual({ ...primitive, name: "published-name" });
+      expect(snapshot.references).toEqual(result.references);
+
+      const audit = await database.query(
+        `SELECT user_id, action, resource_type, resource_id, metadata
+           FROM audit_events WHERE project_id = $1 ORDER BY action`,
+        [fixture.project.id],
+      );
+      expect(audit.rows).toEqual([
+        {
+          user_id: fixture.user.id,
+          action: "release.published",
+          resource_type: "release",
+          resource_id: result.release.id,
+          metadata: null,
+        },
+        {
+          user_id: fixture.user.id,
+          action: "token.batch_saved",
+          resource_type: "token_batch",
+          resource_id: null,
+          metadata: { tokenIds: expect.arrayContaining([primitive.id, semantic.id]) },
+        },
+      ]);
+      expect(audit.rows[1].metadata.tokenIds).toHaveLength(2);
     });
 
-    await publishRelease(database, fixture.context, {
-      projectId: fixture.project.id,
-      releaseId: release.id,
+    it("serializes concurrent publishes and gives each a consistent numbered snapshot", async () => {
+      const database = getTestDatabase();
+      const fixture = await seedProject(database, "publisher");
+      const token = fixture.referencedToken;
+      const results = await Promise.all([
+        publishStagedChanges(database, fixture.context, {
+          projectId: fixture.project.id,
+          changes: [
+            {
+              tokenId: token.id,
+              name: { before: token.name, after: "renamed" },
+              references: [],
+            },
+          ],
+        }),
+        publishStagedChanges(database, fixture.context, {
+          projectId: fixture.project.id,
+          changes: [
+            {
+              tokenId: token.id,
+              value: { before: token.value, after: { kind: "single", value: "#123" } },
+              references: [],
+            },
+          ],
+        }),
+      ]);
+      const first = results.find((result) => result.release.version === "1");
+      const second = results.find((result) => result.release.version === "2");
+      expect(first).toBeDefined();
+      expect(second).toBeDefined();
+      const firstSnapshot = await getPublishedRelease(
+        database,
+        fixture.context,
+        first!.release.id,
+      );
+      const secondSnapshot = await getPublishedRelease(
+        database,
+        fixture.context,
+        second!.release.id,
+      );
+      expect(firstSnapshot.tokens).toEqual(
+        expect.arrayContaining([expect.objectContaining({ id: token.id })]),
+      );
+      const firstToken = firstSnapshot.tokens.find((item) => item.id === token.id)!;
+      expect(
+        [
+          firstToken.name === "renamed",
+          firstToken.value.kind === "single" && firstToken.value.value === "#123",
+        ].filter(Boolean),
+      ).toHaveLength(1);
+      expect(secondSnapshot.tokens).toContainEqual({
+        ...token,
+        name: "renamed",
+        value: { kind: "single", value: "#123" },
+      });
     });
 
-    const result = await database.query(
-      `
-        SELECT action, resource_type, resource_id
-        FROM audit_events
-        WHERE project_id = $1
-     `,
-      [fixture.project.id],
+    it("rejects empty and no-op batches without creating a release or audit event", async () => {
+      const database = getTestDatabase();
+      const fixture = await seedProject(database, "publisher");
+      const token = fixture.referencedToken;
+      for (const changes of [
+        [],
+        [
+          {
+            tokenId: token.id,
+            name: { before: token.name, after: token.name },
+            references: [],
+          },
+        ],
+      ]) {
+        await expect(
+          publishStagedChanges(database, fixture.context, {
+            projectId: fixture.project.id,
+            changes,
+          }),
+        ).rejects.toMatchObject({
+          code: "domain-validation",
+          issues: [{ code: "no-changes" }],
+        });
+      }
+      expect((await database.query("SELECT id FROM releases")).rows).toEqual([]);
+      expect((await database.query("SELECT id FROM audit_events")).rows).toEqual([]);
+    });
+
+    it("rejects editors before changing any project data", async () => {
+      const database = getTestDatabase();
+      const fixture = await seedProject(database, "editor");
+      const token = fixture.referencedToken;
+      await expect(
+        publishStagedChanges(database, fixture.context, {
+          projectId: fixture.project.id,
+          changes: [
+            {
+              tokenId: token.id,
+              name: { before: token.name, after: "not-saved" },
+              references: [],
+            },
+          ],
+        }),
+      ).rejects.toMatchObject({ code: "project-access-denied" });
+      expect(await listTokensByProjectId(database, fixture.project.id)).toContainEqual(
+        token,
+      );
+      expect((await database.query("SELECT id FROM releases")).rows).toEqual([]);
+      expect((await database.query("SELECT id FROM audit_events")).rows).toEqual([]);
+    });
+
+    it("requires project membership before changing any project data", async () => {
+      const database = getTestDatabase();
+      const fixture = await seedProject(database, "publisher");
+      const other = await seedProject(database, "publisher");
+      await expect(
+        publishStagedChanges(database, other.context, {
+          projectId: fixture.project.id,
+          changes: [
+            {
+              tokenId: fixture.referencedToken.id,
+              name: { before: fixture.referencedToken.name, after: "not-saved" },
+              references: [],
+            },
+          ],
+        }),
+      ).rejects.toMatchObject({ code: "project-access-denied" });
+      expect(await listTokensByProjectId(database, fixture.project.id)).toContainEqual(
+        fixture.referencedToken,
+      );
+      expect((await database.query("SELECT id FROM releases")).rows).toEqual([]);
+      expect((await database.query("SELECT id FROM audit_events")).rows).toEqual([]);
+    });
+
+    it("rejects stale changes without saving or creating a release", async () => {
+      const database = getTestDatabase();
+      const fixture = await seedProject(database, "publisher");
+      await expect(
+        publishStagedChanges(database, fixture.context, {
+          projectId: fixture.project.id,
+          changes: [
+            {
+              tokenId: fixture.referencedToken.id,
+              name: { before: "stale", after: "not-saved" },
+              references: [],
+            },
+          ],
+        }),
+      ).rejects.toMatchObject({ code: "staged-changes-conflict" });
+      expect(await listTokensByProjectId(database, fixture.project.id)).toContainEqual(
+        fixture.referencedToken,
+      );
+      expect((await database.query("SELECT id FROM releases")).rows).toEqual([]);
+      expect((await database.query("SELECT id FROM audit_events")).rows).toEqual([]);
+    });
+
+    it.each(["token.batch_saved", "release.published"])(
+      "rolls back the entire publication if %s audit insertion fails",
+      async (action) => {
+        const database = getTestDatabase();
+        const fixture = await seedProject(database, "publisher");
+        await database.query(`
+            CREATE FUNCTION fail_staged_publication_audit()
+            RETURNS trigger AS $$
+            BEGIN
+              IF NEW.action = TG_ARGV[0] THEN
+                RAISE EXCEPTION 'forced staged publication audit failure';
+              END IF;
+              RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql
+          `);
+        await database.query(`
+            CREATE TRIGGER fail_staged_publication_audit
+            BEFORE INSERT ON audit_events
+            FOR EACH ROW EXECUTE FUNCTION fail_staged_publication_audit('${action}')
+          `);
+        try {
+          await expect(
+            publishStagedChanges(database, fixture.context, {
+              projectId: fixture.project.id,
+              changes: [
+                {
+                  tokenId: fixture.referencedToken.id,
+                  name: { before: fixture.referencedToken.name, after: "not-saved" },
+                  references: [],
+                },
+                {
+                  tokenId: fixture.referencingToken.id,
+                  references: [
+                    {
+                      slot: "light",
+                      beforeTokenId: null,
+                      afterTokenId: fixture.referencedToken.id,
+                    },
+                  ],
+                },
+              ],
+            }),
+          ).rejects.toThrow("forced staged publication audit failure");
+          expect(await listTokensByProjectId(database, fixture.project.id)).toEqual(
+            expect.arrayContaining([fixture.referencedToken, fixture.referencingToken]),
+          );
+          expect(
+            await listTokenReferencesByProjectId(database, fixture.project.id),
+          ).toEqual([]);
+          expect((await database.query("SELECT id FROM releases")).rows).toEqual([]);
+          expect(
+            (await database.query("SELECT release_id FROM release_snapshots")).rows,
+          ).toEqual([]);
+          expect((await database.query("SELECT id FROM audit_events")).rows).toEqual([]);
+        } finally {
+          await database.query(
+            "DROP TRIGGER IF EXISTS fail_staged_publication_audit ON audit_events",
+          );
+          await database.query("DROP FUNCTION IF EXISTS fail_staged_publication_audit()");
+        }
+      },
     );
 
-    expect(result.rows).toEqual([
-      expect.objectContaining({
-        action: "release.published",
-        resource_type: "release",
-        resource_id: release.id,
-      }),
-    ]);
-  });
-
-  it("rolls back publishing when audit insertion fails", async () => {
-    const database = getTestDatabase();
-
-    const fixture = await seedProject(database, "publisher");
-
-    const release = await insertRelease(database, {
-      id: crypto.randomUUID(),
-      projectId: fixture.project.id,
-      version: "1.0.0",
-      status: "draft",
-      createdAt: new Date().toISOString(),
-      publishedAt: null,
-    });
-
-    await database.query(`
-    CREATE FUNCTION fail_release_audit_insert()
-    RETURNS trigger AS $$
-    BEGIN
-      RAISE EXCEPTION 'forced audit failure';
-    END;
-    $$ LANGUAGE plpgsql
-  `);
-
-    await database.query(`
-    CREATE TRIGGER fail_release_audit
-    BEFORE INSERT ON audit_events
-    FOR EACH ROW EXECUTE FUNCTION fail_release_audit_insert()
-  `);
-
-    try {
-      await expect(
-        publishRelease(database, fixture.context, {
+    it("uses numeric version order and rejects incompatible existing versions", async () => {
+      const database = getTestDatabase();
+      const fixture = await seedProject(database, "publisher");
+      for (const version of ["9", "10"]) {
+        await insertRelease(database, {
+          id: crypto.randomUUID(),
           projectId: fixture.project.id,
-          releaseId: release.id,
-        }),
-      ).rejects.toThrow("forced audit failure");
+          version,
+          status: "published",
+          createdAt: new Date().toISOString(),
+          publishedAt: new Date().toISOString(),
+        });
+      }
+      const token = fixture.referencedToken;
+      const result = await publishStagedChanges(database, fixture.context, {
+        projectId: fixture.project.id,
+        changes: [
+          {
+            tokenId: token.id,
+            name: { before: token.name, after: "published" },
+            references: [],
+          },
+        ],
+      });
+      expect(result.release.version).toBe("11");
 
-      await expect(findReleaseById(database, release.id)).resolves.toMatchObject({
+      await insertRelease(database, {
+        id: crypto.randomUUID(),
+        projectId: fixture.project.id,
+        version: "1.0.0",
         status: "draft",
+        createdAt: new Date().toISOString(),
         publishedAt: null,
       });
-    } finally {
-      await database.query("DROP TRIGGER IF EXISTS fail_release_audit ON audit_events");
-      await database.query("DROP FUNCTION IF EXISTS fail_release_audit_insert()");
-    }
+      await expect(
+        publishStagedChanges(database, fixture.context, {
+          projectId: fixture.project.id,
+          changes: [
+            {
+              tokenId: token.id,
+              name: { before: "published", after: "not-saved" },
+              references: [],
+            },
+          ],
+        }),
+      ).rejects.toThrow("Cannot determine the next release version.");
+      expect(await listTokensByProjectId(database, fixture.project.id)).toContainEqual({
+        ...token,
+        name: "published",
+      });
+      const events = await database.query("SELECT action FROM audit_events");
+      expect(events.rows).toHaveLength(2);
+    });
   });
 
   it("does not expose credential fields in a published release response", async () => {
@@ -118,18 +379,15 @@ describe("Publising release service integration", () => {
 
     const fixture = await seedProject(database, "admin");
 
-    const release = await insertRelease(database, {
-      id: crypto.randomUUID(),
+    const { release } = await publishStagedChanges(database, fixture.context, {
       projectId: fixture.project.id,
-      version: "1.0.0",
-      status: "draft",
-      createdAt: new Date().toISOString(),
-      publishedAt: null,
-    });
-
-    await publishRelease(database, fixture.context, {
-      projectId: fixture.project.id,
-      releaseId: release.id,
+      changes: [
+        {
+          tokenId: fixture.referencedToken.id,
+          name: { before: fixture.referencedToken.name, after: "published" },
+          references: [],
+        },
+      ],
     });
 
     const response = await getPublishedRelease(database, fixture.context, release.id);
@@ -145,18 +403,15 @@ describe("Publising release service integration", () => {
     const database = getTestDatabase();
     const fixture = await seedProject(database, "publisher");
 
-    const release = await insertRelease(database, {
-      id: crypto.randomUUID(),
+    const { release } = await publishStagedChanges(database, fixture.context, {
       projectId: fixture.project.id,
-      version: "1.0.0",
-      status: "draft",
-      createdAt: new Date().toISOString(),
-      publishedAt: null,
-    });
-
-    await publishRelease(database, fixture.context, {
-      projectId: fixture.project.id,
-      releaseId: release.id,
+      changes: [
+        {
+          tokenId: fixture.referencedToken.id,
+          name: { before: fixture.referencedToken.name, after: "published" },
+          references: [],
+        },
+      ],
     });
 
     const beforeChanges = await getPublishedRelease(

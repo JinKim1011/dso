@@ -129,6 +129,7 @@ export type SaveStagedChangesResponse =
       error: {
         code: string;
         message: string;
+        correlationId?: string;
         issues?: readonly {
           code: string;
           message: string;
@@ -138,3 +139,13 @@ export type SaveStagedChangesResponse =
         }[];
       };
     };
+
+export type PublishStagedChangesResult = {
+  release: Release;
+  tokens: Token[];
+  references: TokenReference[];
+};
+
+export type PublishStagedChangesResponse =
+  | ({ ok: true } & PublishStagedChangesResult)
+  | Extract<SaveStagedChangesResponse, { ok: false }>;

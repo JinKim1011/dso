@@ -409,8 +409,26 @@ const tokenTypes: TokenType[] = [
 export const validSeed: SeedData = {
   users: [
     {
-      id: seedIds.user,
-      email: "developer@example.test",
+      id: seedIds.users.editor,
+      email: "editor@example.test",
+      passwordHash: "fake-seed-hash",
+      createdAt: "2026-10-27T10:00:00.000Z",
+    },
+    {
+      id: seedIds.users.publisher,
+      email: "publisher@example.test",
+      passwordHash: "fake-seed-hash",
+      createdAt: "2026-10-27T10:00:00.000Z",
+    },
+    {
+      id: seedIds.users.admin,
+      email: "admin@example.test",
+      passwordHash: "fake-seed-hash",
+      createdAt: "2026-10-27T10:00:00.000Z",
+    },
+    {
+      id: seedIds.users.nonmember,
+      email: "nonmember@example.test",
       passwordHash: "fake-seed-hash",
       createdAt: "2026-10-27T10:00:00.000Z",
     },
@@ -426,8 +444,20 @@ export const validSeed: SeedData = {
   projectMembers: [
     {
       projectId: seedIds.project,
-      userId: seedIds.user,
+      userId: seedIds.users.editor,
+      role: "editor",
+      createdAt: "2026-10-27T10:00:00.000Z",
+    },
+    {
+      projectId: seedIds.project,
+      userId: seedIds.users.publisher,
       role: "publisher",
+      createdAt: "2026-10-27T10:00:00.000Z",
+    },
+    {
+      projectId: seedIds.project,
+      userId: seedIds.users.admin,
+      role: "admin",
       createdAt: "2026-10-27T10:00:00.000Z",
     },
   ],
@@ -463,7 +493,7 @@ export const validSeed: SeedData = {
     {
       id: seedIds.release,
       projectId: seedIds.project,
-      version: "1.0.0",
+      version: "1",
       status: "published",
       publishedAt: "2026-10-27T10:00:00.000Z",
       createdAt: "2026-10-27T10:00:00.000Z",

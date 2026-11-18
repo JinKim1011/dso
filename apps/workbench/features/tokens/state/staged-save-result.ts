@@ -12,7 +12,12 @@ import type {
   TokenReferenceSlot,
   TokenType,
 } from "@repo/contracts/type";
-import { isRecord } from "@repo/contracts/validation/operations/common";
+import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
+import {
+  isRecord,
+  validateUuidField,
+} from "@repo/contracts/validation/operations/common";
+import { validateTimestamp } from "@repo/contracts/validation/timestamp";
 import { tokenReferenceSlots } from "@repo/contracts/validation/token-reference-slots";
 import { validateTokenValue } from "@repo/contracts/validation/token-value";
 
@@ -40,7 +45,25 @@ function isReference(value: unknown): value is TokenReference {
   );
 }
 
-export function parseSavedRows(
+function isPublishedReleaseForProject(value: unknown, projectId: string): boolean {
+  return (
+    isRecord(value) &&
+    validateUuidField(value.id, "release.id") === null &&
+    typeof value.projectId === "string" &&
+    value.projectId.toLowerCase() === projectId.toLowerCase() &&
+    typeof value.version === "string" &&
+    /^[1-9][0-9]*$/.test(value.version) &&
+    value.version.length <= CONTRACT_LIMITS.releaseVersion &&
+    value.status === "published" &&
+    typeof value.createdAt === "string" &&
+    typeof value.publishedAt === "string" &&
+    validateTimestamp(value.createdAt, "release.createdAt") === null &&
+    validateTimestamp(value.publishedAt, "release.publishedAt") === null &&
+    Date.parse(value.publishedAt) >= Date.parse(value.createdAt)
+  );
+}
+
+export function parsePublishedRows(
   input: unknown,
   request: SaveStagedChangesRequest,
   base: TokenGraphViewModel,
@@ -48,12 +71,13 @@ export function parseSavedRows(
   if (
     !isRecord(input) ||
     input.ok !== true ||
+    !isPublishedReleaseForProject(input.release, request.projectId) ||
     !Array.isArray(input.tokens) ||
     !input.tokens.every(isToken) ||
     !Array.isArray(input.references) ||
     !input.references.every(isReference)
   ) {
-    throw new Error("Invalid save response.");
+    throw new Error("Invalid publication response.");
   }
   const expected = new Set(request.changes.map((change) => change.tokenId.toLowerCase()));
   const ids = new Set<string>();

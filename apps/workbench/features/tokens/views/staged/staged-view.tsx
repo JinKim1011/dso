@@ -6,10 +6,23 @@ import { StagedFilter } from "@/features/tokens/components/staged/staged-filter"
 import { useRowSelection } from "@/features/tokens/navigation/use-row-selection";
 import { useStagedContext } from "@/features/tokens/state/staged-context";
 import { useFilterState } from "@/features/tokens/views/staged/hooks/use-filter-state";
-import { useRowActions } from "@/features/tokens/views/staged/hooks/use-row-actions";
 import { useStagedRowKeyboardNavigation } from "@/features/tokens/views/staged/hooks/use-staged-row-keyboard-navigation";
-import { List, Text } from "@repo/ui";
+import { List, Text, Toaster } from "@repo/ui";
 import { useEffect, useMemo, useRef } from "react";
+
+function useErrorToast(message: string | null) {
+  useEffect(() => {
+    if (!message) return;
+
+    const id = Toaster.toast.error(<span role="alert">{message}</span>, {
+      duration: Infinity,
+      dismissible: false,
+    });
+    return () => {
+      Toaster.toast.dismiss(id);
+    };
+  }, [message]);
+}
 
 export function StagedView() {
   const {
@@ -17,25 +30,30 @@ export function StagedView() {
     draftModel,
     changedRows,
     discardRow,
-    applyRow,
     isStaleDraft,
     draftLoadError,
-    canApply,
     isApplying,
     saveError,
     outcomeUnknown,
   } = useStagedContext();
+  useErrorToast(
+    isStaleDraft
+      ? "Project data changed since this draft was created. Your edits are preserved, but pushing is disabled. Discard all changes to use the current project data."
+      : null,
+  );
+  useErrorToast(
+    draftLoadError
+      ? "The saved draft could not be restored. Pushing is disabled. Discard all to remove it and start from the current project data."
+      : null,
+  );
+  useErrorToast(saveError);
+
   const { activeFilter, setActiveFilter, filteredCategories } = useFilterState({
     changedRows,
   });
   const { selectedRowId, toggleRowSelection } = useRowSelection({
     resetTrigger: activeFilter,
   });
-  const { handleRowApply, handleRowDiscard } = useRowActions({
-    applyRow,
-    discardRow,
-  });
-
   const filteredRows = useMemo(() => {
     return changedRows.filter(
       (row) => activeFilter === "ALL" || row.category.toUpperCase() === activeFilter,
@@ -73,10 +91,8 @@ export function StagedView() {
     children: (
       <StagedRowActions
         rowId={row.rowId}
-        isApplying={isApplying}
-        canApply={canApply}
-        onDiscard={handleRowDiscard}
-        onApply={handleRowApply}
+        disabled={isApplying || outcomeUnknown}
+        onDiscard={discardRow}
       />
     ),
     onSelect: () => toggleRowSelection(row.rowId),
@@ -94,25 +110,6 @@ export function StagedView() {
 
   return (
     <section className="flex h-full w-full flex-col">
-      {/* // will be replaced by toaster later */}
-      {isStaleDraft && (
-        <p role="alert" className="text-content-error p-small">
-          Project data changed since this draft was created. Your edits are preserved, but
-          applying is disabled. Discard all changes to use the current project data.
-        </p>
-      )}
-      {draftLoadError && (
-        <p role="alert" className="text-content-error p-small">
-          The saved draft could not be restored. Applying is disabled. Discard all to
-          remove it and start from the current project data.
-        </p>
-      )}
-      {saveError && (
-        <p role="alert" className="text-content-error p-small">
-          {saveError}
-          {outcomeUnknown && " Reload the page to compare with current project data."}
-        </p>
-      )}
       {rowsLength === 0 && (
         <div className="bg-dot-pattern rounded-mini border-stroke-secondary flex h-full w-full items-center justify-center overflow-hidden border">
           <Text

@@ -78,7 +78,7 @@ dso-project/
 │
 ├── scripts/               # Token scanning and validation scripts
 │
-└── [manifests]            # design-tokens-manifest.json, etc.
+└── [config files]         # package.json, turbo.json, etc.
 ```
 
 ## Contribution Guide

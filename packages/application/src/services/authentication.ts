@@ -31,6 +31,16 @@ export async function login(database: Pool, request: LoginRequest): Promise<Logi
   const passwordMatches = await verifyPassword(passwordHash, request.password);
 
   if (!user || !passwordMatches) {
+    await insertAuditEvent(database, {
+      id: crypto.randomUUID(),
+      userId: null,
+      projectId: null,
+      action: "login.failed",
+      resourceType: "account",
+      resourceId: user?.id ?? null,
+      createdAt: new Date().toISOString(),
+    });
+
     throw new InvalidCredentialsError();
   }
 
@@ -105,5 +115,19 @@ export async function logout(
   database: Pool,
   context: AuthorizationContext,
 ): Promise<void> {
-  await deleteSession(database, context.sessionId);
+  await withTransaction(database, async (client) => {
+    const deleted = await deleteSession(client, context.sessionId, context.userId);
+
+    if (!deleted) return;
+
+    await insertAuditEvent(client, {
+      id: crypto.randomUUID(),
+      userId: context.userId,
+      projectId: null,
+      action: "logout",
+      resourceType: "account",
+      resourceId: null,
+      createdAt: new Date().toISOString(),
+    });
+  });
 }

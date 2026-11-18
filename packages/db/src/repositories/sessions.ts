@@ -57,13 +57,15 @@ export async function findActiveSessionById(
 export async function deleteSession(
   database: Queryable,
   sessionId: string,
+  userId: string,
 ): Promise<boolean> {
   const result = await database.query(
     `
       DELETE FROM sessions
       WHERE id = $1
+        AND user_id = $2
     `,
-    [sessionId],
+    [sessionId, userId],
   );
 
   return result.rowCount === 1;

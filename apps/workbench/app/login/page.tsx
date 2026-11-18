@@ -35,7 +35,7 @@ export default function LoginPage() {
     try {
       const response = await fetch("/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "X-DSO-CSRF": "1" },
         body: JSON.stringify({ email, password }),
       });
       if (!response.ok) {

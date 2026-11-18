@@ -33,11 +33,12 @@ Published release API response
 
 ## Authentication
 
-> **Current delivery status:** The published-release response contract is
-> defined in W3, and session-authenticated workbench reads are delivered in
-> W4. CLI API-key authentication for this endpoint is deferred to W5 with
-> release signing and the CLI. Until W5 is implemented, this endpoint must
-> not expose release downloads through API keys.
+> **Current delivery status:** The response contract is defined in W3 and the
+> `getPublishedRelease` service (session-authorized, published releases only)
+> exists, but the `GET /api/releases/:releaseId` route is not implemented yet.
+> Both session-authenticated workbench reads and CLI API-key authentication are
+> delivered in W5 with release signing and the CLI. Until then, this endpoint
+> must not expose release downloads through API keys.
 
 The target endpoint accepts either:
 
@@ -88,7 +89,7 @@ Show one realistic JSON example.
   "release": {
     "id": "release_001",
     "projectId": "project_001",
-    "version": "1.0.0",
+    "version": "1",
     "status": "published",
     "publishedAt": "2026-10-08T09:00:00Z"
   },
@@ -277,7 +278,7 @@ Metadata for the immutable published snapshot:
 
 - `id`: stable release identifier
 - `projectId`: project that owns the release
-- `version`: project-facing release version
+- `version`: server-assigned project release sequence, represented as a string
 - `status`: must be `"published"` in a successful response
 - `publishedAt`: ISO 8601 timestamp for publication
 
@@ -458,7 +459,6 @@ the authorization policy, an unauthorized release may therefore be returned as
 
 ## Open decisions
 
-- Should `release.version` be semantic versioning or an arbitrary project version?
 - Should projects be allowed to define additional mode names beyond `light` and `dark`?
 - Should an unresolved token value be publishable, or should publication reject it?
 - Which placeholder variables should the first generator contract support?

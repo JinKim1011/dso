@@ -49,7 +49,8 @@ describe("staged draft reload", () => {
       expect((await current.result.current.applyDraft()).status).toBe(401);
     });
     expect(fetchSpy).toHaveBeenCalledOnce();
-    expect(fetchSpy.mock.calls[0]?.[0]).toBe("/api/design-tokens/staged-changes");
+    expect(fetchSpy.mock.calls[0]?.[0]).toBe("/api/releases/publish");
+    expect(new Headers(fetchSpy.mock.calls[0]?.[1]?.headers).get("x-dso-csrf")).toBe("1");
     expect(current.result.current.saveError).toContain("Authentication is required");
     expect(findRowById(current.result.current.draftModel, token.id)?.name).toBe(
       "draft edit",
@@ -146,7 +147,6 @@ describe("staged draft reload", () => {
     ).toEqual({ before: row.name, after: "my edit" });
     const fetchSpy = vi.spyOn(globalThis, "fetch");
     expect((await reloaded.result.current.applyDraft()).status).toBe(409);
-    expect((await reloaded.result.current.applyRow(token.id)).status).toBe(409);
     expect(fetchSpy).not.toHaveBeenCalled();
     fetchSpy.mockRestore();
     act(() => reloaded.result.current.resetDraft());

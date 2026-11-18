@@ -1,5 +1,6 @@
 import type { Release } from "@repo/contracts/type";
 import type { ReleaseStatus } from "@repo/contracts/validation/enum";
+import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import type { Pool, PoolClient, QueryResultRow } from "pg";
 
 type Queryable = Pick<Pool, "query"> | Pick<PoolClient, "query">;
@@ -12,6 +13,39 @@ type ReleaseRow = QueryResultRow & {
   created_at: Date;
   published_at: Date | null;
 };
+
+export async function nextReleaseVersion(
+  database: Pick<PoolClient, "query">,
+  projectId: string,
+): Promise<string> {
+  const result = await database.query<{
+    invalid_versions: boolean;
+    next_version: string;
+  }>(
+    `
+      SELECT
+        COALESCE(BOOL_OR(version !~ '^[1-9][0-9]*$' OR char_length(version) > $2), false)
+          AS invalid_versions,
+        (COALESCE(MAX(
+          CASE WHEN version ~ '^[1-9][0-9]*$' AND char_length(version) <= $2
+            THEN version::numeric
+          END
+        ), 0) + 1)::text AS next_version
+      FROM releases
+      WHERE project_id = $1
+    `,
+    [projectId, CONTRACT_LIMITS.releaseVersion],
+  );
+  const row = result.rows[0];
+  if (
+    !row ||
+    row.invalid_versions ||
+    row.next_version.length > CONTRACT_LIMITS.releaseVersion
+  ) {
+    throw new Error("Cannot determine the next release version.");
+  }
+  return row.next_version;
+}
 
 function mapReleaseRow(row: ReleaseRow): Release {
   return {

@@ -22,7 +22,7 @@ erDiagram
     COMPONENTS ||--o{ DOCUMENT_TEMPLATES : has
     USERS ||--o{ SESSIONS : has
     USERS ||--o{ PROJECT_MEMBERS : joins
-    USERS ||--o{ AUDIT_EVENTS : performs
+    USERS o|--o{ AUDIT_EVENTS : performs
 
     PROJECTS {
         uuid id PK
@@ -77,6 +77,7 @@ erDiagram
         text action
         text resource_type
         uuid resource_id
+        jsonb metadata
         timestamp created_at
     }
 
@@ -137,6 +138,7 @@ erDiagram
   per user.
 - A project can have zero or many project-scoped API keys.
 - A user can perform zero or many audit events.
+- A failed login event has no identified actor.
 - A project can contain zero or many project-scoped audit events.
 - An audit event may belong to zero or one project.
 - An account-level audit event may have no project or resource.
@@ -163,42 +165,74 @@ Project ownership and release-publishing permission are inferred from `project_m
 
 ### Token graph writes
 
-The staged-save service expects an already parsed request and an authenticated
-application context. It checks project membership and the editor role, then uses a
-`READ COMMITTED` transaction to lock the project row before reading the token
-graph. It checks submitted `before` values and validates the proposed final graph
-before writing. Errors roll back the entire batch.
+The staged-publishing service expects an already parsed request and an
+authenticated application context. It checks project membership and the
+publisher role, then uses a `READ COMMITTED` transaction to lock the project row.
+The internal staged-save operation checks submitted `before` values and
+validates the proposed final graph before writing. The service saves changes,
+creates a release snapshot, publishes the release, and records both audit
+events in the same transaction. Errors roll back the entire batch. A batch with
+no actual changes is rejected. Release versions are project-scoped positive
+integer sequences.
+
+`POST /api/releases/publish` accepts a JSON staged-change request. The route
+requires a session and the mutation CSRF
+policy; publishing remains disabled outside development. The service rechecks
+membership and publisher role on every request.
 
 The save request contains only changed token names/values and reference slots.
 It does not update `cssVar`. An omitted slot change leaves the current reference
-unchanged, a token ID assigns or replaces it, and `null` removes it. Empty
-batches and no-op changes are valid. Semantic mode slots may be independently
-empty; a typography preview is available only when all three reference slots
-resolve, while each populated mode slot can be previewed independently.
+unchanged, a token ID assigns or replaces it, and `null` removes it. A batch
+may include no-op changes, but publishing requires at least one actual change.
+Semantic mode slots may be independently empty; a typography preview is
+available only when all three reference slots resolve, while each populated
+mode slot can be previewed independently.
 
 Token, token-type, and reference writers that can run against an existing project
 must use the same project transaction protocol. The lock only coordinates writers
 that participate in it; repository calls and direct SQL do not acquire it
-automatically. The development-only request boundary parses requests, checks the
-session and trusted origin, and invokes the service. Login and production CSRF
-protection remain unfinished; production writes are disabled.
-
-Workbench Apply one sends the selected row, while Apply all sends one atomic batch.
-On success the saved rows update the baseline and edits made after submission remain
-staged. If the save outcome is unknown, the draft is retained and another Apply is
-blocked until the page is reloaded and the current data can be compared.
+automatically. 
 
 ### Audit-event scope
 
-`audit_events.user_id` is required because the current audited actions are performed by an identified user. `project_id` and `resource_id` are optional to support account-level events such as login.
+`audit_events.user_id` is null only for failed logins. Account events have no
+project; a failed login may identify its target account in `resource_id`.
+Project events require a project ID. Release and API-key events also require a
+resource ID; token batches use metadata instead.
 
-Examples:
+The database does not use `resource_id` as a foreign key because it refers to
+different resource types. Application validation must check the target.
+The repository validates batch metadata; direct SQL bypasses that validation.
 
-- A successful login has a user, but no project or resource.
-- A published release has a user, project, and release resource.
-- API-key creation or revocation has a user, project, and API-key resource.
+### Audit event catalogue
 
-For project-scoped actions, application validation must require the relevant project and resource identifiers. The database schema does not use `resource_id` as a foreign key because it can refer to different resource tables according to `resource_type`.
+Each event has a unique ID, an action, and a creation timestamp. The actor is
+the authenticated user, except for failed login attempts.
+
+| Action | Actor | Project | Resource type | Resource ID | Metadata |
+| --- | --- | --- | --- | --- | --- |
+| `login.succeeded` | User | None | `account` | None | None |
+| `login.failed` | Unknown | None | `account` | Target user ID, if found | None |
+| `logout` | User | None | `account` | None | None |
+| `token.batch_saved` | User | Required | `token_batch` | None | `tokenIds` |
+| `release.published` | User | Required | `release` | Release ID | None |
+| `api_key.created` | User | Required | `api_key` | API key ID | None |
+| `api_key.revoked` | User | Required | `api_key` | API key ID | None |
+
+`login.failed` records rejected credentials, not malformed requests. A target
+user ID identifies the attempted account, not the actor. Return the same
+authentication failure whether the account exists or not.
+
+`tokenIds` contains 1–1,000 unique IDs of tokens actually changed. Do not
+record an event when a save changes nothing. No other metadata is allowed.
+Never record passwords, entered emails, session IDs, API key secrets or hashes,
+token names, or token values. Restrict access to audit records.
+
+Commit successful actions and their audit records in the same transaction. If
+the audit write fails, roll back the action. Commit a failed-login event before
+returning the authentication failure; do not roll it back with the rejection.
+If that audit write fails, log a safe server error and return a generic 500.
+Logout is recorded only when the authenticated user's session is deleted.
 
 ## Constraint enforcement
 
@@ -231,7 +265,8 @@ For project-scoped actions, application validation must require the relevant pro
 | API-key identifier is unique                                 | Yes                              |                    Yes | Use a unique constraint                                                                                                                         |
 | API-key scope is valid                                       | Yes                              |                    Yes | The first release allows `release:read`                                                                                                         |
 | Session and API-key expiry follow creation                   | Yes                              |                    Yes | Enforce `expires_at > created_at`                                                                                                               |
-| Account-level audit events can omit project and resource     | Yes                              |                    Yes | Allow null `project_id` and `resource_id` for login events; require them for project-scoped actions                                             |
+| Audit event scope matches its action                         | Yes                              |                    Yes | Failed logins have no actor; token batches have no single resource ID                                                                           |
+| Audit metadata contains only allowed values                  | Limited                          |                    Yes | Batch token IDs must be unique UUIDs within the request limit; direct SQL bypasses detailed validation                                          |
 | User is authorized to modify the project                     | No                               |                    Yes | This is an application authorization rule                                                                                                       |
 | Published releases contain valid complete data               | No                               |                    Yes | Validate before publishing                                                                                                                      |
 | Request body has valid shape and size                        | No                               |                    Yes | Enforce through API schemas and request limits                                                                                                  |

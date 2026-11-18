@@ -1,21 +1,13 @@
-import { CheckIcon, ResetIcon } from "@radix-ui/react-icons";
+import { ResetIcon } from "@radix-ui/react-icons";
 import { Button, Tooltip } from "@repo/ui";
 
 type StagedRowActionsProps = {
   rowId: string;
-  isApplying: boolean;
-  canApply: boolean;
+  disabled: boolean;
   onDiscard: (rowId: string) => void;
-  onApply: (rowId: string) => void;
 };
 
-export function StagedRowActions({
-  rowId,
-  isApplying,
-  canApply,
-  onDiscard,
-  onApply,
-}: StagedRowActionsProps) {
+export function StagedRowActions({ rowId, disabled, onDiscard }: StagedRowActionsProps) {
   return (
     <div className="gap-microPlus px-mini flex w-fit">
       <Tooltip content="DISCARD">
@@ -30,22 +22,7 @@ export function StagedRowActions({
             event.stopPropagation();
             onDiscard(rowId);
           }}
-          disabled={isApplying}
-        />
-      </Tooltip>
-      <Tooltip content="PUSH">
-        <Button
-          size="sm"
-          iconOnly={true}
-          overrideBgClass="bg-surface-tertiary hover:bg-surface-success active:bg-surface-success"
-          overrideTextColorClass="text-content-tertiary hover:text-content-success active:text-content-success"
-          aria-label="apply-row"
-          leftIcon={CheckIcon}
-          onClick={(event) => {
-            event.stopPropagation();
-            onApply(rowId);
-          }}
-          disabled={isApplying || !canApply}
+          disabled={disabled}
         />
       </Tooltip>
     </div>

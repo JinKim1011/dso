@@ -55,18 +55,14 @@ The receiving side should not automatically trust data.
 
 ### Browser -> Workbench API
 
-- The staged token save route is currently available only when `NODE_ENV` is `development`.
-- It requires an active session cookie and editor project membership, and rejects mutations unless their `Origin` exactly matches the explicitly configured `DSO_WORKBENCH_ORIGIN`.
-- It does not derive the trusted origin from request headers.
-- The development route fails closed if the origin is not configured.
-- Login and CSRF-token issuance routes are not implemented yet.
-- Origin checking is the temporary development CSRF control. (production writes remain disabled)
+- Staged token save and release publication are one operation. It requires a
+  session and the publisher role. There is no standalone save endpoint.
 
 ```text
 Browser
-  -> HTTPS request
-     - session cookie
-     - CSRF token for mutations
+  -> HTTPS request in deployment
+     - session cookie for authenticated requests
+     - CSRF headers for mutations
      - project/resource changes
   -> Workbench API
 ```
@@ -79,7 +75,43 @@ Browser
 - Failure behavior
   - reject invalid requests
   - return generic errors
+  - log unexpected API errors with a correlation ID and include it in the response
   - do not persist partial changes
+
+#### CSRF policy
+
+Apply the shared check to every workbench mutation, including login:
+
+- Set `DSO_WORKBENCH_ORIGIN` to the public origin without a path. Require
+  `Origin` to match it exactly; reject missing or `null` origins. Do not derive
+  the trusted origin from request headers.
+- Require `X-DSO-CSRF: 1`. It is not a secret or token. Do not allow untrusted
+  origins to send it through CORS.
+- Require `Sec-Fetch-Site: same-origin` when the header is present. If absent,
+  require the Origin and custom-header checks.
+- Return a generic 403 for rejected requests. Invalid or missing origin
+  configuration fails closed with a server error.
+
+Session and role checks remain separate. SameSite cookies add protection. This
+policy does not prevent XSS or authenticate clients that can forge headers.
+Use HTTPS in deployment.
+
+#### Security headers
+
+Workbench responses use these browser protections:
+
+- `X-Content-Type-Options: nosniff` prevents MIME type guessing.
+- `X-Frame-Options: DENY` prevents embedding and clickjacking.
+- `Referrer-Policy: strict-origin-when-cross-origin` limits referrer disclosure.
+- `Strict-Transport-Security` requires HTTPS after a secure connection.
+- `Permissions-Policy` disables camera, microphone, and geolocation access.
+- Content Security Policy restricts resource loading and script execution.
+
+#### Audit trail
+
+Record important actions and failed logins. Restrict access to audit records
+and exclude credentials, session IDs, token names, and token values. See the
+[audit event catalogue](../database/er-model.md#audit-event-catalogue).
 
 ### Workbench API -> PostgreSQL
 
@@ -448,7 +480,7 @@ implementation work. They are not treated as completed Week 1 evidence:
 - Invalid request bodies are rejected.
 - Unknown fields, invalid identifiers, and oversized collections are rejected.
 - Oversized request bodies are rejected.
-- Invalid CSRF tokens are rejected for cookie-based mutations.
+- Mutations reject invalid Origin, custom header, and Fetch Metadata values.
 - Requests without required CSRF protection are rejected.
 - Security headers are present on web responses.
 - User-controlled token, component, and template content cannot execute as unintended browser script.
