@@ -43,9 +43,15 @@ docker exec dso-postgres createdb -U postgres dso
 
 ## 3. Seed the Database
 
-Run migrations and insert the current seed. The seeded user is
-`developer@example.test` with the `publisher` role. Choose a development
-password; the script hashes it with Argon2id and refuses to run without it:
+Run migrations and insert the current seed. The seed creates:
+
+- `editor@example.test` with the `editor` role
+- `publisher@example.test` with the `publisher` role
+- `admin@example.test` with the `admin` role
+- `nonmember@example.test` without project membership
+
+Choose one development password. The script applies the same Argon2id hash to
+all four seeded users and refuses to run without a password:
 
 ```bash
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso \
