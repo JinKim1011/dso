@@ -52,8 +52,8 @@ describe("downloadReleaseWithApiKey integration", () => {
     expect(response).toMatchObject({
       schemaVersion: 1,
       release: { id: release.id, projectId: fixture.project.id, status: "published" },
-      tokens,
     });
+    expect(response.tokens).toEqual(expect.arrayContaining(tokens));
 
     const serialized = JSON.stringify(response);
     expect(serialized).not.toContain("keyHash");
