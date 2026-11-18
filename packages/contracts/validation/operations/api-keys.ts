@@ -5,7 +5,7 @@ import {
   collectUnknownFields,
   invalidRequestBody,
   isRecord,
-  validateIdentifierField,
+  validateUuidField,
 } from "@repo/contracts/validation/operations/common";
 import { validateTimestamp } from "@repo/contracts/validation/timestamp";
 
@@ -33,7 +33,7 @@ export function parseCreateApiKeyRequest(
 
   const issues = collectUnknownFields(input, CREATE_API_KEY_FIELDS);
 
-  const projectIssue = validateIdentifierField(input.projectId, "projectId");
+  const projectIssue = validateUuidField(input.projectId, "projectId");
 
   if (projectIssue) {
     issues.push(projectIssue);
@@ -84,7 +84,7 @@ export function parseRevokeApiKeyRequest(
 
   const issues = collectUnknownFields(input, REVOKE_API_KEY_FIELDS);
   for (const field of ["projectId", "apiKeyId"] as const) {
-    const issue = validateIdentifierField(input[field], field);
+    const issue = validateUuidField(input[field], field);
     if (issue) {
       issues.push(issue);
     }
@@ -111,7 +111,7 @@ export function parseRevokeApiKeyBody(
   }
 
   const issues = collectUnknownFields(input, REVOKE_API_KEY_BODY_FIELDS);
-  const projectIssue = validateIdentifierField(input.projectId, "projectId");
+  const projectIssue = validateUuidField(input.projectId, "projectId");
 
   if (projectIssue) {
     issues.push(projectIssue);
