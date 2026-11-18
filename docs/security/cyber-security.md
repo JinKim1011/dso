@@ -249,21 +249,17 @@ This week delivers the complete publish-to-generation vertical slice.
 
 #### Build
 
-- Add the `GET /api/releases/:releaseId` route (session-authenticated) and a published-release API containing token definitions, references,
-  token-type hierarchy data, components, and templates.
+- Add the `GET /api/releases/:releaseId` route (session-authenticated) and a published-release API containing token definitions, references, token-type hierarchy data, components, and templates.
 - Keep source-code component-token usage claims out of release data.
 - Canonicalize release JSON and sign it with Ed25519.
 - Create `apps/cli` with `dso pull` and `dso generate`.
-- Add the deferred API-key-authenticated published-release download flow for
-  the CLI, including project, scope, expiration, and revocation checks.
+- Add the deferred API-key-authenticated published-release download flow for the CLI, including project, scope, expiration, and revocation checks.
 - Add admin-only API-key create/revoke routes (CSRF-protected, audited). Return API-key secrets only once and store only hashes.
 - Validate API-key identifier, hash, project, scope, expiration, and revocation.
-- Require HTTPS outside local development; the CLI must never connect to
-  PostgreSQL.
+- Require HTTPS outside local development; the CLI must never connect to PostgreSQL.
 - Verify signatures before generation and stop on failure.
 - Generate `tokens.json`, `tokens.css`, and component Markdown.
-- Resolve portable document paths below a configured output root and reject
-  absolute paths, `..` traversal, unsafe separators, and shell execution.
+- Resolve portable document paths below a configured output root and reject absolute paths, `..` traversal, unsafe separators, and shell execution.
 - Make generated output deterministic and keep credentials out of output.
 
 #### Tests

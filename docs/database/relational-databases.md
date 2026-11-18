@@ -230,32 +230,23 @@ This week delivers the complete publish-to-generation vertical slice.
 
 #### Build
 
-- Add the `GET /api/releases/:releaseId` route (session-authenticated) and an authenticated published-release API containing token definitions,
-  references, token-type hierarchy data, components, and templates.
-- Add the deferred CLI `release:read` path: accept project-scoped API keys,
-  verify the key against the release project and published status, and return
-  only the published release snapshot.
+- Add the `GET /api/releases/:releaseId` route (session-authenticated) and an authenticated published-release API containing token definitions, references, token-type hierarchy data, components, and templates.
+- Add the deferred CLI `release:read` path: accept project-scoped API keys, verify the key against the release project and published status, and return only the published release snapshot.
 - Keep source-code component-token usage claims out of the release snapshot.
 - Canonicalize release JSON and sign it with Ed25519.
 - Create `apps/cli` with `dso pull` and `dso generate`.
-- Implement project-scoped API-key validation for identifier, hash, project,
-  scope, expiration, and revocation.
+- Implement project-scoped API-key validation for identifier, hash, project, scope, expiration, and revocation.
 - Add admin-only API-key create/revoke routes (CSRF-protected, audited). Return API-key secrets only once and store only hashes.
-- Require HTTPS outside local development and keep the CLI dependent on the
-  API, never PostgreSQL.
+- Require HTTPS outside local development and keep the CLI dependent on the API, never PostgreSQL.
 - Verify release signatures before generation and stop on failure.
 - Generate `tokens.json`, `tokens.css`, and component Markdown.
-- Resolve portable component document paths below a configured local output
-  root; reject absolute paths, `..` traversal, unsafe separators, and shell
-  execution based on release data.
+- Resolve portable component document paths below a configured local output root; reject absolute paths, `..` traversal, unsafe separators, and shell execution based on release data.
 - Make generated output deterministic and keep credentials out of output.
 
 #### Tests and evidence
 
 - Verify invalid, expired, revoked, wrong-scope, and wrong-project keys.
-- Verify invalid signatures stop generation, valid releases work under
-  different output roots, unsafe paths fail, output is deterministic, and the
-  CLI never connects to PostgreSQL.
+- Verify invalid signatures stop generation, valid releases work under different output roots, unsafe paths fail, output is deterministic, and the CLI never connects to PostgreSQL.
 
 #### Done when
 
