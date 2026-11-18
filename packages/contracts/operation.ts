@@ -71,9 +71,7 @@ export type CreateApiKeyResponse = {
     scope: ApiKeyScope;
     expiresAt: string;
   };
-  // returned only during creation.
-  // it should not be part of the stored ApiKey record, which contains only keyHash.
-  secret: string;
+  credential: string;
 };
 
 export type RevokeApiKeyRequest = {
