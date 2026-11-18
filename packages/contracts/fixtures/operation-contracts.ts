@@ -36,9 +36,13 @@ export const publishRequest = {
   releaseId: fixtureIds.release,
 } satisfies PublishReleaseRequest;
 
+const futureApiKeyExpiration = new Date(
+  Date.now() + 365 * 24 * 60 * 60 * 1000,
+).toISOString();
+
 export const createApiKeyRequest = {
   projectId: fixtureIds.project,
-  expiresAt: "2026-11-27T10:00:00.000Z",
+  expiresAt: futureApiKeyExpiration,
   scope: "release:read",
 } satisfies CreateApiKeyRequest;
 
