@@ -35,13 +35,15 @@ Document but do not build:
 - Passwords use Argon2id or bcrypt hashes and are never stored in plaintext.
 - Sessions use opaque, database-backed cookies with `HttpOnly`, `Secure` in deployment, and `SameSite` protection.
 - The CLI uses project-scoped API keys, not web sessions.
-- API keys are shown once, stored only as hashes, and can be revoked or rotated.
+- API keys are shown once and have the wire format `dso_<keyIdentifier>_<secret>`. Only the secret hash is stored by the server.
+- The CLI reads the complete API key from `DSO_API_KEY`, not from a command-line argument. Administrators rotate keys by creating a replacement and explicitly revoking the previous key.
 - All PostgreSQL access goes through `packages/db` and parameterized SQL.
 - The CLI communicates with the API only. It never connects directly to PostgreSQL.
 - Published releases are signed with Ed25519 and verified by the CLI before generation.
+- Release public keys are distributed through a local CLI trust file, not accepted from the release response. The trust file may contain multiple key IDs during signing-key rotation. Signature failure always stops the workflow.
 - PostgreSQL is private; only the web/API service is exposed.
-- Published component document paths are portable relative paths. The CLI or
-  consuming repository supplies the local output root.
+- The first version generation is limited to `tokens.json` and `tokens.css`. Components and document templates remain part of the stored and downloaded snapshot for compatibility, but doesn't render Markdown from them.
+- Generation is all-or-nothing for its two owned artifacts. Existing output is preserved unless the user confirms an interactive prompt or passes `--force`. Non-interactive conflicts fail with `--force` guidance. Unrelated files are preserved.
 
 ## Weekly Plan
 
@@ -243,31 +245,49 @@ and preserved by the client across retries.
 
 An authenticated user can edit only authorized projects, role restrictions are enforced, and a publisher can publish through the workbench in development. Production enablement and the deferred items remain open.
 
-### W5: Release signing, CLI, and generation
+### W5: Signed token release, CLI, and generation
 
-This week delivers the complete publish-to-generation vertical slice.
+This week delivers the publish-to-token-artifact vertical slice. Component registration and document-template generation remain outside W5. Their stored snapshot data is retained, but the CLI does not interpret or generate from it.
 
 #### Build
 
-- Add the `GET /api/releases/:releaseId` route (session-authenticated) and a published-release API containing token definitions, references, token-type hierarchy data, components, and templates.
-- Keep source-code component-token usage claims out of release data.
-- Canonicalize release JSON and sign it with Ed25519.
-- Create `apps/cli` with `dso pull` and `dso generate`.
-- Add the deferred API-key-authenticated published-release download flow for the CLI, including project, scope, expiration, and revocation checks.
-- Add admin-only API-key create/revoke routes (CSRF-protected, audited). Return API-key secrets only once and store only hashes.
-- Validate API-key identifier, hash, project, scope, expiration, and revocation.
-- Require HTTPS outside local development; the CLI must never connect to PostgreSQL.
-- Verify signatures before generation and stop on failure.
-- Generate `tokens.json`, `tokens.css`, and component Markdown.
-- Resolve portable document paths below a configured output root and reject absolute paths, `..` traversal, unsafe separators, and shell execution.
-- Make generated output deterministic and keep credentials out of output.
+The three implementation days are ordered to avoid coupling downstream work to unfinished server contracts.
+
+##### Day 1: Release and API-key boundary
+
+- Add session and API-key authentication to `GET /api/releases/:releaseId`.
+- Accept CLI credentials in the `Authorization: Bearer` header as `dso_<keyIdentifier>_<secret>`.
+- Parse the identifier for lookup, hash and verify the secret, then verify the key's project, `release:read` scope, expiration, revocation, and release publication status.
+- Add admin-only, CSRF-protected, audited API-key create/revoke routes. Return the combined API-key string only during creation.
+
+##### Day 2: Signing and download
+
+- Add a shared release-protocol package for canonicalization, signing, and verification.
+- Canonicalize the complete published-release payload, excluding the signature object itself, and sign it with Ed25519.
+- Add `apps/cli` with `dso pull`. The CLI reads `DSO_API_KEY`, requires HTTPS outside local development, and never connects to PostgreSQL.
+- Load trusted public keys by key ID from a local trust file. Support multiple trusted key IDs. Do not take the trust decision from the API response.
+- Stop before cache or output changes if the schema, signature, or key ID is invalid.
+
+##### Day 3: Token generation and verification
+
+- Add a generator package and `dso generate`.
+- Generate only `tokens.json` and `tokens.css` from token types, tokens, and references in the validated signed snapshot.
+- Make output deterministic and independent of the local output root.
+- Prompt before replacing existing `tokens.json` or `tokens.css` in an interactive terminal. `--force` replaces only those owned artifacts without prompting.
+- In non-interactive execution, reject a conflict unless `--force` is present.
+- Stage both generated files and replace them atomically. Preserve unrelated files and avoid partial output.
+- Keep component and document-template generation, placeholder rendering, and release-driven `documentPath` handling out of W5.
 
 #### Tests
 
 - Invalid, expired, revoked, wrong-scope, and wrong-project keys fail.
-- Invalid signatures stop generation.
-- Valid releases work under different local output roots.
-- Unsafe paths fail, output is deterministic, and the CLI uses only the API.
+- Invalid signatures, modified payloads, and unknown key IDs stop pull or generation without changing cache or output.
+- Valid releases work under different local output roots and produce identical token artifacts.
+- Interactive conflicts require confirmation; non-interactive conflicts fail unless `--force` is present.
+- `--force` replaces only `tokens.json` and `tokens.css`; unrelated files remain.
+- A generation failure leaves both existing outputs unchanged.
+- API keys and signing secrets do not appear in logs or generated files.
+- The CLI uses only the API and has no PostgreSQL dependency.
 
 #### Done When
 
@@ -276,7 +296,18 @@ This workflow succeeds:
 ```text
 Workbench publish -> signed release API -> dso pull
 -> signature verification -> dso generate
+-> deterministic tokens.json and tokens.css
 ```
+
+The documented failure policy is verified: invalid credentials or signatures make no output changes; conflicting outputs require confirmation or `--force`; both token artifacts are committed together or not at all.
+
+#### Not in W5
+
+- Component Markdown generation and template placeholder rendering.
+- Workbench editing for components, templates, or token-type hierarchy.
+- Automatic component-token discovery or source-code scanning.
+- API-key management UI, signing-key infrastructure, HSMs, or automatic key rotation.
+- Rate limiting, CSP enforcement, production enablement, and final deployment evidence; these remain W6 work.
 
 ### W6: Performance, deployment security, documentation, and final verification
 
@@ -297,7 +328,7 @@ This week completes evidence, hardening, and the clean end-to-end run.
 - Complete setup, CLI, use-case, threat-model, and implemented/open/excluded
   risk documentation.
 - Run from an empty database: migrations, seed, login, editing, publishing,
-  API-key creation, CLI pull, signature verification, generation, output
+  API-key creation, CLI pull, signature verification, token generation, output
   inspection, tests, typecheck, lint, security scans, and smoke checks.
 
 #### Required final security tests
