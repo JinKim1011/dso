@@ -29,19 +29,18 @@ describe("Create API keys service integration", () => {
     }
 
     expect(parsed.value.keyIdentifier).toBe(response.apiKey.keyIdentifier);
+    expect(response).not.toHaveProperty("secret");
 
-    const stored = await database.query(
-      `SELECT key_hash, key_identifier
-     FROM api_keys
-     WHERE id = $1`,
-      [response.apiKey.id],
+    const stored = await findActiveApiKeyByIdentifier(
+      database,
+      parsed.value.keyIdentifier,
     );
 
-    expect(stored.rows[0]).not.toHaveProperty("secret");
-    expect(stored.rows[0].key_hash).toBeTruthy();
-    expect(stored.rows[0].key_hash).not.toBe(response.credential);
-
-    expect(stored.rows[0].key_hash).toBe(hashApiKey(parsed.value.secret));
+    expect(stored).toMatchObject({
+      id: response.apiKey.id,
+      keyIdentifier: response.apiKey.keyIdentifier,
+    });
+    expect(stored?.keyHash).toBe(hashApiKey(parsed.value.secret));
   });
 
   it("rejects an editor from creating an API key", async () => {
