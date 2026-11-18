@@ -1,5 +1,5 @@
 import { seedProject } from "@repo/application/fixtures";
-import { getPublishedRelease } from "@repo/application/services/published-releases";
+import { getPublishedReleaseForSession } from "@repo/application/services/published-releases";
 import { publishStagedChanges } from "@repo/application/services/staged-publishing";
 import { listTokenReferencesByProjectId } from "@repo/db/repositories/references";
 import { insertRelease } from "@repo/db/repositories/releases";
@@ -25,7 +25,7 @@ describe("Publising release service integration", () => {
     await insertRelease(database, draft);
 
     await expect(
-      getPublishedRelease(database, fixture.context, draft.id),
+      getPublishedReleaseForSession(database, fixture.context, draft.id),
     ).rejects.toMatchObject({
       code: "resource-not-found",
     });
@@ -70,7 +70,7 @@ describe("Publising release service integration", () => {
           slot: "light",
         },
       ]);
-      const snapshot = await getPublishedRelease(
+      const snapshot = await getPublishedReleaseForSession(
         database,
         fixture.context,
         result.release.id,
@@ -132,12 +132,12 @@ describe("Publising release service integration", () => {
       const second = results.find((result) => result.release.version === "2");
       expect(first).toBeDefined();
       expect(second).toBeDefined();
-      const firstSnapshot = await getPublishedRelease(
+      const firstSnapshot = await getPublishedReleaseForSession(
         database,
         fixture.context,
         first!.release.id,
       );
-      const secondSnapshot = await getPublishedRelease(
+      const secondSnapshot = await getPublishedReleaseForSession(
         database,
         fixture.context,
         second!.release.id,
@@ -390,7 +390,11 @@ describe("Publising release service integration", () => {
       ],
     });
 
-    const response = await getPublishedRelease(database, fixture.context, release.id);
+    const response = await getPublishedReleaseForSession(
+      database,
+      fixture.context,
+      release.id,
+    );
 
     const serialized = JSON.stringify(response);
 
@@ -414,7 +418,7 @@ describe("Publising release service integration", () => {
       ],
     });
 
-    const beforeChanges = await getPublishedRelease(
+    const beforeChanges = await getPublishedReleaseForSession(
       database,
       fixture.context,
       release.id,
@@ -429,7 +433,11 @@ describe("Publising release service integration", () => {
       [fixture.project.id],
     );
 
-    const afterChanges = await getPublishedRelease(database, fixture.context, release.id);
+    const afterChanges = await getPublishedReleaseForSession(
+      database,
+      fixture.context,
+      release.id,
+    );
 
     expect(afterChanges.tokenTypes).toEqual(beforeChanges.tokenTypes);
     expect(afterChanges.tokens).toEqual(beforeChanges.tokens);

@@ -37,7 +37,7 @@ Published release API response
 ## Authentication
 
 > **Current delivery status:** The response contract is defined in W3 and the
-> `getPublishedRelease` service (session-authorized, published releases only)
+> `getPublishedReleaseForSession` service (session-authorized, published releases only)
 > exists, but the `GET /api/releases/:releaseId` route is not implemented yet.
 > Both session-authenticated workbench reads and CLI API-key authentication are
 > delivered in W5 with release signing and the CLI. Until then, this endpoint
