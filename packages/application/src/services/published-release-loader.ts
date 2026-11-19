@@ -1,5 +1,5 @@
 import { ResourceNotFoundError } from "@repo/application/errors";
-import { PublishedReleaseResponse } from "@repo/contracts/operation";
+import type { PublishedReleaseResponse } from "@repo/contracts/operation";
 import type { Release } from "@repo/contracts/type";
 import { findReleaseSnapshot } from "@repo/db/repositories/release-snapshots";
 import { findReleaseById } from "@repo/db/repositories/releases";
@@ -29,6 +29,10 @@ export async function loadPublishedRelease(
   return {
     schemaVersion: 1,
     release,
-    ...snapshot,
+    tokenTypes: snapshot.tokenTypes,
+    tokens: snapshot.tokens,
+    references: snapshot.references,
+    components: snapshot.components,
+    templates: snapshot.templates,
   };
 }
