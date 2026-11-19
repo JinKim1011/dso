@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@repo/ui", "@repo/contracts"],
+  transpilePackages: ["@repo/ui", "@repo/contracts", "@repo/release-protocol"],
   async headers() {
     const csp = [
       "default-src 'self'",
