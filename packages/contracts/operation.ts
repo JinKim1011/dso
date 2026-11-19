@@ -88,6 +88,16 @@ export type PublishedReleaseResponse = {
   release: Release;
 } & PublishedReleaseSnapshot;
 
+export type ReleaseSignature = {
+  algorithm: "Ed25519";
+  keyId: string;
+  value: string;
+};
+
+export type SignedPublishedReleaseResponse = PublishedReleaseResponse & {
+  signature: ReleaseSignature;
+};
+
 export type PublishedReleaseSnapshot = {
   tokenTypes: TokenType[];
   tokens: Token[];
