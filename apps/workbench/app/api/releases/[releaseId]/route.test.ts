@@ -1,4 +1,5 @@
 import { getBearerApiKeyCredential } from "@/server/bearer-authentication";
+import { getReleaseSigningConfiguration } from "@/server/config";
 import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
 import {
@@ -7,6 +8,8 @@ import {
 } from "@repo/application/errors";
 import { downloadReleaseWithApiKey } from "@repo/application/services/download-release";
 import { getPublishedReleaseForSession } from "@repo/application/services/published-releases";
+import { verifyRelease } from "@repo/release-protocol/verify";
+import { generateKeyPairSync } from "node:crypto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "./route";
 
@@ -15,6 +18,7 @@ vi.mock("@/server/bearer-authentication", () => ({
 }));
 vi.mock("@/server/current-session", () => ({ getCurrentSession: vi.fn() }));
 vi.mock("@/server/database", () => ({ getDatabasePool: vi.fn() }));
+vi.mock("@/server/config", () => ({ getReleaseSigningConfiguration: vi.fn() }));
 vi.mock("@repo/application/services/download-release", () => ({
   downloadReleaseWithApiKey: vi.fn(),
 }));
@@ -44,6 +48,8 @@ const response = {
   components: [],
   templates: [],
 };
+const signingKeyPair = generateKeyPairSync("ed25519");
+const signingKeyId = "release-key-test";
 
 function routeRequest(headers: Record<string, string> = {}): Request {
   return new Request(`https://workbench.example.test/api/releases/${releaseId}`, {
@@ -62,6 +68,10 @@ describe("GET /api/releases/:releaseId", () => {
     vi.mocked(getBearerApiKeyCredential).mockReturnValue(credential);
     vi.mocked(getPublishedReleaseForSession).mockResolvedValue(response);
     vi.mocked(downloadReleaseWithApiKey).mockResolvedValue(response);
+    vi.mocked(getReleaseSigningConfiguration).mockReturnValue({
+      keyId: signingKeyId,
+      privateKey: signingKeyPair.privateKey,
+    });
   });
 
   afterEach(() => vi.restoreAllMocks());
@@ -71,10 +81,20 @@ describe("GET /api/releases/:releaseId", () => {
     const incoming = routeRequest({ authorization: `Bearer ${credential}` });
 
     const result = await invoke(incoming);
+    const body = await result.json();
 
     expect(result.status).toBe(200);
     expect(result.headers.get("cache-control")).toBe("no-store");
-    expect(await result.json()).toEqual(response);
+    expect(body).toMatchObject(response);
+    expect(body.signature).toMatchObject({
+      algorithm: "Ed25519",
+      keyId: signingKeyId,
+    });
+    expect(
+      verifyRelease(body, {
+        [signingKeyId]: signingKeyPair.publicKey,
+      }),
+    ).toBe(true);
     expect(getPublishedReleaseForSession).toHaveBeenCalledWith(
       getDatabasePool(),
       context,
@@ -86,8 +106,18 @@ describe("GET /api/releases/:releaseId", () => {
 
   it("uses the parsed Bearer credential when no session is available", async () => {
     const incoming = routeRequest({ authorization: `Bearer ${credential}` });
+    const before = structuredClone(response);
 
-    expect((await invoke(incoming)).status).toBe(200);
+    const result = await invoke(incoming);
+    const body = await result.json();
+
+    expect(result.status).toBe(200);
+    expect(body).toMatchObject(response);
+    expect(body.signature).toMatchObject({
+      algorithm: "Ed25519",
+      keyId: signingKeyId,
+    });
+    expect(response).toEqual(before);
     expect(getBearerApiKeyCredential).toHaveBeenCalledWith(incoming);
     expect(downloadReleaseWithApiKey).toHaveBeenCalledWith(
       getDatabasePool(),
@@ -110,6 +140,7 @@ describe("GET /api/releases/:releaseId", () => {
       error: { code: "invalid-api-key-credential" },
     });
     expect(downloadReleaseWithApiKey).not.toHaveBeenCalled();
+    expect(getReleaseSigningConfiguration).not.toHaveBeenCalled();
   });
 
   it("maps inaccessible session releases to 404", async () => {
@@ -163,5 +194,45 @@ describe("GET /api/releases/:releaseId", () => {
     expect(result.status).toBe(500);
     expect(body).toMatchObject({ ok: false, error: { code: "internal-error" } });
     expect(JSON.stringify(body)).not.toContain(credential);
+  });
+
+  it("maps signing configuration failures to a generic 500 response", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(getReleaseSigningConfiguration).mockImplementation(() => {
+      throw new Error("private key location: /secret/release-key.pem");
+    });
+
+    const result = await invoke();
+    const body = await result.json();
+
+    expect(result.status).toBe(500);
+    expect(body).toMatchObject({ ok: false, error: { code: "internal-error" } });
+    expect(JSON.stringify(body)).not.toContain("private key");
+    expect(JSON.stringify(body)).not.toContain("/secret/");
+  });
+
+  it("rejects unsigned payloads that exceed the response limit", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(downloadReleaseWithApiKey).mockResolvedValue({
+      ...response,
+      components: [
+        {
+          id: "00000000-0000-4000-8000-000000000005",
+          projectId: response.release.projectId,
+          name: "Large",
+          slug: "large",
+          description: "x".repeat(5 * 1024 * 1024),
+          documentPath: "large.md",
+        },
+      ],
+    });
+
+    const result = await invoke();
+
+    expect(result.status).toBe(500);
+    expect(await result.json()).toMatchObject({
+      ok: false,
+      error: { code: "internal-error" },
+    });
   });
 });
