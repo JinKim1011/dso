@@ -38,3 +38,12 @@ export function loadSecurityEnvironment(env: NodeJS.ProcessEnv): SecurityEnviron
     sessionCookieName: env.SESSION_COOKIE_NAME ?? "dso_session",
   };
 }
+
+export function loadReleaseSigningEnvironment(
+  env: NodeJS.ProcessEnv,
+): ReleaseSigningEnvironment {
+  return {
+    keyId: env.DSO_RELEASE_SIGNING_KEY_ID,
+    privateKey: env.DSO_RELEASE_SIGNING_PRIVATE_KEY,
+  };
+}
