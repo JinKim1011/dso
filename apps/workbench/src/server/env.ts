@@ -4,6 +4,11 @@ export type SecurityEnvironment = {
   sessionCookieName: string;
 };
 
+export type ReleaseSigningEnvironment = {
+  keyId: string | undefined;
+  privateKey: string | undefined;
+};
+
 function loadNodeEnvironment(value: string | undefined): SecurityEnvironment["nodeEnv"] {
   if (value === "production") {
     return "production";
