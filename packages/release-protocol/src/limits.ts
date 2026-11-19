@@ -1,4 +1,5 @@
 export const MAX_RELEASE_BYTES = 5 * 1024 * 1024;
+export const MAX_RELEASE_RESPONSE_BYTES = 5 * 1024 * 1024;
 export const MAX_RELEASE_KEY_ID_BYTES = 128;
 export const ED25519_SIGNATURE_BYTES = 64;
 export const ED25519_SIGNATURE_BASE64URL_LENGTH = 86;
@@ -7,6 +8,26 @@ export function assertReleaseSize(serialized: string): void {
   if (Buffer.byteLength(serialized, "utf8") > MAX_RELEASE_BYTES) {
     throw new RangeError(
       `Canonical release exceeds the ${MAX_RELEASE_BYTES}-byte limit.`,
+    );
+  }
+}
+
+export function assertResponseSize(value: unknown): void {
+  let serialized: string | undefined;
+
+  try {
+    serialized = JSON.stringify(value);
+  } catch {
+    throw new TypeError("Release response must be valid JSON.");
+  }
+
+  if (serialized === undefined) {
+    throw new TypeError("Release response must be a JSON object.");
+  }
+
+  if (Buffer.byteLength(serialized, "utf8") > MAX_RELEASE_RESPONSE_BYTES) {
+    throw new RangeError(
+      `Release response exceeds the ${MAX_RELEASE_RESPONSE_BYTES}-byte limit.`,
     );
   }
 }
