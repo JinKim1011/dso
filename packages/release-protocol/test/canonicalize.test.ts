@@ -125,7 +125,7 @@ describe("canonicalizeRelease", () => {
       signature: {
         algorithm: "Ed25519",
         keyId: "key-1",
-        value: Buffer.alloc(64).toString("base64"),
+        value: Buffer.alloc(64).toString("base64url"),
       },
     };
 
