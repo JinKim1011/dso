@@ -18,7 +18,6 @@ Find relevant reads in:
 ## 1. Start PostgreSQL
 
 Start the existing container:
-ㅇ
 
 ```bash
 docker start dso-postgres
@@ -77,6 +76,14 @@ The signing private key must be an Ed25519 PKCS#8 PEM value. Represent newlines 
 
 ## 4. Start the Workbench
 
+Install workspace dependencies once after a clean checkout:
+
+```bash
+npm install
+```
+
+Start the full development workflow:
+
 ```bash
 npm run dev
 ```
@@ -84,6 +91,13 @@ npm run dev
 Open `http://localhost:3000` and log in with a seeded email and the password supplied to `DSO_SEED_USER_PASSWORD`.
 
 Restart the development server after environment changes.
+
+`@repo/release-protocol` exposes TypeScript source under the resolver's
+`development` condition and JavaScript from `dist` under the default condition.
+Next.js and Vitest therefore use the source implementation during Workbench
+development and tests; a prior protocol build is not required after a clean
+checkout. Production CLI and Workbench builds continue to use generated
+JavaScript.
 
 ## Database Tests
 
@@ -99,6 +113,18 @@ Run the database integration suite:
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso \
 TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso_test \
 npm --workspace @repo/db test
+```
+
+Run the Workbench route tests without prebuilding the release-protocol package:
+
+```bash
+npm --workspace workbench test
+```
+
+The Turbo production build still builds workspace dependencies first:
+
+```bash
+npm run build --filter=workbench
 ```
 
 Seed validation can be run separately:
