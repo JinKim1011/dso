@@ -19,12 +19,12 @@ type PullDependencyOverrides = {
   -readonly [Key in keyof PullDependencies]?: PullDependencies[Key];
 };
 
-function envelope(): SignedPublishedReleaseResponse {
+function envelope(id = releaseId): SignedPublishedReleaseResponse {
   return createSignedReleaseEnvelope(
     {
       schemaVersion: 1,
       release: {
-        id: releaseId,
+        id,
         projectId: "00000000-0000-4000-8000-000000000002",
         version: "1",
         status: "published",
@@ -111,6 +111,34 @@ describe("pull command", () => {
     });
     expect(deps.verify).toHaveBeenCalledOnce();
     expect(JSON.parse(await readFile(path, "utf8"))).toEqual(envelope());
+  });
+
+  it("accepts case-insensitive UUID matching", async () => {
+    const cacheDirectory = await directory();
+    const requestedReleaseId = releaseId.toUpperCase();
+    const deps = dependencies(cacheDirectory);
+
+    await runPull(["--release", requestedReleaseId], deps);
+
+    expect(deps.writeCache).toHaveBeenCalledOnce();
+  });
+
+  it("rejects an authentic envelope for a different release", async () => {
+    const cacheDirectory = await directory();
+    const cachePath = join(cacheDirectory, `${releaseId}.json`);
+    const previous = Buffer.from("previous-cache-bytes\n");
+    await writeFile(cachePath, previous);
+    const substituted = envelope("00000000-0000-4000-8000-000000000099");
+    const deps = dependencies(cacheDirectory, {
+      fetchRelease: vi.fn().mockResolvedValue(substituted),
+      verify: vi.fn().mockReturnValue(true),
+    });
+
+    await expect(runPull(["--release", releaseId], deps)).rejects.toThrow(
+      "signed release could not be verified",
+    );
+    expect(await readFile(cachePath)).toEqual(previous);
+    expect(deps.writeCache).not.toHaveBeenCalled();
   });
 
   it.each(["network", "malformed", "verification", "unknown-key"])(
