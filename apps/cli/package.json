@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json && node -e \"require('node:fs').chmodSync('dist/cli.js', 0o755)\"",
-    "check-types": "tsc --noEmit -p tsconfig.json",
+    "check-types": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
     "pretest": "npm run build --workspace @repo/release-protocol && npm run build",
     "test": "vitest run",
     "test:watch": "vitest"
