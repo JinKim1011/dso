@@ -1,182 +1,102 @@
 # Design System Oracle (DSO)
 
-DSO (Design System Observer) is built on the paradigm of [Inference Design Systems](https://www.proofofconcept.pub/p/design-systems-are-now-inference). It focuses on turning traditional design tokens into a design language layer that AI agents can actually understand, combine, and act on. By capturing intent, roles, and relationships around tokens, DSO helps design systems move beyond static configuration and toward interfaces that respond intelligently to context.
+DSO is a database-backed workbench for authoring and publishing design-system resources. It stores token contracts, component registrations, token relationships, and Markdown templates in PostgreSQL.
 
-This monorepo contains the complete DSO implementation, including the interactive workbench for token management, reusable UI components, and shared configuration tools. After terminal initialization is completed, the workbench becomes the main place to build, edit, model, and validate token systems.
+The current release flow is:
 
-## Getting Started
+1. Author and stage token changes in the Workbench.
+2. Save and publish the changes as one atomic operation.
+3. Store an immutable release snapshot.
+4. Deliver a signed release through the HTTP API.
+5. Verify and generate `tokens.json` and `tokens.css` with the CLI.
+
+## Repository
+
+```text
+apps/
+  workbench/     Web application and API
+  cli/           Signed-release client and token generator
+  docs/          Product and concept documentation
+
+packages/
+  application/   Authentication, authorization, and application services
+  contracts/     Domain contracts and validation
+  db/            PostgreSQL repositories, migrations, and seed helpers
+  release-protocol/
+                  Canonicalization, signing, parsing, and verification
+  seed-data/     Development seed data
+  ui/            Shared UI
+
+database/
+  migrations/    PostgreSQL schema migrations
+
+docs/            Architecture, database, and security documentation
+scripts/         Repository scripts
+```
+
+## Technology
+
+- TypeScript, React, Next.js
+- PostgreSQL and `pg`
+- npm workspaces and Turborepo
+- Vitest
+- Argon2id for password hashing
+- Ed25519 for published-release signatures
+
+## Local development
 
 ### Prerequisites
 
 - Node.js 18+
 - npm 10.9.4+
+- Docker
 
-### Installation
-
-Clone the repository and install dependencies:
+### Install
 
 ```bash
-git clone <repository-url>
-cd dso-project
 npm install
 ```
 
-### Running Locally
+### Configure and run
 
-Start all apps and watch for changes:
+The Workbench requires PostgreSQL, seeded data, and environment configuration. Follow [Workbench local development](./docs/database/workbench-local-development.md) for the complete setup.
 
 ```bash
 npm run dev
 ```
 
-The workbench will be available at `http://localhost:3000`.
+The Workbench runs at `http://localhost:3000`. The documentation app runs at `http://localhost:3001`.
 
-### Running Specific Commands
-
-```bash
-npm run build         # Build all apps and packages
-npm run lint          # Lint all packages
-npm run check-types   # Validate types across the project
-npm run test          # Run tests
-npm run scan          # Scan and validate tokens and components
-```
-
-Database integration tests are destructive and require separate PostgreSQL
-databases:
+## Commands
 
 ```bash
-DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso \
-TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso_test \
-  npm --workspace @repo/db test
+npm run build
+npm run lint
+npm run check-types
+npm run format
 ```
 
-## Tech Stack
+Run package tests through the relevant workspace, for example:
 
-- **Monorepo**: Turbo, npm Workspaces
-- **Framework**: Next.js 16
-- **Language**: TypeScript
-- **UI Library**: React 19
-- **Styling**: Tailwind CSS
-- **Animation**: Framer Motion
-- **Node Graph**: XYFlow
-- **Testing**: Vitest with React Testing Library
-- **Linting**: ESLint
-- **Code Formatting**: Prettier
-
-## Project Structure
-
-```
-dso-project/
-├── apps/
-│   ├── docs/              # Documentation site
-│   ├── workbench/         # Interactive token management UI
-│
-├── packages/
-│   ├── ui/                # Shared React components
-│   ├── eslint-config/     # Shared ESLint configuration
-│   ├── typescript-config/ # Shared TypeScript configuration
-│
-├── scripts/               # Token scanning and validation scripts
-│
-└── [config files]         # package.json, turbo.json, etc.
+```bash
+npm --workspace @repo/db test
+npm --workspace @repo/application test
+npm --workspace @repo/release-protocol test
+npm --workspace @repo/cli test
+npm --workspace workbench test
 ```
 
-## Contribution Guide
+Database integration tests require separate development and test databases. See [migration verification](./docs/database/migration-verification.md).
 
-### Branch Naming
+## Documentation
 
-Use the following prefixes for branches:
+- [Workbench local development](./docs/database/workbench-local-development.md)
+- [ER model](./docs/database/er-model.md)
+- [Migration verification](./docs/database/migration-verification.md)
+- [Published release API contract](./docs/database/published-release-api.md)
+- [Threat model](./docs/security/threat-model.md)
+- [Implemented security measures](./docs/security/implemented-security-measures.md)
 
-- `feat/` — New features
-- `test/` — Adding or updating tests
-- `refactor/` — Code refactoring without behavior changes
-- `chore/` — Maintenance tasks, dependency updates, documentation
+## Status
 
-Example: `feat/add-gradient-tokens`, `chore/update-dependencies`
-
-### Pull Requests
-
-- Create a PR with a clear title and description
-- Link any related issues
-- Ensure tests pass and types are correct
-- One approval from maintainers(e.g. Copilot) before merge
-
-### Commit Messages
-
-Keep commits focused and descriptive:
-
-- Use present tense: "Add feature" not "Added feature"
-- Be specific: "Fix color token validation" not "Fix bug"
-- Reference scope in parentheses: `feat(component-name):`
-
-Example:
-
-```
-feat(token-form): add gradient token type support
-```
-
-## Architecture
-
-```mermaid
-graph TB
-  subgraph "Monorepo Structure"
-    subgraph "Apps"
-      Workbench["Workbench<br/>Token Management UI"]
-      Docs["Documentation<br/>Concept & Guides"]
-    end
-
-    subgraph "Packages"
-      UI["UI Components<br/>Shared React Library"]
-      ESLint["ESLint Config<br/>Lint Rules"]
-      TS["TypeScript Config<br/>Type Settings"]
-    end
-
-    subgraph "Core"
-      Manifests["Design Token Manifests<br/>Schema & Metadata"]
-      Scripts["Validation Scripts<br/>Token & Component Scanning"]
-    end
-  end
-
-  subgraph "Token Management Layer"
-    TokenEditor["Token Editor<br/>Create & Edit"]
-    TokenForms["Dynamic Forms<br/>Color, Typography, etc."]
-    TokenValidation["Token Validation<br/>Schema Checking"]
-  end
-
-  subgraph "Schema & Staging"
-    Schema["Schema View<br/>Intent, Axes, Relationships"]
-    Staged["Staged Changes<br/>Apply & Verify"]
-  end
-
-  subgraph "Future: AI Integration"
-    AIAgent["AI Agent<br/>Design Inference"]
-    Inference["Intent Recognition<br/>Context-Aware Generation"]
-  end
-
-  Workbench --> TokenEditor
-  TokenEditor --> TokenForms
-  TokenForms --> TokenValidation
-  Manifests --> TokenValidation
-  TokenValidation --> Schema
-  Schema --> Staged
-  UI --> Workbench
-  ESLint --> Workbench
-  TS --> Workbench
-
-  Manifests -.-> AIAgent
-  AIAgent -.-> Inference
-  Inference -.-> TokenForms
-
-  style AIAgent fill:#e1f5ff
-  style Inference fill:#e1f5ff
-```
-
-## Next Steps
-
-- Read [Concept Overview](./apps/docs/concept-overview.md) to understand DSO's core ideas
-- Check [Procedural Guide](./apps/docs/procedural.md) for step-by-step workflows
-- Visit the [Workbench README](./apps/workbench/README.md) for UI-specific details
-
----
-
-**Status**: Early stage. Features and APIs may change.
+DSO is under active development. The core publish-to-CLI token flow is implemented, while production enablement, deployment configuration, and operational security controls remain in progress.
