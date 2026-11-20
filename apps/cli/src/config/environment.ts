@@ -23,20 +23,32 @@ function requireApiKey(value: string | undefined): string {
 
 export function loadCliConfiguration(
   env: NodeJS.ProcessEnv = process.env,
-  options: { cwd?: string; home?: string } = {},
+  options: {
+    cwd?: string;
+    home?: string;
+    apiUrl?: string;
+    trustFilePath?: string;
+    cachePath?: string;
+  } = {},
 ): CliConfiguration {
-  const trustFilePath = env.DSO_RELEASE_TRUST_FILE
-    ? resolvePath(env.DSO_RELEASE_TRUST_FILE, options.cwd)
+  const trustFilePathValue = options.trustFilePath ?? env.DSO_RELEASE_TRUST_FILE;
+
+  const trustFilePath = trustFilePathValue
+    ? resolvePath(trustFilePathValue, options.cwd)
     : defaultTrustFilePath(env, options.home);
+
+  const cachePath = options.cachePath
+    ? resolvePath(options.cachePath, options.cwd)
+    : defaultCachePath(env, options.home);
 
   return {
     apiKey: requireApiKey(env.DSO_API_KEY),
     apiBaseUrl: formatApiBaseUrl(
-      parseApiUrl(env.DSO_API_URL, {
+      parseApiUrl(options.apiUrl ?? env.DSO_API_URL, {
         allowLoopbackHttp: env.NODE_ENV !== "production",
       }),
     ),
     trustFilePath,
-    cachePath: defaultCachePath(env, options.home),
+    cachePath,
   };
 }
