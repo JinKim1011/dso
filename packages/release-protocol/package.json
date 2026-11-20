@@ -6,6 +6,7 @@
   "exports": {
     "./*": {
       "types": "./src/*.ts",
+      "development": "./src/*.ts",
       "default": "./dist/*.js"
     }
   },
