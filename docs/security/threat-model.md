@@ -199,7 +199,10 @@ API -> CLI
   - Reject missing, invalid, expired, revoked, or incorrectly scoped API keys.
   - Stop when HTTPS is required but unavailable.
   - Stop when the API returns an unauthorized, invalid, incomplete, or oversized release.
-  - Stop generation when signature verification fails.
+  - Stop `dso pull` when signature verification fails, and stop generation when
+    it consumes a rejected release.
+  - Reject redirects, malformed JSON, invalid UTF-8, wrong content type, and
+    stream bodies above the release-response limit.
   - Do not update cache or generated files after a failed verification.
   - Display safe errors without printing API keys or authorization headers.
   - Handle timeouts and network failures without exposing response contents or secrets.
@@ -208,7 +211,18 @@ The API-key string is `dso_<keyIdentifier>_<secret>`. The CLI reads the complete
 
 The server looks up `keyIdentifier` and verifies a hash of `secret`; it never stores the combined value or plaintext secret. Operators rotate keys by issuing a replacement and explicitly revoking the previous key.
 
-The CLI trust file is independent of the release API. It maps trusted signing key IDs to public keys and may temporarily contain both old and new keys during rotation. The server response cannot establish trust in its own key.
+The CLI trust file is independent of the release API. It maps trusted signing
+key IDs to Ed25519 public keys and may temporarily contain both old and new
+keys during rotation. The server response cannot establish trust in its own
+key.
+
+The Workbench operator controls the private signing key and injects it through
+`DSO_RELEASE_SIGNING_PRIVATE_KEY` plus `DSO_RELEASE_SIGNING_KEY_ID`. CLI
+administrators independently distribute the corresponding public key and key
+ID through the trust file. For rotation, publish the new public key, retain
+both IDs in the trust file, switch Workbench signing to the new private key,
+then retire the old ID after the overlap period. Neither side should distribute
+a private signing key to the CLI.
 
 ### CLI -> Local repository
 
@@ -397,7 +411,7 @@ not implemented by DSO application code. Verification evidence:
   PostgreSQL.
 - **Planned:** Confirm that firewall or security-group rules deny unauthorized
   database connections.
-- **Planned:** Confirm that the CLI uses the Published-release API and has no
+- **Completed in code:** The CLI uses the Published-release API and has no
   PostgreSQL connection configuration or database dependency.
 - **Planned:** Confirm that development, migration, and production database
   access are separated where required.
@@ -408,15 +422,15 @@ not implemented by DSO application code. Verification evidence:
 
 - **Planned:** Confirm that browser-to-API traffic uses HTTPS in deployed
   environments.
-- **Planned:** Confirm that CLI-to-API traffic requires HTTPS outside local
+- **Completed in code:** CLI-to-API traffic requires HTTPS outside local
   development.
-- **Planned:** Confirm that the CLI rejects non-HTTPS API URLs outside local
+- **Completed in code:** The CLI rejects non-HTTPS API URLs outside local
   development.
 - **Planned:** Confirm that sessions, API keys, release data, and signatures
   are never sent over plain HTTP.
 - **Planned:** Verify that deployed TLS certificates are valid and not expired.
-- **Planned:** Verify that HTTP requests are redirected or rejected according
-  to the deployment policy.
+- **Completed in code:** The CLI explicitly rejects HTTP redirects rather
+  than forwarding Authorization data to another endpoint.
 - **Planned:** Confirm that authorization headers and session cookies are
   protected by the configured transport security.
 
@@ -448,8 +462,8 @@ recorded separately in `migration-verification.md`.
 - **Planned:** Deployment configuration injects secrets without committing them
   to source control.
 - **Planned:** Session expiration and API-key revocation are verified.
-- **Planned:** Local trust-file loading, multiple signing-key IDs, and
-  signing-key rotation overlap are documented and tested.
+- **Completed in code:** Local trust-file loading and multiple signing-key IDs
+  are implemented and tested. Rotation overlap remains an operator procedure.
 - **Planned:** Login, mutation, API-key, and release-download rate limits are
   configured and verified.
 - **Planned:** Logs are checked to confirm that credentials, authorization
@@ -538,6 +552,9 @@ The following decisions are now fixed by the completed schemas and the W5 plan:
 - API rate and response-size limits are enforced.
 - Network timeouts fail without exposing secrets.
 - API keys and authorization headers do not appear in logs.
+- Verified cache writes use a same-directory temporary file and atomic rename.
+- An end-to-end pull test confirms that a tampered response cannot replace
+  existing cache bytes.
 
 ### CLI and local repository security
 
