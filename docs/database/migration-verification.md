@@ -2,11 +2,11 @@
 
 ## Environment
 
-- Database: `dso_empty_test`
+- Database: `dso_test`
 - PostgreSQL client: `18.6`
 - PostgreSQL server: `16.15`
 - Starting state: empty database
-- Verification date: `2026-10-24`
+- Updated: `2026-11-20`
 - Migration directory: `database/migrations`
 
 ## Migration Result (empty database)
@@ -51,10 +51,14 @@ Applied migrations:
 - `api_keys`
 - `audit_events`
 
+### Migration metadata
+
+- `migration_history`
+
 ## Foreign-Key Relationships Verified
 
 - Status: completed
-- Result: All 19 expected domain and security foreign-key constraints were inspected, including the composite same-project foreign keys.
+- Result: all 20 expected domain and security foreign-key constraints were inspected, including the composite same-project foreign keys.
 
 ### Domain relationships
 
@@ -130,6 +134,11 @@ The composite foreign keys enforce that the referenced tokens belong to the same
 - Session expiration after creation
 - Account-level `login.succeeded` events require an account resource and no
   project or resource ID
+- Account-level `logout` events require an account resource and no project or
+  resource ID
+- Failed login events require an account resource and no project
+- Token-batch events require a token-batch resource, project ID, metadata, and
+  no resource ID
 - Project-scoped release events require a release resource, project ID, and
   resource ID
 - Project-scoped API-key events require an API-key resource, project ID, and
@@ -138,7 +147,7 @@ The composite foreign keys enforce that the referenced tokens belong to the same
 ## Indexes Verified
 
 - Status: completed
-- Result: all lookup and pk/fk indexes were present. (32 rows)
+- Result: all 34 indexes in the public schema were present.
 
 The database index list was inspected with `\di`.
 
@@ -154,11 +163,15 @@ Verified indexes include:
 - Session expiry lookup
 - Project-membership lookup
 - Audit-event lookup by project and creation time
+- API-key identifier lookup
+- Primary-key indexes for domain and security tables
+- Unique-constraint indexes
 
 A unique constraint may create the index used for API-key identifier lookup.
 
 ## Invalid-Row Tests
 
+- Migration suite: 44 database integration tests passed
 - Duplicate user email: completed
 - Duplicate project membership: completed
 - Invalid project-member role: completed
@@ -169,10 +182,38 @@ A unique constraint may create the index used for API-key identifier lookup.
 - Missing user referenced by a session: completed
 - Missing project referenced by an API key: completed
 - Invalid release state: completed
+- Missing release project: completed
+- Duplicate release version within a project: completed
+- Duplicate project slug: completed
+- Cross-project token type: completed
+- Cross-project token reference: completed
 - Invalid token reference: completed
+- Self-referencing token: completed
+- Invalid audit actors and scopes: completed
+- Invalid audit targets and metadata: completed
+- Unknown audit action: completed
+- Failed login and token-batch audit scopes: completed
 - Project-scoped audit event without required identifiers: completed
 - Login event with project or resource: completed
-- Unknown audit action: completed
+
+## Reproduction
+
+Create the test database once:
+
+```bash
+docker exec dso-postgres createdb -U postgres dso_test
+```
+
+Run the database integration suite:
+
+```bash
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso \
+TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso_test \
+npm --workspace @repo/db test
+```
+
+The suite applies migrations to the test database and executes the constraint,
+repository, seed, transaction, staged-write, and client integration tests.
 
 ## Notes
 
