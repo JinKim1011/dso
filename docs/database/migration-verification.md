@@ -6,6 +6,7 @@ Find relevant reads in:
 
 - [ER model](./er-model.md) for schema structure and rule ownership.
 - [published release API contract](./published-release-api.md) for the database snapshot exposed to clients.
+- [workbench local development](./workbench-local-development.md) for PostgreSQL and workbench setup.
 
 ## Latest verification
 
