@@ -221,7 +221,9 @@ Deferred:
 
 - Production enablement: login, logout, and publishing work only in development.
 - W6: rate limiting, CSP enforcement, and CSP violation reporting.
-- W5: published-release reads, API-key create/revoke routes, and the CLI `release:read` API-key flow. Services exist but no HTTP routes yet.
+- W5 Day 3: token generation and the `dso generate` command. Published-release
+  reads, API-key create/revoke routes, release signing, `dso pull`, trust-file
+  verification, and atomic verified caching are implemented.
 - After W5: workbench persistence for token-type hierarchy, components, and templates, including React Flow updates.
 - Request-ID duplicate-publish protection (see below).
 - Editor-only saving without publishing.
@@ -262,11 +264,18 @@ The three implementation days are ordered to avoid coupling downstream work to u
 
 ##### Day 2: Signing and download
 
-- Add a shared release-protocol package for canonicalization, signing, and verification.
-- Canonicalize the complete published-release payload, excluding the signature object itself, and sign it with Ed25519.
-- Add `apps/cli` with `dso pull`. The CLI reads `DSO_API_KEY`, requires HTTPS outside local development, and never connects to PostgreSQL.
-- Load trusted public keys by key ID from a local trust file. Support multiple trusted key IDs. Do not take the trust decision from the API response.
-- Stop before cache or output changes if the schema, signature, or key ID is invalid.
+- The shared release-protocol package canonicalizes, signs, parses, and
+  verifies Ed25519 release envelopes.
+- The complete published-release payload is canonicalized with the `signature`
+  object excluded and signed at the HTTP response boundary.
+- `apps/cli` provides `dso pull`. The CLI reads `DSO_API_KEY`, requires HTTPS
+  outside local loopback development, and has no PostgreSQL dependency.
+- Trusted public keys are loaded by key ID from the local trust file. The
+  trust file may contain multiple key IDs and the release response never
+  supplies a trusted public key.
+- Invalid schema, response, key ID, or signature data stops before cache
+  changes. Verified envelopes are written through a temporary file and atomic
+  rename.
 
 ##### Day 3: Token generation and verification
 
@@ -288,6 +297,8 @@ The three implementation days are ordered to avoid coupling downstream work to u
 - A generation failure leaves both existing outputs unchanged.
 - API keys and signing secrets do not appear in logs or generated files.
 - The CLI uses only the API and has no PostgreSQL dependency.
+- `dso pull` integration coverage verifies a signed HTTP response, trust lookup,
+  cache creation, and preservation of existing cache bytes after tampering.
 
 #### Done When
 
@@ -306,7 +317,9 @@ The documented failure policy is verified: invalid credentials or signatures mak
 - Component Markdown generation and template placeholder rendering.
 - Workbench editing for components, templates, or token-type hierarchy.
 - Automatic component-token discovery or source-code scanning.
-- API-key management UI, signing-key infrastructure, HSMs, or automatic key rotation.
+- API-key management UI, managed signing-key infrastructure, HSMs, or
+  automatic key rotation. Operators distribute public trust files and keep
+  private signing keys in deployment configuration.
 - Rate limiting, CSP enforcement, production enablement, and final deployment evidence; these remain W6 work.
 
 ### W6: Performance, deployment security, documentation, and final verification
