@@ -5,7 +5,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
       "env": ["DSO_RELEASE_SIGNING_KEY_ID", "DSO_RELEASE_SIGNING_PRIVATE_KEY"]
     },
     "lint": {
