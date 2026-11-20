@@ -1,6 +1,15 @@
 import { runCli } from "@repo/cli/cli";
 import { CliUsageError } from "@repo/cli/errors";
+import { execFile } from "node:child_process";
+import { mkdtemp, rm, symlink } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 import { describe, expect, it, vi } from "vitest";
+
+const execFileAsync = promisify(execFile);
+const builtCli = fileURLToPath(new URL("../dist/cli.js", import.meta.url));
 
 function io() {
   return {
@@ -64,4 +73,22 @@ describe("dso CLI", () => {
     await runCli(["pull", "--help"], io(), deps);
     expect(deps.runPull).not.toHaveBeenCalled();
   });
+
+  it.skipIf(process.platform === "win32")(
+    "runs main through an npm-style bin symlink",
+    async () => {
+      const directory = await mkdtemp(join(tmpdir(), "dso-bin-"));
+      const binPath = join(directory, "dso");
+
+      try {
+        await symlink(builtCli, binPath);
+        const result = await execFileAsync(process.execPath, [binPath, "--version"]);
+
+        expect(result.stdout).toBe("0.0.0\n");
+        expect(result.stderr).toBe("");
+      } finally {
+        await rm(directory, { recursive: true, force: true });
+      }
+    },
+  );
 });
