@@ -6,3 +6,12 @@ export class CliUsageError extends Error {
     this.name = "CliUsageError";
   }
 }
+
+export class CliConfigurationError extends Error {
+  readonly exitCode = 1;
+
+  constructor() {
+    super("The CLI configuration is invalid.");
+    this.name = "CliConfigurationError";
+  }
+}
