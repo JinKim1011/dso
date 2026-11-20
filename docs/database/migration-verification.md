@@ -5,6 +5,7 @@ This document records the latest evidence that the migrations create the expecte
 Find relevant reads in:
 
 - [ER model](./er-model.md) for schema structure and rule ownership.
+- [published release API contract](./published-release-api.md) for the database snapshot exposed to clients.
 
 ## Latest verification
 
