@@ -1,11 +1,7 @@
 #!/usr/bin/env node
 
+import { runPull } from "@repo/cli/commands/pull";
 import { CliUsageError } from "@repo/cli/errors";
-import {
-  loadCliConfiguration,
-  type CliConfiguration,
-} from "@repo/cli/config/environment";
-import { loadReleaseTrustFile } from "@repo/cli/config/trust-file";
 import { pathToFileURL } from "node:url";
 
 export type CliIo = {
@@ -14,13 +10,11 @@ export type CliIo = {
 };
 
 type CliDependencies = {
-  loadConfiguration: () => CliConfiguration;
-  loadTrustFile: (filePath: string) => Promise<ReadonlyMap<string, unknown>>;
+  runPull: (args: readonly string[]) => Promise<string>;
 };
 
 const defaultDependencies: CliDependencies = {
-  loadConfiguration: loadCliConfiguration,
-  loadTrustFile: loadReleaseTrustFile,
+  runPull,
 };
 
 const HELP = `Usage: dso <command> [options]
@@ -67,14 +61,8 @@ export async function runCli(
     return 0;
   }
 
-  if (commandArgs.length !== 1) {
-    throw new CliUsageError("Usage: dso pull <release-id>");
-  }
-
-  const configuration = dependencies.loadConfiguration();
-  await dependencies.loadTrustFile(configuration.trustFilePath);
-
-  io.stdout.write("Pull command recognized.\n");
+  const cacheFilePath = await dependencies.runPull(commandArgs);
+  io.stdout.write(`Release cached at ${cacheFilePath}\n`);
   return 0;
 }
 
