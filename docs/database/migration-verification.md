@@ -66,15 +66,12 @@ The direct token foreign keys enforce token existence.
 
 - `releases.project_id` references `projects.id`
 - `token_types.project_id` references `projects.id`
-- `token_types.(project_id, parent_type_id)` references
-  `token_types.(project_id, id)`
+- `token_types.(project_id, parent_type_id)` references `token_types.(project_id, id)`
 - `tokens.project_id` references `projects.id`
-- `tokens.(project_id, token_type_id)` references
-  `token_types.(project_id, id)`
+- `tokens.(project_id, token_type_id)` references `token_types.(project_id, id)`
 - `components.project_id` references `projects.id`
 - `document_templates.project_id` references `projects.id`
-- `document_templates.(project_id, component_id)` references
-  `components.(project_id, id)`
+- `document_templates.(project_id, component_id)` references `components.(project_id, id)`
 - `release_snapshots.release_id` references `releases.id`
 
 ### Token-reference relationships
@@ -84,10 +81,8 @@ The composite foreign keys enforce that the referenced tokens belong to the same
 - `token_references.project_id` references `projects.id`
 - `token_references.referencing_token_id` references `tokens.id`
 - `token_references.referenced_token_id` references `tokens.id`
-- `token_references.(project_id, referencing_token_id)` references
-  `tokens.(project_id, id)`
-- `token_references.(project_id, referenced_token_id)` references
-  `tokens.(project_id, id)`
+- `token_references.(project_id, referencing_token_id)` references `tokens.(project_id, id)`
+- `token_references.(project_id, referenced_token_id)` references `tokens.(project_id, id)`
 
 ### Security relationships
 
@@ -132,17 +127,12 @@ The composite foreign keys enforce that the referenced tokens belong to the same
   - `release:read`
 - API-key expiration after creation
 - Session expiration after creation
-- Account-level `login.succeeded` events require an account resource and no
-  project or resource ID
-- Account-level `logout` events require an account resource and no project or
-  resource ID
+- Account-level `login.succeeded` events require an account resource and no project or resource ID
+- Account-level `logout` events require an account resource and no project or resource ID
 - Failed login events require an account resource and no project
-- Token-batch events require a token-batch resource, project ID, metadata, and
-  no resource ID
-- Project-scoped release events require a release resource, project ID, and
-  resource ID
-- Project-scoped API-key events require an API-key resource, project ID, and
-  resource ID
+- Token-batch events require a token-batch resource, project ID, metadata, and no resource ID
+- Project-scoped release events require a release resource, project ID, and resource ID
+- Project-scoped API-key events require an API-key resource, project ID, and resource ID
 
 ## Indexes Verified
 
@@ -212,16 +202,12 @@ TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso_test \
 npm --workspace @repo/db test
 ```
 
-The suite applies migrations to the test database and executes the constraint,
-repository, seed, transaction, staged-write, and client integration tests.
+The suite applies migrations to the test database and executes the constraint, repository, seed, transaction, staged-write, and client integration tests.
 
 ## Notes
 
 - Project ownership and release publishing permissions are inferred from `project_members`. The user who performs a publish action must be recorded through `audit_events`.
-- Valid audit-event rows were accepted for account-level `login.succeeded`,
-  project-scoped `release.published`, `api_key.created`, and
-  `api_key.revoked` events. All audit-event tests were executed inside
-  transactions and rolled back.
+- Valid audit-event rows were accepted for account-level `login.succeeded`, project-scoped `release.published`, `api_key.created`, and `api_key.revoked` events. All audit-event tests were executed inside transactions and rolled back.
 - Release signatures, signing-key identifiers, immutable release contents, and application-level authorization tests are outside this migration verification record.
 - Runtime database roles and privileges will be managed through development/deployment database administration rather than application schema migrations.
   - A migration role with schema-definition privileges

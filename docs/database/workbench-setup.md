@@ -50,8 +50,7 @@ Run migrations and insert the current seed. The seed creates:
 - `admin@example.test` with the `admin` role
 - `nonmember@example.test` without project membership
 
-Choose one development password. The script applies the same Argon2id hash to
-all four seeded users and refuses to run without a password:
+Choose one development password. The script applies the same Argon2id hash to all four seeded users and refuses to run without a password:
 
 ```bash
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso \
@@ -84,16 +83,9 @@ DSO_RELEASE_SIGNING_KEY_ID=release-key-2026-01
 DSO_RELEASE_SIGNING_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n
 ```
 
-Replace `<project-id>` with the UUID returned in the previous step.
-`DSO_WORKBENCH_ORIGIN` is the trusted origin for the
-[CSRF policy](../security/threat-model.md#csrf-policy). It must be an origin
-without a path, and mutation requests fail without it. Login, logout, and
-publishing work only in development (`npm run dev`).
+Replace `<project-id>` with the UUID returned in the previous step. `DSO_WORKBENCH_ORIGIN` is the trusted origin for the [CSRF policy](../security/threat-model.md#csrf-policy). It must be an origin without a path, and mutation requests fail without it. Login, logout, and publishing work only in development (`npm run dev`).
 
-`DSO_RELEASE_SIGNING_PRIVATE_KEY` must be an Ed25519 PKCS#8 PEM value. In a
-single-line environment file, represent newlines as literal `\n`; the signing
-configuration converts them back before parsing the key. Never commit a real
-private key.
+`DSO_RELEASE_SIGNING_PRIVATE_KEY` must be an Ed25519 PKCS#8 PEM value. In a single-line environment file, represent newlines as literal `\n`; the signing configuration converts them back before parsing the key. Never commit a real private key.
 
 Distribute only the corresponding public key to CLI users in their trust file:
 
@@ -105,8 +97,7 @@ Distribute only the corresponding public key to CLI users in their trust file:
 }
 ```
 
-The Workbench signs at the HTTP response boundary. PostgreSQL stores the
-immutable unsigned snapshot only.
+The Workbench signs at the HTTP response boundary. PostgreSQL stores the immutable unsigned snapshot only.
 
 ## 6. Start the Workbench
 
@@ -114,21 +105,17 @@ immutable unsigned snapshot only.
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and log in with the seeded
-email and the password you chose.
+Open [http://localhost:3000](http://localhost:3000) and log in with the seeded email and the password you chose.
 
 Restart the dev server whenever `.env.local` changes.
 
-For a development CLI pull, set `DSO_API_KEY`, `DSO_API_URL`,
-`DSO_RELEASE_TRUST_FILE`, then run:
+For a development CLI pull, set `DSO_API_KEY`, `DSO_API_URL`, `DSO_RELEASE_TRUST_FILE`, then run:
 
 ```bash
 dso pull --release <release-uuid>
 ```
 
-The default CLI cache is `~/Library/Caches/dso` on macOS or
-`$XDG_CACHE_HOME/dso`/`$HOME/.cache/dso` on Linux. Use `--cache-dir` to override
-it. A failed signature or unknown key ID does not replace an existing cache.
+The default CLI cache is `~/Library/Caches/dso` on macOS or `$XDG_CACHE_HOME/dso`/`$HOME/.cache/dso` on Linux. Use `--cache-dir` to override it. A failed signature or unknown key ID does not replace an existing cache.
 
 ## 7. Run Database Tests
 
@@ -174,5 +161,4 @@ docker exec dso-postgres \
 npm run dev
 ```
 
-Update `DSO_WORKBENCH_PROJECT_ID` after every reseed because
-[`fixtureIds`](../../packages/contracts/fixtures/ids.ts) generates fresh UUIDs.
+Update `DSO_WORKBENCH_PROJECT_ID` after every reseed because [`fixtureIds`](../../packages/contracts/fixtures/ids.ts) generates fresh UUIDs.

@@ -134,8 +134,7 @@ erDiagram
   - document templates
 - A user can have zero or many sessions.
 - A user can belong to zero or many projects through `project_members`.
-- A project can have zero or many members, with at most one membership
-  per user.
+- A project can have zero or many members, with at most one membership per user.
 - A project can have zero or many project-scoped API keys.
 - A user can perform zero or many audit events.
 - A failed login event has no identified actor.
@@ -149,8 +148,7 @@ erDiagram
 - A token can also be referenced by zero or many other tokens.
   - Both directions are represented by `TOKEN_REFERENCES`.
   - `referencing_token_id` is the source and `referenced_token_id` is the target.
-  - References are identified by target token ID and slot, independently of
-    token names and CSS variables.
+  - References are identified by target token ID and slot, independently of token names and CSS variables.
   - A supported slot may have no reference.
 - A component can have zero or many document templates.
   - Each document template belongs to exactly one component.
@@ -165,74 +163,39 @@ Project ownership and release-publishing permission are inferred from `project_m
 
 ### Token graph writes
 
-The staged-publishing service expects an already parsed request and an
-authenticated application context. It checks project membership and the
-publisher role, then uses a `READ COMMITTED` transaction to lock the project row.
-The internal staged-save operation checks submitted `before` values and
-validates the proposed final graph before writing. The service saves changes,
-creates a release snapshot, publishes the release, and records both audit
-events in the same transaction. Errors roll back the entire batch. A batch with
-no actual changes is rejected. Release versions are project-scoped positive
-integer sequences.
+The staged-publishing service expects an already parsed request and an authenticated application context. It checks project membership and the publisher role, then uses a `READ COMMITTED` transaction to lock the project row. The internal staged-save operation checks submitted `before` values and validates the proposed final graph before writing. The service saves changes, creates a release snapshot, publishes the release, and records both audit events in the same transaction. Errors roll back the entire batch. A batch with no actual changes is rejected. Release versions are project-scoped positive integer sequences.
 
-`POST /api/releases/publish` accepts a JSON staged-change request. The route
-requires a session and the mutation CSRF
-policy; publishing remains disabled outside development. The service rechecks
-membership and publisher role on every request.
+`POST /api/releases/publish` accepts a JSON staged-change request. The route requires a session and the mutation CSRF policy; publishing remains disabled outside development. The service rechecks membership and publisher role on every request.
 
-The save request contains only changed token names/values and reference slots.
-It does not update `cssVar`. An omitted slot change leaves the current reference
-unchanged, a token ID assigns or replaces it, and `null` removes it. A batch
-may include no-op changes, but publishing requires at least one actual change.
-Semantic mode slots may be independently empty; a typography preview is
-available only when all three reference slots resolve, while each populated
-mode slot can be previewed independently.
+The save request contains only changed token names/values and reference slots. It does not update `cssVar`. An omitted slot change leaves the current reference unchanged, a token ID assigns or replaces it, and `null` removes it. A batch may include no-op changes, but publishing requires at least one actual change. Semantic mode slots may be independently empty; a typography preview is available only when all three reference slots resolve, while each populated mode slot can be previewed independently.
 
-Token, token-type, and reference writers that can run against an existing project
-must use the same project transaction protocol. The lock only coordinates writers
-that participate in it; repository calls and direct SQL do not acquire it
-automatically. 
+Token, token-type, and reference writers that can run against an existing project must use the same project transaction protocol. The lock only coordinates writers that participate in it; repository calls and direct SQL do not acquire it automatically.
 
 ### Audit-event scope
 
-`audit_events.user_id` is null only for failed logins. Account events have no
-project; a failed login may identify its target account in `resource_id`.
-Project events require a project ID. Release and API-key events also require a
-resource ID; token batches use metadata instead.
+`audit_events.user_id` is null only for failed logins. Account events have no project; a failed login may identify its target account in `resource_id`. Project events require a project ID. Release and API-key events also require a resource ID; token batches use metadata instead.
 
-The database does not use `resource_id` as a foreign key because it refers to
-different resource types. Application validation must check the target.
-The repository validates batch metadata; direct SQL bypasses that validation.
+The database does not use `resource_id` as a foreign key because it refers to different resource types. Application validation must check the target. The repository validates batch metadata; direct SQL bypasses that validation.
 
 ### Audit event catalogue
 
-Each event has a unique ID, an action, and a creation timestamp. The actor is
-the authenticated user, except for failed login attempts.
+Each event has a unique ID, an action, and a creation timestamp. The actor is the authenticated user, except for failed login attempts.
 
-| Action | Actor | Project | Resource type | Resource ID | Metadata |
-| --- | --- | --- | --- | --- | --- |
-| `login.succeeded` | User | None | `account` | None | None |
-| `login.failed` | Unknown | None | `account` | Target user ID, if found | None |
-| `logout` | User | None | `account` | None | None |
-| `token.batch_saved` | User | Required | `token_batch` | None | `tokenIds` |
-| `release.published` | User | Required | `release` | Release ID | None |
-| `api_key.created` | User | Required | `api_key` | API key ID | None |
-| `api_key.revoked` | User | Required | `api_key` | API key ID | None |
+| Action              | Actor   | Project  | Resource type | Resource ID              | Metadata   |
+| ------------------- | ------- | -------- | ------------- | ------------------------ | ---------- |
+| `login.succeeded`   | User    | None     | `account`     | None                     | None       |
+| `login.failed`      | Unknown | None     | `account`     | Target user ID, if found | None       |
+| `logout`            | User    | None     | `account`     | None                     | None       |
+| `token.batch_saved` | User    | Required | `token_batch` | None                     | `tokenIds` |
+| `release.published` | User    | Required | `release`     | Release ID               | None       |
+| `api_key.created`   | User    | Required | `api_key`     | API key ID               | None       |
+| `api_key.revoked`   | User    | Required | `api_key`     | API key ID               | None       |
 
-`login.failed` records rejected credentials, not malformed requests. A target
-user ID identifies the attempted account, not the actor. Return the same
-authentication failure whether the account exists or not.
+`login.failed` records rejected credentials, not malformed requests. A target user ID identifies the attempted account, not the actor. Return the same authentication failure whether the account exists or not.
 
-`tokenIds` contains 1–1,000 unique IDs of tokens actually changed. Do not
-record an event when a save changes nothing. No other metadata is allowed.
-Never record passwords, entered emails, session IDs, API key secrets or hashes,
-token names, or token values. Restrict access to audit records.
+`tokenIds` contains 1–1,000 unique IDs of tokens actually changed. Do not record an event when a save changes nothing. No other metadata is allowed. Never record passwords, entered emails, session IDs, API key secrets or hashes, token names, or token values. Restrict access to audit records.
 
-Commit successful actions and their audit records in the same transaction. If
-the audit write fails, roll back the action. Commit a failed-login event before
-returning the authentication failure; do not roll it back with the rejection.
-If that audit write fails, log a safe server error and return a generic 500.
-Logout is recorded only when the authenticated user's session is deleted.
+Commit successful actions and their audit records in the same transaction. If the audit write fails, roll back the action. Commit a failed-login event before returning the authentication failure; do not roll it back with the rejection. If that audit write fails, log a safe server error and return a generic 500. Logout is recorded only when the authenticated user's session is deleted.
 
 ## Constraint enforcement
 

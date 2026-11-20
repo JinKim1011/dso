@@ -164,41 +164,26 @@ This week establishes the foundation for every later integration.
 - Treat design-tokens-manifest.json as a legacy workbench compatibility input, not as the canonical database seed format.
 - Define and seed current domain records directly for users, projects, project memberships, token types, tokens, token references, components, document templates, and releases.
 - If legacy manifest data is reused during development, pass it through an explicit adapter that accepts only primitive and semantic kinds. Reject class-union, unknown, and other unsupported kinds before domain conversion.
-- Add shared schemas and types to `packages/contracts` for login, resource
-  writes, hierarchy changes, publishing, API keys, and release downloads.
-- Validate required fields, enum values, identifiers, unknown fields, token
-  references, token-type relationships, and collection sizes.
-- Reject self-references, duplicate references, cross-project references,
-  invalid parents, and cyclic token-type hierarchies.
-- Implement password hashing, database-backed sessions, expiration, logout,
-  opaque cookies, and the environment configuration needed by the web/API.
-- Implement `packages/db` with a pool, parameterized repositories,
-  transaction helpers, membership authorization, API-key verification, and
-  audit-event insertion.
-- Require authorization context for protected repository functions and keep
-  credentials, authorization headers, and sensitive payloads out of logs.
-- W3 implements password authentication, database-backed workbench sessions,
-  session expiration, logout, and session-based application authorization.
-  API-key-authenticated release downloads remain deferred to W5.
-- Keep the legacy manifest adapter tolerant for existing workbench
-  compatibility, but apply strict validation at the domain and persistence
-  boundaries. Database seed data must contain only supported token kinds and
-  must not contain real passwords, API-key secrets, signing keys, or other
-  credentials.
+- Add shared schemas and types to `packages/contracts` for login, resource writes, hierarchy changes, publishing, API keys, and release downloads.
+- Validate required fields, enum values, identifiers, unknown fields, token references, token-type relationships, and collection sizes.
+- Reject self-references, duplicate references, cross-project references, invalid parents, and cyclic token-type hierarchies.
+- Implement password hashing, database-backed sessions, expiration, logout, opaque cookies, and the environment configuration needed by the web/API.
+- Implement `packages/db` with a pool, parameterized repositories, transaction helpers, membership authorization, API-key verification, and audit-event insertion.
+- Require authorization context for protected repository functions and keep credentials, authorization headers, and sensitive payloads out of logs.
+- W3 implements password authentication, database-backed workbench sessions, session expiration, logout, and session-based application authorization. API-key-authenticated release downloads remain deferred to W5.
+- Keep the legacy manifest adapter tolerant for existing workbench compatibility, but apply strict validation at the domain and persistence boundaries. Database seed data must contain only supported token kinds and must not contain real passwords, API-key secrets, signing keys, or other credentials.
 
 #### Tests
 
 - Valid login creates a session; invalid login and expired sessions fail.
 - Invalid and oversized requests are rejected before repository calls.
 - Parameterized SQL resists injection payloads.
-- Unauthorized projects, invalid relationships, foreign keys, uniqueness
-  constraints, and transaction rollback behave correctly.
+- Unauthorized projects, invalid relationships, foreign keys, uniqueness constraints, and transaction rollback behave correctly.
 - Seed data contains no real secrets.
 
 #### Done When
 
-Authenticated and authorized repository operations work against PostgreSQL and
-all application database access goes through tested repositories.
+Authenticated and authorized repository operations work against PostgreSQL and all application database access goes through tested repositories.
 
 ### W4: Workbench integration and web security
 
@@ -221,9 +206,7 @@ Deferred:
 
 - Production enablement: login, logout, and publishing work only in development.
 - W6: rate limiting, CSP enforcement, and CSP violation reporting.
-- W5 Day 3: token generation and the `dso generate` command. Published-release
-  reads, API-key create/revoke routes, release signing, `dso pull`, trust-file
-  verification, and atomic verified caching are implemented.
+- W5 Day 3: token generation and the `dso generate` command. Published-release reads, API-key create/revoke routes, release signing, `dso pull`, trust-file verification, and atomic verified caching are implemented.
 - After W5: workbench persistence for token-type hierarchy, components, and templates, including React Flow updates.
 - Request-ID duplicate-publish protection (see below).
 - Editor-only saving without publishing.
@@ -232,10 +215,7 @@ Deferred:
 
 If publication commits but the response is lost, the workbench cannot determine whether that specific request succeeded. The draft is preserved and the UI does not automatically retry. Check the release and audit records before retrying; the workbench does not yet provide a release-history view. These records may help an investigation but cannot always link a release to the specific request.
 
-The staged `before` checks reject many stale retries but do not guarantee
-deduplication if project data later returns to its earlier state. A future
-improvement can use a stable request ID recorded atomically with publication
-and preserved by the client across retries.
+The staged `before` checks reject many stale retries but do not guarantee deduplication if project data later returns to its earlier state. A future improvement can use a stable request ID recorded atomically with publication and preserved by the client across retries.
 
 #### Tests
 
@@ -264,18 +244,11 @@ The three implementation days are ordered to avoid coupling downstream work to u
 
 ##### Day 2: Signing and download
 
-- The shared release-protocol package canonicalizes, signs, parses, and
-  verifies Ed25519 release envelopes.
-- The complete published-release payload is canonicalized with the `signature`
-  object excluded and signed at the HTTP response boundary.
-- `apps/cli` provides `dso pull`. The CLI reads `DSO_API_KEY`, requires HTTPS
-  outside local loopback development, and has no PostgreSQL dependency.
-- Trusted public keys are loaded by key ID from the local trust file. The
-  trust file may contain multiple key IDs and the release response never
-  supplies a trusted public key.
-- Invalid schema, response, key ID, or signature data stops before cache
-  changes. Verified envelopes are written through a temporary file and atomic
-  rename.
+- The shared release-protocol package canonicalizes, signs, parses, and verifies Ed25519 release envelopes.
+- The complete published-release payload is canonicalized with the `signature` object excluded and signed at the HTTP response boundary.
+- `apps/cli` provides `dso pull`. The CLI reads `DSO_API_KEY`, requires HTTPS outside local loopback development, and has no PostgreSQL dependency.
+- Trusted public keys are loaded by key ID from the local trust file. The trust file may contain multiple key IDs and the release response never supplies a trusted public key.
+- Invalid schema, response, key ID, or signature data stops before cache changes. Verified envelopes are written through a temporary file and atomic rename.
 
 ##### Day 3: Token generation and verification
 
@@ -297,8 +270,7 @@ The three implementation days are ordered to avoid coupling downstream work to u
 - A generation failure leaves both existing outputs unchanged.
 - API keys and signing secrets do not appear in logs or generated files.
 - The CLI uses only the API and has no PostgreSQL dependency.
-- `dso pull` integration coverage verifies a signed HTTP response, trust lookup,
-  cache creation, and preservation of existing cache bytes after tampering.
+- `dso pull` integration coverage verifies a signed HTTP response, trust lookup, cache creation, and preservation of existing cache bytes after tampering.
 
 #### Done When
 
@@ -317,9 +289,7 @@ The documented failure policy is verified: invalid credentials or signatures mak
 - Component Markdown generation and template placeholder rendering.
 - Workbench editing for components, templates, or token-type hierarchy.
 - Automatic component-token discovery or source-code scanning.
-- API-key management UI, managed signing-key infrastructure, HSMs, or
-  automatic key rotation. Operators distribute public trust files and keep
-  private signing keys in deployment configuration.
+- API-key management UI, managed signing-key infrastructure, HSMs, or automatic key rotation. Operators distribute public trust files and keep private signing keys in deployment configuration.
 - Rate limiting, CSP enforcement, production enablement, and final deployment evidence; these remain W6 work.
 
 ### W6: Performance, deployment security, documentation, and final verification
@@ -328,35 +298,23 @@ This week completes evidence, hardening, and the clean end-to-end run.
 
 #### Build and evidence
 
-- Run `EXPLAIN ANALYZE` on representative release, token-type,
-  token-reference, reverse-reference, hierarchy, and complete-release queries.
-- Document connection pooling, caching, read replicas, API statelessness,
-  larger releases, migration management, scaling limits, and raw SQL versus
-  ORM/data-mapper choices.
-- Document HTTPS, private PostgreSQL networking, separate migration/runtime
-  credentials, least privilege, request/rate limits, dependency scanning,
-  secret scanning, log redaction, key rotation, backups, and incident limits.
-- Complete the authentication, authorization, input-validation, TLS,
-  signing, key-management, web-threat, and secure-SDLC evidence.
-- Complete setup, CLI, use-case, threat-model, and implemented/open/excluded
-  risk documentation.
-- Run from an empty database: migrations, seed, login, editing, publishing,
-  API-key creation, CLI pull, signature verification, token generation, output
-  inspection, tests, typecheck, lint, security scans, and smoke checks.
+- Run `EXPLAIN ANALYZE` on representative release, token-type, token-reference, reverse-reference, hierarchy, and complete-release queries.
+- Document connection pooling, caching, read replicas, API statelessness, larger releases, migration management, scaling limits, and raw SQL versus ORM/data-mapper choices.
+- Document HTTPS, private PostgreSQL networking, separate migration/runtime credentials, least privilege, request/rate limits, dependency scanning, secret scanning, log redaction, key rotation, backups, and incident limits.
+- Complete the authentication, authorization, input-validation, TLS, signing, key-management, web-threat, and secure-SDLC evidence.
+- Complete setup, CLI, use-case, threat-model, and implemented/open/excluded risk documentation.
+- Run from an empty database: migrations, seed, login, editing, publishing, API-key creation, CLI pull, signature verification, token generation, output inspection, tests, typecheck, lint, security scans, and smoke checks.
 
 #### Required final security tests
 
 - Unpublished releases cannot be downloaded.
-- SQL injection, CSRF, path traversal, cross-project access, self-references,
-  duplicate references, invalid parents, cyclic hierarchies, and failed
-  transactions are rejected or rolled back.
+- SQL injection, CSRF, path traversal, cross-project access, self-references, duplicate references, invalid parents, cyclic hierarchies, and failed transactions are rejected or rolled back.
 - Logs and generated files contain no secrets.
 - Signed releases preserve token references and hierarchy data.
 
 #### Done When
 
-Performance measurements, deployment/security evidence, documentation, and the
-complete empty-database workflow are ready for the report and demonstration.
+Performance measurements, deployment/security evidence, documentation, and the complete empty-database workflow are ready for the report and demonstration.
 
 ### Level 1 Requirement Mapping
 

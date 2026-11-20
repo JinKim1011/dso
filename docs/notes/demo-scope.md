@@ -53,8 +53,7 @@ The interactive demo provides a safe, resettable way to explore DSO without crea
 7. The visitor starts the demonstration publish workflow.
 8. DSO creates a temporary demonstration release without modifying private project data.
 9. The visitor views the generated `tokens.json`, `tokens.css`, and component Markdown output.
-10. The visitor can reset the demo and return to the original seeded project.
-11. The visitor can request early access after completing or leaving the demo.
+10. The visitor can reset the demo and return to the original seeded project. 11. The visitor can request early access after completing or leaving the demo.
 
 ## Early access
 

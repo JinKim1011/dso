@@ -1,12 +1,10 @@
 # Published Release API Contract
 
-What complete, stable snapshot does a CLI need in order
-to generate local resources?
+What complete, stable snapshot does a CLI need in order to generate local resources?
 
 ## Purpose
 
-A published release is the versioned snapshot that the workbench makes
-available to the CLI. The response must represent:
+A published release is the versioned snapshot that the workbench makes available to the CLI. The response must represent:
 
 - token definitions
 - token-type hierarchy
@@ -45,10 +43,7 @@ The endpoint accepts either:
 - an authenticated workbench session for authorized project members; or
 - a project-scoped CLI API key with the `release:read` scope.
 
-The CLI uses the API-key flow and never connects directly to PostgreSQL. The
-API checks that the release exists, belongs to the credential's project, and
-has `status: "published"` before returning it. Unpublished releases are never
-downloadable.
+The CLI uses the API-key flow and never connects directly to PostgreSQL. The API checks that the release exists, belongs to the credential's project, and has `status: "published"` before returning it. Unpublished releases are never downloadable.
 
 ### Authorization
 
@@ -58,16 +53,14 @@ Workbench session access is authorized through `project_members`:
 - `publisher` members may publish releases.
 - `admin` members may publish releases and manage project API keys.
 
-CLI access is authorized through a project-scoped API key.
-The API key must:
+CLI access is authorized through a project-scoped API key. The API key must:
 
 - belong to the release's project;
 - have the `release:read` scope;
 - not be revoked; and
 - not be expired.
 
-The API verifies session membership and, for the API-key path, the API-key
-project scope before assembling the shared unsigned release response.
+The API verifies session membership and, for the API-key path, the API-key project scope before assembling the shared unsigned release response.
 
 The response does not include a `publishedBy` field. The application records the user who performs a publish action in `audit_events`.
 
@@ -93,11 +86,9 @@ The CLI reads the following settings:
 - `DSO_API_URL`: required API base URL
 - `DSO_RELEASE_TRUST_FILE`: optional local trust-file override
 
-Remote API URLs require HTTPS. Plain HTTP is accepted only for loopback hosts
-in non-production development. Redirects are rejected.
+Remote API URLs require HTTPS. Plain HTTP is accepted only for loopback hosts in non-production development. Redirects are rejected.
 
-The independently distributed trust file maps signing key IDs to Ed25519
-public keys:
+The independently distributed trust file maps signing key IDs to Ed25519 public keys:
 
 ```json
 {
@@ -107,11 +98,7 @@ public keys:
 }
 ```
 
-The Workbench receives the private key through
-`DSO_RELEASE_SIGNING_PRIVATE_KEY` and identifies it with
-`DSO_RELEASE_SIGNING_KEY_ID`. The corresponding public key and key ID are
-distributed to CLI consumers through the local trust file; they are not
-returned by the release API.
+The Workbench receives the private key through `DSO_RELEASE_SIGNING_PRIVATE_KEY` and identifies it with `DSO_RELEASE_SIGNING_KEY_ID`. The corresponding public key and key ID are distributed to CLI consumers through the local trust file; they are not returned by the release API.
 
 ## Success response
 
@@ -307,9 +294,7 @@ Show one realistic JSON example.
 
 ### `schemaVersion`
 
-The version of the published-release response schema. It changes when the
-meaning or structure of the response changes in a way that may require a
-consumer update.
+The version of the published-release response schema. It changes when the meaning or structure of the response changes in a way that may require a consumer update.
 
 ### `release`
 
@@ -321,8 +306,7 @@ Metadata for the immutable published snapshot:
 - `status`: must be `"published"` in a successful response
 - `publishedAt`: ISO 8601 timestamp for publication
 
-The release metadata identifies the snapshot; it does not describe the current
-mutable project state.
+The release metadata identifies the snapshot; it does not describe the current mutable project state.
 
 ### `signature`
 
@@ -332,16 +316,9 @@ The signature protects the canonical representation of the complete response exc
 - `keyId`: identifies the public key in the CLI's independently distributed local trust file.
 - `value`: base64url-encoded Ed25519 signature.
 
-The CLI rejects an unknown key ID, unsupported algorithm, modified payload, or
-invalid signature. The release API is not an authority for the public-key
-trust decision. During signing-key rotation, distribute the new public key
-first, retain both old and new IDs in the trust file, start signing with the
-new private key, then remove the old ID only after clients and retained caches
-no longer need it.
+The CLI rejects an unknown key ID, unsupported algorithm, modified payload, or invalid signature. The release API is not an authority for the public-key trust decision. During signing-key rotation, distribute the new public key first, retain both old and new IDs in the trust file, start signing with the new private key, then remove the old ID only after clients and retained caches no longer need it.
 
-Signature failure stops `dso pull` before cache output is changed. Cache files
-are written to `<cache-dir>/<release-id>.json` only after verification, using a
-temporary file and atomic rename.
+Signature failure stops `dso pull` before cache output is changed. Cache files are written to `<cache-dir>/<release-id>.json` only after verification, using a temporary file and atomic rename.
 
 ### `tokenTypes`
 
@@ -350,48 +327,34 @@ The token-type hierarchy. Each item contains:
 - `id`: stable token-type identifier
 - `projectId`: owning project
 - `category`: value category such as `color`, `typography`, `spacing`, `radius`, `motion`, or `shadow`
-- `name`: token-type name. Typography primitive types use the canonical names
-  `font-size`, `font-weight`, and `line-height`.
+- `name`: token-type name. Typography primitive types use the canonical names `font-size`, `font-weight`, and `line-height`.
 - `kind`: `"primitive"` or `"semantic"`
 - `parentTypeId`: parent type identifier, or `null` for a root type
 
 ### `tokens`
 
-The token definitions in the release. Each token points to a token type through
-`tokenTypeId`.
+The token definitions in the release. Each token points to a token type through `tokenTypeId`.
 
 - `name` is the token name within its type.
 - `cssVar` is the generated CSS custom-property name, when one exists.
 - `value` uses the domain value union.
 - For `color` and `shadow` tokens:
   - a `primitive` token uses `kind: "single"` with one direct string value;
-  - a `semantic` token uses `kind: "modes"` and references for its `light`
-    and `dark` slots.
+  - a `semantic` token uses `kind: "modes"` and references for its `light` and `dark` slots.
 - For `typography` tokens:
-  - a primitive `font-size`, `font-weight`, or `line-height` token uses
-    `kind: "single"` with one direct string value;
-  - a semantic typography token such as `body-md` uses `kind: "typography"`
-    with references for its `fontSize`, `fontWeight`, and `lineHeight` slots.
+  - a primitive `font-size`, `font-weight`, or `line-height` token uses `kind: "single"` with one direct string value;
+  - a semantic typography token such as `body-md` uses `kind: "typography"` with references for its `fontSize`, `fontWeight`, and `lineHeight` slots.
 - Other token categories use their category-specific value shape.
 
 ### `tokenReferences`
 
-Token-to-token dependency edges. Each edge contains the referencing token,
-referenced token, and the slot of the referencing semantic value.
+Token-to-token dependency edges. Each edge contains the referencing token, referenced token, and the slot of the referencing semantic value.
 
-Color and shadow semantic tokens use `light` and `dark` slots to reference
-same-category primitive tokens. The referenced primitive token supplies one
-`single` value for whichever mode slot points to it.
+Color and shadow semantic tokens use `light` and `dark` slots to reference same-category primitive tokens. The referenced primitive token supplies one `single` value for whichever mode slot points to it.
 
-Typography semantic tokens use `fontSize`, `fontWeight`, and `lineHeight`
-slots to reference the corresponding primitive typography types:
-`font-size`, `font-weight`, and `line-height`.
+Typography semantic tokens use `fontSize`, `fontWeight`, and `lineHeight` slots to reference the corresponding primitive typography types: `font-size`, `font-weight`, and `line-height`.
 
-Semantic color, shadow, and typography values contain only their `kind`. A slot is
-populated when a corresponding reference exists, and empty otherwise. Consumers
-resolve referenced IDs to primitive token values; semantic slots do not store
-literal values or CSS `var(...)` expressions. `cssVar` remains a separate token
-property.
+Semantic color, shadow, and typography values contain only their `kind`. A slot is populated when a corresponding reference exists, and empty otherwise. Consumers resolve referenced IDs to primitive token values; semantic slots do not store literal values or CSS `var(...)` expressions. `cssVar` remains a separate token property.
 
 ### `components`
 
@@ -425,38 +388,17 @@ The relationships are represented by IDs in normalized arrays for these reasons:
 }
 ```
 
-`tokenReferences` identifies the exact value slot when the referencing token has
-mode-specific values. For example, the `light` slot of
-`token_color_surface_default` references `token_color_base_neutral_0`, while
-the `dark` value references `token_color_base_neutral_900`.
+`tokenReferences` identifies the exact value slot when the referencing token has mode-specific values. For example, the `light` slot of `token_color_surface_default` references `token_color_base_neutral_0`, while the `dark` value references `token_color_base_neutral_900`.
 
-The same referencing token, referenced token, and slot combination may appear
-only once. The database also allows only one target for each referencing token
-and slot. A reference slot must be supported by the referencing token's value
-and token type.
-The API does not include a separate reverse-reference collection; consumers can
-derive reverse dependencies by indexing `tokenReferences`.
+The same referencing token, referenced token, and slot combination may appear only once. The database also allows only one target for each referencing token and slot. A reference slot must be supported by the referencing token's value and token type. The API does not include a separate reverse-reference collection; consumers can derive reverse dependencies by indexing `tokenReferences`.
 
-Token types own the hierarchy and tokens point to their type through
-`tokenTypeId`. Components and document templates are related by their
-component/template identifiers and are included as separate normalized
-collections.
+Token types own the hierarchy and tokens point to their type through `tokenTypeId`. Components and document templates are related by their component/template identifiers and are included as separate normalized collections.
 
-Each component registration identifies the component. Each document template
-identifies its component through `componentId` and contains the Markdown source
-used by the generator. The template is a per-component document definition; it
-does not contain source-code analysis or an inferred list of tokens used by the
-component. `components[].documentPath` is a portable path relative to the
-output root selected by the CLI or consuming repository. It must use `/`
-separators and must not be absolute or contain `..` path segments.
+Each component registration identifies the component. Each document template identifies its component through `componentId` and contains the Markdown source used by the generator. The template is a per-component document definition; it does not contain source-code analysis or an inferred list of tokens used by the component. `components[].documentPath` is a portable path relative to the output root selected by the CLI or consuming repository. It must use `/` separators and must not be absolute or contain `..` path segments.
 
 ## Excluded data
 
-The response does not claim to contain automatic source-code analysis of which
-components use which tokens. That analysis is outside the first release scope.
-It also does not contain an absolute or machine-specific output directory.
-Legacy source manifest kinds such as `class-union` and `unknown` are not part of
-the published domain contract; seed normalization will exclude or reject them.
+The response does not claim to contain automatic source-code analysis of which components use which tokens. That analysis is outside the first release scope. It also does not contain an absolute or machine-specific output directory. Legacy source manifest kinds such as `class-union` and `unknown` are not part of the published domain contract; seed normalization will exclude or reject them.
 
 The first CLI version also does not use release component registrations or document templates to determine local files. Its owned outputs are only `tokens.json` and `tokens.css`.
 
@@ -484,25 +426,15 @@ Expected cases:
 | `422`  | `RELEASE_INVALID`       | The stored release cannot satisfy the published contract.                 |
 | `429`  | `RATE_LIMITED`          | The caller exceeded the release-download limit.                           |
 
-The API must not expose whether an inaccessible release exists. Depending on
-the authorization policy, an unauthorized release may therefore be returned as
-`404` rather than `403`.
+The API must not expose whether an inaccessible release exists. Depending on the authorization policy, an unauthorized release may therefore be returned as `404` rather than `403`.
 
 ## Compatibility
 
-- The workbench uses an adapter to convert the published release domain
-  response into the existing `TokenGraphViewModel`; the two shapes are
-  intentionally different.
-- The API response's `value.kind` is part of the domain contract. The
-  workbench view model may adapt mode values to its existing view-oriented
-  shape.
-- The CLI stores the downloaded response with its `schemaVersion` and must
-  reject unsupported schema versions rather than silently guessing.
-- Adding optional fields is backward-compatible. Removing fields, changing
-  field meanings, or changing required value shapes requires a new schema
-  version or an explicitly compatible migration.
-- `documentPath` remains relative to the CLI-selected output root. A release
-  must never encode an absolute machine-specific output directory.
+- The workbench uses an adapter to convert the published release domain response into the existing `TokenGraphViewModel`; the two shapes are intentionally different.
+- The API response's `value.kind` is part of the domain contract. The workbench view model may adapt mode values to its existing view-oriented shape.
+- The CLI stores the downloaded response with its `schemaVersion` and must reject unsupported schema versions rather than silently guessing.
+- Adding optional fields is backward-compatible. Removing fields, changing field meanings, or changing required value shapes requires a new schema version or an explicitly compatible migration.
+- `documentPath` remains relative to the CLI-selected output root. A release must never encode an absolute machine-specific output directory.
 - The first version CLI does not interpret `documentPath`; component generation remains a later feature.
 - CLI trust keys come from a local trust file independently of this response.
 - The canonicalization and verification rules are shared between the server and CLI through a database-independent release-protocol package.
