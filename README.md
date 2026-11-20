@@ -10,6 +10,14 @@ The current release flow is:
 4. Deliver a signed release through the HTTP API.
 5. Verify and generate `tokens.json` and `tokens.css` with the CLI.
 
+## Implemented use cases
+
+- Authenticate Workbench users with database-backed sessions.
+- Stage, save, and publish authorized token changes atomically.
+- Store and serve immutable, signed release snapshots.
+- Download project-scoped releases with expiring, revocable API keys.
+- Verify release signatures and generate token artifacts with the CLI.
+
 ## Repository
 
 ```text
