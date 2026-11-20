@@ -1,11 +1,26 @@
 #!/usr/bin/env node
 
 import { CliUsageError } from "@repo/cli/errors";
+import {
+  loadCliConfiguration,
+  type CliConfiguration,
+} from "@repo/cli/config/environment";
+import { loadReleaseTrustFile } from "@repo/cli/config/trust-file";
 import { pathToFileURL } from "node:url";
 
 export type CliIo = {
   stdout: Pick<NodeJS.WriteStream, "write">;
   stderr: Pick<NodeJS.WriteStream, "write">;
+};
+
+type CliDependencies = {
+  loadConfiguration: () => CliConfiguration;
+  loadTrustFile: (filePath: string) => Promise<ReadonlyMap<string, unknown>>;
+};
+
+const defaultDependencies: CliDependencies = {
+  loadConfiguration: loadCliConfiguration,
+  loadTrustFile: loadReleaseTrustFile,
 };
 
 const HELP = `Usage: dso <command> [options]
@@ -24,6 +39,7 @@ Authentication:
 export async function runCli(
   args: readonly string[],
   io: CliIo = { stdout: process.stdout, stderr: process.stderr },
+  dependencies: CliDependencies = defaultDependencies,
 ): Promise<number> {
   const [command, ...commandArgs] = args;
 
@@ -50,6 +66,9 @@ export async function runCli(
   if (commandArgs.length !== 1) {
     throw new CliUsageError("Usage: dso pull <release-id>");
   }
+
+  const configuration = dependencies.loadConfiguration();
+  await dependencies.loadTrustFile(configuration.trustFilePath);
 
   io.stdout.write("Pull command recognized.\n");
   return 0;
