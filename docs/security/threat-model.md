@@ -446,10 +446,11 @@ security-test sections below. Those tests provide evidence for:
 - SQL-injection resistance, project isolation, data constraints, relationship
   validation, transaction rollback, safe database errors, and log redaction.
 
-**Planned:** Execute and record these application and database tests. Migration
-verification currently confirms the expected domain tables, constraints, and
-indexes; valid-row and invalid-row test evidence remains pending or is
-recorded separately in `migration-verification.md`.
+**Status:** Migration verification confirms the expected domain and security
+tables, constraints, indexes, and migration history. The database integration
+suite passes against PostgreSQL 16.15. Application-level authentication,
+authorization, and security-header testing remains planned where not covered
+by the database suite.
 
 ### Development and operations verification
 
