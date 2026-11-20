@@ -2,7 +2,8 @@
 
 import { runPull } from "@repo/cli/commands/pull";
 import { CliUsageError } from "@repo/cli/errors";
-import { pathToFileURL } from "node:url";
+import { realpathSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 export type CliIo = {
   stdout: Pick<NodeJS.WriteStream, "write">;
@@ -83,6 +84,11 @@ export async function main(
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  process.exitCode = await main();
+if (process.argv[1]) {
+  const entryPath = realpathSync(process.argv[1]);
+  const modulePath = realpathSync(fileURLToPath(import.meta.url));
+
+  if (entryPath === modulePath) {
+    process.exitCode = await main();
+  }
 }
