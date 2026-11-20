@@ -102,7 +102,21 @@ Workbench responses use these browser protections:
 
 #### Audit trail
 
-Record important actions and failed logins. Restrict access to audit records and exclude credentials, session IDs, token names, and token values. See the [audit event catalogue](../database/er-model.md#audit-event-catalogue).
+Record important actions and failed logins. Restrict access to audit records and exclude credentials, session IDs, token names, and token values.
+
+#### Audit event catalogue
+
+| Action              | Actor   | Project  | Resource type | Resource ID              | Metadata   |
+| ------------------- | ------- | -------- | ------------- | ------------------------ | ---------- |
+| `login.succeeded`   | User    | None     | `account`     | None                     | None       |
+| `login.failed`      | Unknown | None     | `account`     | Target user ID, if found | None       |
+| `logout`            | User    | None     | `account`     | None                     | None       |
+| `token.batch_saved` | User    | Required | `token_batch` | None                     | `tokenIds` |
+| `release.published` | User    | Required | `release`     | Release ID               | None       |
+| `api_key.created`   | User    | Required | `api_key`     | API key ID               | None       |
+| `api_key.revoked`   | User    | Required | `api_key`     | API key ID               | None       |
+
+Commit successful actions and their audit records in the same transaction. Commit a failed-login event before returning the authentication failure. If an audit write fails, roll back the action or return a generic server error according to the transaction policy. `tokenIds` contains only unique IDs for tokens actually changed. Do not record passwords, entered emails, session IDs, API-key secrets or hashes, token names, or token values.
 
 ### Workbench API -> PostgreSQL
 
