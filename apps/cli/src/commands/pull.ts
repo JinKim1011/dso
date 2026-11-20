@@ -77,6 +77,10 @@ export async function runPull(
     throw new ReleaseVerificationError();
   }
 
+  if (envelope.release.id.toLowerCase() !== options.releaseId.toLowerCase()) {
+    throw new ReleaseVerificationError();
+  }
+
   const cacheFilePath = releaseCachePath(configuration.cachePath, options.releaseId);
 
   await dependencies.writeCache(cacheFilePath, envelope);
