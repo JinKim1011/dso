@@ -80,6 +80,8 @@ DATABASE_URL=postgres://postgres:postgres@localhost:5432/dso
 DB_POOL_MAX=10
 DSO_WORKBENCH_PROJECT_ID=<project-id>
 DSO_WORKBENCH_ORIGIN=http://localhost:3000
+DSO_RELEASE_SIGNING_KEY_ID=release-key-2026-01
+DSO_RELEASE_SIGNING_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n
 ```
 
 Replace `<project-id>` with the UUID returned in the previous step.
@@ -87,6 +89,24 @@ Replace `<project-id>` with the UUID returned in the previous step.
 [CSRF policy](../security/threat-model.md#csrf-policy). It must be an origin
 without a path, and mutation requests fail without it. Login, logout, and
 publishing work only in development (`npm run dev`).
+
+`DSO_RELEASE_SIGNING_PRIVATE_KEY` must be an Ed25519 PKCS#8 PEM value. In a
+single-line environment file, represent newlines as literal `\n`; the signing
+configuration converts them back before parsing the key. Never commit a real
+private key.
+
+Distribute only the corresponding public key to CLI users in their trust file:
+
+```json
+{
+  "keys": {
+    "release-key-2026-01": "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n"
+  }
+}
+```
+
+The Workbench signs at the HTTP response boundary. PostgreSQL stores the
+immutable unsigned snapshot only.
 
 ## 6. Start the Workbench
 
@@ -98,6 +118,17 @@ Open [http://localhost:3000](http://localhost:3000) and log in with the seeded
 email and the password you chose.
 
 Restart the dev server whenever `.env.local` changes.
+
+For a development CLI pull, set `DSO_API_KEY`, `DSO_API_URL`,
+`DSO_RELEASE_TRUST_FILE`, then run:
+
+```bash
+dso pull --release <release-uuid>
+```
+
+The default CLI cache is `~/Library/Caches/dso` on macOS or
+`$XDG_CACHE_HOME/dso`/`$HOME/.cache/dso` on Linux. Use `--cache-dir` to override
+it. A failed signature or unknown key ID does not replace an existing cache.
 
 ## 7. Run Database Tests
 
