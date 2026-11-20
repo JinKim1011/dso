@@ -36,22 +36,18 @@ Published release API response
 
 ## Authentication
 
-> **Current delivery status:** The response contract is defined in W3 and the
-> `getPublishedReleaseForSession` service (session-authorized, published releases only)
-> exists, but the `GET /api/releases/:releaseId` route is not implemented yet.
-> Both session-authenticated workbench reads and CLI API-key authentication are
-> delivered in W5 with release signing and the CLI. Until then, this endpoint
-> must not expose release downloads through API keys.
+> **Delivery status:** `GET /api/releases/:releaseId` is implemented. Session and
+> API-key authorization continue to produce the same unsigned application
+> response, and the HTTP boundary adds the Ed25519 signed envelope.
 
-The target endpoint accepts either:
+The endpoint accepts either:
 
 - an authenticated workbench session for authorized project members; or
 - a project-scoped CLI API key with the `release:read` scope.
 
-The CLI will use the API-key flow and never connect directly to PostgreSQL.
-When the W5 API-key flow is implemented, the API must check that the release
-exists, belongs to the project associated with the credential, and has
-`status: "published"` before returning it. Unpublished releases are never
+The CLI uses the API-key flow and never connects directly to PostgreSQL. The
+API checks that the release exists, belongs to the credential's project, and
+has `status: "published"` before returning it. Unpublished releases are never
 downloadable.
 
 ### Authorization
@@ -62,7 +58,7 @@ Workbench session access is authorized through `project_members`:
 - `publisher` members may publish releases.
 - `admin` members may publish releases and manage project API keys.
 
-When enabled in W5, CLI access is authorized through a project-scoped API key.
+CLI access is authorized through a project-scoped API key.
 The API key must:
 
 - belong to the release's project;
@@ -70,9 +66,8 @@ The API key must:
 - not be revoked; and
 - not be expired.
 
-The API must verify session membership before assembling a W4 workbench
-response. In W5 it must additionally verify the API-key project scope before
-assembling a CLI response.
+The API verifies session membership and, for the API-key path, the API-key
+project scope before assembling the shared unsigned release response.
 
 The response does not include a `publishedBy` field. The application records the user who performs a publish action in `audit_events`.
 
@@ -89,6 +84,34 @@ Authorization: Bearer dso_<keyIdentifier>_<secret>
 ```
 
 Rotation is create-then-revoke: issue a replacement, update the consuming environment, verify it, and explicitly revoke the previous key.
+
+### CLI transport and local trust
+
+The CLI reads the following settings:
+
+- `DSO_API_KEY`: required combined API key
+- `DSO_API_URL`: required API base URL
+- `DSO_RELEASE_TRUST_FILE`: optional local trust-file override
+
+Remote API URLs require HTTPS. Plain HTTP is accepted only for loopback hosts
+in non-production development. Redirects are rejected.
+
+The independently distributed trust file maps signing key IDs to Ed25519
+public keys:
+
+```json
+{
+  "keys": {
+    "release-key-2026-01": "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n"
+  }
+}
+```
+
+The Workbench receives the private key through
+`DSO_RELEASE_SIGNING_PRIVATE_KEY` and identifies it with
+`DSO_RELEASE_SIGNING_KEY_ID`. The corresponding public key and key ID are
+distributed to CLI consumers through the local trust file; they are not
+returned by the release API.
 
 ## Success response
 
@@ -309,9 +332,16 @@ The signature protects the canonical representation of the complete response exc
 - `keyId`: identifies the public key in the CLI's independently distributed local trust file.
 - `value`: base64url-encoded Ed25519 signature.
 
-The CLI must reject an unknown key ID, unsupported algorithm, modified payload, or invalid signature. The release API must not be used as the authority for the public key trust decision. A trust file may contain multiple key IDs so old and new signing keys can overlap during rotation.
+The CLI rejects an unknown key ID, unsupported algorithm, modified payload, or
+invalid signature. The release API is not an authority for the public-key
+trust decision. During signing-key rotation, distribute the new public key
+first, retain both old and new IDs in the trust file, start signing with the
+new private key, then remove the old ID only after clients and retained caches
+no longer need it.
 
-Signature failure stops `dso pull` or `dso generate` before cache or generated output is changed.
+Signature failure stops `dso pull` before cache output is changed. Cache files
+are written to `<cache-dir>/<release-id>.json` only after verification, using a
+temporary file and atomic rename.
 
 ### `tokenTypes`
 
