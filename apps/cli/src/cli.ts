@@ -26,11 +26,15 @@ const defaultDependencies: CliDependencies = {
 const HELP = `Usage: dso <command> [options]
 
 Commands:
-  pull <release-id>  Download and verify a published release
+  pull --release <release-id>  Download and verify a published release
 
 Options:
   -h, --help         Show this help
   -v, --version      Show the CLI version
+      --release       Release ID
+      --trust-file    Trust file path
+      --cache-dir     Cache directory
+      --api-url       API base URL
 
 Authentication:
   The pull command reads its API key from DSO_API_KEY.
