@@ -6,6 +6,7 @@ Find relevant reads in:
 
 - [ER model](./er-model.md) for the persisted release snapshot structure
 - [migration verification](./migration-verification.md) for the implemented database result
+- [workbench local development](./workbench-local-development.md) for PostgreSQL and workbench setup
 - [threat model](../security/threat-model.md) for authentication and signing security boundaries.
 
 ## Endpoint
