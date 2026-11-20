@@ -6,6 +6,7 @@ Find relevant reads in:
 
 - [migration verification](./migration-verification.md) for the implemented result
 - [published release API contract](./published-release-api.md) for the database snapshot exposed to clients
+- [workbench local development](./workbench-local-development.md) for PostgreSQL and workbench setup
 - [threat model](../security/threat-model.md#audit-event-catalogue) for security-event rules.
 
 ## ERD
