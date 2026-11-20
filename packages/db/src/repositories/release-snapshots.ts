@@ -82,7 +82,7 @@ export async function createReleaseSnapshot(
   database: Queryable,
   releaseId: string,
   projectId: string,
-): Promise<void> {
+): Promise<PublishedReleaseSnapshot> {
   const tokenTypes = await listTokenTypesByProjectId(database, projectId);
   const tokens = await listTokensByProjectId(database, projectId);
   const references = await listTokenReferencesByProjectId(database, projectId);
@@ -98,4 +98,5 @@ export async function createReleaseSnapshot(
   };
 
   await insertReleaseSnapshot(database, releaseId, snapshot);
+  return snapshot;
 }

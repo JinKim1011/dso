@@ -1,10 +1,12 @@
 import { mapApiError } from "@/server/api-error";
 import { getBearerApiKeyCredential } from "@/server/bearer-authentication";
 import { getCurrentSession } from "@/server/current-session";
+import { getReleaseSigningConfiguration } from "@/server/config";
 import { getDatabasePool } from "@/server/database";
 import { downloadReleaseWithApiKey } from "@repo/application/services/download-release";
 import { getPublishedReleaseForSession } from "@repo/application/services/published-releases";
 import { parseDownloadReleaseRequest } from "@repo/contracts/validation/operations/releases";
+import { createSignedReleaseEnvelope } from "@repo/release-protocol/envelope";
 
 export const runtime = "nodejs";
 
@@ -37,7 +39,7 @@ export async function GET(
     const database = getDatabasePool();
 
     const context = await getCurrentSession(request);
-    const result = context
+    const unsignedRelease = context
       ? await getPublishedReleaseForSession(database, context, parsed.value.releaseId)
       : await downloadReleaseWithApiKey(
           database,
@@ -45,7 +47,13 @@ export async function GET(
           parsed.value.releaseId,
         );
 
-    return Response.json(result, {
+    const signing = getReleaseSigningConfiguration();
+    const signedRelease = createSignedReleaseEnvelope(unsignedRelease, {
+      privateKey: signing.privateKey,
+      keyId: signing.keyId,
+    });
+
+    return Response.json(signedRelease, {
       headers: { "Cache-Control": "no-store" },
     });
   } catch (error) {

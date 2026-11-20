@@ -1,0 +1,32 @@
+{
+  "name": "@repo/cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": {
+      "types": "./src/*.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "bin": {
+    "dso": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node -e \"require('node:fs').chmodSync('dist/cli.js', 0o755)\"",
+    "check-types": "tsc --noEmit -p tsconfig.json",
+    "pretest": "npm run build --workspace @repo/release-protocol && npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@repo/contracts": "*",
+    "@repo/release-protocol": "*"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "@types/node": "^26.6.6",
+    "typescript": "5.9.2",
+    "vitest": "^4.1.4"
+  }
+}

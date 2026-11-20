@@ -5,13 +5,16 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": ["DSO_RELEASE_SIGNING_KEY_ID", "DSO_RELEASE_SIGNING_PRIVATE_KEY"]
     },
     "lint": {
       "dependsOn": ["^lint"],
       "env": [
         "NODE_ENV",
         "DSO_MANIFEST_PATH",
+        "DSO_RELEASE_SIGNING_KEY_ID",
+        "DSO_RELEASE_SIGNING_PRIVATE_KEY",
         "DSO_WORKBENCH_PROJECT_ID",
         "TEST_DATABASE_URL"
       ]
@@ -28,6 +31,8 @@
         "DSO_WORKBENCH_ORIGIN",
         "DSO_WORKBENCH_PROJECT_ID",
         "DSO_MANIFEST_PATH",
+        "DSO_RELEASE_SIGNING_KEY_ID",
+        "DSO_RELEASE_SIGNING_PRIVATE_KEY",
         "SESSION_COOKIE_NAME"
       ]
     }

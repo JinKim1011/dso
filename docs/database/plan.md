@@ -118,10 +118,8 @@ Use cases, terminology, architecture, and first ER model are documented
   - Typography has primitive and semantic token types.
   - Typography primitive type names are `font-size`, `font-weight`, and `line-height`.
   - Typography primitive tokens use a `single` value.
-  - Typography semantic tokens use a `typography` value with optional
-    `fontSize`, `fontWeight`, and `lineHeight` slots.
-  - Token-reference rows identify targets by token ID and slot; CSS variables
-    are separate token properties and are not reference identities.
+  - Typography semantic tokens use a `typography` value with optional `fontSize`, `fontWeight`, and `lineHeight` slots.
+  - Token-reference rows identify targets by token ID and slot; CSS variables are separate token properties and are not reference identities.
   - A missing token-reference row means that slot has no assigned reference.
   - A token cannot reference itself.
   - Duplicate token references are rejected for the same referencing token, referenced token, and slot.
@@ -129,10 +127,8 @@ Use cases, terminology, architecture, and first ER model are documented
   - A semantic color or shadow token may reference only a primitive token of the same category.
   - A referenced primitive color or shadow token must provide a `single` value.
   - Primitive color and shadow references resolve their `single` value for the selected `light` or `dark` slot.
-  - A semantic typography token may reference only the primitive typography type
-    corresponding to the selected slot.
-  - Typography references map `fontSize` to `font-size`, `fontWeight` to
-    `font-weight`, and `lineHeight` to `line-height`.
+  - A semantic typography token may reference only the primitive typography type corresponding to the selected slot.
+  - Typography references map `fontSize` to `font-size`, `fontWeight` to `font-weight`, and `lineHeight` to `line-height`.
   - Referenced tokens must belong to the same project.
   - Referencing and referenced tokens must exist.
   - A component document path is relative to the CLI output root.
@@ -145,8 +141,7 @@ Use cases, terminology, architecture, and first ER model are documented
 Tables, columns, keys, relationships, constraints, and indexes are implemented.
 
 - [ER model](../../docs/database/er-model.md)
-- [Migrations](../../database/migrations/001_create_base_schema.sql) through
-  `008_add_indexes.sql`
+- [Migrations](../../database/migrations/001_create_base_schema.sql) through `008_add_indexes.sql`
 - [Migration verification](../../docs/database/migration-verification.md)
 - [Token hierarchy validator](../../packages/contracts/validation/token-type-hierarchy.ts)
 - [Token reference validator](../../packages/contracts/validation/token-reference.ts)
@@ -172,9 +167,7 @@ This week establishes the foundation for every later integration.
 - Add shared contracts and validation for login, resource writes, publishing, API keys, and release downloads.
 - Implement password hashing, database-backed sessions, expiration, and logout.
 - Require authorization context for protected repository operations.
-- W3 delivers authenticated workbench-session access to application services.
-  API-key-authenticated release downloads are deferred to W5 with the CLI and
-  release-signing vertical slice.
+- W3 delivers authenticated workbench-session access to application services. API-key-authenticated release downloads are deferred to W5 with the CLI and release-signing vertical slice.
 
 #### Tests and evidence
 
@@ -279,8 +272,7 @@ Workbench publish -> signed release API -> dso pull
 - Component `documentPath` consumption or release-driven path traversal concerns.
 - Workbench edits for hierarchy, components, or templates.
 - Source-code scanning and automatic component-token usage discovery.
-- API-key management UI, rate limiting, CSP enforcement, production enablement,
-  HSMs, or automatic signing-key infrastructure.
+- API-key management UI, rate limiting, CSP enforcement, production enablement, HSMs, or automatic signing-key infrastructure.
 
 ### W6: Performance, deployment security, documentation, and final verification
 
@@ -288,26 +280,16 @@ This week completes evidence, hardening, and the clean end-to-end run.
 
 #### Build and evidence
 
-- Run `EXPLAIN ANALYZE` on representative project/release, token-type,
-  token-reference, reverse-reference, hierarchy, and complete-release queries.
+- Run `EXPLAIN ANALYZE` on representative project/release, token-type, token-reference, reverse-reference, hierarchy, and complete-release queries.
 - Compare indexed and inefficient plans and verify the planned indexes.
-- Document connection pooling, caching, read replicas, API statelessness,
-  larger releases, migration management, scaling limits, and the raw SQL
-  versus ORM/data-mapper decision.
-- Document HTTPS, private PostgreSQL networking, separate migration/runtime
-  credentials, least privilege, request/rate limits, dependency scanning,
-  secret scanning, log redaction, key rotation, backups, and incident limits.
-- Complete the README, setup and seed instructions, CLI usage, use-case status,
-  ER model, SQL examples, normalization, transaction, performance, scaling,
-  hierarchy, reference, and source-scanning scope documentation.
-- Run from an empty database: migrations, seed, workbench login, editing,
-  publishing, API-key creation, CLI pull, signature verification, generation,
-  output inspection, tests, typecheck, lint, and smoke checks.
+- Document connection pooling, caching, read replicas, API statelessness, larger releases, migration management, scaling limits, and the raw SQL versus ORM/data-mapper decision.
+- Document HTTPS, private PostgreSQL networking, separate migration/runtime credentials, least privilege, request/rate limits, dependency scanning, secret scanning, log redaction, key rotation, backups, and incident limits.
+- Complete the README, setup and seed instructions, CLI usage, use-case status, ER model, SQL examples, normalization, transaction, performance, scaling, hierarchy, reference, and source-scanning scope documentation.
+- Run from an empty database: migrations, seed, workbench login, editing, publishing, API-key creation, CLI pull, signature verification, generation, output inspection, tests, typecheck, lint, and smoke checks.
 
 #### Done when
 
-Performance measurements, security evidence, documentation, and the complete
-empty-database workflow are ready for the report and final demonstration.
+Performance measurements, security evidence, documentation, and the complete empty-database workflow are ready for the report and final demonstration.
 
 ## Requirement Coverage
 

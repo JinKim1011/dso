@@ -1,3 +1,4 @@
+import { getReleaseSigningConfiguration } from "@/server/config";
 import { getDatabasePool } from "@/server/database";
 import { seedProject } from "@repo/application/fixtures";
 import { createApiKey } from "@repo/application/services/api-keys";
@@ -5,6 +6,8 @@ import { publishStagedChanges } from "@repo/application/services/staged-publishi
 import { insertRelease } from "@repo/db/repositories/releases";
 import { insertSession } from "@repo/db/repositories/sessions";
 import { closeDatabase, resetDatabase, setupDatabase } from "@repo/db/test/database";
+import { verifyRelease } from "@repo/release-protocol/verify";
+import { generateKeyPairSync } from "node:crypto";
 import {
   afterAll,
   afterEach,
@@ -18,9 +21,14 @@ import {
 import { GET } from "./route";
 
 vi.mock("@/server/database", () => ({ getDatabasePool: vi.fn() }));
+vi.mock("@/server/config", () => ({
+  getReleaseSigningConfiguration: vi.fn(),
+}));
 
 const origin = "https://workbench.example.test";
 const futureExpiration = "2099-01-01T00:00:00.000Z";
+const signingKeyPair = generateKeyPairSync("ed25519");
+const signingKeyId = "release-key-integration";
 let database: Awaited<ReturnType<typeof setupDatabase>>;
 
 async function publishRelease(fixture: Awaited<ReturnType<typeof seedProject>>) {
@@ -77,6 +85,10 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
       vi.stubEnv("NODE_ENV", "test");
       vi.stubEnv("SESSION_COOKIE_NAME", "dso_session");
       vi.mocked(getDatabasePool).mockReturnValue(database);
+      vi.mocked(getReleaseSigningConfiguration).mockReturnValue({
+        keyId: signingKeyId,
+        privateKey: signingKeyPair.privateKey,
+      });
     });
     afterEach(() => {
       vi.unstubAllEnvs();
@@ -109,7 +121,18 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
       expect(apiKeyResponse.status).toBe(200);
       expect(sessionResponse.headers.get("cache-control")).toBe("no-store");
       expect(apiKeyResponse.headers.get("cache-control")).toBe("no-store");
-      expect(await apiKeyResponse.json()).toEqual(await sessionResponse.json());
+      const apiKeyBody = await apiKeyResponse.json();
+      const sessionBody = await sessionResponse.json();
+      expect(apiKeyBody).toEqual(sessionBody);
+      expect(apiKeyBody.signature).toMatchObject({
+        algorithm: "Ed25519",
+        keyId: signingKeyId,
+      });
+      expect(
+        verifyRelease(apiKeyBody, {
+          [signingKeyId]: signingKeyPair.publicKey,
+        }),
+      ).toBe(true);
     });
 
     it("returns 401 for missing, malformed, or invalid API-key authentication", async () => {

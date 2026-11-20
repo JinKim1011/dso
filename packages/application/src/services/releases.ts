@@ -1,6 +1,9 @@
-import { ResourceNotFoundError } from "@repo/application/errors";
+import { DomainValidationError, ResourceNotFoundError } from "@repo/application/errors";
 import type { AuthorizationContext } from "@repo/application/types";
-import type { PublishReleaseRequest } from "@repo/contracts/operation";
+import type {
+  PublishedReleaseResponse,
+  PublishReleaseRequest,
+} from "@repo/contracts/operation";
 import type { Release } from "@repo/contracts/type";
 import { insertAuditEvent } from "@repo/db/repositories/audit-events";
 import { createReleaseSnapshot } from "@repo/db/repositories/release-snapshots";
@@ -9,6 +12,37 @@ import {
   updateReleasesStatus,
 } from "@repo/db/repositories/releases";
 import type { PoolClient } from "pg";
+import { canonicalizeRelease } from "@repo/release-protocol/canonicalize";
+import {
+  assertResponseSize,
+  ED25519_SIGNATURE_BASE64URL_LENGTH,
+  MAX_RELEASE_KEY_ID_BYTES,
+} from "@repo/release-protocol/limits";
+
+function assertReleaseCanBeDownloaded(release: PublishedReleaseResponse): void {
+  try {
+    canonicalizeRelease(release);
+    assertResponseSize({
+      ...release,
+      signature: {
+        algorithm: "Ed25519",
+        keyId: "k".repeat(MAX_RELEASE_KEY_ID_BYTES),
+        value: "A".repeat(ED25519_SIGNATURE_BASE64URL_LENGTH),
+      },
+    });
+  } catch (error) {
+    if (error instanceof RangeError) {
+      throw new DomainValidationError([
+        {
+          code: "release-too-large",
+          message:
+            "The published release exceeds the 5 MiB download size limit, including signature metadata.",
+        },
+      ]);
+    }
+    throw error;
+  }
+}
 
 export async function publishRelease(
   client: PoolClient,
@@ -25,9 +59,17 @@ export async function publishRelease(
     throw new ResourceNotFoundError();
   }
 
-  await createReleaseSnapshot(client, release.id, release.projectId);
-
   const publishedAt = new Date().toISOString();
+  const snapshot = await createReleaseSnapshot(client, release.id, release.projectId);
+  assertReleaseCanBeDownloaded({
+    schemaVersion: 1,
+    release: {
+      ...release,
+      status: "published",
+      publishedAt,
+    },
+    ...snapshot,
+  });
 
   const published = await updateReleasesStatus(
     client,

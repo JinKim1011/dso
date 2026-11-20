@@ -4,6 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "prebuild": "npm run build --workspace @repo/release-protocol",
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
@@ -17,6 +18,7 @@
     "@repo/application": "*",
     "@repo/contracts": "*",
     "@repo/db": "*",
+    "@repo/release-protocol": "*",
     "@repo/ui": "*",
     "@xyflow/react": "^12.10.2",
     "framer-motion": "12.29.2",

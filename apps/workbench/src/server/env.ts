@@ -4,6 +4,11 @@ export type SecurityEnvironment = {
   sessionCookieName: string;
 };
 
+export type ReleaseSigningEnvironment = {
+  keyId: string | undefined;
+  privateKey: string | undefined;
+};
+
 function loadNodeEnvironment(value: string | undefined): SecurityEnvironment["nodeEnv"] {
   if (value === "production") {
     return "production";
@@ -31,5 +36,14 @@ export function loadSecurityEnvironment(env: NodeJS.ProcessEnv): SecurityEnviron
     databaseUrl: env.DATABASE_URL,
     nodeEnv: loadNodeEnvironment(env.NODE_ENV),
     sessionCookieName: env.SESSION_COOKIE_NAME ?? "dso_session",
+  };
+}
+
+export function loadReleaseSigningEnvironment(
+  env: NodeJS.ProcessEnv,
+): ReleaseSigningEnvironment {
+  return {
+    keyId: env.DSO_RELEASE_SIGNING_KEY_ID,
+    privateKey: env.DSO_RELEASE_SIGNING_PRIVATE_KEY,
   };
 }

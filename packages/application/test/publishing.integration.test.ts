@@ -3,8 +3,11 @@ import { getPublishedReleaseForSession } from "@repo/application/services/publis
 import { publishStagedChanges } from "@repo/application/services/staged-publishing";
 import { listTokenReferencesByProjectId } from "@repo/db/repositories/references";
 import { insertRelease } from "@repo/db/repositories/releases";
+import { insertComponent } from "@repo/db/repositories/components";
+import { insertDocumentTemplate } from "@repo/db/repositories/templates";
 import { listTokensByProjectId } from "@repo/db/repositories/tokens";
 import { getTestDatabase } from "@repo/db/test/setup";
+import { MAX_RELEASE_RESPONSE_BYTES } from "@repo/release-protocol/limits";
 import { describe, expect, it } from "vitest";
 
 describe("Publising release service integration", () => {
@@ -252,6 +255,66 @@ describe("Publising release service integration", () => {
         fixture.referencedToken,
       );
       expect((await database.query("SELECT id FROM releases")).rows).toEqual([]);
+      expect((await database.query("SELECT id FROM audit_events")).rows).toEqual([]);
+    });
+
+    it("rolls back publication when the signed release exceeds the download limit", async () => {
+      const database = getTestDatabase();
+      const fixture = await seedProject(database, "publisher");
+      const component = {
+        id: crypto.randomUUID(),
+        projectId: fixture.project.id,
+        name: "Large documentation",
+        slug: "large-documentation",
+        description: "Individually valid templates with an oversized aggregate.",
+        documentPath: "docs/large.md",
+      };
+      await insertComponent(database, component);
+      const templateContent = "x".repeat(100_000);
+      const templateCount =
+        Math.ceil(MAX_RELEASE_RESPONSE_BYTES / templateContent.length) + 1;
+
+      for (let index = 0; index < templateCount; index += 1) {
+        await insertDocumentTemplate(database, {
+          id: crypto.randomUUID(),
+          projectId: fixture.project.id,
+          componentId: component.id,
+          name: `Template ${index}`,
+          content: templateContent,
+        });
+      }
+
+      await expect(
+        publishStagedChanges(database, fixture.context, {
+          projectId: fixture.project.id,
+          changes: [
+            {
+              tokenId: fixture.referencedToken.id,
+              name: {
+                before: fixture.referencedToken.name,
+                after: "should-roll-back",
+              },
+              references: [],
+            },
+          ],
+        }),
+      ).rejects.toMatchObject({
+        code: "domain-validation",
+        issues: [
+          {
+            code: "release-too-large",
+            message: expect.stringContaining("signature metadata"),
+          },
+        ],
+      });
+
+      expect(await listTokensByProjectId(database, fixture.project.id)).toContainEqual(
+        fixture.referencedToken,
+      );
+      expect((await database.query("SELECT id FROM releases")).rows).toEqual([]);
+      expect(
+        (await database.query("SELECT release_id FROM release_snapshots")).rows,
+      ).toEqual([]);
       expect((await database.query("SELECT id FROM audit_events")).rows).toEqual([]);
     });
 
