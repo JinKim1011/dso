@@ -1,0 +1,42 @@
+import type { TokenReferenceSlot } from "@repo/contracts/type";
+
+export type TokenGraphErrorCode =
+  | "duplicate-token-type"
+  | "duplicate-token"
+  | "wrong-project"
+  | "missing-token-type"
+  | "missing-referencing-token"
+  | "missing-referenced-token"
+  | "duplicate-reference-slot"
+  | "self-reference"
+  | "unsupported-reference-slot"
+  | "primitive-reference-source"
+  | "incompatible-reference-target"
+  | "missing-reference-css-var";
+
+export class TokenGraphValidationError extends Error {
+  readonly code: TokenGraphErrorCode;
+  readonly tokenId?: string;
+  readonly tokenTypeId?: string;
+  readonly slot?: TokenReferenceSlot;
+  readonly targetTokenId?: string;
+
+  constructor(
+    code: TokenGraphErrorCode,
+    message: string,
+    details: {
+      tokenId?: string;
+      tokenTypeId?: string;
+      slot?: TokenReferenceSlot;
+      targetTokenId?: string;
+    } = {},
+  ) {
+    super(message);
+    this.name = "TokenGraphValidationError";
+    this.code = code;
+    this.tokenId = details.tokenId;
+    this.tokenTypeId = details.tokenTypeId;
+    this.slot = details.slot;
+    this.targetTokenId = details.targetTokenId;
+  }
+}
