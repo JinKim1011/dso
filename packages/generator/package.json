@@ -17,8 +17,10 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
+  "dependencies": {
+    "@repo/contracts": "*"
+  },
   "devDependencies": {
-    "@repo/contracts": "*",
     "@repo/typescript-config": "*",
     "typescript": "5.9.2",
     "vitest": "^4.1.4"
