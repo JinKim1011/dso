@@ -40,3 +40,35 @@ export class TokenGraphValidationError extends Error {
     this.targetTokenId = details.targetTokenId;
   }
 }
+
+export type TokenResolutionErrorCode =
+  | "unresolved-token"
+  | "invalid-token-category"
+  | "invalid-token-value"
+  | "missing-reference-target"
+  | "missing-reference-css-var"
+  | "semantic-reference-chain";
+
+export class TokenResolutionError extends Error {
+  readonly code: TokenResolutionErrorCode;
+  readonly tokenId: string;
+  readonly slot?: TokenReferenceSlot;
+  readonly targetTokenId?: string;
+
+  constructor(
+    code: TokenResolutionErrorCode,
+    message: string,
+    details: {
+      tokenId: string;
+      slot?: TokenReferenceSlot;
+      targetTokenId?: string;
+    },
+  ) {
+    super(message);
+    this.name = "TokenResolutionError";
+    this.code = code;
+    this.tokenId = details.tokenId;
+    this.slot = details.slot;
+    this.targetTokenId = details.targetTokenId;
+  }
+}
