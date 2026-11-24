@@ -69,6 +69,8 @@ The CLI validates the response stream, envelope, key ID, and Ed25519 signature b
 `dso generate` reads the deterministic `<cache-dir>/<release-id>.json` path offline. It applies a bounded read, strict UTF-8/JSON decoding, envelope parsing,
 local trust-file lookup, Ed25519 verification, and release-ID matching again. Cache reads do not require `DSO_API_KEY` or an API URL and never fall back to the network.
 
+Reverification is required because `dso pull` can only guarantee integrity at download time. A later process or user can modify the local cache, so `dso generate` treats cached bytes as untrusted until the bounded read, envelope validation, and Ed25519 signature check all succeed.
+
 ## Generate
 
 ```bash
