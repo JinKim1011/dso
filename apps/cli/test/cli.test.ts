@@ -21,6 +21,7 @@ function io() {
 function dependencies() {
   return {
     runPull: vi.fn().mockResolvedValue("/test/cache/release.json"),
+    runGenerate: vi.fn().mockResolvedValue("/test/output"),
   };
 }
 
@@ -45,6 +46,27 @@ describe("dso CLI", () => {
     expect(streams.stderr.write).toHaveBeenCalledWith("Unknown command: unknown\n");
   });
 
+  it("dispatches generate", async () => {
+    const streams = io();
+    const deps = dependencies();
+
+    expect(
+      await runCli(
+        ["generate", "--release", crypto.randomUUID(), "--force"],
+        streams,
+        deps,
+      ),
+    ).toBe(0);
+    expect(deps.runGenerate).toHaveBeenCalledWith([
+      "--release",
+      expect.any(String),
+      "--force",
+    ]);
+    expect(streams.stdout.write).toHaveBeenCalledWith(
+      "Generated tokens.json and tokens.css in /test/output\n",
+    );
+  });
+
   it("requires a release identifier for pull", async () => {
     const deps = dependencies();
     deps.runPull.mockRejectedValueOnce(new CliUsageError("missing release"));
@@ -57,6 +79,7 @@ describe("dso CLI", () => {
     expect(await runCli(["--help"], streams)).toBe(0);
     const output = String(vi.mocked(streams.stdout.write).mock.calls[0]?.[0]);
     expect(output).toContain("pull --release <release-id>");
+    expect(output).toContain("generate --release <release-id>");
     expect(output).toContain("DSO_API_KEY");
     expect(output).not.toMatch(/--api-key|--credential/u);
   });
@@ -72,6 +95,12 @@ describe("dso CLI", () => {
     const deps = dependencies();
     await runCli(["pull", "--help"], io(), deps);
     expect(deps.runPull).not.toHaveBeenCalled();
+  });
+
+  it("supports generate help without dispatching generation", async () => {
+    const deps = dependencies();
+    await runCli(["generate", "--help"], io(), deps);
+    expect(deps.runGenerate).not.toHaveBeenCalled();
   });
 
   it.skipIf(process.platform === "win32")(
