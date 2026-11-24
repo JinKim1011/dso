@@ -64,3 +64,8 @@ Each verified release is stored as:
 ```
 
 The CLI validates the response stream, envelope, key ID, and Ed25519 signature before writing cache. It writes a temporary file and atomically renames it over the destination. Network, schema, signature, unknown-key, and disk failures leave an existing cache file byte-for-byte unchanged.
+
+## Verified cache reads
+
+`dso generate` reads the deterministic `<cache-dir>/<release-id>.json` path offline. It applies a bounded read, strict UTF-8/JSON decoding, envelope parsing,
+local trust-file lookup, Ed25519 verification, and release-ID matching again. Cache reads do not require `DSO_API_KEY` or an API URL and never fall back to the network.
