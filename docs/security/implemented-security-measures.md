@@ -119,6 +119,7 @@ Evidence:
 
 - [`pull.ts`](../../apps/cli/src/commands/pull.ts)
 - [`release-cache.ts`](../../apps/cli/src/cache/release-cache.ts)
+- [`read-release-cache.ts`](../../apps/cli/src/cache/read-release-cache.ts)
 - CLI `pull` and cache tests in `apps/cli/test/`
 
 ## Audit events
