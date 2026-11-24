@@ -14,6 +14,17 @@ export type TokenGraphErrorCode =
   | "incompatible-reference-target"
   | "missing-reference-css-var";
 
+export type TokenResolutionErrorCode =
+  | "unresolved-token"
+  | "invalid-token-category"
+  | "invalid-token-value"
+  | "missing-reference-target"
+  | "missing-reference-css-var"
+  | "semantic-reference-chain";
+
+export type TokensCssRenderErrorCode =
+  "invalid-css-var" | "invalid-class-name" | "unsafe-css-value" | "missing-css-var";
+
 export class TokenGraphValidationError extends Error {
   readonly code: TokenGraphErrorCode;
   readonly tokenId?: string;
@@ -40,14 +51,6 @@ export class TokenGraphValidationError extends Error {
     this.targetTokenId = details.targetTokenId;
   }
 }
-
-export type TokenResolutionErrorCode =
-  | "unresolved-token"
-  | "invalid-token-category"
-  | "invalid-token-value"
-  | "missing-reference-target"
-  | "missing-reference-css-var"
-  | "semantic-reference-chain";
 
 export class TokenResolutionError extends Error {
   readonly code: TokenResolutionErrorCode;
@@ -77,5 +80,17 @@ export class TokensJsonRenderError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "TokensJsonRenderError";
+  }
+}
+
+export class TokensCssRenderError extends Error {
+  readonly code: TokensCssRenderErrorCode;
+  readonly tokenId: string;
+
+  constructor(code: TokensCssRenderErrorCode, message: string, tokenId: string) {
+    super(message);
+    this.name = "TokensCssRenderError";
+    this.code = code;
+    this.tokenId = tokenId;
   }
 }
