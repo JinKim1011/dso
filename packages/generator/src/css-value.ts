@@ -43,7 +43,7 @@ export function assertCssPrimitiveValue(value: string, tokenId: string): void {
     value.length === 0 ||
     value.trim() !== value ||
     /[\u0000-\u001f\u007f]/u.test(value) ||
-    /[;{}\\]/u.test(value) ||
+    /[;{}\[\]\\]/u.test(value) ||
     /\/\*|\*\//u.test(value) ||
     /@import\b/iu.test(value) ||
     /\b(?:url|var)\s*\(/iu.test(value);
