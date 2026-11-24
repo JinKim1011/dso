@@ -115,6 +115,9 @@ export async function installGeneratedArtifacts(
   dependencies: AtomicArtifactDependencies = defaultDependencies,
 ): Promise<void> {
   const outputRoot = await resolveOutputRoot(options.outputPath);
+
+  const lock = await acquireOutputLock(outputRoot);
+
   const transactionDirectory = join(outputRoot, `.dso-generate-${randomUUID()}`);
   const paths: TransactionPath[] = [
     {
@@ -182,6 +185,7 @@ export async function installGeneratedArtifacts(
       await rm(transactionDirectory, { recursive: true, force: true }).catch(
         () => undefined,
       );
+      await lock.release();
     }
   }
 }
