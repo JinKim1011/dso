@@ -285,7 +285,11 @@ Workbench publish -> signed release API -> dso pull
 -> deterministic tokens.json and tokens.css
 ```
 
-The documented failure policy is verified: invalid credentials or signatures make no output changes; conflicting outputs require confirmation or `--force`; both token artifacts are committed together or not at all.
+The documented failure policy is verified:
+
+- Invalid credentials or signatures make no output changes.
+- Conflicting outputs require confirmation or `--force`.
+- Both outputs are staged and any command-level installation failure restores the previous owned artifacts.
 
 #### Not in W5
 
