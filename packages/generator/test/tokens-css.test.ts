@@ -45,6 +45,15 @@ describe("renderTokensCss", () => {
     expect(actual).toBe(expected);
   });
 
+  it("is independent of legacy cssVar fields in the release", () => {
+    const release: PublishedReleaseResponse = structuredClone(generatorReleaseFixture);
+    for (const token of release.tokens) {
+      token.cssVar = "--release-value-must-be-ignored;unsafe";
+    }
+
+    expect(renderTokensCss(resolveTokenReferences(release))).toBe(renderedFixture());
+  });
+
   it("omits missing mode and typography slots independently", () => {
     const release: PublishedReleaseResponse = structuredClone(generatorReleaseFixture);
     const heading = release.tokens.find((token) => token.name === "heading-strong")!;
