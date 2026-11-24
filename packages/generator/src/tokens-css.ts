@@ -1,10 +1,10 @@
-import { TokensCssRenderError } from "@repo/generator/errors";
 import {
   assertCssClassSegment,
   assertCssCustomPropertyName,
   assertCssPrimitiveValue,
   assertCssSemanticAlias,
 } from "@repo/generator/css-value";
+import { TokensCssRenderError } from "@repo/generator/errors";
 import type { GeneratedToken } from "@repo/generator/types";
 
 type CssDeclaration = {
@@ -67,7 +67,9 @@ function renderRoot(tokens: readonly GeneratedToken[]): string | null {
       const value =
         token.kind === "primitive"
           ? primitiveValue(token)
-          : semanticAlias(token, token.value.value);
+          : /^var\(--[A-Za-z0-9_-]+\)$/.test(token.value.value)
+            ? semanticAlias(token, token.value.value)
+            : primitiveValue(token);
 
       declarations.push({ name: requireCssVar(token), value });
       continue;
