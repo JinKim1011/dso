@@ -160,6 +160,45 @@ describe("atomic generated artifacts", () => {
     expect(await readFile(cssPath, "utf8")).toBe("old-css");
   });
 
+  it("attempts every rollback restoration and preserves backups on failure", async () => {
+    const outputPath = await directory();
+    const canonicalOutputPath = await realpath(outputPath);
+    const jsonPath = join(canonicalOutputPath, "tokens.json");
+    const cssPath = join(canonicalOutputPath, "tokens.css");
+    await writeFile(jsonPath, "old-json");
+    await writeFile(cssPath, "old-css");
+    let installFailed = false;
+    const rename = vi.fn(async (source: string, target: string) => {
+      if (target === cssPath && !installFailed) {
+        installFailed = true;
+        throw new Error("install failed");
+      }
+      if (source.endsWith("tokens.css.backup")) {
+        throw new Error("CSS restoration failed");
+      }
+      await fsRename(source, target);
+    });
+
+    await expect(
+      installGeneratedArtifacts(
+        { outputPath, force: true, contents },
+        { ...dependencies(), rename },
+      ),
+    ).rejects.toThrow("The generated artifacts could not be installed or restored.");
+
+    expect(await readFile(jsonPath, "utf8")).toBe("old-json");
+    const transactionDirectories = (await readdir(outputPath)).filter((name) =>
+      name.startsWith(".dso-generate-"),
+    );
+    expect(transactionDirectories).toHaveLength(1);
+    expect(
+      await readFile(
+        join(outputPath, transactionDirectories[0]!, "tokens.css.backup"),
+        "utf8",
+      ),
+    ).toBe("old-css");
+  });
+
   it("leaves output unchanged on overwrite cancellation", async () => {
     const outputPath = await directory();
     await writeFile(join(outputPath, "tokens.json"), "old-json");
