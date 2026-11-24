@@ -80,6 +80,51 @@ describe("resolveTokenReferences", () => {
     });
   });
 
+  it("preserves safe stored literals for semantic single values", () => {
+    const release = copyRelease();
+    const semantic = {
+      projectId: release.release.projectId,
+      id: "00000000-0000-4000-8000-000000000301",
+      tokenTypeId: release.tokenTypes.find(
+        (tokenType) => tokenType.category === "color" && tokenType.kind === "semantic",
+      )!.id,
+      name: "literal-spacing",
+      cssVar: "--color-literal-spacing",
+      value: { kind: "single" as const, value: "1rem" },
+    };
+
+    release.tokens.push(semantic);
+    const result = resolveTokenReferences(release);
+
+    expect(result.find((token) => token.name === "literal-spacing")?.value).toEqual({
+      kind: "single",
+      value: "1rem",
+    });
+  });
+
+  it("rejects stored var aliases without normalized single references", () => {
+    const release = copyRelease();
+    const source = {
+      projectId: release.release.projectId,
+      id: "00000000-0000-4000-8000-000000000302",
+      tokenTypeId: release.tokenTypes.find(
+        (tokenType) => tokenType.category === "color" && tokenType.kind === "semantic",
+      )!.id,
+      name: "stored-alias",
+      cssVar: "--color-stored-alias",
+      value: { kind: "single" as const, value: "var(--spacing-missing)" },
+    };
+    release.tokens.push(source);
+
+    expect(() => resolveTokenReferences(release)).toThrowError(
+      expect.objectContaining({
+        code: "stored-css-alias",
+        tokenId: source.id,
+        slot: "value",
+      }),
+    );
+  });
+
   it("resolves shadow modes with the same alias rules as color", () => {
     const release = copyRelease();
     for (const tokenType of release.tokenTypes) {
