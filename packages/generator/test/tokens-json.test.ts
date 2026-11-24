@@ -161,6 +161,21 @@ describe("renderTokensJson", () => {
     expect(actual).toBe(expected);
   });
 
+  it("is independent of legacy cssVar fields in the release", () => {
+    const release: PublishedReleaseResponse = structuredClone(generatorReleaseFixture);
+    for (const token of release.tokens) {
+      token.cssVar = "--release-value-must-be-ignored;unsafe";
+    }
+
+    const expected = renderTokensJson(
+      generatorReleaseFixture,
+      resolveTokenReferences(generatorReleaseFixture),
+    );
+    const actual = renderTokensJson(release, resolveTokenReferences(release));
+
+    expect(actual).toBe(expected);
+  });
+
   it("emits exactly one trailing newline", () => {
     const output = renderTokensJson(
       generatorReleaseFixture,
