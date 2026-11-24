@@ -1,3 +1,4 @@
+import { acquireOutputLock } from "@repo/cli/output/output-lock";
 import {
   resolveOutputRoot,
   resolveOwnedArtifactPath,
@@ -119,26 +120,29 @@ export async function installGeneratedArtifacts(
   const lock = await acquireOutputLock(outputRoot);
 
   const transactionDirectory = join(outputRoot, `.dso-generate-${randomUUID()}`);
-  const paths: TransactionPath[] = [
-    {
-      name: "tokens.json",
-      target: await resolveOwnedArtifactPath(outputRoot, "tokens.json"),
-      staged: join(transactionDirectory, "tokens.json"),
-      backup: join(transactionDirectory, "tokens.json.backup"),
-    },
-    {
-      name: "tokens.css",
-      target: await resolveOwnedArtifactPath(outputRoot, "tokens.css"),
-      staged: join(transactionDirectory, "tokens.css"),
-      backup: join(transactionDirectory, "tokens.css.backup"),
-    },
-  ];
+
+  let paths: TransactionPath[] = [];
 
   const backedUp = new Set<string>();
   const installed = new Set<string>();
   let cleanupSafe = false;
 
   try {
+    paths = [
+      {
+        name: "tokens.json",
+        target: await resolveOwnedArtifactPath(outputRoot, "tokens.json"),
+        staged: join(transactionDirectory, "tokens.json"),
+        backup: join(transactionDirectory, "tokens.json.backup"),
+      },
+      {
+        name: "tokens.css",
+        target: await resolveOwnedArtifactPath(outputRoot, "tokens.css"),
+        staged: join(transactionDirectory, "tokens.css"),
+        backup: join(transactionDirectory, "tokens.css.backup"),
+      },
+    ];
+
     await mkdir(transactionDirectory, { mode: 0o700 });
     await stageFile(paths[0]!.staged, options.contents.tokensJson);
     await stageFile(paths[1]!.staged, options.contents.tokensCss);
