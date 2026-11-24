@@ -85,6 +85,7 @@ export const generatorReleaseFixture = {
   tokenTypes: [...tokenTypes],
   // Deliberately unsorted: the generator must not preserve input order.
   tokens: [
+    // Legacy release cssVar fields intentionally model ignored snapshot data.
     {
       id: ids.surface,
       projectId,
