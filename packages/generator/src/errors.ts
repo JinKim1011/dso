@@ -11,8 +11,7 @@ export type TokenGraphErrorCode =
   | "self-reference"
   | "unsupported-reference-slot"
   | "primitive-reference-source"
-  | "incompatible-reference-target"
-  | "missing-reference-css-var";
+  | "incompatible-reference-target";
 
 export type TokenResolutionErrorCode =
   | "unresolved-token"
