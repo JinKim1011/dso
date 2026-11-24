@@ -97,3 +97,10 @@ export class TokensCssRenderError extends Error {
     this.tokenId = tokenId;
   }
 }
+
+export class TokenGenerationError extends Error {
+  constructor(message = "Token artifacts could not be generated.", cause?: unknown) {
+    super(message, { cause });
+    this.name = "TokenGenerationError";
+  }
+}
