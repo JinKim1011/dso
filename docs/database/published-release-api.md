@@ -81,6 +81,8 @@ Each item contains `id`, `projectId`, `parentTypeId`, `category`, `name`, and `k
 Each token contains `id`, `projectId`, `tokenTypeId`, `name`, `cssVar`, and `value`.
 `value.kind` is one of `single`, `modes`, `typography`, or `unresolved`. The release contract does not include resolved reference values inside this union.
 
+`cssVar` is retained as a legacy compatibility field. The token generator derives CSS custom-property names deterministically from the token type and token name.
+
 ### `references`
 
 Each normalized edge contains `referencingTokenId`, `referencedTokenId`, `projectId`, and `slot`.
