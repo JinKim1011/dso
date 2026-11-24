@@ -231,16 +231,13 @@ describe("buildTokenGraphIndex", () => {
     );
   });
 
-  it("rejects reference targets without a cssVar", () => {
+  it("does not depend on reference targets having a stored cssVar", () => {
     const reference = generatorReleaseFixture.references[2]!;
 
-    expectGraphError(
-      (release) => {
-        release.tokens.find((token) => token.id === reference.referencedTokenId)!.cssVar =
-          null;
-      },
-      "missing-reference-css-var",
-      { tokenId: reference.referencingTokenId, slot: "dark" },
-    );
+    const release = copyRelease();
+    release.tokens.find((token) => token.id === reference.referencedTokenId)!.cssVar =
+      null;
+
+    expect(() => buildTokenGraphIndex(release)).not.toThrow();
   });
 });
