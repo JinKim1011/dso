@@ -1,6 +1,7 @@
 import type { PublishedReleaseResponse } from "@repo/contracts/operation";
 import type { Token, TokenReferenceSlot, TokenType } from "@repo/contracts/type";
 import { isCategory } from "@repo/contracts/validation/enum";
+import { containsCssVariable } from "@repo/contracts/validation/token-value";
 import {
   assertUniqueCssVariables,
   deriveCssVariable,
@@ -99,9 +100,19 @@ function resolveValue(
 
     const referenceValue = resolvePrimitiveAlias(index, token, "value");
 
-    return referenceValue === undefined
-      ? token.value
-      : { kind: "single", value: referenceValue };
+    if (referenceValue !== undefined) {
+      return { kind: "single", value: referenceValue };
+    }
+
+    if (containsCssVariable(token.value.value)) {
+      throw new TokenResolutionError(
+        "stored-css-alias",
+        `Semantic token "${token.id}" contains a stored CSS alias without a normalized reference.`,
+        { tokenId: token.id, slot: "value" },
+      );
+    }
+
+    return token.value;
   }
 
   if (token.value.kind === "modes") {
