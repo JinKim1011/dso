@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@repo/contracts": "*",
+    "@repo/generator": "*",
     "@repo/release-protocol": "*"
   },
   "devDependencies": {
