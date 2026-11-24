@@ -1,11 +1,10 @@
 # DSO CLI
 
-The CLI downloads and verifies signed published releases. Currently, it supports only `dso pull`, token generation is a later command.
+The CLI downloads and verifies signed published releases, then generates verified token artifacts from local cache.
 
 ## Build
 
 ```bash
-npm run build --workspace @repo/release-protocol
 npm run build --workspace @repo/cli
 ```
 
@@ -69,3 +68,16 @@ The CLI validates the response stream, envelope, key ID, and Ed25519 signature b
 
 `dso generate` reads the deterministic `<cache-dir>/<release-id>.json` path offline. It applies a bounded read, strict UTF-8/JSON decoding, envelope parsing,
 local trust-file lookup, Ed25519 verification, and release-ID matching again. Cache reads do not require `DSO_API_KEY` or an API URL and never fall back to the network.
+
+## Generate
+
+```bash
+DSO_RELEASE_TRUST_FILE="$HOME/.config/dso/trust.json" \
+dso generate \
+  --release 00000000-0000-4000-8000-000000000001 \
+  --cache-dir ./.dso/cache \
+  --output . \
+  --force
+```
+
+`--force` is optional. Without it, the CLI prompts before replacing generated artifacts in an interactive terminal and fails immediately in non-interactive execution. Generation is offline and never reads `DSO_API_KEY` or an API URL.
