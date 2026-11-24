@@ -45,6 +45,24 @@ describe("resolveTokenReferences", () => {
     });
   });
 
+  it("ignores legacy release cssVar values", () => {
+    const release = copyRelease();
+    for (const token of release.tokens) {
+      token.cssVar = "--legacy-wrong-name; unsafe";
+    }
+
+    const tokens = resolveTokenReferences(release);
+
+    expect(tokenByName(tokens, "neutral-0")?.cssVar).toBe("--base-neutral-0");
+    expect(tokenByName(tokens, "surface")?.cssVar).toBe("--color-surface");
+    expect(tokenByName(tokens, "heading-strong")?.cssVar).toBeNull();
+    expect(tokenByName(tokens, "surface")?.value).toEqual({
+      kind: "modes",
+      light: "var(--base-neutral-0)",
+      dark: "var(--base-neutral-900)",
+    });
+  });
+
   it("omits typography slots independently", () => {
     const release = copyRelease();
     const heading = release.tokens.find((token) => token.name === "heading-strong")!;
