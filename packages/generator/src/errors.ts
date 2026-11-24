@@ -72,3 +72,10 @@ export class TokenResolutionError extends Error {
     this.targetTokenId = details.targetTokenId;
   }
 }
+
+export class TokensJsonRenderError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "TokensJsonRenderError";
+  }
+}
