@@ -16,7 +16,7 @@ The current release flow is:
 - Stage, save, and publish authorized token changes atomically.
 - Store and serve immutable, signed release snapshots.
 - Download project-scoped releases with expiring, revocable API keys.
-- Verify release signatures and generate token artifacts with the CLI.
+- Re-verify cached releases offline and generate deterministic `tokens.json` and `tokens.css` with the CLI.
 
 ## Repository
 
@@ -32,6 +32,7 @@ packages/
   db/            PostgreSQL repositories, migrations, and seed helpers
   release-protocol/
                   Canonicalization, signing, parsing, and verification
+  generator/      Pure token reference resolution and artifact rendering
   seed-data/     Development seed data
   ui/            Shared UI
 
@@ -90,6 +91,7 @@ Run package tests through the relevant workspace, for example:
 npm --workspace @repo/db test
 npm --workspace @repo/application test
 npm --workspace @repo/release-protocol test
+npm --workspace @repo/generator test
 npm --workspace @repo/cli test
 npm --workspace workbench test
 ```

@@ -81,6 +81,10 @@ Each item contains `id`, `projectId`, `parentTypeId`, `category`, `name`, and `k
 Each token contains `id`, `projectId`, `tokenTypeId`, `name`, `cssVar`, and `value`.
 `value.kind` is one of `single`, `modes`, `typography`, or `unresolved`. The release contract does not include resolved reference values inside this union.
 
+`cssVar` is retained as a legacy compatibility field. The token generator derives CSS custom-property names deterministically from the token type and token name.
+
+Generator consumers must not depend on this legacy value. `dso generate` derives primitive and semantic names inside the generator and ignores stored `cssVar` values.
+
 ### `references`
 
 Each normalized edge contains `referencingTokenId`, `referencedTokenId`, `projectId`, and `slot`.
@@ -93,12 +97,12 @@ The same referencing token, referenced token, and slot combination is unique. Th
 Registered components retained for compatibility contain `id`, `projectId`, `name`, `slug`, `description`, and `documentPath`.
 `documentPath` is relative to the CLI-selected output root. It must use `/` separators and must not be absolute or contain `..` path segments.
 
-The response does not infer component source usage or source-code relationships.
+The response does not infer component source usage or source-code relationships. Components and `documentPath` are retained for compatibility and are not consumed by token generation.
 
 ### `templates`
 
 Per-component Markdown templates contain `id`, `projectId`, `componentId`, `name`, and `content`.
-The first release supports Markdown template content only.
+The first release supports Markdown template content only. Templates remain part of the signed snapshot, but first version does not render their content or process placeholders.
 
 ## Relationships
 

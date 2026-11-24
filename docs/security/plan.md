@@ -252,12 +252,14 @@ The three implementation days are ordered to avoid coupling downstream work to u
 
 ##### Day 3: Token generation and verification
 
-- Add a generator package and `dso generate`.
+- `@repo/generator` and `dso generate` are implemented as a pure generator plus offline CLI orchestration.
 - Generate only `tokens.json` and `tokens.css` from token types, tokens, and references in the validated signed snapshot.
+- Cache is bounded-read, parsed, signature-verified, and release-ID checked again for every generate operation.
+- CSS variable names are derived by the generator. The release's legacy `cssVar` field is ignored.
 - Make output deterministic and independent of the local output root.
 - Prompt before replacing existing `tokens.json` or `tokens.css` in an interactive terminal. `--force` replaces only those owned artifacts without prompting.
 - In non-interactive execution, reject a conflict unless `--force` is present.
-- Stage both generated files and replace them atomically. Preserve unrelated files and avoid partial output.
+- Stage both generated files, back up existing owned files, install both names, and roll back on command failure. Preserve unrelated files.
 - Keep component and document-template generation, placeholder rendering, and release-driven `documentPath` handling out of W5.
 
 #### Tests
@@ -267,10 +269,11 @@ The three implementation days are ordered to avoid coupling downstream work to u
 - Valid releases work under different local output roots and produce identical token artifacts.
 - Interactive conflicts require confirmation; non-interactive conflicts fail unless `--force` is present.
 - `--force` replaces only `tokens.json` and `tokens.css`; unrelated files remain.
-- A generation failure leaves both existing outputs unchanged.
+- A generation or transaction failure restores both existing owned outputs.
 - API keys and signing secrets do not appear in logs or generated files.
 - The CLI uses only the API and has no PostgreSQL dependency.
 - `dso pull` integration coverage verifies a signed HTTP response, trust lookup, cache creation, and preservation of existing cache bytes after tampering.
+- `dso generate` integration coverage verifies cache tampering, signing-key failures, graph/CSS failures, output collisions, symlink rejection, determinism across output roots, and rename rollback.
 
 #### Done When
 
@@ -282,7 +285,11 @@ Workbench publish -> signed release API -> dso pull
 -> deterministic tokens.json and tokens.css
 ```
 
-The documented failure policy is verified: invalid credentials or signatures make no output changes; conflicting outputs require confirmation or `--force`; both token artifacts are committed together or not at all.
+The documented failure policy is verified:
+
+- Invalid credentials or signatures make no output changes.
+- Conflicting outputs require confirmation or `--force`.
+- Both outputs are staged and any command-level installation failure restores the previous owned artifacts.
 
 #### Not in W5
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { runPull } from "@repo/cli/commands/pull";
+import { runGenerate } from "@repo/cli/commands/generate";
 import { CliUsageError } from "@repo/cli/errors";
 import { realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -12,16 +13,20 @@ export type CliIo = {
 
 type CliDependencies = {
   runPull: (args: readonly string[]) => Promise<string>;
+  runGenerate: (args: readonly string[]) => Promise<string>;
 };
 
 const defaultDependencies: CliDependencies = {
   runPull,
+  runGenerate,
 };
 
 const HELP = `Usage: dso <command> [options]
 
 Commands:
   pull --release <release-id>  Download and verify a published release
+  generate --release <release-id>
+                               Generate tokens.json and tokens.css
 
 Options:
   -h, --help         Show this help
@@ -29,6 +34,8 @@ Options:
       --release       Release ID
       --trust-file    Trust file path
       --cache-dir     Cache directory
+      --output        Generated artifact directory
+      --force         Replace existing generated artifacts
       --api-url       API base URL
 
 Authentication:
@@ -52,7 +59,7 @@ export async function runCli(
     return 0;
   }
 
-  if (command !== "pull") {
+  if (command !== "pull" && command !== "generate") {
     io.stderr.write(`Unknown command: ${command}\n`);
     return 2;
   }
@@ -62,8 +69,14 @@ export async function runCli(
     return 0;
   }
 
-  const cacheFilePath = await dependencies.runPull(commandArgs);
-  io.stdout.write(`Release cached at ${cacheFilePath}\n`);
+  if (command === "pull") {
+    const cacheFilePath = await dependencies.runPull(commandArgs);
+    io.stdout.write(`Release cached at ${cacheFilePath}\n`);
+    return 0;
+  }
+
+  const outputPath = await dependencies.runGenerate(commandArgs);
+  io.stdout.write(`Generated tokens.json and tokens.css in ${outputPath}\n`);
   return 0;
 }
 

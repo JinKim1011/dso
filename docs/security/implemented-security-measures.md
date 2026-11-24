@@ -113,13 +113,17 @@ Evidence:
 - Generated paths and output conflicts are validated before writing.
 - Interactive replacement requires confirmation; non-interactive replacement requires `--force`.
 - Unrelated files are preserved.
-- Verified release cache files and generated artifacts use temporary files and atomic replacement.
+- `dso generate` re-verifies cache size, UTF-8/JSON, envelope schema, signing key, signature, and release ID before generation.
+- Generated artifacts use staging and per-file atomic rename with backup restoration on command failure.
 
 Evidence:
 
 - [`pull.ts`](../../apps/cli/src/commands/pull.ts)
 - [`release-cache.ts`](../../apps/cli/src/cache/release-cache.ts)
-- CLI `pull` and cache tests in `apps/cli/test/`
+- [`read-release-cache.ts`](../../apps/cli/src/cache/read-release-cache.ts)
+- [`generate.ts`](../../apps/cli/src/commands/generate.ts)
+- [`atomic-artifacts.ts`](../../apps/cli/src/output/atomic-artifacts.ts)
+- CLI pull, cache, generation, overwrite, and transaction tests in `apps/cli/test/`
 
 ## Audit events
 
