@@ -44,19 +44,25 @@ function resolvePrimitiveAlias(
     );
   }
 
-  if (target.cssVar === null) {
+  if (!targetType) {
     throw new TokenResolutionError(
-      "missing-reference-css-var",
-      `Reference target token "${target.id}" has no CSS variable name.`,
-      {
-        tokenId: token.id,
-        slot,
-        targetTokenId: target.id,
-      },
+      "missing-reference-target",
+      `Reference target token "${target.id}" has no token type.`,
+      { tokenId: token.id, slot, targetTokenId: target.id },
     );
   }
 
-  return `var(${target.cssVar})`;
+  const cssVar = deriveCssVariable(target, targetType);
+
+  if (cssVar === null) {
+    throw new TokenResolutionError(
+      "missing-reference-css-var",
+      `Reference target token "${target.id}" cannot produce a CSS variable name.`,
+      { tokenId: token.id, slot, targetTokenId: target.id },
+    );
+  }
+
+  return `var(${cssVar})`;
 }
 
 function withOptionalReference(
@@ -150,6 +156,7 @@ export function resolveTokenReferences(
   release: PublishedReleaseResponse,
 ): readonly GeneratedToken[] {
   const index = buildTokenGraphIndex(release);
+  assertUniqueCssVariables(release.tokens, index.tokenTypeById);
 
   for (const token of index.tokenById.values()) {
     if (token.value.kind === "unresolved") {
@@ -177,7 +184,7 @@ export function resolveTokenReferences(
     return {
       id: token.id,
       name: token.name,
-      cssVar: token.cssVar,
+      cssVar: deriveCssVariable(token, tokenType),
       category: tokenType.category,
       type: tokenType.name,
       kind: tokenType.kind,
