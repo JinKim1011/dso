@@ -83,16 +83,30 @@ async function rollback(
   installed: ReadonlySet<string>,
   renameFile: AtomicArtifactDependencies["rename"],
 ): Promise<void> {
+  const errors: unknown[] = [];
+
   for (const path of [...transactionPaths].reverse()) {
     if (installed.has(path.target)) {
-      await rm(path.target, { force: true });
+      try {
+        await rm(path.target, { force: true });
+      } catch (error) {
+        errors.push(error);
+      }
     }
   }
 
   for (const path of [...transactionPaths].reverse()) {
     if (backedUp.has(path.backup)) {
-      await renameFile(path.backup, path.target);
+      try {
+        await renameFile(path.backup, path.target);
+      } catch (error) {
+        errors.push(error);
+      }
     }
+  }
+
+  if (errors.length > 0) {
+    throw new AggregateError(errors, "One or more rollback operations failed.");
   }
 }
 
