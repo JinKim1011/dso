@@ -78,6 +78,7 @@ export type Token = {
   projectId: string;
   tokenTypeId: string;
   name: string;
+  /** @deprecated Generator derives CSS variable names from token type and name. */
   cssVar: string | null;
   value: TokenValue;
 };
