@@ -82,4 +82,8 @@ dso generate \
   --force
 ```
 
-`--force` is optional. Without it, the CLI prompts before replacing generated artifacts in an interactive terminal and fails immediately in non-interactive execution. Generation is offline and never reads `DSO_API_KEY` or an API URL.
+Generation is offline and never reads `DSO_API_KEY` or an API URL. `--output` defaults to the current directory, and relative output, cache, and trust paths use the same working-directory base.
+
+Only `tokens.json` and `tokens.css` are managed. Existing owned artifacts require an interactive confirmation or `--force`. Both artifacts are rendered and staged before replacement. Existing files are backed up and restored after rename failure.
+
+Component and template Markdown are not generated.
