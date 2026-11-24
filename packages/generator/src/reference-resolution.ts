@@ -1,6 +1,10 @@
 import type { PublishedReleaseResponse } from "@repo/contracts/operation";
 import type { Token, TokenReferenceSlot, TokenType } from "@repo/contracts/type";
 import { isCategory } from "@repo/contracts/validation/enum";
+import {
+  assertUniqueCssVariables,
+  deriveCssVariable,
+} from "@repo/generator/css-variable";
 import { TokenResolutionError } from "@repo/generator/errors";
 import { buildTokenGraphIndex, type TokenGraphIndex } from "@repo/generator/token-graph";
 import type { GeneratedToken, GeneratedTokenValue } from "@repo/generator/types";
