@@ -132,9 +132,28 @@ function renderTypographyClass(token: GeneratedToken): string | null {
 }
 
 function renderTypographyLayer(tokens: readonly GeneratedToken[]): string | null {
-  const classes = tokens
-    .map(renderTypographyClass)
-    .filter((value): value is string => value !== null);
+  const seenClassNames = new Set<string>();
+  const classes: string[] = [];
+
+  for (const token of tokens) {
+    const rendered = renderTypographyClass(token);
+
+    if (rendered === null) continue;
+
+    const className = `text-${token.name}`;
+
+    if (seenClassNames.has(className)) {
+      throw new TokensCssRenderError(
+        "invalid-class-name",
+        `Token "${token.id}" produces a duplicate typography class name.`,
+        token.id,
+      );
+    }
+
+    seenClassNames.add(className);
+
+    classes.push(rendered);
+  }
 
   if (classes.length === 0) return null;
 
