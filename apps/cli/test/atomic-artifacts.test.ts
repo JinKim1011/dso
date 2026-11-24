@@ -4,6 +4,7 @@ import {
 } from "@repo/cli/output/atomic-artifacts";
 import {
   chmod,
+  mkdir,
   mkdtemp,
   readFile,
   readdir,
@@ -212,6 +213,29 @@ describe("atomic generated artifacts", () => {
     ).rejects.toThrow("cancelled");
 
     expect(await readFile(join(outputPath, "tokens.json"), "utf8")).toBe("old-json");
+    expect(
+      (await readdir(outputPath)).filter((name) => name.startsWith(".dso-")),
+    ).toEqual([]);
+  });
+
+  it("revalidates targets after overwrite confirmation", async () => {
+    const outputPath = await directory();
+    const jsonPath = join(outputPath, "tokens.json");
+    await writeFile(jsonPath, "old-json");
+    const deps: AtomicArtifactDependencies = {
+      ...dependencies(),
+      applyOverwritePolicy: vi.fn(async () => {
+        await rm(jsonPath);
+        await mkdir(join(jsonPath, "unrelated"), { recursive: true });
+        await writeFile(join(jsonPath, "unrelated", "keep.txt"), "keep");
+      }),
+    };
+
+    await expect(
+      installGeneratedArtifacts({ outputPath, force: false, contents }, deps),
+    ).rejects.toThrow("Generated artifact targets must be regular files.");
+
+    expect(await readFile(join(jsonPath, "unrelated", "keep.txt"), "utf8")).toBe("keep");
     expect(
       (await readdir(outputPath)).filter((name) => name.startsWith(".dso-")),
     ).toEqual([]);
