@@ -163,7 +163,9 @@ Required failure behavior:
 
 ```text
 CLI
-  -> verified release
+  -> local cache
+  -> bounded read and signature re-verification
+  -> pure token resolution and rendering
   -> tokens.json and tokens.css
   -> consumer repository
 ```
@@ -183,7 +185,8 @@ Required failure behavior:
 - Restrict owned artifacts to `tokens.json` and `tokens.css` below the approved output root.
 - Stop before writing when path or release validation fails.
 - Never interpret release data as shell input.
-- Replace owned artifacts together and preserve unrelated files.
+- Re-read and verify the release for every generation because prior pull verification is not durable trust.
+- Stage both outputs, back up existing owned files, and restore them if either installation fails.
 - Require explicit confirmation or `--force` for replacement.
 - Fail safely on permission, disk, and repository errors.
 
