@@ -269,10 +269,11 @@ The three implementation days are ordered to avoid coupling downstream work to u
 - Valid releases work under different local output roots and produce identical token artifacts.
 - Interactive conflicts require confirmation; non-interactive conflicts fail unless `--force` is present.
 - `--force` replaces only `tokens.json` and `tokens.css`; unrelated files remain.
-- A generation failure leaves both existing outputs unchanged.
+- A generation or transaction failure restores both existing owned outputs.
 - API keys and signing secrets do not appear in logs or generated files.
 - The CLI uses only the API and has no PostgreSQL dependency.
 - `dso pull` integration coverage verifies a signed HTTP response, trust lookup, cache creation, and preservation of existing cache bytes after tampering.
+- `dso generate` integration coverage verifies cache tampering, signing-key failures, graph/CSS failures, output collisions, symlink rejection, determinism across output roots, and rename rollback.
 
 #### Done When
 
