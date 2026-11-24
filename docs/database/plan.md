@@ -241,12 +241,14 @@ This week delivers the complete publish-to-token-artifact vertical slice. Compon
 
 ##### Day 3: Deterministic token generation
 
-- Add `@repo/generator` and `dso generate` for `tokens.json` and `tokens.css`.
-- Resolve semantic references into their primitive token values and use stable ordering and formatting.
+- Implemented `@repo/generator` and `dso generate` for `tokens.json` and `tokens.css`.
+- Resolve semantic references to deterministic `var(--derived-primitive-name)` aliases. The release's legacy `cssVar` field is not consumed by the generator.
+- Generate primitive custom properties, mode values in `:root`/`[data-theme="dark"]`, and typography utility classes in standalone `@layer components`.
 - Do not generate component Markdown, render templates, or interpret component `documentPath` values.
 - Ask before replacing existing generated artifacts in an interactive run. Require `--force` to replace them without a prompt.
 - In non-interactive runs, fail on conflicts unless `--force` is supplied.
-- Limit overwrite to `tokens.json` and `tokens.css`, preserve unrelated files, stage both artifacts, and commit them together so generation cannot leave a partial result.
+- Limit overwrite to `tokens.json` and `tokens.css`, preserve unrelated files, stage both artifacts, and roll back command failure after either rename.
+- Re-read and re-verify the cached signed envelope before generation. Generation is offline and never pulls from the API.
 
 #### Tests and evidence
 
