@@ -159,8 +159,13 @@ function assertNoPrimitiveReferences(
 export function resolveTokenReferences(
   release: PublishedReleaseResponse,
 ): readonly GeneratedToken[] {
-  const index = buildTokenGraphIndex(release);
-  assertUniqueCssVariables(release.tokens, index.tokenTypeById);
+  return resolveTokenReferencesFromIndex(buildTokenGraphIndex(release));
+}
+
+export function resolveTokenReferencesFromIndex(
+  index: TokenGraphIndex,
+): readonly GeneratedToken[] {
+  assertUniqueCssVariables([...index.tokenById.values()], index.tokenTypeById);
 
   for (const token of index.tokenById.values()) {
     if (token.value.kind === "unresolved") {
