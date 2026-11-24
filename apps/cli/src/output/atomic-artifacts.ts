@@ -146,6 +146,10 @@ export async function installGeneratedArtifacts(
     });
 
     for (const path of paths) {
+      await resolveOwnedArtifactPath(outputRoot, path.name);
+    }
+
+    for (const path of paths) {
       if (await exists(path.target)) {
         await dependencies.rename(path.target, path.backup);
 
