@@ -12,11 +12,11 @@ The executable is `apps/cli/dist/cli.js`.
 
 ## Configuration
 
-| Setting                  | Required | Description                                        |
-| ------------------------ | -------- | -------------------------------------------------- |
-| `DSO_API_KEY`            | yes      | Combined `dso_<keyIdentifier>_<secret>` credential |
-| `DSO_API_URL`            | yes      | Workbench API base URL                             |
-| `DSO_RELEASE_TRUST_FILE` | no       | Independent local trust file path                  |
+| Setting                  | Required  | Description                                        |
+| ------------------------ | --------- | -------------------------------------------------- |
+| `DSO_API_KEY`            | pull only | Combined `dso_<keyIdentifier>_<secret>` credential |
+| `DSO_API_URL`            | pull only | Workbench API base URL                             |
+| `DSO_RELEASE_TRUST_FILE` | no        | Independent local trust file path                  |
 
 The CLI never accepts the API key as a command-line option. Remote API URLs must use HTTPS. Plain HTTP is accepted only for loopback hosts outside production.
 
