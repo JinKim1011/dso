@@ -140,4 +140,32 @@ describe("resolveTokenReferences", () => {
       expect(String(error)).not.toContain("oklch");
     }
   });
+
+  it("rejects duplicate derived CSS variable names", () => {
+    const release = copyRelease();
+    const neutral0 = release.tokens.find((token) => token.name === "neutral-0")!;
+    const neutral900 = release.tokens.find((token) => token.name === "neutral-900")!;
+    neutral900.name = "neutral 0";
+
+    expect(() => resolveTokenReferences(release)).toThrowError(
+      expect.objectContaining({
+        code: "duplicate-css-var",
+      }),
+    );
+
+    expect(neutral0.cssVar).toBe("--base-neutral-0");
+    expect(neutral900.cssVar).toBe("--base-neutral-900");
+  });
+
+  it("rejects names that cannot produce a CSS variable", () => {
+    const release = copyRelease();
+    release.tokens[0]!.name = "///";
+
+    expect(() => resolveTokenReferences(release)).toThrowError(
+      expect.objectContaining({
+        code: "invalid-css-var",
+        tokenId: release.tokens[0]!.id,
+      }),
+    );
+  });
 });
