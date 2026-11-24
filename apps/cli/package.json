@@ -13,9 +13,10 @@
     "dso": "./dist/cli.js"
   },
   "scripts": {
+    "prebuild": "npm run build --workspace @repo/generator && npm run build --workspace @repo/release-protocol",
     "build": "tsc -p tsconfig.build.json && node -e \"require('node:fs').chmodSync('dist/cli.js', 0o755)\"",
     "check-types": "tsc --noEmit -p tsconfig.json",
-    "pretest": "npm run build --workspace @repo/release-protocol && npm run build",
+    "pretest": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest"
   },
