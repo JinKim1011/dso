@@ -115,6 +115,38 @@ describe("atomic generated artifacts", () => {
     ).toEqual([]);
   });
 
+  it("serializes transactions for the same canonical output root", async () => {
+    const outputPath = await directory();
+    const canonicalOutputPath = await realpath(outputPath);
+    let entered = false;
+    let continueFirst!: () => void;
+    const waitForFirst = new Promise<void>((resolve) => {
+      continueFirst = resolve;
+    });
+    const firstPolicy = vi.fn(async () => {
+      entered = true;
+      await waitForFirst;
+    });
+    const first = installGeneratedArtifacts(
+      { outputPath: canonicalOutputPath, force: true, contents },
+      { ...dependencies(), applyOverwritePolicy: firstPolicy },
+    );
+
+    while (!entered) {
+      await new Promise((resolve) => setImmediate(resolve));
+    }
+
+    await expect(
+      installGeneratedArtifacts({ outputPath, force: true, contents }, dependencies()),
+    ).rejects.toThrow(
+      "Another dso generate operation is already running in this output root.",
+    );
+
+    continueFirst();
+    await first;
+    expect(await readdir(outputPath)).not.toContain(".dso-generate.lock");
+  });
+
   it("removes newly installed artifacts when a later install rename fails", async () => {
     const outputPath = await directory();
     const canonicalOutputPath = await realpath(outputPath);
@@ -198,6 +230,7 @@ describe("atomic generated artifacts", () => {
         "utf8",
       ),
     ).toBe("old-css");
+    expect(await readdir(outputPath)).toContain(".dso-generate.lock");
   });
 
   it("leaves output unchanged on overwrite cancellation", async () => {
