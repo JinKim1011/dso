@@ -151,14 +151,6 @@ export function buildTokenGraphIndex(release: PublishedReleaseResponse): TokenGr
       );
     }
 
-    if (target.cssVar === null) {
-      throw new TokenGraphValidationError(
-        "missing-reference-css-var",
-        `Reference target token "${referencedTokenId}" has no CSS variable name.`,
-        { tokenId: referencingTokenId, slot, targetTokenId: referencedTokenId },
-      );
-    }
-
     const sourceReferences =
       referencesByTokenAndSlot.get(referencingTokenId) ??
       new Map<TokenReferenceSlot, TokenReference>();
