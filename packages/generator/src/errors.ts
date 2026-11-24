@@ -22,7 +22,11 @@ export type TokenResolutionErrorCode =
   | "semantic-reference-chain";
 
 export type TokensCssRenderErrorCode =
-  "invalid-css-var" | "invalid-class-name" | "unsafe-css-value" | "missing-css-var";
+  | "invalid-css-var"
+  | "duplicate-css-var"
+  | "invalid-class-name"
+  | "unsafe-css-value"
+  | "missing-css-var";
 
 export class TokenGraphValidationError extends Error {
   readonly code: TokenGraphErrorCode;
