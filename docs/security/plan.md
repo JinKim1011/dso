@@ -252,12 +252,14 @@ The three implementation days are ordered to avoid coupling downstream work to u
 
 ##### Day 3: Token generation and verification
 
-- Add a generator package and `dso generate`.
+- `@repo/generator` and `dso generate` are implemented as a pure generator plus offline CLI orchestration.
 - Generate only `tokens.json` and `tokens.css` from token types, tokens, and references in the validated signed snapshot.
+- Cache is bounded-read, parsed, signature-verified, and release-ID checked again for every generate operation.
+- CSS variable names are derived by the generator. The release's legacy `cssVar` field is ignored.
 - Make output deterministic and independent of the local output root.
 - Prompt before replacing existing `tokens.json` or `tokens.css` in an interactive terminal. `--force` replaces only those owned artifacts without prompting.
 - In non-interactive execution, reject a conflict unless `--force` is present.
-- Stage both generated files and replace them atomically. Preserve unrelated files and avoid partial output.
+- Stage both generated files, back up existing owned files, install both names, and roll back on command failure. Preserve unrelated files.
 - Keep component and document-template generation, placeholder rendering, and release-driven `documentPath` handling out of W5.
 
 #### Tests
