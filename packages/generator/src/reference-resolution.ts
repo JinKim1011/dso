@@ -188,6 +188,7 @@ export function resolveTokenReferences(
     return {
       id: token.id,
       name: token.name,
+      // Release cssVar is legacy; all generated aliases use this derived value.
       cssVar: deriveCssVariable(token, tokenType),
       category: tokenType.category,
       type: tokenType.name,
