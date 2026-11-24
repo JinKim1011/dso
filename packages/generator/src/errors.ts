@@ -19,6 +19,7 @@ export type TokenResolutionErrorCode =
   | "invalid-token-value"
   | "missing-reference-target"
   | "missing-reference-css-var"
+  | "stored-css-alias"
   | "semantic-reference-chain";
 
 export type TokensCssRenderErrorCode =
