@@ -130,7 +130,7 @@ describe("loadWorkbenchProject database pipeline", () => {
     expect(
       viewModel.tokenTypes
         .flatMap(({ values }) => values)
-        .find(({ name }) => name === "surface"),
+        .find(({ name }) => name === "default"),
     ).toMatchObject({
       value: {
         kind: "modes",
