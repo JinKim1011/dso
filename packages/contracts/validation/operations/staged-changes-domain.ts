@@ -13,6 +13,10 @@ import {
 } from "@repo/contracts/validation/token-reference";
 import { supportsTokenReferenceSlot } from "@repo/contracts/validation/token-reference-slots";
 import {
+  findTokenCssVariableConflicts,
+  validateTokenName,
+} from "@repo/contracts/validation/token-naming";
+import {
   expectedValueKind,
   validatePrimitiveTokenValue,
   validateTokenValue,
@@ -25,6 +29,8 @@ export type StagedChangesDomainIssue = {
     | "missing-token-type"
     | "conflict"
     | "invalid-value"
+    | "invalid-name"
+    | "duplicate-css-variable"
     | "unsupported-slot"
     | "duplicate-reference"
     | TokenReferenceValidationError["code"];
@@ -182,6 +188,41 @@ export function validateSaveStagedChanges(
   const proposedState = applyChanges(request, tokenById, currentReferences, projectId);
   const finalTokens = Array.from(proposedState.tokens.values());
   const finalReferences = proposedState.references;
+
+  const renamedTokenIds = new Set(
+    request.changes
+      .filter((change) => change.name)
+      .map((change) => change.tokenId.toLowerCase()),
+  );
+
+  for (const token of finalTokens) {
+    if (!renamedTokenIds.has(token.id.toLowerCase())) continue;
+
+    const nameError = validateTokenName(token.name);
+
+    if (nameError) {
+      issues.push({
+        code: "invalid-name",
+        tokenId: token.id,
+        field: "name",
+        message: nameError,
+      });
+    }
+  }
+
+  for (const [cssVariable, tokenIds] of findTokenCssVariableConflicts(
+    finalTokens,
+    new Map(tokenTypes.map((type) => [type.id, type])),
+  )) {
+    for (const tokenId of tokenIds) {
+      issues.push({
+        code: "duplicate-css-variable",
+        tokenId,
+        field: "name",
+        message: `The generated token path already exists: ${cssVariable}`,
+      });
+    }
+  }
 
   for (const token of finalTokens) {
     const tokenType = typeById.get(token.tokenTypeId.toLowerCase());
