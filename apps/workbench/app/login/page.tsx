@@ -10,7 +10,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
@@ -29,7 +28,6 @@ export default function LoginPage() {
 
     if (pending) return;
 
-    setError("");
     setPending(true);
 
     try {
@@ -39,7 +37,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       if (!response.ok) {
-        setError(
+        Toaster.toast.error(
           response.status === 401
             ? "Invalid email or password."
             : "Unable to log in. Please try again.",
@@ -51,7 +49,7 @@ export default function LoginPage() {
       router.replace("/projects");
       router.refresh();
     } catch {
-      setError("Unable to log in. Please try again.");
+      Toaster.toast.error("Unable to log in. Please try again.");
     } finally {
       setPending(false);
     }
@@ -92,11 +90,6 @@ export default function LoginPage() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />
-          {error && (
-            <Text role="alert" variant="input-helper-sm" className="text-content-error">
-              {error}
-            </Text>
-          )}
         </div>
         <Button
           type="submit"
