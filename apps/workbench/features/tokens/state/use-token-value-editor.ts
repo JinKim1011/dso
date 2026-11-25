@@ -1,11 +1,11 @@
+import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
 import type {
+  TokenGraphViewModel,
   TokenReferenceOption,
   TokenValueDetailUpdate,
   TokenValueViewModel,
   TypographyReferenceOptions,
 } from "@/features/tokens/model/token-graph";
-import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
-import type { TokenGraphViewModel } from "@/features/tokens/model/token-graph";
 import { validateTokenNameChange } from "@/features/tokens/model/token-name-validation";
 import {
   buildTokenEditorUpdate,
@@ -14,8 +14,8 @@ import {
   type TokenEditorDraft,
 } from "@/features/tokens/model/token-value-editor";
 import type { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
-import { useEffect, useMemo, useState } from "react";
 import { Toaster } from "@repo/ui";
+import { useEffect, useMemo, useState } from "react";
 
 type UseTokenValueEditorProps = {
   rowId: string;
@@ -72,7 +72,12 @@ export function useTokenValueEditor({
   const undo = () => setDraft(initialDraft);
 
   const save = () => {
-    if (state.missingReference || state.incomplete || state.invalidPrimitiveValue) return;
+    if (
+      state.missingReference ||
+      (draft.kind === "single-reference" && state.incomplete) ||
+      state.invalidPrimitiveValue
+    )
+      return;
     const update = buildTokenEditorUpdate(category, draft);
     const nameError = validateTokenNameChange({
       draftModel,
