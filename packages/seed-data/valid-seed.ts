@@ -364,7 +364,7 @@ const spacingPrimitiveTokens: Token[] = spacingPrimitiveValues.flatMap(
       id: tokenId(),
       projectId: seedIds.project,
       tokenTypeId,
-      name,
+      name: `${cssPrefix}-${name}`,
       cssVar: `--spacing-${cssPrefix}-${name}`,
       value: { kind: "single" as const, value },
     })),
@@ -415,8 +415,8 @@ const radiusScaleTokens: Token[] = radiusScaleValues.map(([name, value]) => ({
   id: tokenId(),
   projectId: seedIds.project,
   tokenTypeId: primitiveRadiusScaleTypeId,
-  name,
-  cssVar: `--radius-${name}`,
+  name: `scale-${name}`,
+  cssVar: `--radius-scale-${name}`,
   value: { kind: "single", value },
 }));
 
@@ -439,12 +439,19 @@ const radiusSemanticValues = [
   [semanticRadiusInputFieldTypeId, "xlarge", "large", "12px"],
 ] as const;
 
+const radiusSemanticPrefixByTypeId = new Map([
+  [semanticRadiusModalTypeId, "modal"],
+  [semanticRadiusCardTypeId, "card"],
+  [semanticRadiusButtonTypeId, "button"],
+  [semanticRadiusInputFieldTypeId, "input-field"],
+] as const);
+
 const radiusSemanticTokens: Token[] = radiusSemanticValues.map(
   ([tokenTypeId, name, , value]) => ({
     id: tokenId(),
     projectId: seedIds.project,
     tokenTypeId,
-    name,
+    name: `${radiusSemanticPrefixByTypeId.get(tokenTypeId)}-${name}`,
     cssVar: null,
     value: { kind: "single" as const, value },
   }),
@@ -468,7 +475,7 @@ const lightElevationTokens: Token[] = lightElevationValues.map(([name, value]) =
   id: tokenId(),
   projectId: seedIds.project,
   tokenTypeId: primitiveLightElevationTypeId,
-  name,
+  name: `light-${name}`,
   cssVar: `--shadow-light-${name}`,
   value: { kind: "single", value },
 }));
@@ -477,7 +484,7 @@ const darkElevationTokens: Token[] = darkElevationValues.map(([name, value]) => 
   id: tokenId(),
   projectId: seedIds.project,
   tokenTypeId: primitiveDarkElevationTypeId,
-  name,
+  name: `dark-${name}`,
   cssVar: `--shadow-dark-${name}`,
   value: { kind: "single", value },
 }));
@@ -501,12 +508,19 @@ const shadowSemanticValues = [
   [semanticShadowHeaderTypeId, "large"],
 ] as const;
 
+const shadowSemanticPrefixByTypeId = new Map([
+  [semanticShadowModalTypeId, "modal"],
+  [semanticShadowCardTypeId, "card"],
+  [semanticShadowSidebarTypeId, "sidebar"],
+  [semanticShadowHeaderTypeId, "header"],
+] as const);
+
 const shadowSemanticTokens: Token[] = shadowSemanticValues.map(
   ([tokenTypeId, name]) => ({
     id: tokenId(),
     projectId: seedIds.project,
     tokenTypeId,
-    name,
+    name: `${shadowSemanticPrefixByTypeId.get(tokenTypeId)}-${name}`,
     cssVar: null,
     value: { kind: "modes" as const },
   }),
@@ -516,12 +530,8 @@ const typographyTokensByTypeAndName = new Map(
   typographyPrimitiveTokens.map((token) => [`${token.tokenTypeId}:${token.name}`, token]),
 );
 
-const spacingPrimitiveTokensByTypeAndName = new Map(
-  spacingPrimitiveTokens.map((token) => [`${token.tokenTypeId}:${token.name}`, token]),
-);
-
 const radiusScaleTokensByName = new Map(
-  radiusScaleTokens.map((token) => [token.name, token]),
+  radiusScaleTokens.map((token) => [token.name.replace(/^scale-/u, ""), token]),
 );
 
 const spacingReferences = spacingSemanticValues.map(
@@ -535,8 +545,10 @@ const spacingReferences = spacingSemanticValues.map(
             ? "margin"
             : "gap"}-${primitiveName}`,
     );
-    const referencedToken = spacingPrimitiveTokensByTypeAndName.get(
-      `${primitiveTypeId}:${primitiveName}`,
+    const referencedToken = spacingPrimitiveTokens.find(
+      (token) =>
+        token.tokenTypeId === primitiveTypeId &&
+        token.name.endsWith(`-${primitiveName}`),
     );
 
     if (!semanticToken) {
@@ -561,7 +573,9 @@ const radiusReferences = radiusSemanticValues.map(
   ([tokenTypeId, semanticName, primitiveName]) => {
     const semanticToken = radiusSemanticTokens.find(
       (token) =>
-        token.tokenTypeId === tokenTypeId && token.name === semanticName,
+        token.tokenTypeId === tokenTypeId &&
+        token.name ===
+          `${radiusSemanticPrefixByTypeId.get(tokenTypeId)}-${semanticName}`,
     );
     const referencedToken = radiusScaleTokensByName.get(primitiveName);
 
@@ -584,18 +598,20 @@ const radiusReferences = radiusSemanticValues.map(
 );
 
 const lightElevationTokensByName = new Map(
-  lightElevationTokens.map((token) => [token.name, token]),
+  lightElevationTokens.map((token) => [token.name.replace(/^light-/u, ""), token]),
 );
 
 const darkElevationTokensByName = new Map(
-  darkElevationTokens.map((token) => [token.name, token]),
+  darkElevationTokens.map((token) => [token.name.replace(/^dark-/u, ""), token]),
 );
 
 const shadowReferences = shadowSemanticValues.flatMap(
   ([tokenTypeId, elevationName]) => {
     const semanticToken = shadowSemanticTokens.find(
       (token) =>
-        token.tokenTypeId === tokenTypeId && token.name === elevationName,
+        token.tokenTypeId === tokenTypeId &&
+        token.name ===
+          `${shadowSemanticPrefixByTypeId.get(tokenTypeId)}-${elevationName}`,
     );
     const lightToken = lightElevationTokensByName.get(elevationName);
     const darkToken = darkElevationTokensByName.get(elevationName);
