@@ -57,6 +57,16 @@ describe("logout request boundary", () => {
     },
   );
 
+  it("is available in production when authentication is explicitly enabled", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DSO_WORKBENCH_AUTH_ENABLED", "true");
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(200);
+    expect(logout).toHaveBeenCalled();
+  });
+
   it("deletes the session and expires the configured cookie", async () => {
     const incoming = request();
     const response = await POST(incoming);
