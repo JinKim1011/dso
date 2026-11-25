@@ -135,9 +135,13 @@ describe("database audit events repository", () => {
     for (const metadata of invalidMetadata) {
       const event = batch();
       Reflect.set(event, "metadata", metadata);
-      await expect(insertAuditEvent(database, event)).rejects.toThrow("Invalid audit token IDs.");
+      await expect(insertAuditEvent(database, event)).rejects.toThrow(
+        "Invalid audit token IDs.",
+      );
     }
-    const result = await database.query("SELECT COUNT(*)::int AS count FROM audit_events");
+    const result = await database.query(
+      "SELECT COUNT(*)::int AS count FROM audit_events",
+    );
     expect(result.rows[0].count).toBe(0);
   });
 
@@ -302,7 +306,7 @@ describe("database token references repository", () => {
     const semanticType = findTokenType(seed, "surface", "semantic");
 
     const semanticToken = seed.tokens.find(
-      (token) => token.name === "surface" && token.tokenTypeId === semanticType.id,
+      (token) => token.name === "default" && token.tokenTypeId === semanticType.id,
     )!;
     const lightReference = seed.tokenReferences.find(
       (reference) =>
