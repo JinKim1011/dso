@@ -20,6 +20,34 @@ describe("validSeed", () => {
     });
   });
 
+  it("matches color definitions by token type and name", () => {
+    const typeNames = new Map(validSeed.tokenTypes.map((type) => [type.id, type.name]));
+    const tokenNames = new Map(validSeed.tokens.map((token) => [token.id, token.name]));
+    const expected = [
+      ["surface", "default", { light: "neutral-0", dark: "neutral-900" }],
+      ["interactive", "default", { light: "neutral-0", dark: "neutral-900" }],
+      ["content", "default", { light: "neutral-900", dark: "neutral-0" }],
+      ["stroke", "default", { light: "neutral-100", dark: "neutral-800" }],
+    ] as const;
+
+    for (const [typeName, tokenName, references] of expected) {
+      const token = validSeed.tokens.find(
+        (item) => item.name === tokenName && typeNames.get(item.tokenTypeId) === typeName,
+      );
+      expect(token).toBeDefined();
+
+      const actual = Object.fromEntries(
+        validSeed.tokenReferences
+          .filter((reference) => reference.referencingTokenId === token?.id)
+          .map((reference) => [
+            reference.slot,
+            tokenNames.get(reference.referencedTokenId),
+          ]),
+      );
+      expect(actual).toEqual(references);
+    }
+  });
+
   it("is a valid complete seed", () => {
     expect(validateSeedData(validSeed)).toEqual([]);
   });
