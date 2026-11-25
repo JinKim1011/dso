@@ -39,6 +39,13 @@ export function loadSecurityEnvironment(env: NodeJS.ProcessEnv): SecurityEnviron
   };
 }
 
+export function isWorkbenchAuthenticationEnabled(env: NodeJS.ProcessEnv): boolean {
+  return (
+    env.NODE_ENV === "development" ||
+    (env.NODE_ENV === "production" && env.DSO_WORKBENCH_AUTH_ENABLED === "true")
+  );
+}
+
 export function loadReleaseSigningEnvironment(
   env: NodeJS.ProcessEnv,
 ): ReleaseSigningEnvironment {
