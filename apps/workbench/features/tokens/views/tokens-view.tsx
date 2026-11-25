@@ -73,6 +73,7 @@ export function TokensView({ category }: TokensViewProps) {
           preview: valueItem.preview,
           category: tokenType.category,
           kind: tokenType.kind,
+          tokenTypeId: tokenType.id,
           value: valueItem,
         })),
       );
@@ -168,6 +169,7 @@ export function TokensView({ category }: TokensViewProps) {
         hasNextRow={hasNextRow}
         hasPreviousRow={hasPreviousRow}
         flowInstance={flowInstance}
+        draftModel={draftModel}
         typographyOptions={typographyOptions}
         modeOptions={modeOptions}
         singleReferenceOptions={singleReferenceOptions}
