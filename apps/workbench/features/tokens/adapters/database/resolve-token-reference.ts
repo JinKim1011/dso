@@ -68,6 +68,24 @@ export function resolveTypographyToken(
   };
 }
 
+export function resolveSingleReferenceToken(
+  token: Token,
+  tokenType: TokenType,
+  referenceLookup: TokenReferenceLookup,
+): string | undefined {
+  if (
+    token.value.kind !== "single" ||
+    token.tokenTypeId !== tokenType.id ||
+    token.projectId !== tokenType.projectId ||
+    tokenType.kind !== "semantic" ||
+    !["spacing", "radius", "motion"].includes(tokenType.category)
+  ) {
+    throw new Error(`Token "${token.id}" is not a semantic single-reference token.`);
+  }
+
+  return resolveTokenReferenceValue(token, tokenType, "value", referenceLookup);
+}
+
 export function resolveModeToken(
   token: Token,
   tokenType: TokenType,
