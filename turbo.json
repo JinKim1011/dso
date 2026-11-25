@@ -28,6 +28,7 @@
       "passThroughEnv": [
         "DATABASE_URL",
         "DB_POOL_MAX",
+        "DSO_WORKBENCH_AUTH_ENABLED",
         "DSO_WORKBENCH_ORIGIN",
         "DSO_WORKBENCH_PROJECT_ID",
         "DSO_MANIFEST_PATH",
