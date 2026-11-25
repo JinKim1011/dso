@@ -71,10 +71,18 @@ export function mapApiError(error: unknown): Response {
   }
 
   const correlationId = crypto.randomUUID();
+  const errorCode =
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    typeof error.code === "string"
+      ? error.code
+      : undefined;
 
   console.error("Unhandled API error.", {
     correlationId,
     errorType: error instanceof Error ? "Error" : typeof error,
+    ...(errorCode ? { errorCode } : {}),
   });
 
   return failure(500, {
