@@ -1,5 +1,15 @@
 import type { Token, TokenType } from "@repo/contracts/type";
 
+export const CANONICAL_TOKEN_NAME_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
+
+export function validateTokenName(value: string): string | null {
+  if (!CANONICAL_TOKEN_NAME_PATTERN.test(value)) {
+    return "Use lowercase letters, numbers, and single hyphens.";
+  }
+
+  return null;
+}
+
 export function normalizeTokenPathSegment(value: string): string {
   return value
     .trim()
