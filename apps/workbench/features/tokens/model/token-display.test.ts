@@ -74,7 +74,14 @@ describe("token previews across database, editor and staged models", () => {
   afterEach(() => clearPersistedDraftModel(projectId));
 
   it("edits semantic single references without treating primitive values as references", () => {
-    const token = validSeed.tokens.find((item) => item.name === "component-inset-small")!;
+    const token = validSeed.tokens.find(
+      (item) =>
+        item.name === "inset-small" &&
+        item.tokenTypeId ===
+          validSeed.tokenTypes.find(
+            (type) => type.category === "spacing" && type.name === "component",
+          )?.id,
+    )!;
     const row = rowIn(baseModel, token.id);
     const type = baseModel.tokenTypes.find((item) => item.id === token.tokenTypeId)!;
     const referenceOptions = buildSingleReferenceOptions(baseModel, "spacing");
@@ -82,7 +89,7 @@ describe("token previews across database, editor and staged models", () => {
 
     expect(initialDraft).toEqual({
       kind: "single-reference",
-      name: "component-inset-small",
+      name: "inset-small",
       valueReferencedTokenId: row.references?.value,
     });
     if (initialDraft.kind !== "single-reference") {
@@ -152,7 +159,14 @@ describe("token previews across database, editor and staged models", () => {
   });
 
   it("marks unavailable and unset semantic single references as incomplete", () => {
-    const token = validSeed.tokens.find((item) => item.name === "button-corner-regular")!;
+    const token = validSeed.tokens.find(
+      (item) =>
+        item.name === "regular" &&
+        item.tokenTypeId ===
+          validSeed.tokenTypes.find(
+            (type) => type.category === "radius" && type.name === "button",
+          )?.id,
+    )!;
     const row = rowIn(baseModel, token.id);
     const type = baseModel.tokenTypes.find((item) => item.id === token.tokenTypeId)!;
     const referenceOptions = buildSingleReferenceOptions(baseModel, "radius");
