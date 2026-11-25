@@ -26,12 +26,19 @@ const {
   primitiveEaseIn: primitiveEaseInTypeId,
   primitiveEaseOut: primitiveEaseOutTypeId,
   primitiveEaseInOut: primitiveEaseInOutTypeId,
-  primitivePadding: primitivePaddingTypeId,
-  primitiveMargin: primitiveMarginTypeId,
-  primitiveGap: primitiveGapTypeId,
-  semanticComponent: semanticComponentTypeId,
-  semanticLayout: semanticLayoutTypeId,
-  semanticInline: semanticInlineTypeId,
+  primitiveSpacingScale: primitiveSpacingScaleTypeId,
+  semanticPadding: semanticPaddingTypeId,
+  semanticMargin: semanticMarginTypeId,
+  semanticGap: semanticGapTypeId,
+  semanticPaddingComponent: semanticPaddingComponentTypeId,
+  semanticPaddingLayout: semanticPaddingLayoutTypeId,
+  semanticPaddingInline: semanticPaddingInlineTypeId,
+  semanticMarginComponent: semanticMarginComponentTypeId,
+  semanticMarginLayout: semanticMarginLayoutTypeId,
+  semanticMarginInline: semanticMarginInlineTypeId,
+  semanticGapComponent: semanticGapComponentTypeId,
+  semanticGapLayout: semanticGapLayoutTypeId,
+  semanticGapInline: semanticGapInlineTypeId,
   primitiveRadiusScale: primitiveRadiusScaleTypeId,
   semanticRadiusComponent: semanticRadiusComponentTypeId,
   semanticRadiusModal: semanticRadiusModalTypeId,
@@ -257,80 +264,62 @@ const motionTokens: Token[] = motionValues.map(([name, value]) => ({
   value: { kind: "single", value },
 }));
 
-const spacingPrimitiveValues = [
-  [
-    primitivePaddingTypeId,
-    "padding",
-    [
-      ["micro", "0.125rem"],
-      ["mini", "0.25rem"],
-      ["small", "0.5rem"],
-      ["regular", "0.75rem"],
-      ["large", "1rem"],
-    ],
-  ],
-  [
-    primitiveMarginTypeId,
-    "margin",
-    [
-      ["micro", "1rem"],
-      ["mini", "1.5rem"],
-      ["small", "2rem"],
-      ["regular", "3rem"],
-      ["large", "4rem"],
-    ],
-  ],
-  [
-    primitiveGapTypeId,
-    "gap",
-    [
-      ["micro", "0.125rem"],
-      ["mini", "0.25rem"],
-      ["small", "0.5rem"],
-      ["regular", "0.75rem"],
-      ["large", "1rem"],
-    ],
-  ],
+const spacingScaleValues = [
+  ["none", "0rem"],
+  ["micro", "0.125rem"],
+  ["mini", "0.25rem"],
+  ["small", "0.5rem"],
+  ["regular", "0.75rem"],
+  ["large", "1rem"],
+  ["xlarge", "1.5rem"],
+  ["2xlarge", "2rem"],
+  ["3xlarge", "3rem"],
+  ["4xlarge", "4rem"],
 ] as const;
 
-const spacingPrimitiveTokens: Token[] = spacingPrimitiveValues.flatMap(
-  ([tokenTypeId, cssPrefix, values]) =>
-    values.map(([name, value]) => ({
-      id: tokenId(),
-      projectId: seedIds.project,
-      tokenTypeId,
-      name: `${cssPrefix}-${name}`,
-      cssVar: `--spacing-${cssPrefix}-${name}`,
-      value: { kind: "single" as const, value },
-    })),
+const spacingScaleTokens: Token[] = spacingScaleValues.map(([name, value]) => ({
+  id: tokenId(),
+  projectId: seedIds.project,
+  tokenTypeId: primitiveSpacingScaleTypeId,
+  name: `spacing-scale-${name}`,
+  cssVar: `--spacing-scale-${name}`,
+  value: { kind: "single", value },
+}));
+
+const compactSpacingScale = [
+  ["micro", "micro", "0.125rem"],
+  ["mini", "mini", "0.25rem"],
+  ["small", "small", "0.5rem"],
+  ["regular", "regular", "0.75rem"],
+  ["large", "large", "1rem"],
+] as const;
+
+const spaciousSpacingScale = [
+  ["micro", "large", "1rem"],
+  ["mini", "xlarge", "1.5rem"],
+  ["small", "2xlarge", "2rem"],
+  ["regular", "3xlarge", "3rem"],
+  ["large", "4xlarge", "4rem"],
+] as const;
+
+const spacingSemanticValues: Array<readonly [string, string, string, string]> = (
+  [
+    [semanticPaddingComponentTypeId, compactSpacingScale],
+    [semanticPaddingLayoutTypeId, compactSpacingScale],
+    [semanticPaddingInlineTypeId, compactSpacingScale],
+    [semanticMarginComponentTypeId, spaciousSpacingScale],
+    [semanticMarginLayoutTypeId, spaciousSpacingScale],
+    [semanticMarginInlineTypeId, spaciousSpacingScale],
+    [semanticGapComponentTypeId, compactSpacingScale],
+    [semanticGapLayoutTypeId, compactSpacingScale],
+    [semanticGapInlineTypeId, compactSpacingScale],
+  ] as const
+).flatMap(([tokenTypeId, values]) =>
+  values.map(([name, scaleName, value]) => [tokenTypeId, name, scaleName, value]),
 );
 
-const spacingSemanticValues = [
-  [semanticComponentTypeId, "inset-micro", "micro", primitivePaddingTypeId, "0.125rem"],
-  [semanticComponentTypeId, "inset-mini", "mini", primitivePaddingTypeId, "0.25rem"],
-  [semanticComponentTypeId, "inset-small", "small", primitivePaddingTypeId, "0.5rem"],
-  [
-    semanticComponentTypeId,
-    "inset-regular",
-    "regular",
-    primitivePaddingTypeId,
-    "0.75rem",
-  ],
-  [semanticComponentTypeId, "inset-large", "large", primitivePaddingTypeId, "1rem"],
-  [semanticLayoutTypeId, "section-gap-micro", "micro", primitiveMarginTypeId, "1rem"],
-  [semanticLayoutTypeId, "section-gap-mini", "mini", primitiveMarginTypeId, "1.5rem"],
-  [semanticLayoutTypeId, "section-gap-small", "small", primitiveMarginTypeId, "2rem"],
-  [semanticLayoutTypeId, "section-gap-regular", "regular", primitiveMarginTypeId, "3rem"],
-  [semanticLayoutTypeId, "section-gap-large", "large", primitiveMarginTypeId, "4rem"],
-  [semanticInlineTypeId, "item-gap-micro", "micro", primitiveGapTypeId, "0.125rem"],
-  [semanticInlineTypeId, "item-gap-mini", "mini", primitiveGapTypeId, "0.25rem"],
-  [semanticInlineTypeId, "item-gap-small", "small", primitiveGapTypeId, "0.5rem"],
-  [semanticInlineTypeId, "item-gap-regular", "regular", primitiveGapTypeId, "0.75rem"],
-  [semanticInlineTypeId, "item-gap-large", "large", primitiveGapTypeId, "1rem"],
-] as const;
-
 const spacingSemanticTokens: Token[] = spacingSemanticValues.map(
-  ([tokenTypeId, name, , , value]) => ({
+  ([tokenTypeId, name, , value]) => ({
     id: tokenId(),
     projectId: seedIds.project,
     tokenTypeId,
@@ -459,23 +448,22 @@ const radiusScaleTokensByName = new Map(
   radiusScaleTokens.map((token) => [token.name.replace(/^scale-/u, ""), token]),
 );
 
+const spacingScaleTokensByName = new Map(
+  spacingScaleTokens.map((token) => [token.name.replace(/^spacing-scale-/u, ""), token]),
+);
+
 const spacingReferences = spacingSemanticValues.map(
-  ([tokenTypeId, semanticName, primitiveName, primitiveTypeId]) => {
+  ([tokenTypeId, semanticName, scaleName]) => {
     const semanticToken = spacingSemanticTokens.find(
       (token) => token.tokenTypeId === tokenTypeId && token.name === semanticName,
     );
-    const referencedToken = spacingPrimitiveTokens.find(
-      (token) =>
-        token.tokenTypeId === primitiveTypeId && token.name.endsWith(`-${primitiveName}`),
-    );
+    const referencedToken = spacingScaleTokensByName.get(scaleName);
 
     if (!semanticToken) {
-      throw new Error(`Missing spacing semantic token: ${primitiveName}`);
+      throw new Error(`Missing spacing semantic token: ${tokenTypeId}:${semanticName}`);
     }
     if (!referencedToken) {
-      throw new Error(
-        `Missing spacing primitive token: ${primitiveTypeId}:${primitiveName}`,
-      );
+      throw new Error(`Missing spacing scale token: ${scaleName}`);
     }
 
     return {
@@ -665,29 +653,72 @@ const tokenTypes: TokenType[] = [
   createTokenType(primitiveEaseOutTypeId, "ease-out", "motion", "primitive"),
   createTokenType(primitiveEaseInOutTypeId, "ease-in-out", "motion", "primitive"),
   // spacing
-  createTokenType(primitivePaddingTypeId, "padding", "spacing", "primitive"),
-  createTokenType(primitiveMarginTypeId, "margin", "spacing", "primitive"),
-  createTokenType(primitiveGapTypeId, "gap", "spacing", "primitive"),
+  createTokenType(primitiveSpacingScaleTypeId, "scale", "spacing", "primitive"),
+  createTokenType(semanticPaddingTypeId, "padding", "spacing", "semantic"),
+  createTokenType(semanticMarginTypeId, "margin", "spacing", "semantic"),
+  createTokenType(semanticGapTypeId, "gap", "spacing", "semantic"),
   createTokenType(
-    semanticComponentTypeId,
+    semanticPaddingComponentTypeId,
     "component",
     "spacing",
     "semantic",
-    primitivePaddingTypeId,
+    semanticPaddingTypeId,
   ),
   createTokenType(
-    semanticLayoutTypeId,
+    semanticPaddingLayoutTypeId,
     "layout",
     "spacing",
     "semantic",
-    primitiveMarginTypeId,
+    semanticPaddingTypeId,
   ),
   createTokenType(
-    semanticInlineTypeId,
+    semanticPaddingInlineTypeId,
     "inline",
     "spacing",
     "semantic",
-    primitiveGapTypeId,
+    semanticPaddingTypeId,
+  ),
+  createTokenType(
+    semanticMarginComponentTypeId,
+    "component",
+    "spacing",
+    "semantic",
+    semanticMarginTypeId,
+  ),
+  createTokenType(
+    semanticMarginLayoutTypeId,
+    "layout",
+    "spacing",
+    "semantic",
+    semanticMarginTypeId,
+  ),
+  createTokenType(
+    semanticMarginInlineTypeId,
+    "inline",
+    "spacing",
+    "semantic",
+    semanticMarginTypeId,
+  ),
+  createTokenType(
+    semanticGapComponentTypeId,
+    "component",
+    "spacing",
+    "semantic",
+    semanticGapTypeId,
+  ),
+  createTokenType(
+    semanticGapLayoutTypeId,
+    "layout",
+    "spacing",
+    "semantic",
+    semanticGapTypeId,
+  ),
+  createTokenType(
+    semanticGapInlineTypeId,
+    "inline",
+    "spacing",
+    "semantic",
+    semanticGapTypeId,
   ),
   // radius
   createTokenType(primitiveRadiusScaleTypeId, "scale", "radius", "primitive"),
@@ -822,7 +853,7 @@ export const validSeed: SeedData = {
     ...typographyPrimitiveTokens,
     ...typographySemanticTokens,
     ...motionTokens,
-    ...spacingPrimitiveTokens,
+    ...spacingScaleTokens,
     ...spacingSemanticTokens,
     ...radiusScaleTokens,
     ...radiusSemanticTokens,
