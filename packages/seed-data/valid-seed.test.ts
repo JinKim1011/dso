@@ -82,21 +82,21 @@ describe("validSeed", () => {
         )
         .map((token) => token.name),
     ).toEqual([
-      "component-inset-micro",
-      "component-inset-mini",
-      "component-inset-small",
-      "component-inset-regular",
-      "component-inset-large",
-      "layout-section-gap-micro",
-      "layout-section-gap-mini",
-      "layout-section-gap-small",
-      "layout-section-gap-regular",
-      "layout-section-gap-large",
-      "inline-item-gap-micro",
-      "inline-item-gap-mini",
-      "inline-item-gap-small",
-      "inline-item-gap-regular",
-      "inline-item-gap-large",
+      "inset-micro",
+      "inset-mini",
+      "inset-small",
+      "inset-regular",
+      "inset-large",
+      "section-gap-micro",
+      "section-gap-mini",
+      "section-gap-small",
+      "section-gap-regular",
+      "section-gap-large",
+      "item-gap-micro",
+      "item-gap-mini",
+      "item-gap-small",
+      "item-gap-regular",
+      "item-gap-large",
     ]);
   });
 
@@ -168,7 +168,7 @@ describe("validSeed", () => {
       validSeed.tokens
         .filter((token) => semanticRadiusTokenIds.has(token.id))
         .map((token) => token.name),
-    ).toContain("input-field-corner-regular");
+    ).toContain("regular");
   });
 
   it("contains demo shadow elevations and light/dark semantic references", () => {
@@ -248,6 +248,6 @@ describe("validSeed", () => {
       validSeed.tokens
         .filter((token) => semanticShadowTokenIds.has(token.id))
         .map((token) => token.name),
-    ).toContain("modal-elevation-large");
+    ).toContain("large");
   });
 });
