@@ -1,56 +1,29 @@
 import type { Token, TokenType } from "@repo/contracts/type";
+import {
+  deriveTokenCssVariable,
+  findTokenCssVariableConflicts,
+} from "@repo/contracts/validation/token-naming";
 import { assertCssCustomPropertyName } from "@repo/generator/css-value";
 import { TokensCssRenderError } from "@repo/generator/errors";
 
-function normalizeCssName(value: string, tokenId: string): string {
-  const normalized = value
-    .trim()
-    .replace(/[^A-Za-z0-9_-]+/gu, "-")
-    .replace(/-+/gu, "-")
-    .replace(/^-|-$/gu, "");
+export function deriveCssVariable(
+  token: Token,
+  tokenType: TokenType,
+  tokenTypesById: ReadonlyMap<string, TokenType>,
+): string | null {
+  const cssVar = deriveTokenCssVariable(token, tokenType, tokenTypesById);
 
-  if (normalized.length === 0) {
+  if (
+    cssVar === null &&
+    !(tokenType.kind === "semantic" && tokenType.category === "typography")
+  ) {
     throw new TokensCssRenderError(
       "invalid-css-var",
-      `Token "${tokenId}" cannot produce a CSS variable name.`,
-      tokenId,
+      `Token "${token.id}" cannot produce a CSS variable name.`,
+      token.id,
     );
   }
-
-  return normalized;
-}
-
-function primitiveCssPrefix(tokenType: TokenType): string | null {
-  if (tokenType.category === "typography") {
-    switch (tokenType.name) {
-      case "font-size":
-        return "text";
-      case "font-weight":
-        return "font";
-      case "line-height":
-        return "leading";
-      default:
-        return null;
-    }
-  }
-
-  return tokenType.category === "color" || tokenType.category === "shadow"
-    ? "base"
-    : null;
-}
-
-export function deriveCssVariable(token: Token, tokenType: TokenType): string | null {
-  if (tokenType.kind === "semantic" && tokenType.category === "typography") {
-    return null;
-  }
-
-  const normalizedName = normalizeCssName(token.name, token.id);
-  const prefix =
-    tokenType.kind === "semantic"
-      ? normalizeCssName(tokenType.category, token.id)
-      : primitiveCssPrefix(tokenType);
-
-  const cssVar = `--${prefix ? `${prefix}-` : ""}${normalizedName}`;
+  if (cssVar === null) return null;
 
   assertCssCustomPropertyName(cssVar, token.id);
 
@@ -61,27 +34,15 @@ export function assertUniqueCssVariables(
   tokens: readonly Token[],
   tokenTypeById: ReadonlyMap<string, TokenType>,
 ): void {
-  const tokenIdByCssVar = new Map<string, string>();
+  const conflicts = findTokenCssVariableConflicts(tokens, tokenTypeById);
+  const conflict = conflicts.entries().next().value;
 
-  for (const token of tokens) {
-    const tokenType = tokenTypeById.get(token.tokenTypeId);
-
-    if (!tokenType) continue;
-
-    const cssVar = deriveCssVariable(token, tokenType);
-
-    if (cssVar === null) continue;
-
-    const existingTokenId = tokenIdByCssVar.get(cssVar);
-
-    if (existingTokenId !== undefined && existingTokenId !== token.id) {
-      throw new TokensCssRenderError(
-        "duplicate-css-var",
-        `Tokens "${existingTokenId}" and "${token.id}" produce the same CSS variable name.`,
-        token.id,
-      );
-    }
-
-    tokenIdByCssVar.set(cssVar, token.id);
+  if (conflict) {
+    const [cssVar, tokenIds] = conflict;
+    throw new TokensCssRenderError(
+      "duplicate-css-var",
+      `Tokens "${tokenIds[0]}" and "${tokenIds[1]}" produce the same CSS variable name "${cssVar}".`,
+      tokenIds[1]!,
+    );
   }
 }

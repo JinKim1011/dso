@@ -2,11 +2,13 @@
 
 import { TokenModesForm } from "@/features/tokens/components/form/token-modes-form";
 import { TokenSingleForm } from "@/features/tokens/components/form/token-single-form";
+import { TokenSingleReferenceForm } from "@/features/tokens/components/form/token-single-reference-form";
 import { TokenTypographyForm } from "@/features/tokens/components/form/token-typography-form";
 import { TokenValuePreview } from "@/features/tokens/components/token-value/token-value-preview";
 import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
 import type {
   TokenReferenceOption,
+  TokenGraphViewModel,
   TokenValueDetailUpdate,
   TokenValueViewModel,
   TypographyReferenceOptions,
@@ -22,8 +24,11 @@ type TokenValueDetailProps = {
   meta?: string;
   category: TokenCategory;
   kind: TokenKind;
+  tokenTypeId: string;
+  draftModel: TokenGraphViewModel;
   value: TokenValueViewModel;
   modeOptions: TokenReferenceOption[];
+  singleReferenceOptions: TokenReferenceOption[];
   resolveDisplay: TokenDisplayResolver;
   typographyOptions: TypographyReferenceOptions;
   onClose?: () => void;
@@ -35,8 +40,11 @@ export function TokenValueDetail({
   name,
   category,
   kind,
+  tokenTypeId,
+  draftModel,
   value,
   modeOptions,
+  singleReferenceOptions,
   resolveDisplay,
   typographyOptions,
   onSave,
@@ -56,7 +64,10 @@ export function TokenValueDetail({
     value,
     category,
     kind,
+    tokenTypeId,
+    draftModel,
     modeOptions,
+    singleReferenceOptions,
     resolveDisplay,
     typographyOptions,
     onSave,
@@ -103,6 +114,25 @@ export function TokenValueDetail({
               name: next.name,
               lightId: next.lightReferencedTokenId,
               darkId: next.darkReferencedTokenId,
+            })
+          }
+        />
+      );
+    }
+
+    if (draft.kind === "single-reference") {
+      return (
+        <TokenSingleReferenceForm
+          draft={{
+            name: draft.name,
+            valueReferencedTokenId: draft.valueReferencedTokenId,
+          }}
+          options={singleReferenceOptions}
+          onChange={(next) =>
+            setDraft({
+              kind: "single-reference",
+              name: next.name,
+              valueReferencedTokenId: next.valueReferencedTokenId,
             })
           }
         />

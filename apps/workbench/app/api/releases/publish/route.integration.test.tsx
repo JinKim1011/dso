@@ -9,7 +9,7 @@ import { seedProject } from "@repo/application/fixtures";
 import { listTokenReferencesByProjectId } from "@repo/db/repositories/references";
 import { insertSession } from "@repo/db/repositories/sessions";
 import { listTokenTypesByProjectId } from "@repo/db/repositories/token-types";
-import { listTokensByProjectId } from "@repo/db/repositories/tokens";
+import { insertToken, listTokensByProjectId } from "@repo/db/repositories/tokens";
 import { closeDatabase, resetDatabase, setupDatabase } from "@repo/db/test/database";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
@@ -104,6 +104,66 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
         2,
       );
       hook.unmount();
+    });
+
+    it("rejects a generated CSS path collision before publishing", async () => {
+      const fixture = await seedProject(database, "publisher");
+      const sessionId = crypto.randomUUID();
+      const now = Date.now();
+      await insertSession(database, {
+        id: sessionId,
+        userId: fixture.user.id,
+        createdAt: new Date(now).toISOString(),
+        expiresAt: new Date(now + 60_000).toISOString(),
+      });
+      const duplicate = {
+        ...fixture.referencedToken,
+        id: crypto.randomUUID(),
+        name: "reserved-name",
+      };
+      await insertToken(database, duplicate);
+      const response = await POST(
+        new Request(`${origin}/api/releases/publish`, {
+          method: "POST",
+          headers: {
+            origin,
+            "content-type": "application/json",
+            "x-dso-csrf": "1",
+            cookie: `dso_session=${sessionId}`,
+          },
+          body: JSON.stringify({
+            projectId: fixture.project.id,
+            changes: [
+              {
+                tokenId: fixture.referencedToken.id,
+                name: {
+                  before: fixture.referencedToken.name,
+                  after: duplicate.name,
+                },
+                references: [],
+              },
+            ],
+          }),
+        }),
+      );
+
+      expect(response.status).toBe(422);
+      expect(await response.json()).toMatchObject({
+        error: {
+          code: "domain-validation",
+          issues: expect.arrayContaining([
+            expect.objectContaining({
+              code: "duplicate-css-variable",
+              tokenId: fixture.referencedToken.id,
+            }),
+          ]),
+        },
+      });
+      expect(await listTokensByProjectId(database, fixture.project.id)).toContainEqual(
+        fixture.referencedToken,
+      );
+      expect((await database.query("SELECT id FROM releases")).rows).toHaveLength(0);
+      expect((await database.query("SELECT id FROM audit_events")).rows).toHaveLength(0);
     });
 
     it("authenticates, publishes, and rejects stale changes and unauthorized callers", async () => {

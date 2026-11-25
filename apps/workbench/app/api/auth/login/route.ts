@@ -2,6 +2,7 @@ import { mapApiError } from "@/server/api-error";
 import { SESSION_COOKIE } from "@/server/auth-session-cookie";
 import { getDatabasePool } from "@/server/database";
 import { isTrustedMutationRequest } from "@/server/csrf";
+import { isWorkbenchAuthenticationEnabled } from "@/server/env";
 import { readJsonBody } from "@/server/request-body";
 import { login } from "@repo/application/services/authentication";
 import { parseLoginRequest } from "@repo/contracts/validation/operations/authentication";
@@ -17,7 +18,7 @@ function failure(status: number, code: string, message: string): Response {
 }
 
 export async function POST(request: Request): Promise<Response> {
-  if (process.env.NODE_ENV !== "development") {
+  if (!isWorkbenchAuthenticationEnabled(process.env)) {
     return failure(404, "not-found", "Not found.");
   }
 

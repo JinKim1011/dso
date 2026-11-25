@@ -1,3 +1,4 @@
+import { Toaster } from "@repo/ui";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -39,18 +40,21 @@ describe("login page", () => {
   });
 
   it("shows a generic credentials error without navigating", async () => {
+    const toastError = vi.spyOn(Toaster.toast, "error").mockReturnValue("toast-id");
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 401 }));
     render(<LoginPage />);
     await fillForm();
-    expect(await screen.findByRole("alert")).toHaveTextContent("Invalid email or password.");
+    expect(toastError).toHaveBeenCalledWith("Invalid email or password.");
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(replace).not.toHaveBeenCalled();
   });
 
   it("shows network errors and permits retrying", async () => {
+    const toastError = vi.spyOn(Toaster.toast, "error").mockReturnValue("toast-id");
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network error")));
     render(<LoginPage />);
     await fillForm();
-    expect(await screen.findByRole("alert")).toHaveTextContent("Unable to log in. Please try again.");
+    expect(toastError).toHaveBeenCalledWith("Unable to log in. Please try again.");
     expect(screen.getByRole("button", { name: "LOG IN" })).toBeEnabled();
     expect(replace).not.toHaveBeenCalled();
   });

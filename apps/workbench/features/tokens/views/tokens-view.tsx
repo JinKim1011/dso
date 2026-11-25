@@ -15,6 +15,7 @@ import { TokenRowViewModel } from "@/features/tokens/model/token-row";
 import { useRowNavigation } from "@/features/tokens/navigation/use-row-navigation";
 import { useRowSelection } from "@/features/tokens/navigation/use-row-selection";
 import { useModeOptions } from "@/features/tokens/options/use-mode-options";
+import { useSingleReferenceOptions } from "@/features/tokens/options/use-single-reference-options";
 import { useTypographyOptions } from "@/features/tokens/options/use-typography-options";
 import { useStagedContext } from "@/features/tokens/state/staged-context";
 import {
@@ -72,6 +73,7 @@ export function TokensView({ category }: TokensViewProps) {
           preview: valueItem.preview,
           category: tokenType.category,
           kind: tokenType.kind,
+          tokenTypeId: tokenType.id,
           value: valueItem,
         })),
       );
@@ -121,6 +123,9 @@ export function TokensView({ category }: TokensViewProps) {
   const typographyOptions = useTypographyOptions(draftModel);
   const colorOptions = useModeOptions({ draftModel, category: "color" });
   const shadowOptions = useModeOptions({ draftModel, category: "shadow" });
+  const spacingOptions = useSingleReferenceOptions(draftModel, "spacing");
+  const radiusOptions = useSingleReferenceOptions(draftModel, "radius");
+  const motionOptions = useSingleReferenceOptions(draftModel, "motion");
 
   const modeOptions =
     selectedRow?.category === "color"
@@ -128,6 +133,15 @@ export function TokensView({ category }: TokensViewProps) {
       : selectedRow?.category === "shadow"
         ? shadowOptions
         : [];
+
+  const singleReferenceOptions =
+    selectedRow?.category === "spacing"
+      ? spacingOptions
+      : selectedRow?.category === "radius"
+        ? radiusOptions
+        : selectedRow?.category === "motion"
+          ? motionOptions
+          : [];
 
   return (
     <div className="bg-dot-pattern rounded-mini border-stroke-secondary relative flex h-full w-full overflow-hidden border">
@@ -155,8 +169,10 @@ export function TokensView({ category }: TokensViewProps) {
         hasNextRow={hasNextRow}
         hasPreviousRow={hasPreviousRow}
         flowInstance={flowInstance}
+        draftModel={draftModel}
         typographyOptions={typographyOptions}
         modeOptions={modeOptions}
+        singleReferenceOptions={singleReferenceOptions}
         resolveDisplay={resolveDisplay}
         selectPreviousRow={selectPreviousRow}
         selectNextRow={selectNextRow}

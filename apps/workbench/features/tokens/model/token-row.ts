@@ -12,6 +12,7 @@ export type TokenRowViewModel = {
   preview?: TokenValueViewModel["preview"];
   category: TokenCategory;
   kind: TokenGraphViewModel["tokenTypes"][number]["kind"];
+  tokenTypeId: string;
   value: TokenValueViewModel;
 };
 

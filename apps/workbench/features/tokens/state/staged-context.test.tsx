@@ -29,7 +29,14 @@ describe("staged draft reload", () => {
   afterEach(() => localStorage.clear());
 
   it("retains the draft when the save endpoint rejects the request", async () => {
-    const token = validSeed.tokens.find((item) => item.name === "surface")!;
+    const token = validSeed.tokens.find(
+      (item) =>
+        item.name === "default" &&
+        item.tokenTypeId ===
+          validSeed.tokenTypes.find(
+            (type) => type.category === "color" && type.name === "surface",
+          )?.id,
+    )!;
     const current = renderHook(() => useStagedContext(), { wrapper });
     act(() => current.result.current.updateRow(token.id, { name: "draft edit" }));
     await waitFor(() => expect(current.result.current.changedRowCount).toBe(1));
@@ -61,7 +68,7 @@ describe("staged draft reload", () => {
   });
 
   it.each([
-    { name: "surface", kind: "modes", slot: "light" },
+    { name: "default", kind: "modes", slot: "light" },
     { name: "body", kind: "typography", slot: "fontSize" },
   ] as const)(
     "restores a cleared $kind slot and falls back to the original without a draft",
@@ -114,7 +121,14 @@ describe("staged draft reload", () => {
   );
 
   it("preserves the original baseline and blocks stale drafts until discarded", async () => {
-    const token = validSeed.tokens.find((item) => item.name === "surface")!;
+    const token = validSeed.tokens.find(
+      (item) =>
+        item.name === "default" &&
+        item.tokenTypeId ===
+          validSeed.tokenTypes.find(
+            (type) => type.category === "color" && type.name === "surface",
+          )?.id,
+    )!;
     const row = findRowById(baseModel, token.id)!;
     const first = renderHook(() => useStagedContext(), { wrapper });
     act(() => first.result.current.updateRow(token.id, { name: "my edit" }));
@@ -160,7 +174,14 @@ describe("staged draft reload", () => {
 
   it("keeps projects' drafts separate", async () => {
     const otherProject = "other-project";
-    const token = validSeed.tokens.find((item) => item.name === "surface")!;
+    const token = validSeed.tokens.find(
+      (item) =>
+        item.name === "default" &&
+        item.tokenTypeId ===
+          validSeed.tokenTypes.find(
+            (type) => type.category === "color" && type.name === "surface",
+          )?.id,
+    )!;
     const changed = {
       ...baseModel,
       tokenTypes: baseModel.tokenTypes.map((type) => ({

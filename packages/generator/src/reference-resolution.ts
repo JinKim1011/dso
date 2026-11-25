@@ -57,7 +57,7 @@ function resolvePrimitiveAlias(
     );
   }
 
-  const cssVar = deriveCssVariable(target, targetType);
+  const cssVar = deriveCssVariable(target, targetType, index.tokenTypeById);
 
   if (cssVar === null) {
     throw new TokenResolutionError(
@@ -205,7 +205,7 @@ export function resolveTokenReferencesFromIndex(
       id: token.id,
       name: token.name,
       // Release cssVar is legacy; all generated aliases use this derived value.
-      cssVar: deriveCssVariable(token, tokenType),
+      cssVar: deriveCssVariable(token, tokenType, index.tokenTypeById),
       category: tokenType.category,
       type: tokenType.name,
       kind: tokenType.kind,

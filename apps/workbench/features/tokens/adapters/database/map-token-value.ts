@@ -1,9 +1,11 @@
 import type { TokenReferenceLookup } from "@/features/tokens/adapters/database/create-token-reference-lookup";
 import {
   resolveModeToken,
+  resolveSingleReferenceToken,
   resolveTypographyToken,
 } from "@/features/tokens/adapters/database/resolve-token-reference";
 import type { TokenValueViewModel } from "@/features/tokens/model/token-graph";
+import { isSemanticSingleReference } from "@/features/tokens/model/single-reference";
 import type { Token, TokenType } from "@repo/contracts/type";
 import { containsCssVariable } from "@repo/contracts/validation/token-value";
 
@@ -22,12 +24,15 @@ export function mapTokenValue(
   switch (token.value.kind) {
     case "single": {
       const valueReference = referenceLookup.find(token.id, "value");
+      const resolvedReference = isSemanticSingleReference(category, tokenType.kind)
+        ? resolveSingleReferenceToken(token, tokenType, referenceLookup)
+        : undefined;
       return {
         value: token.value,
         ...(valueReference.kind === "found"
           ? { references: { value: valueReference.token.id } }
           : {}),
-        meta: token.value.value,
+        meta: resolvedReference ?? token.value.value,
         preview:
           (category === "color" || category === "shadow") &&
           !(tokenType.kind === "primitive" && containsCssVariable(token.value.value))

@@ -39,15 +39,56 @@ describe("deriveCssVariable", () => {
     ["tight", tokenType("typography", "line-height", "primitive"), "--leading-tight"],
     ["ease-in-quad", tokenType("motion", "ease-in", "primitive"), "--ease-in-quad"],
   ])("derives %s from token data", (name, type, expected) => {
-    expect(deriveCssVariable(token(name), type)).toBe(expected);
+    expect(deriveCssVariable(token(name), type, new Map([[type.id, type]]))).toBe(
+      expected,
+    );
   });
 
   it("does not derive a custom property for semantic typography", () => {
+    const type = tokenType("typography", "Typography", "semantic");
+    expect(
+      deriveCssVariable(token("heading-strong"), type, new Map([[type.id, type]])),
+    ).toBeNull();
+  });
+
+  it("includes semantic token type ancestors in the generated path", () => {
+    const projectId = crypto.randomUUID();
+    const component: TokenType = {
+      ...tokenType("radius", "component", "semantic"),
+      id: crypto.randomUUID(),
+      projectId,
+    };
+    const modal: TokenType = {
+      ...tokenType("radius", "modal", "semantic"),
+      id: crypto.randomUUID(),
+      projectId,
+      parentTypeId: component.id,
+    };
+    const types = new Map([
+      [component.id, component],
+      [modal.id, modal],
+    ]);
+    const value = { ...token("small"), tokenTypeId: modal.id, projectId };
+
+    expect(deriveCssVariable(value, modal, types)).toBe("--radius-component-modal-small");
+  });
+
+  it("does not include primitive parents in a semantic path", () => {
+    const primitive = tokenType("color", "Base", "primitive");
+    const semantic = {
+      ...tokenType("color", "content", "semantic"),
+      parentTypeId: primitive.id,
+    };
+
     expect(
       deriveCssVariable(
-        token("heading-strong"),
-        tokenType("typography", "Typography", "semantic"),
+        token("primary"),
+        semantic,
+        new Map([
+          [primitive.id, primitive],
+          [semantic.id, semantic],
+        ]),
       ),
-    ).toBeNull();
+    ).toBe("--color-content-primary");
   });
 });

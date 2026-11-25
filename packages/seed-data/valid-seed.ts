@@ -2,7 +2,7 @@
 
 // TODO:
 // Expand seed coverage to all contract-supported category/type-kind combinations,
-// unresolved values, and semantic motion, spacing, radius, and shadow references.
+// unresolved values, and semantic motion references.
 
 import type { SeedData } from "@repo/contracts/seed";
 import type { Token, TokenType } from "@repo/contracts/type";
@@ -26,6 +26,33 @@ const {
   primitiveEaseIn: primitiveEaseInTypeId,
   primitiveEaseOut: primitiveEaseOutTypeId,
   primitiveEaseInOut: primitiveEaseInOutTypeId,
+  primitiveSpacingScale: primitiveSpacingScaleTypeId,
+  semanticPadding: semanticPaddingTypeId,
+  semanticMargin: semanticMarginTypeId,
+  semanticGap: semanticGapTypeId,
+  semanticPaddingComponent: semanticPaddingComponentTypeId,
+  semanticPaddingLayout: semanticPaddingLayoutTypeId,
+  semanticPaddingInline: semanticPaddingInlineTypeId,
+  semanticMarginComponent: semanticMarginComponentTypeId,
+  semanticMarginLayout: semanticMarginLayoutTypeId,
+  semanticMarginInline: semanticMarginInlineTypeId,
+  semanticGapComponent: semanticGapComponentTypeId,
+  semanticGapLayout: semanticGapLayoutTypeId,
+  semanticGapInline: semanticGapInlineTypeId,
+  primitiveRadiusScale: primitiveRadiusScaleTypeId,
+  semanticRadiusComponent: semanticRadiusComponentTypeId,
+  semanticRadiusModal: semanticRadiusModalTypeId,
+  semanticRadiusCard: semanticRadiusCardTypeId,
+  semanticRadiusButton: semanticRadiusButtonTypeId,
+  semanticRadiusInputField: semanticRadiusInputFieldTypeId,
+  primitiveLightElevation: primitiveLightElevationTypeId,
+  primitiveDarkElevation: primitiveDarkElevationTypeId,
+  semanticShadowComponent: semanticShadowComponentTypeId,
+  semanticShadowLayout: semanticShadowLayoutTypeId,
+  semanticShadowModal: semanticShadowModalTypeId,
+  semanticShadowCard: semanticShadowCardTypeId,
+  semanticShadowSidebar: semanticShadowSidebarTypeId,
+  semanticShadowHeader: semanticShadowHeaderTypeId,
 } = seedIds.tokenTypes;
 
 let nextTokenId = 0;
@@ -95,102 +122,37 @@ const primitiveColorByName = new Map(
 );
 
 const semanticColorValues = [
-  ["surface", "neutral-0", "neutral-900", semanticSurfaceTypeId],
-  ["surface-muted", "neutral-50", "neutral-800", semanticSurfaceTypeId],
-  ["surface-interactive", "neutral-0", "neutral-900", semanticSurfaceInteractiveTypeId],
-  [
-    "surface-interactive-hoverWeak",
-    "neutral-50",
-    "neutral-800",
-    semanticSurfaceInteractiveTypeId,
-  ],
-  [
-    "surface-interactive-hoverStrong",
-    "neutral-100",
-    "neutral-700",
-    semanticSurfaceInteractiveTypeId,
-  ],
-  [
-    "surface-interactive-active",
-    "neutral-200",
-    "neutral-600",
-    semanticSurfaceInteractiveTypeId,
-  ],
-  [
-    "surface-interactive-disabled",
-    "neutral-0",
-    "neutral-900",
-    semanticSurfaceInteractiveTypeId,
-  ],
-  ["surface-feedback-success", "lime-50", "lime-500", semanticSurfaceFeedbackTypeId],
-  ["surface-feedback-warning", "amber-50", "amber-500", semanticSurfaceFeedbackTypeId],
-  ["surface-feedback-error", "red-50", "red-500", semanticSurfaceFeedbackTypeId],
-  ["content-default", "neutral-900", "neutral-0", semanticContentTypeId],
-  ["content-muted", "neutral-600", "neutral-200", semanticContentTypeId],
-  ["content-interactive", "neutral-600", "neutral-200", semanticContentInteractiveTypeId],
-  [
-    "content-interactive-muted",
-    "neutral-400",
-    "neutral-400",
-    semanticContentInteractiveTypeId,
-  ],
-  [
-    "content-interactive-hover",
-    "neutral-900",
-    "neutral-0",
-    semanticContentInteractiveTypeId,
-  ],
-  [
-    "content-interactive-focus",
-    "neutral-900",
-    "neutral-0",
-    semanticContentInteractiveTypeId,
-  ],
-  [
-    "content-interactive-active",
-    "neutral-900",
-    "neutral-0",
-    semanticContentInteractiveTypeId,
-  ],
-  [
-    "content-interactive-disabled",
-    "neutral-400",
-    "neutral-400",
-    semanticContentInteractiveTypeId,
-  ],
-  ["content-feedback-success", "lime-500", "lime-50", semanticContentFeedbackTypeId],
-  ["content-feedback-warning", "amber-500", "amber-50", semanticContentFeedbackTypeId],
-  ["content-feedback-error", "red-500", "red-50", semanticContentFeedbackTypeId],
-  ["stroke", "neutral-100", "neutral-800", semanticStrokeTypeId],
-  ["stroke-muted", "neutral-50", "neutral-900", semanticStrokeTypeId],
-  ["stroke-interactive", "neutral-100", "neutral-800", semanticStrokeInteractiveTypeId],
-  [
-    "stroke-interactive-hover",
-    "neutral-200",
-    "neutral-700",
-    semanticStrokeInteractiveTypeId,
-  ],
-  [
-    "stroke-interactive-active",
-    "neutral-200",
-    "neutral-700",
-    semanticStrokeInteractiveTypeId,
-  ],
-  [
-    "stroke-interactive-focus",
-    "neutral-400",
-    "neutral-400",
-    semanticStrokeInteractiveTypeId,
-  ],
-  [
-    "stroke-interactive-disabled",
-    "neutral-50",
-    "neutral-900",
-    semanticStrokeInteractiveTypeId,
-  ],
-  ["stroke-feedback-success", "lime-100", "lime-100", semanticStrokeFeedbackTypeId],
-  ["stroke-feedback-warning", "amber-100", "amber-100", semanticStrokeFeedbackTypeId],
-  ["stroke-feedback-error", "red-100", "red-100", semanticStrokeFeedbackTypeId],
+  ["default", "neutral-0", "neutral-900", semanticSurfaceTypeId],
+  ["muted", "neutral-50", "neutral-800", semanticSurfaceTypeId],
+  ["default", "neutral-0", "neutral-900", semanticSurfaceInteractiveTypeId],
+  ["hover-weak", "neutral-50", "neutral-800", semanticSurfaceInteractiveTypeId],
+  ["hover-strong", "neutral-100", "neutral-700", semanticSurfaceInteractiveTypeId],
+  ["active", "neutral-200", "neutral-600", semanticSurfaceInteractiveTypeId],
+  ["disabled", "neutral-0", "neutral-900", semanticSurfaceInteractiveTypeId],
+  ["success", "lime-50", "lime-500", semanticSurfaceFeedbackTypeId],
+  ["warning", "amber-50", "amber-500", semanticSurfaceFeedbackTypeId],
+  ["error", "red-50", "red-500", semanticSurfaceFeedbackTypeId],
+  ["default", "neutral-900", "neutral-0", semanticContentTypeId],
+  ["muted", "neutral-600", "neutral-200", semanticContentTypeId],
+  ["default", "neutral-600", "neutral-200", semanticContentInteractiveTypeId],
+  ["muted", "neutral-400", "neutral-400", semanticContentInteractiveTypeId],
+  ["hover", "neutral-900", "neutral-0", semanticContentInteractiveTypeId],
+  ["focus", "neutral-900", "neutral-0", semanticContentInteractiveTypeId],
+  ["active", "neutral-900", "neutral-0", semanticContentInteractiveTypeId],
+  ["disabled", "neutral-400", "neutral-400", semanticContentInteractiveTypeId],
+  ["success", "lime-500", "lime-50", semanticContentFeedbackTypeId],
+  ["warning", "amber-500", "amber-50", semanticContentFeedbackTypeId],
+  ["error", "red-500", "red-50", semanticContentFeedbackTypeId],
+  ["default", "neutral-100", "neutral-800", semanticStrokeTypeId],
+  ["muted", "neutral-50", "neutral-900", semanticStrokeTypeId],
+  ["default", "neutral-100", "neutral-800", semanticStrokeInteractiveTypeId],
+  ["hover", "neutral-200", "neutral-700", semanticStrokeInteractiveTypeId],
+  ["active", "neutral-200", "neutral-700", semanticStrokeInteractiveTypeId],
+  ["focus", "neutral-400", "neutral-400", semanticStrokeInteractiveTypeId],
+  ["disabled", "neutral-50", "neutral-900", semanticStrokeInteractiveTypeId],
+  ["success", "lime-100", "lime-100", semanticStrokeFeedbackTypeId],
+  ["warning", "amber-100", "amber-100", semanticStrokeFeedbackTypeId],
+  ["error", "red-100", "red-100", semanticStrokeFeedbackTypeId],
 ] as const;
 
 const semanticColorTokens: Token[] = semanticColorValues.map(
@@ -302,15 +264,291 @@ const motionTokens: Token[] = motionValues.map(([name, value]) => ({
   value: { kind: "single", value },
 }));
 
+const spacingScaleValues = [
+  ["none", "0rem"],
+  ["micro", "0.125rem"],
+  ["mini", "0.25rem"],
+  ["small", "0.5rem"],
+  ["regular", "0.75rem"],
+  ["large", "1rem"],
+  ["xlarge", "1.5rem"],
+  ["2xlarge", "2rem"],
+  ["3xlarge", "3rem"],
+  ["4xlarge", "4rem"],
+] as const;
+
+const spacingScaleTokens: Token[] = spacingScaleValues.map(([name, value]) => ({
+  id: tokenId(),
+  projectId: seedIds.project,
+  tokenTypeId: primitiveSpacingScaleTypeId,
+  name: `spacing-scale-${name}`,
+  cssVar: `--spacing-scale-${name}`,
+  value: { kind: "single", value },
+}));
+
+const compactSpacingScale = [
+  ["micro", "micro", "0.125rem"],
+  ["mini", "mini", "0.25rem"],
+  ["small", "small", "0.5rem"],
+  ["regular", "regular", "0.75rem"],
+  ["large", "large", "1rem"],
+] as const;
+
+const spaciousSpacingScale = [
+  ["micro", "large", "1rem"],
+  ["mini", "xlarge", "1.5rem"],
+  ["small", "2xlarge", "2rem"],
+  ["regular", "3xlarge", "3rem"],
+  ["large", "4xlarge", "4rem"],
+] as const;
+
+const spacingSemanticValues: Array<readonly [string, string, string, string]> = (
+  [
+    [semanticPaddingComponentTypeId, compactSpacingScale],
+    [semanticPaddingLayoutTypeId, compactSpacingScale],
+    [semanticPaddingInlineTypeId, compactSpacingScale],
+    [semanticMarginComponentTypeId, spaciousSpacingScale],
+    [semanticMarginLayoutTypeId, spaciousSpacingScale],
+    [semanticMarginInlineTypeId, spaciousSpacingScale],
+    [semanticGapComponentTypeId, compactSpacingScale],
+    [semanticGapLayoutTypeId, compactSpacingScale],
+    [semanticGapInlineTypeId, compactSpacingScale],
+  ] as const
+).flatMap(([tokenTypeId, values]) =>
+  values.map(([name, scaleName, value]) => [tokenTypeId, name, scaleName, value]),
+);
+
+const spacingSemanticTokens: Token[] = spacingSemanticValues.map(
+  ([tokenTypeId, name, , value]) => ({
+    id: tokenId(),
+    projectId: seedIds.project,
+    tokenTypeId,
+    name,
+    cssVar: null,
+    value: { kind: "single" as const, value },
+  }),
+);
+
+const radiusScaleValues = [
+  ["none", "0rem"],
+  ["micro", "0.125rem"],
+  ["mini", "0.25rem"],
+  ["small", "0.375rem"],
+  ["regular", "0.5rem"],
+  ["large", "0.75rem"],
+  ["xlarge", "1rem"],
+  ["2xlarge", "1.5rem"],
+  ["full", "624.9375rem"],
+] as const;
+
+const radiusScaleTokens: Token[] = radiusScaleValues.map(([name, value]) => ({
+  id: tokenId(),
+  projectId: seedIds.project,
+  tokenTypeId: primitiveRadiusScaleTypeId,
+  name: `scale-${name}`,
+  cssVar: `--radius-scale-${name}`,
+  value: { kind: "single", value },
+}));
+
+const radiusSemanticValues = [
+  [semanticRadiusModalTypeId, "small", "small", "0.375rem"],
+  [semanticRadiusModalTypeId, "regular", "regular", "0.5rem"],
+  [semanticRadiusModalTypeId, "large", "large", "0.75rem"],
+  [semanticRadiusModalTypeId, "xlarge", "xlarge", "1rem"],
+  [semanticRadiusCardTypeId, "small", "mini", "0.25rem"],
+  [semanticRadiusCardTypeId, "regular", "small", "0.375rem"],
+  [semanticRadiusCardTypeId, "large", "regular", "0.5rem"],
+  [semanticRadiusCardTypeId, "xlarge", "large", "0.75rem"],
+  [semanticRadiusButtonTypeId, "small", "mini", "0.25rem"],
+  [semanticRadiusButtonTypeId, "regular", "small", "0.375rem"],
+  [semanticRadiusButtonTypeId, "large", "regular", "0.5rem"],
+  [semanticRadiusButtonTypeId, "xlarge", "large", "0.75rem"],
+  [semanticRadiusInputFieldTypeId, "small", "mini", "0.25rem"],
+  [semanticRadiusInputFieldTypeId, "regular", "small", "0.375rem"],
+  [semanticRadiusInputFieldTypeId, "large", "regular", "0.5rem"],
+  [semanticRadiusInputFieldTypeId, "xlarge", "large", "0.75rem"],
+] as const;
+
+const radiusSemanticTokens: Token[] = radiusSemanticValues.map(
+  ([tokenTypeId, name, , value]) => ({
+    id: tokenId(),
+    projectId: seedIds.project,
+    tokenTypeId,
+    name,
+    cssVar: null,
+    value: { kind: "single" as const, value },
+  }),
+);
+
+const lightElevationValues = [
+  ["mini", "0 0.0625rem 0.125rem rgba(0, 0, 0, 0.08)"],
+  ["small", "0 0.125rem 0.375rem rgba(0, 0, 0, 0.10)"],
+  ["regular", "0 0.25rem 0.75rem rgba(0, 0, 0, 0.12)"],
+  ["large", "0 0.75rem 2rem rgba(0, 0, 0, 0.16)"],
+] as const;
+
+const darkElevationValues = [
+  ["mini", "0 0.0625rem 0.125rem rgba(0, 0, 0, 0.28)"],
+  ["small", "0 0.125rem 0.5rem rgba(0, 0, 0, 0.36)"],
+  ["regular", "0 0.375rem 1rem rgba(0, 0, 0, 0.44)"],
+  ["large", "0 1rem 2.5rem rgba(0, 0, 0, 0.52)"],
+] as const;
+
+const lightElevationTokens: Token[] = lightElevationValues.map(([name, value]) => ({
+  id: tokenId(),
+  projectId: seedIds.project,
+  tokenTypeId: primitiveLightElevationTypeId,
+  name: `light-${name}`,
+  cssVar: `--shadow-light-${name}`,
+  value: { kind: "single", value },
+}));
+
+const darkElevationTokens: Token[] = darkElevationValues.map(([name, value]) => ({
+  id: tokenId(),
+  projectId: seedIds.project,
+  tokenTypeId: primitiveDarkElevationTypeId,
+  name: `dark-${name}`,
+  cssVar: `--shadow-dark-${name}`,
+  value: { kind: "single", value },
+}));
+
+const shadowSemanticValues = [
+  [semanticShadowModalTypeId, "mini"],
+  [semanticShadowModalTypeId, "small"],
+  [semanticShadowModalTypeId, "regular"],
+  [semanticShadowModalTypeId, "large"],
+  [semanticShadowCardTypeId, "mini"],
+  [semanticShadowCardTypeId, "small"],
+  [semanticShadowCardTypeId, "regular"],
+  [semanticShadowCardTypeId, "large"],
+  [semanticShadowSidebarTypeId, "mini"],
+  [semanticShadowSidebarTypeId, "small"],
+  [semanticShadowSidebarTypeId, "regular"],
+  [semanticShadowSidebarTypeId, "large"],
+  [semanticShadowHeaderTypeId, "mini"],
+  [semanticShadowHeaderTypeId, "small"],
+  [semanticShadowHeaderTypeId, "regular"],
+  [semanticShadowHeaderTypeId, "large"],
+] as const;
+
+const shadowSemanticTokens: Token[] = shadowSemanticValues.map(([tokenTypeId, name]) => ({
+  id: tokenId(),
+  projectId: seedIds.project,
+  tokenTypeId,
+  name,
+  cssVar: null,
+  value: { kind: "modes" as const },
+}));
+
 const typographyTokensByTypeAndName = new Map(
   typographyPrimitiveTokens.map((token) => [`${token.tokenTypeId}:${token.name}`, token]),
 );
 
+const radiusScaleTokensByName = new Map(
+  radiusScaleTokens.map((token) => [token.name.replace(/^scale-/u, ""), token]),
+);
+
+const spacingScaleTokensByName = new Map(
+  spacingScaleTokens.map((token) => [token.name.replace(/^spacing-scale-/u, ""), token]),
+);
+
+const spacingReferences = spacingSemanticValues.map(
+  ([tokenTypeId, semanticName, scaleName]) => {
+    const semanticToken = spacingSemanticTokens.find(
+      (token) => token.tokenTypeId === tokenTypeId && token.name === semanticName,
+    );
+    const referencedToken = spacingScaleTokensByName.get(scaleName);
+
+    if (!semanticToken) {
+      throw new Error(`Missing spacing semantic token: ${tokenTypeId}:${semanticName}`);
+    }
+    if (!referencedToken) {
+      throw new Error(`Missing spacing scale token: ${scaleName}`);
+    }
+
+    return {
+      projectId: seedIds.project,
+      referencingTokenId: semanticToken.id,
+      referencedTokenId: referencedToken.id,
+      slot: "value" as const,
+    };
+  },
+);
+
+const radiusReferences = radiusSemanticValues.map(
+  ([tokenTypeId, semanticName, primitiveName]) => {
+    const semanticToken = radiusSemanticTokens.find(
+      (token) => token.tokenTypeId === tokenTypeId && token.name === semanticName,
+    );
+    const referencedToken = radiusScaleTokensByName.get(primitiveName);
+
+    if (!semanticToken) {
+      throw new Error(`Missing radius semantic token: ${tokenTypeId}:${semanticName}`);
+    }
+    if (!referencedToken) {
+      throw new Error(`Missing radius primitive token: ${primitiveName}`);
+    }
+
+    return {
+      projectId: seedIds.project,
+      referencingTokenId: semanticToken.id,
+      referencedTokenId: referencedToken.id,
+      slot: "value" as const,
+    };
+  },
+);
+
+const lightElevationTokensByName = new Map(
+  lightElevationTokens.map((token) => [token.name.replace(/^light-/u, ""), token]),
+);
+
+const darkElevationTokensByName = new Map(
+  darkElevationTokens.map((token) => [token.name.replace(/^dark-/u, ""), token]),
+);
+
+const shadowReferences = shadowSemanticValues.flatMap(([tokenTypeId, elevationName]) => {
+  const semanticToken = shadowSemanticTokens.find(
+    (token) => token.tokenTypeId === tokenTypeId && token.name === elevationName,
+  );
+  const lightToken = lightElevationTokensByName.get(elevationName);
+  const darkToken = darkElevationTokensByName.get(elevationName);
+
+  if (!semanticToken) {
+    throw new Error(`Missing shadow semantic token: ${tokenTypeId}:${elevationName}`);
+  }
+  if (!lightToken || !darkToken) {
+    throw new Error(`Missing shadow primitive elevation: ${elevationName}`);
+  }
+
+  return [
+    {
+      projectId: seedIds.project,
+      referencingTokenId: semanticToken.id,
+      referencedTokenId: lightToken.id,
+      slot: "light" as const,
+    },
+    {
+      projectId: seedIds.project,
+      referencingTokenId: semanticToken.id,
+      referencedTokenId: darkToken.id,
+      slot: "dark" as const,
+    },
+  ];
+});
+
 const colorReferences = semanticColorTokens
   .map((token) => {
-    const [, lightPrimitiveName, darkPrimitiveName] = semanticColorValues.find(
-      ([name]) => name === token.name,
-    )!;
+    const definition = semanticColorValues.find(
+      ([name, , , tokenTypeId]) =>
+        name === token.name && tokenTypeId === token.tokenTypeId,
+    );
+    if (!definition) {
+      throw new Error(
+        `Missing semantic color definition: ${token.tokenTypeId}:${token.name}`,
+      );
+    }
+
+    const [, lightPrimitiveName, darkPrimitiveName] = definition;
     const lightToken = primitiveColorByName.get(lightPrimitiveName)!;
     const darkToken = primitiveColorByName.get(darkPrimitiveName)!;
 
@@ -371,7 +609,13 @@ const tokenTypes: TokenType[] = [
     "semantic",
     semanticSurfaceTypeId,
   ),
-  createTokenType(semanticSurfaceFeedbackTypeId, "feedback", "color", "semantic"),
+  createTokenType(
+    semanticSurfaceFeedbackTypeId,
+    "feedback",
+    "color",
+    "semantic",
+    semanticSurfaceTypeId,
+  ),
   createTokenType(
     semanticContentTypeId,
     "content",
@@ -386,7 +630,13 @@ const tokenTypes: TokenType[] = [
     "semantic",
     semanticContentTypeId,
   ),
-  createTokenType(semanticContentFeedbackTypeId, "feedback", "color", "semantic"),
+  createTokenType(
+    semanticContentFeedbackTypeId,
+    "feedback",
+    "color",
+    "semantic",
+    semanticContentTypeId,
+  ),
   createTokenType(semanticStrokeTypeId, "stroke", "color", "semantic"),
   createTokenType(
     semanticStrokeInteractiveTypeId,
@@ -395,7 +645,13 @@ const tokenTypes: TokenType[] = [
     "semantic",
     semanticStrokeTypeId,
   ),
-  createTokenType(semanticStrokeFeedbackTypeId, "feedback", "color", "semantic"),
+  createTokenType(
+    semanticStrokeFeedbackTypeId,
+    "feedback",
+    "color",
+    "semantic",
+    semanticStrokeTypeId,
+  ),
   // typography
   createTokenType(primitiveFontSizeTypeId, "font-size", "typography", "primitive"),
   createTokenType(primitiveFontWeightTypeId, "font-weight", "typography", "primitive"),
@@ -404,6 +660,143 @@ const tokenTypes: TokenType[] = [
   createTokenType(primitiveEaseInTypeId, "ease-in", "motion", "primitive"),
   createTokenType(primitiveEaseOutTypeId, "ease-out", "motion", "primitive"),
   createTokenType(primitiveEaseInOutTypeId, "ease-in-out", "motion", "primitive"),
+  // spacing
+  createTokenType(primitiveSpacingScaleTypeId, "scale", "spacing", "primitive"),
+  createTokenType(semanticPaddingTypeId, "padding", "spacing", "semantic"),
+  createTokenType(semanticMarginTypeId, "margin", "spacing", "semantic"),
+  createTokenType(semanticGapTypeId, "gap", "spacing", "semantic"),
+  createTokenType(
+    semanticPaddingComponentTypeId,
+    "component",
+    "spacing",
+    "semantic",
+    semanticPaddingTypeId,
+  ),
+  createTokenType(
+    semanticPaddingLayoutTypeId,
+    "layout",
+    "spacing",
+    "semantic",
+    semanticPaddingTypeId,
+  ),
+  createTokenType(
+    semanticPaddingInlineTypeId,
+    "inline",
+    "spacing",
+    "semantic",
+    semanticPaddingTypeId,
+  ),
+  createTokenType(
+    semanticMarginComponentTypeId,
+    "component",
+    "spacing",
+    "semantic",
+    semanticMarginTypeId,
+  ),
+  createTokenType(
+    semanticMarginLayoutTypeId,
+    "layout",
+    "spacing",
+    "semantic",
+    semanticMarginTypeId,
+  ),
+  createTokenType(
+    semanticMarginInlineTypeId,
+    "inline",
+    "spacing",
+    "semantic",
+    semanticMarginTypeId,
+  ),
+  createTokenType(
+    semanticGapComponentTypeId,
+    "component",
+    "spacing",
+    "semantic",
+    semanticGapTypeId,
+  ),
+  createTokenType(
+    semanticGapLayoutTypeId,
+    "layout",
+    "spacing",
+    "semantic",
+    semanticGapTypeId,
+  ),
+  createTokenType(
+    semanticGapInlineTypeId,
+    "inline",
+    "spacing",
+    "semantic",
+    semanticGapTypeId,
+  ),
+  // radius
+  createTokenType(primitiveRadiusScaleTypeId, "scale", "radius", "primitive"),
+  createTokenType(semanticRadiusComponentTypeId, "component", "radius", "semantic"),
+  createTokenType(
+    semanticRadiusModalTypeId,
+    "modal",
+    "radius",
+    "semantic",
+    semanticRadiusComponentTypeId,
+  ),
+  createTokenType(
+    semanticRadiusCardTypeId,
+    "card",
+    "radius",
+    "semantic",
+    semanticRadiusComponentTypeId,
+  ),
+  createTokenType(
+    semanticRadiusButtonTypeId,
+    "button",
+    "radius",
+    "semantic",
+    semanticRadiusComponentTypeId,
+  ),
+  createTokenType(
+    semanticRadiusInputFieldTypeId,
+    "input-field",
+    "radius",
+    "semantic",
+    semanticRadiusComponentTypeId,
+  ),
+  // shadow
+  createTokenType(
+    primitiveLightElevationTypeId,
+    "light-elevation",
+    "shadow",
+    "primitive",
+  ),
+  createTokenType(primitiveDarkElevationTypeId, "dark-elevation", "shadow", "primitive"),
+  createTokenType(semanticShadowComponentTypeId, "component", "shadow", "semantic"),
+  createTokenType(semanticShadowLayoutTypeId, "layout", "shadow", "semantic"),
+  createTokenType(
+    semanticShadowModalTypeId,
+    "modal",
+    "shadow",
+    "semantic",
+    semanticShadowComponentTypeId,
+  ),
+  createTokenType(
+    semanticShadowCardTypeId,
+    "card",
+    "shadow",
+    "semantic",
+    semanticShadowComponentTypeId,
+  ),
+  createTokenType(
+    semanticShadowSidebarTypeId,
+    "sidebar",
+    "shadow",
+    "semantic",
+    semanticShadowLayoutTypeId,
+  ),
+  createTokenType(
+    semanticShadowHeaderTypeId,
+    "header",
+    "shadow",
+    "semantic",
+    semanticShadowLayoutTypeId,
+  ),
 ];
 
 export const validSeed: SeedData = {
@@ -437,7 +830,7 @@ export const validSeed: SeedData = {
     {
       id: seedIds.project,
       slug: "design-system",
-      name: "Design System",
+      name: "Demo",
       createdAt: "2026-10-27T10:00:00.000Z",
     },
   ],
@@ -468,8 +861,21 @@ export const validSeed: SeedData = {
     ...typographyPrimitiveTokens,
     ...typographySemanticTokens,
     ...motionTokens,
+    ...spacingScaleTokens,
+    ...spacingSemanticTokens,
+    ...radiusScaleTokens,
+    ...radiusSemanticTokens,
+    ...lightElevationTokens,
+    ...darkElevationTokens,
+    ...shadowSemanticTokens,
   ],
-  tokenReferences: [...colorReferences, ...typographyReferences],
+  tokenReferences: [
+    ...colorReferences,
+    ...typographyReferences,
+    ...spacingReferences,
+    ...radiusReferences,
+    ...shadowReferences,
+  ],
   components: [
     {
       id: seedIds.component,

@@ -39,6 +39,7 @@ describe("mapTokenType", () => {
 
     expect(mapTokenType(tokenType, tokensByType, lookup)).toEqual({
       id: tokenType.id,
+      parentTypeId: null,
       category: "color",
       type: "Base",
       kind: "primitive",
@@ -61,6 +62,7 @@ describe("mapTokenType", () => {
   it("returns an empty values list when the type has no tokens", () => {
     expect(mapTokenType(tokenType, new Map(), lookup)).toEqual({
       id: tokenType.id,
+      parentTypeId: null,
       category: "color",
       type: "Base",
       kind: "primitive",

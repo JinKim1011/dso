@@ -5,11 +5,17 @@ import type {
   TypographyReferenceOptions,
 } from "@/features/tokens/model/token-graph";
 import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
+import { isSemanticSingleReference } from "@/features/tokens/model/single-reference";
 import type { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
 import { containsCssVariable } from "@repo/contracts/validation/token-value";
 
 export type TokenEditorDraft =
   | { kind: "single"; name: string; value: string }
+  | {
+      kind: "single-reference";
+      name: string;
+      valueReferencedTokenId?: string;
+    }
   | { kind: "modes"; name: string; lightId?: string; darkId?: string }
   | {
       kind: "typography";
@@ -28,8 +34,17 @@ export function createTokenEditorDraft(
   const tokenValue = value.value;
 
   switch (tokenValue.kind) {
-    case "single":
+    case "single": {
+      if (isSemanticSingleReference(category, kind)) {
+        return {
+          kind: "single-reference",
+          name,
+          valueReferencedTokenId: value.references?.value,
+        };
+      }
+
       return { kind: "single", name, value: tokenValue.value };
+    }
 
     case "modes": {
       if (kind !== "semantic" || (category !== "color" && category !== "shadow")) {
@@ -72,6 +87,12 @@ export function buildTokenEditorUpdate(
           category === "color" ? { kind: "single", value: draft.value } : undefined,
       };
 
+    case "single-reference":
+      return {
+        name: draft.name,
+        references: { value: draft.valueReferencedTokenId },
+      };
+
     case "modes":
       return {
         name: draft.name,
@@ -101,6 +122,7 @@ export function getTokenEditorState(
   resolveDisplay: TokenDisplayResolver,
   category: TokenCategory,
   kind: TokenKind,
+  singleReferenceOptions: readonly TokenReferenceOption[] = [],
 ) {
   const isDirty = JSON.stringify(draft) !== JSON.stringify(initialDraft);
   const display = resolveDisplay(
@@ -119,6 +141,26 @@ export function getTokenEditorState(
         incomplete: display.incomplete,
         previewValue: display.value,
       };
+
+    case "single-reference": {
+      const referencesChanged =
+        initialDraft.kind !== "single-reference" ||
+        draft.valueReferencedTokenId !== initialDraft.valueReferencedTokenId;
+      const missingReference =
+        !draft.valueReferencedTokenId ||
+        !singleReferenceOptions.some(
+          (option) => option.value === draft.valueReferencedTokenId,
+        );
+
+      return {
+        isDirty,
+        invalidPrimitiveValue: false,
+        referencesChanged,
+        missingReference: missingReference || display.missingReference,
+        incomplete: missingReference || display.incomplete,
+        previewValue: display.value,
+      };
+    }
 
     case "modes": {
       const referencesChanged =

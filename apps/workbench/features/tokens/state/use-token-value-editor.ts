@@ -1,10 +1,12 @@
+import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
 import type {
+  TokenGraphViewModel,
   TokenReferenceOption,
   TokenValueDetailUpdate,
   TokenValueViewModel,
   TypographyReferenceOptions,
 } from "@/features/tokens/model/token-graph";
-import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
+import { validateTokenNameChange } from "@/features/tokens/model/token-name-validation";
 import {
   buildTokenEditorUpdate,
   createTokenEditorDraft,
@@ -12,6 +14,7 @@ import {
   type TokenEditorDraft,
 } from "@/features/tokens/model/token-value-editor";
 import type { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
+import { Toaster } from "@repo/ui";
 import { useEffect, useMemo, useState } from "react";
 
 type UseTokenValueEditorProps = {
@@ -20,7 +23,10 @@ type UseTokenValueEditorProps = {
   value: TokenValueViewModel;
   category: TokenCategory;
   kind: TokenKind;
+  tokenTypeId: string;
+  draftModel: TokenGraphViewModel;
   modeOptions: TokenReferenceOption[];
+  singleReferenceOptions: TokenReferenceOption[];
   typographyOptions: TypographyReferenceOptions;
   resolveDisplay: TokenDisplayResolver;
   onSave: (rowId: string, update: TokenValueDetailUpdate) => void;
@@ -32,7 +38,10 @@ export function useTokenValueEditor({
   value,
   category,
   kind,
+  tokenTypeId,
+  draftModel,
   modeOptions,
+  singleReferenceOptions,
   typographyOptions,
   resolveDisplay,
   onSave,
@@ -57,13 +66,33 @@ export function useTokenValueEditor({
     resolveDisplay,
     category,
     kind,
+    singleReferenceOptions,
   );
 
   const undo = () => setDraft(initialDraft);
 
   const save = () => {
-    if (state.missingReference || state.invalidPrimitiveValue) return;
-    onSave(rowId, buildTokenEditorUpdate(category, draft));
+    if (
+      state.missingReference ||
+      (draft.kind === "single-reference" && state.incomplete) ||
+      state.invalidPrimitiveValue
+    )
+      return;
+    const update = buildTokenEditorUpdate(category, draft);
+    const nameError = validateTokenNameChange({
+      draftModel,
+      row: value,
+      tokenTypeId,
+      originalName: name,
+      nextName: update.name,
+    });
+
+    if (nameError) {
+      Toaster.toast.error(nameError, { id: `token-name:${rowId}` });
+      return;
+    }
+
+    onSave(rowId, update);
   };
 
   return { draft, setDraft, ...state, undo, save };

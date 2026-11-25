@@ -19,6 +19,7 @@ export type TokenValueViewModel = {
 
 export type TokenTypeViewModel = {
   id: string;
+  parentTypeId: string | null;
   category: TokenCategory;
   type: string;
   kind: TokenKind;
