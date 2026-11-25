@@ -63,6 +63,16 @@ describe("login request boundary", () => {
     },
   );
 
+  it("is available in production when authentication is explicitly enabled", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DSO_WORKBENCH_AUTH_ENABLED", "true");
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(200);
+    expect(login).toHaveBeenCalled();
+  });
+
   it("returns only the safe response and sets the configured secure session cookie", async () => {
     const response = await POST(request());
     expect(response.status).toBe(200);
