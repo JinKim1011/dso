@@ -1,8 +1,25 @@
 import { validateSeedData } from "@repo/contracts/validation/seed";
+import { validateTokenName } from "@repo/contracts/validation/token-naming";
 import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 
 describe("validSeed", () => {
+  it("uses canonical final-segment token names", () => {
+    expect(
+      validSeed.tokens.flatMap((token) => {
+        const error = validateTokenName(token.name);
+        return error ? [{ name: token.name, error }] : [];
+      }),
+    ).toEqual([]);
+  });
+
+  it("defines the demo project", () => {
+    expect(validSeed.projects[0]).toMatchObject({
+      name: "Demo",
+      slug: "design-system",
+    });
+  });
+
   it("is a valid complete seed", () => {
     expect(validateSeedData(validSeed)).toEqual([]);
   });
