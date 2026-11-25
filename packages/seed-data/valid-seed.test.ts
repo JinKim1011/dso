@@ -62,7 +62,11 @@ describe("validSeed", () => {
         validSeed.tokens
           .filter((token) => token.tokenTypeId === tokenType.id)
           .map((token) => token.name),
-      ).toEqual(["micro", "mini", "small", "regular", "large"]);
+      ).toEqual(
+        ["micro", "mini", "small", "regular", "large"].map(
+          (name) => `${tokenType.name}-${name}`,
+        ),
+      );
     }
 
     const spacingReferences = validSeed.tokenReferences.filter(
@@ -95,15 +99,15 @@ describe("validSeed", () => {
         .filter((token) => token.tokenTypeId === primitiveScale?.id)
         .map((token) => token.name),
     ).toEqual([
-      "none",
-      "micro",
-      "mini",
-      "small",
-      "regular",
-      "large",
-      "xlarge",
-      "2xlarge",
-      "full",
+      "scale-none",
+      "scale-micro",
+      "scale-mini",
+      "scale-small",
+      "scale-regular",
+      "scale-large",
+      "scale-xlarge",
+      "scale-2xlarge",
+      "scale-full",
     ]);
 
     const component = validSeed.tokenTypes.find(
@@ -161,11 +165,16 @@ describe("validSeed", () => {
     ]);
 
     for (const tokenType of primitiveTypes) {
+      const prefix = tokenType.name === "light-elevation" ? "light" : "dark";
       expect(
         validSeed.tokens
           .filter((token) => token.tokenTypeId === tokenType.id)
           .map((token) => token.name),
-      ).toEqual(["mini", "small", "regular", "large"]);
+      ).toEqual(
+        ["mini", "small", "regular", "large"].map(
+          (name) => `${prefix}-${name}`,
+        ),
+      );
     }
 
     const component = validSeed.tokenTypes.find(
