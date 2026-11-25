@@ -5,6 +5,8 @@ import type {
   TypographyReferenceOptions,
 } from "@/features/tokens/model/token-graph";
 import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
+import type { TokenGraphViewModel } from "@/features/tokens/model/token-graph";
+import { validateTokenNameChange } from "@/features/tokens/model/token-name-validation";
 import {
   buildTokenEditorUpdate,
   createTokenEditorDraft,
@@ -13,6 +15,7 @@ import {
 } from "@/features/tokens/model/token-value-editor";
 import type { TokenCategory, TokenKind } from "@repo/contracts/validation/enum";
 import { useEffect, useMemo, useState } from "react";
+import { Toaster } from "@repo/ui";
 
 type UseTokenValueEditorProps = {
   rowId: string;
@@ -70,7 +73,21 @@ export function useTokenValueEditor({
 
   const save = () => {
     if (state.missingReference || state.incomplete || state.invalidPrimitiveValue) return;
-    onSave(rowId, buildTokenEditorUpdate(category, draft));
+    const update = buildTokenEditorUpdate(category, draft);
+    const nameError = validateTokenNameChange({
+      draftModel,
+      row: value,
+      tokenTypeId,
+      originalName: name,
+      nextName: update.name,
+    });
+
+    if (nameError) {
+      Toaster.toast.error(nameError, { id: `token-name:${rowId}` });
+      return;
+    }
+
+    onSave(rowId, update);
   };
 
   return { draft, setDraft, ...state, undo, save };
