@@ -55,6 +55,20 @@ export function resolveSlot(context: SlotContext, slot: TokenReferenceSlot): Slo
   return { value: target.row.value.value, label: target.row.name, missing: false };
 }
 
+export function resolveSingleReference(context: SlotContext) {
+  const reference = resolveSlot(context, "value");
+
+  return {
+    meta: reference.label,
+    preview:
+      reference.value === undefined
+        ? undefined
+        : { kind: "single" as const, value: reference.value },
+    incomplete: reference.value === undefined,
+    missing: reference.missing,
+  };
+}
+
 export function resolveTypography(context: SlotContext) {
   const fontSize = resolveSlot(context, "fontSize");
   const fontWeight = resolveSlot(context, "fontWeight");
