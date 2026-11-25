@@ -72,6 +72,6 @@ describe("validateTokenNameChange", () => {
         originalName: row.name,
         nextName: "large",
       }),
-    ).toContain("--radius-component-modal-large");
+    ).toBe("That name is already used. Try another name.");
   });
 });
