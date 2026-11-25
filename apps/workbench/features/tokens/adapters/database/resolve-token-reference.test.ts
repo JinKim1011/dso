@@ -7,7 +7,14 @@ import type { Token, TokenReference, TokenType } from "@repo/contracts/type";
 import { validSeed } from "@repo/seed-data/valid-seed";
 import { describe, expect, it } from "vitest";
 
-const surface = validSeed.tokens.find((token) => token.name === "surface")!;
+const surface = validSeed.tokens.find(
+  (token) =>
+    token.name === "default" &&
+    token.tokenTypeId ===
+      validSeed.tokenTypes.find(
+        (type) => type.category === "color" && type.name === "surface",
+      )?.id,
+)!;
 const surfaceType = validSeed.tokenTypes.find((type) => type.id === surface.tokenTypeId)!;
 const body = validSeed.tokens.find(
   (token) => token.name === "body" && token.value.kind === "typography",
