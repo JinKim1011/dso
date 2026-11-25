@@ -538,9 +538,17 @@ const shadowReferences = shadowSemanticValues.flatMap(([tokenTypeId, elevationNa
 
 const colorReferences = semanticColorTokens
   .map((token) => {
-    const [, lightPrimitiveName, darkPrimitiveName] = semanticColorValues.find(
-      ([name]) => name === token.name,
-    )!;
+    const definition = semanticColorValues.find(
+      ([name, , , tokenTypeId]) =>
+        name === token.name && tokenTypeId === token.tokenTypeId,
+    );
+    if (!definition) {
+      throw new Error(
+        `Missing semantic color definition: ${token.tokenTypeId}:${token.name}`,
+      );
+    }
+
+    const [, lightPrimitiveName, darkPrimitiveName] = definition;
     const lightToken = primitiveColorByName.get(lightPrimitiveName)!;
     const darkToken = primitiveColorByName.get(darkPrimitiveName)!;
 
