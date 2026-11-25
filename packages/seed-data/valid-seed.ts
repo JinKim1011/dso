@@ -371,93 +371,27 @@ const spacingPrimitiveTokens: Token[] = spacingPrimitiveValues.flatMap(
 );
 
 const spacingSemanticValues = [
+  [semanticComponentTypeId, "inset-micro", "micro", primitivePaddingTypeId, "0.125rem"],
+  [semanticComponentTypeId, "inset-mini", "mini", primitivePaddingTypeId, "0.25rem"],
+  [semanticComponentTypeId, "inset-small", "small", primitivePaddingTypeId, "0.5rem"],
   [
     semanticComponentTypeId,
-    "component-inset-micro",
-    "micro",
-    primitivePaddingTypeId,
-    "0.125rem",
-  ],
-  [
-    semanticComponentTypeId,
-    "component-inset-mini",
-    "mini",
-    primitivePaddingTypeId,
-    "0.25rem",
-  ],
-  [
-    semanticComponentTypeId,
-    "component-inset-small",
-    "small",
-    primitivePaddingTypeId,
-    "0.5rem",
-  ],
-  [
-    semanticComponentTypeId,
-    "component-inset-regular",
+    "inset-regular",
     "regular",
     primitivePaddingTypeId,
     "0.75rem",
   ],
-  [
-    semanticComponentTypeId,
-    "component-inset-large",
-    "large",
-    primitivePaddingTypeId,
-    "1rem",
-  ],
-  [
-    semanticLayoutTypeId,
-    "layout-section-gap-micro",
-    "micro",
-    primitiveMarginTypeId,
-    "1rem",
-  ],
-  [
-    semanticLayoutTypeId,
-    "layout-section-gap-mini",
-    "mini",
-    primitiveMarginTypeId,
-    "1.5rem",
-  ],
-  [
-    semanticLayoutTypeId,
-    "layout-section-gap-small",
-    "small",
-    primitiveMarginTypeId,
-    "2rem",
-  ],
-  [
-    semanticLayoutTypeId,
-    "layout-section-gap-regular",
-    "regular",
-    primitiveMarginTypeId,
-    "3rem",
-  ],
-  [
-    semanticLayoutTypeId,
-    "layout-section-gap-large",
-    "large",
-    primitiveMarginTypeId,
-    "4rem",
-  ],
-  [
-    semanticInlineTypeId,
-    "inline-item-gap-micro",
-    "micro",
-    primitiveGapTypeId,
-    "0.125rem",
-  ],
-  [semanticInlineTypeId, "inline-item-gap-mini", "mini", primitiveGapTypeId, "0.25rem"],
-  [semanticInlineTypeId, "inline-item-gap-small", "small", primitiveGapTypeId, "0.5rem"],
-  [
-    semanticInlineTypeId,
-    "inline-item-gap-regular",
-    "regular",
-    primitiveGapTypeId,
-    "0.75rem",
-  ],
-  [semanticInlineTypeId, "inline-item-gap-large", "large", primitiveGapTypeId, "1rem"],
+  [semanticComponentTypeId, "inset-large", "large", primitivePaddingTypeId, "1rem"],
+  [semanticLayoutTypeId, "section-gap-micro", "micro", primitiveMarginTypeId, "1rem"],
+  [semanticLayoutTypeId, "section-gap-mini", "mini", primitiveMarginTypeId, "1.5rem"],
+  [semanticLayoutTypeId, "section-gap-small", "small", primitiveMarginTypeId, "2rem"],
+  [semanticLayoutTypeId, "section-gap-regular", "regular", primitiveMarginTypeId, "3rem"],
+  [semanticLayoutTypeId, "section-gap-large", "large", primitiveMarginTypeId, "4rem"],
+  [semanticInlineTypeId, "item-gap-micro", "micro", primitiveGapTypeId, "0.125rem"],
+  [semanticInlineTypeId, "item-gap-mini", "mini", primitiveGapTypeId, "0.25rem"],
+  [semanticInlineTypeId, "item-gap-small", "small", primitiveGapTypeId, "0.5rem"],
+  [semanticInlineTypeId, "item-gap-regular", "regular", primitiveGapTypeId, "0.75rem"],
+  [semanticInlineTypeId, "item-gap-large", "large", primitiveGapTypeId, "1rem"],
 ] as const;
 
 const spacingSemanticTokens: Token[] = spacingSemanticValues.map(
@@ -511,19 +445,12 @@ const radiusSemanticValues = [
   [semanticRadiusInputFieldTypeId, "xlarge", "large", "0.75rem"],
 ] as const;
 
-const radiusSemanticPrefixByTypeId = new Map([
-  [semanticRadiusModalTypeId, "modal-corner"],
-  [semanticRadiusCardTypeId, "card-corner"],
-  [semanticRadiusButtonTypeId, "button-corner"],
-  [semanticRadiusInputFieldTypeId, "input-field-corner"],
-] as const);
-
 const radiusSemanticTokens: Token[] = radiusSemanticValues.map(
   ([tokenTypeId, name, , value]) => ({
     id: tokenId(),
     projectId: seedIds.project,
     tokenTypeId,
-    name: `${radiusSemanticPrefixByTypeId.get(tokenTypeId)}-${name}`,
+    name,
     cssVar: null,
     value: { kind: "single" as const, value },
   }),
@@ -580,18 +507,11 @@ const shadowSemanticValues = [
   [semanticShadowHeaderTypeId, "large"],
 ] as const;
 
-const shadowSemanticPrefixByTypeId = new Map([
-  [semanticShadowModalTypeId, "modal-elevation"],
-  [semanticShadowCardTypeId, "card-elevation"],
-  [semanticShadowSidebarTypeId, "sidebar-elevation"],
-  [semanticShadowHeaderTypeId, "header-elevation"],
-] as const);
-
 const shadowSemanticTokens: Token[] = shadowSemanticValues.map(([tokenTypeId, name]) => ({
   id: tokenId(),
   projectId: seedIds.project,
   tokenTypeId,
-  name: `${shadowSemanticPrefixByTypeId.get(tokenTypeId)}-${name}`,
+  name,
   cssVar: null,
   value: { kind: "modes" as const },
 }));
@@ -635,9 +555,7 @@ const spacingReferences = spacingSemanticValues.map(
 const radiusReferences = radiusSemanticValues.map(
   ([tokenTypeId, semanticName, primitiveName]) => {
     const semanticToken = radiusSemanticTokens.find(
-      (token) =>
-        token.tokenTypeId === tokenTypeId &&
-        token.name === `${radiusSemanticPrefixByTypeId.get(tokenTypeId)}-${semanticName}`,
+      (token) => token.tokenTypeId === tokenTypeId && token.name === semanticName,
     );
     const referencedToken = radiusScaleTokensByName.get(primitiveName);
 
@@ -667,9 +585,7 @@ const darkElevationTokensByName = new Map(
 
 const shadowReferences = shadowSemanticValues.flatMap(([tokenTypeId, elevationName]) => {
   const semanticToken = shadowSemanticTokens.find(
-    (token) =>
-      token.tokenTypeId === tokenTypeId &&
-      token.name === `${shadowSemanticPrefixByTypeId.get(tokenTypeId)}-${elevationName}`,
+    (token) => token.tokenTypeId === tokenTypeId && token.name === elevationName,
   );
   const lightToken = lightElevationTokensByName.get(elevationName);
   const darkToken = darkElevationTokensByName.get(elevationName);
@@ -762,7 +678,13 @@ const tokenTypes: TokenType[] = [
     "semantic",
     semanticSurfaceTypeId,
   ),
-  createTokenType(semanticSurfaceFeedbackTypeId, "feedback", "color", "semantic"),
+  createTokenType(
+    semanticSurfaceFeedbackTypeId,
+    "feedback",
+    "color",
+    "semantic",
+    semanticSurfaceTypeId,
+  ),
   createTokenType(
     semanticContentTypeId,
     "content",
@@ -777,7 +699,13 @@ const tokenTypes: TokenType[] = [
     "semantic",
     semanticContentTypeId,
   ),
-  createTokenType(semanticContentFeedbackTypeId, "feedback", "color", "semantic"),
+  createTokenType(
+    semanticContentFeedbackTypeId,
+    "feedback",
+    "color",
+    "semantic",
+    semanticContentTypeId,
+  ),
   createTokenType(semanticStrokeTypeId, "stroke", "color", "semantic"),
   createTokenType(
     semanticStrokeInteractiveTypeId,
@@ -786,7 +714,13 @@ const tokenTypes: TokenType[] = [
     "semantic",
     semanticStrokeTypeId,
   ),
-  createTokenType(semanticStrokeFeedbackTypeId, "feedback", "color", "semantic"),
+  createTokenType(
+    semanticStrokeFeedbackTypeId,
+    "feedback",
+    "color",
+    "semantic",
+    semanticStrokeTypeId,
+  ),
   // typography
   createTokenType(primitiveFontSizeTypeId, "font-size", "typography", "primitive"),
   createTokenType(primitiveFontWeightTypeId, "font-weight", "typography", "primitive"),
