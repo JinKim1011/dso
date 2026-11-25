@@ -21,6 +21,7 @@ type UseTokenValueEditorProps = {
   category: TokenCategory;
   kind: TokenKind;
   modeOptions: TokenReferenceOption[];
+  singleReferenceOptions: TokenReferenceOption[];
   typographyOptions: TypographyReferenceOptions;
   resolveDisplay: TokenDisplayResolver;
   onSave: (rowId: string, update: TokenValueDetailUpdate) => void;
@@ -33,6 +34,7 @@ export function useTokenValueEditor({
   category,
   kind,
   modeOptions,
+  singleReferenceOptions,
   typographyOptions,
   resolveDisplay,
   onSave,
@@ -57,12 +59,13 @@ export function useTokenValueEditor({
     resolveDisplay,
     category,
     kind,
+    singleReferenceOptions,
   );
 
   const undo = () => setDraft(initialDraft);
 
   const save = () => {
-    if (state.missingReference || state.invalidPrimitiveValue) return;
+    if (state.missingReference || state.incomplete || state.invalidPrimitiveValue) return;
     onSave(rowId, buildTokenEditorUpdate(category, draft));
   };
 
