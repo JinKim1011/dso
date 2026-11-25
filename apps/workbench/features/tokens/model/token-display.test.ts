@@ -76,7 +76,7 @@ describe("token previews across database, editor and staged models", () => {
   it("edits semantic single references without treating primitive values as references", () => {
     const token = validSeed.tokens.find(
       (item) =>
-        item.name === "inset-small" &&
+        item.name === "small" &&
         item.tokenTypeId ===
           validSeed.tokenTypes.find(
             (type) => type.category === "spacing" && type.name === "component",
@@ -89,7 +89,7 @@ describe("token previews across database, editor and staged models", () => {
 
     expect(initialDraft).toEqual({
       kind: "single-reference",
-      name: "inset-small",
+      name: "small",
       valueReferencedTokenId: row.references?.value,
     });
     if (initialDraft.kind !== "single-reference") {
@@ -139,7 +139,9 @@ describe("token previews across database, editor and staged models", () => {
       },
     ]);
 
-    const primitive = validSeed.tokens.find((item) => item.name === "padding-small")!;
+    const primitive = validSeed.tokens.find(
+      (item) => item.name === "spacing-scale-small",
+    )!;
     const primitiveRow = rowIn(baseModel, primitive.id);
     const primitiveType = baseModel.tokenTypes.find(
       (item) => item.id === primitive.tokenTypeId,
@@ -153,7 +155,7 @@ describe("token previews across database, editor and staged models", () => {
       ),
     ).toEqual({
       kind: "single",
-      name: "padding-small",
+      name: "spacing-scale-small",
       value: primitiveRow.value.kind === "single" ? primitiveRow.value.value : "",
     });
   });
