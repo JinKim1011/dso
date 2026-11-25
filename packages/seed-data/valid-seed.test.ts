@@ -61,23 +61,48 @@ describe("validSeed", () => {
       (tokenType) => tokenType.category === "spacing" && tokenType.kind === "semantic",
     );
 
-    expect(primitiveTypes.map(({ name }) => name)).toEqual(["padding", "margin", "gap"]);
+    expect(primitiveTypes.map(({ name }) => name)).toEqual(["scale"]);
+    expect(
+      validSeed.tokens
+        .filter((token) => token.tokenTypeId === primitiveTypes[0]?.id)
+        .map((token) => token.name),
+    ).toEqual([
+      "spacing-scale-none",
+      "spacing-scale-micro",
+      "spacing-scale-mini",
+      "spacing-scale-small",
+      "spacing-scale-regular",
+      "spacing-scale-large",
+      "spacing-scale-xlarge",
+      "spacing-scale-2xlarge",
+      "spacing-scale-3xlarge",
+      "spacing-scale-4xlarge",
+    ]);
     expect(semanticTypes.map(({ name }) => name)).toEqual([
+      "padding",
+      "margin",
+      "gap",
+      "component",
+      "layout",
+      "inline",
+      "component",
+      "layout",
+      "inline",
       "component",
       "layout",
       "inline",
     ]);
 
-    for (const tokenType of primitiveTypes) {
+    const leafTypes = semanticTypes.filter((tokenType) =>
+      semanticTypes.some((parent) => parent.id === tokenType.parentTypeId),
+    );
+    expect(leafTypes).toHaveLength(9);
+    for (const tokenType of leafTypes) {
       expect(
         validSeed.tokens
           .filter((token) => token.tokenTypeId === tokenType.id)
           .map((token) => token.name),
-      ).toEqual(
-        ["micro", "mini", "small", "regular", "large"].map(
-          (name) => `${tokenType.name}-${name}`,
-        ),
-      );
+      ).toEqual(["micro", "mini", "small", "regular", "large"]);
     }
 
     const spacingReferences = validSeed.tokenReferences.filter(
@@ -91,30 +116,7 @@ describe("validSeed", () => {
               ?.tokenTypeId,
         )?.category === "spacing",
     );
-    expect(spacingReferences).toHaveLength(15);
-    expect(
-      validSeed.tokens
-        .filter((token) =>
-          semanticTypes.some((tokenType) => tokenType.id === token.tokenTypeId),
-        )
-        .map((token) => token.name),
-    ).toEqual([
-      "inset-micro",
-      "inset-mini",
-      "inset-small",
-      "inset-regular",
-      "inset-large",
-      "section-gap-micro",
-      "section-gap-mini",
-      "section-gap-small",
-      "section-gap-regular",
-      "section-gap-large",
-      "item-gap-micro",
-      "item-gap-mini",
-      "item-gap-small",
-      "item-gap-regular",
-      "item-gap-large",
-    ]);
+    expect(spacingReferences).toHaveLength(45);
   });
 
   it("contains demo radius primitives and component semantic references", () => {
