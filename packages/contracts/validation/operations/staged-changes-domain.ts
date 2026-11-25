@@ -7,15 +7,15 @@ import type {
   TokenValue,
 } from "@repo/contracts/type";
 import {
+  findTokenCssVariableConflicts,
+  validateTokenName,
+} from "@repo/contracts/validation/token-naming";
+import {
   type TokenReferenceValidationError,
   createTokenReferenceLookup,
   validateTokenReferenceWithLookup,
 } from "@repo/contracts/validation/token-reference";
 import { supportsTokenReferenceSlot } from "@repo/contracts/validation/token-reference-slots";
-import {
-  findTokenCssVariableConflicts,
-  validateTokenName,
-} from "@repo/contracts/validation/token-naming";
 import {
   expectedValueKind,
   validatePrimitiveTokenValue,
