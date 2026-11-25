@@ -3,6 +3,7 @@ import { SESSION_COOKIE } from "@/server/auth-session-cookie";
 import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
 import { isTrustedMutationRequest } from "@/server/csrf";
+import { isWorkbenchAuthenticationEnabled } from "@/server/env";
 import { logout } from "@repo/application/services/authentication";
 import { NextResponse } from "next/server";
 
@@ -16,7 +17,7 @@ function failure(status: number, code: string, message: string): Response {
 }
 
 export async function POST(request: Request): Promise<Response> {
-  if (process.env.NODE_ENV !== "development") {
+  if (!isWorkbenchAuthenticationEnabled(process.env)) {
     return failure(404, "not-found", "Not found.");
   }
 
