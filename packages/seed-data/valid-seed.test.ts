@@ -35,4 +35,195 @@ describe("validSeed", () => {
       ).toBe(true);
     }
   });
+
+  it("contains demo spacing primitives and semantic references", () => {
+    const primitiveTypes = validSeed.tokenTypes.filter(
+      (tokenType) =>
+        tokenType.category === "spacing" && tokenType.kind === "primitive",
+    );
+    const semanticTypes = validSeed.tokenTypes.filter(
+      (tokenType) =>
+        tokenType.category === "spacing" && tokenType.kind === "semantic",
+    );
+
+    expect(primitiveTypes.map(({ name }) => name)).toEqual([
+      "padding",
+      "margin",
+      "gap",
+    ]);
+    expect(semanticTypes.map(({ name }) => name)).toEqual([
+      "component",
+      "layout",
+      "inline",
+    ]);
+
+    for (const tokenType of primitiveTypes) {
+      expect(
+        validSeed.tokens
+          .filter((token) => token.tokenTypeId === tokenType.id)
+          .map((token) => token.name),
+      ).toEqual(["micro", "mini", "small", "regular", "large"]);
+    }
+
+    const spacingReferences = validSeed.tokenReferences.filter(
+      (reference) =>
+        validSeed.tokens.find(
+          (token) => token.id === reference.referencingTokenId,
+        )?.tokenTypeId &&
+        validSeed.tokenTypes.find(
+          (tokenType) =>
+            tokenType.id ===
+            validSeed.tokens.find(
+              (token) => token.id === reference.referencingTokenId,
+            )?.tokenTypeId,
+        )?.category === "spacing",
+    );
+    expect(spacingReferences).toHaveLength(15);
+  });
+
+  it("contains demo radius primitives and component semantic references", () => {
+    const primitiveScale = validSeed.tokenTypes.find(
+      (tokenType) =>
+        tokenType.category === "radius" &&
+        tokenType.kind === "primitive" &&
+        tokenType.name === "scale",
+    );
+    expect(primitiveScale).toBeDefined();
+
+    expect(
+      validSeed.tokens
+        .filter((token) => token.tokenTypeId === primitiveScale?.id)
+        .map((token) => token.name),
+    ).toEqual([
+      "none",
+      "micro",
+      "mini",
+      "small",
+      "regular",
+      "large",
+      "xlarge",
+      "2xlarge",
+      "full",
+    ]);
+
+    const component = validSeed.tokenTypes.find(
+      (tokenType) =>
+        tokenType.category === "radius" &&
+        tokenType.kind === "semantic" &&
+        tokenType.name === "component",
+    );
+    expect(component).toBeDefined();
+
+    expect(
+      validSeed.tokenTypes
+        .filter(
+          (tokenType) =>
+            tokenType.category === "radius" &&
+            tokenType.kind === "semantic" &&
+            tokenType.parentTypeId === component?.id,
+        )
+        .map((tokenType) => tokenType.name),
+    ).toEqual(["modal", "card", "button", "input-field"]);
+
+    const radiusTypeIds = new Set(
+      validSeed.tokenTypes
+        .filter((tokenType) => tokenType.category === "radius")
+        .map((tokenType) => tokenType.id),
+    );
+    const semanticRadiusTokenIds = new Set(
+      validSeed.tokens
+        .filter((token) => radiusTypeIds.has(token.tokenTypeId))
+        .filter(
+          (token) =>
+            validSeed.tokenTypes.find(
+              (tokenType) => tokenType.id === token.tokenTypeId,
+            )?.kind === "semantic",
+        )
+        .map((token) => token.id),
+    );
+    expect(
+      validSeed.tokenReferences.filter((reference) =>
+        semanticRadiusTokenIds.has(reference.referencingTokenId),
+      ),
+    ).toHaveLength(16);
+  });
+
+  it("contains demo shadow elevations and light/dark semantic references", () => {
+    const primitiveTypes = validSeed.tokenTypes.filter(
+      (tokenType) =>
+        tokenType.category === "shadow" &&
+        tokenType.kind === "primitive",
+    );
+
+    expect(primitiveTypes.map(({ name }) => name)).toEqual([
+      "light-elevation",
+      "dark-elevation",
+    ]);
+
+    for (const tokenType of primitiveTypes) {
+      expect(
+        validSeed.tokens
+          .filter((token) => token.tokenTypeId === tokenType.id)
+          .map((token) => token.name),
+      ).toEqual(["mini", "small", "regular", "large"]);
+    }
+
+    const component = validSeed.tokenTypes.find(
+      (tokenType) =>
+        tokenType.category === "shadow" &&
+        tokenType.kind === "semantic" &&
+        tokenType.name === "component",
+    );
+    const layout = validSeed.tokenTypes.find(
+      (tokenType) =>
+        tokenType.category === "shadow" &&
+        tokenType.kind === "semantic" &&
+        tokenType.name === "layout",
+    );
+
+    expect(component).toBeDefined();
+    expect(layout).toBeDefined();
+    expect(
+      validSeed.tokenTypes
+        .filter(
+          (tokenType) =>
+            tokenType.category === "shadow" &&
+            tokenType.parentTypeId === component?.id,
+        )
+        .map((tokenType) => tokenType.name),
+    ).toEqual(["modal", "card"]);
+    expect(
+      validSeed.tokenTypes
+        .filter(
+          (tokenType) =>
+            tokenType.category === "shadow" &&
+            tokenType.parentTypeId === layout?.id,
+        )
+        .map((tokenType) => tokenType.name),
+    ).toEqual(["sidebar", "header"]);
+
+    const shadowTypeIds = new Set(
+      validSeed.tokenTypes
+        .filter((tokenType) => tokenType.category === "shadow")
+        .map((tokenType) => tokenType.id),
+    );
+    const semanticShadowTokenIds = new Set(
+      validSeed.tokens
+        .filter((token) => shadowTypeIds.has(token.tokenTypeId))
+        .filter(
+          (token) =>
+            validSeed.tokenTypes.find(
+              (tokenType) => tokenType.id === token.tokenTypeId,
+            )?.kind === "semantic",
+        )
+        .map((token) => token.id),
+    );
+    const shadowReferences = validSeed.tokenReferences.filter((reference) =>
+      semanticShadowTokenIds.has(reference.referencingTokenId),
+    );
+
+    expect(shadowReferences).toHaveLength(32);
+    expect(shadowReferences.filter(({ slot }) => slot === "light")).toHaveLength(16);
+    expect(shadowReferences.filter(({ slot }) => slot === "dark")).toHaveLength(16);
+  });
 });
