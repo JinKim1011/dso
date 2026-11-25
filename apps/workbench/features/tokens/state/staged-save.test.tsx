@@ -30,8 +30,22 @@ const base = buildTokenGraphViewModel(
   validSeed.tokens,
   validSeed.tokenReferences,
 );
-const surface = validSeed.tokens.find((token) => token.name === "surface")!;
-const other = validSeed.tokens.find((token) => token.name === "surface-muted")!;
+const surface = validSeed.tokens.find(
+  (token) =>
+    token.name === "default" &&
+    token.tokenTypeId ===
+      validSeed.tokenTypes.find(
+        (type) => type.category === "color" && type.name === "surface",
+      )?.id,
+)!;
+const other = validSeed.tokens.find(
+  (token) =>
+    token.name === "muted" &&
+    token.tokenTypeId ===
+      validSeed.tokenTypes.find(
+        (type) => type.category === "color" && type.name === "surface",
+      )?.id,
+)!;
 
 function wrapper({ children }: { children: ReactNode }) {
   return (
