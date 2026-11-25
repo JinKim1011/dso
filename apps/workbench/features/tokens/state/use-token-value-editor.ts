@@ -20,6 +20,8 @@ type UseTokenValueEditorProps = {
   value: TokenValueViewModel;
   category: TokenCategory;
   kind: TokenKind;
+  tokenTypeId: string;
+  draftModel: TokenGraphViewModel;
   modeOptions: TokenReferenceOption[];
   singleReferenceOptions: TokenReferenceOption[];
   typographyOptions: TypographyReferenceOptions;
@@ -33,6 +35,8 @@ export function useTokenValueEditor({
   value,
   category,
   kind,
+  tokenTypeId,
+  draftModel,
   modeOptions,
   singleReferenceOptions,
   typographyOptions,
