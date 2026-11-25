@@ -2,9 +2,18 @@ import { cn } from "@repo/ui/lib/utils";
 
 type TerminalProps = React.ComponentProps<"span"> & {
   prompt?: string;
+  width?: string;
+  height?: string;
 };
 
-function TerminalLoading({ className, prompt = ">", style, ...props }: TerminalProps) {
+function TerminalLoading({
+  className,
+  prompt = ">",
+  width = "0.5em",
+  height = "1em",
+  style,
+  ...props
+}: TerminalProps) {
   return (
     <>
       <style>{`
@@ -28,9 +37,10 @@ function TerminalLoading({ className, prompt = ">", style, ...props }: TerminalP
         <span aria-hidden="true">{prompt}</span>
         <span
           aria-hidden="true"
-          className="inline-block w-[0.5em] bg-current"
+          className="inline-block bg-current"
           style={{
-            height: "1em",
+            width,
+            height,
             animation: "loading-ui-terminal-blink var(--duration, 1s) step-end infinite",
           }}
         />
