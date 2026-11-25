@@ -5,6 +5,7 @@ import { TokenValueDetail } from "@/features/tokens/components/token-value/token
 import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
 import type {
   TokenReferenceOption,
+  TokenGraphViewModel,
   TokenValueDetailUpdate,
   TypographyReferenceOptions,
 } from "@/features/tokens/model/token-graph";
@@ -19,6 +20,7 @@ type TokenPanelProps = {
   hasNextRow: boolean;
   hasPreviousRow: boolean;
   flowInstance: ReactFlowInstance | null;
+  draftModel: TokenGraphViewModel;
   typographyOptions: TypographyReferenceOptions;
   modeOptions: TokenReferenceOption[];
   singleReferenceOptions: TokenReferenceOption[];
@@ -34,6 +36,7 @@ export function TokenPanel({
   hasNextRow,
   hasPreviousRow,
   flowInstance,
+  draftModel,
   typographyOptions,
   modeOptions,
   singleReferenceOptions,
@@ -87,6 +90,8 @@ export function TokenPanel({
                 meta={selectedRow.meta}
                 category={selectedRow.category}
                 kind={selectedRow.kind}
+                tokenTypeId={selectedRow.tokenTypeId}
+                draftModel={draftModel}
                 value={selectedRow.value}
                 typographyOptions={typographyOptions}
                 modeOptions={modeOptions}
