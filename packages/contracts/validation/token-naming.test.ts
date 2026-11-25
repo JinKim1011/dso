@@ -2,6 +2,7 @@ import type { Token, TokenType } from "@repo/contracts/type";
 import {
   deriveTokenCssVariable,
   findTokenCssVariableConflicts,
+  validateTokenName,
 } from "@repo/contracts/validation/token-naming";
 import { describe, expect, it } from "vitest";
 
@@ -55,6 +56,22 @@ describe("token naming", () => {
       "--radius-component-card-small",
     );
   });
+
+  it.each(["small", "hover-strong", "2xlarge"])(
+    "accepts canonical final segment %s",
+    (name) => {
+      expect(validateTokenName(name)).toBeNull();
+    },
+  );
+
+  it.each(["Small", "small inset", "-small", "small-", "small--large"])(
+    "rejects non-canonical final segment %s",
+    (name) => {
+      expect(validateTokenName(name)).toBe(
+        "Use lowercase letters, numbers, and single hyphens.",
+      );
+    },
+  );
 
   it("reports conflicts after generated paths are normalized", () => {
     const tokens = [token("a", modal.id, "small"), token("b", modal.id, " small ")];
