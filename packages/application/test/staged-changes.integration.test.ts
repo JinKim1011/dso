@@ -37,6 +37,42 @@ async function saveStagedChanges(
 }
 
 describe("staged changes service", () => {
+  it("rejects a renamed token that creates an existing generated path", async () => {
+    const database = getTestDatabase();
+    const fixture = await seedProject(database, "editor");
+    const duplicate = {
+      ...fixture.referencedToken,
+      id: crypto.randomUUID(),
+      name: "reserved-name",
+    };
+    await insertToken(database, duplicate);
+
+    await expect(
+      saveStagedChanges(database, fixture.context, {
+        projectId: fixture.project.id,
+        changes: [
+          {
+            tokenId: fixture.referencedToken.id,
+            name: { before: fixture.referencedToken.name, after: duplicate.name },
+            references: [],
+          },
+        ],
+      }),
+    ).rejects.toMatchObject({
+      code: "domain-validation",
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "duplicate-css-variable",
+          tokenId: fixture.referencedToken.id,
+          field: "name",
+        }),
+      ]),
+    });
+    expect(await listTokensByProjectId(database, fixture.project.id)).toContainEqual(
+      fixture.referencedToken,
+    );
+  });
+
   it("uses READ COMMITTED even when the connection defaults to SERIALIZABLE", async () => {
     const database = getTestDatabase();
     const fixture = await seedProject(database, "editor");
