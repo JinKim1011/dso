@@ -14,6 +14,7 @@ import {
   getTokenEditorState,
   type TokenEditorDraft,
 } from "@/features/tokens/model/token-value-editor";
+import { buildSingleReferenceOptions } from "@/features/tokens/options/use-single-reference-options";
 import {
   clearPersistedDraftModel,
   discardLegacyDraft,
@@ -71,6 +72,122 @@ const cases = [
 
 describe("token previews across database, editor and staged models", () => {
   afterEach(() => clearPersistedDraftModel(projectId));
+
+  it("edits semantic single references without treating primitive values as references", () => {
+    const token = validSeed.tokens.find((item) => item.name === "component-inset-small")!;
+    const row = rowIn(baseModel, token.id);
+    const type = baseModel.tokenTypes.find((item) => item.id === token.tokenTypeId)!;
+    const referenceOptions = buildSingleReferenceOptions(baseModel, "spacing");
+    const initialDraft = createTokenEditorDraft(row.name, row, type.category, type.kind);
+
+    expect(initialDraft).toEqual({
+      kind: "single-reference",
+      name: "component-inset-small",
+      valueReferencedTokenId: row.references?.value,
+    });
+    if (initialDraft.kind !== "single-reference") {
+      throw new Error("Expected a semantic single-reference draft.");
+    }
+
+    const replacement = referenceOptions.find(
+      (option) => option.value !== row.references?.value,
+    )!;
+    const draft = {
+      ...initialDraft,
+      valueReferencedTokenId: replacement.value,
+    } satisfies TokenEditorDraft;
+    const update = buildTokenEditorUpdate(type.category, draft);
+    const stagedRow = { ...row, ...update };
+    const stagedModel = withRow(baseModel, stagedRow);
+    const resolve = createTokenDisplayResolver(stagedModel);
+    const editorState = getTokenEditorState(
+      draft,
+      initialDraft,
+      row,
+      options,
+      typographyOptions,
+      resolve,
+      type.category,
+      type.kind,
+      referenceOptions,
+    );
+
+    expect(update.value).toBeUndefined();
+    expect(update.references).toEqual({ value: replacement.value });
+    expect(editorState).toMatchObject({
+      isDirty: true,
+      referencesChanged: true,
+      missingReference: false,
+      incomplete: false,
+      previewValue: {
+        meta: replacement.label,
+        preview: { kind: "single", value: replacement.resolvedValue },
+      },
+    });
+    expect(buildStagedTokenChange(row, stagedRow)?.references).toEqual([
+      {
+        slot: "value",
+        beforeTokenId: row.references?.value,
+        afterTokenId: replacement.value,
+      },
+    ]);
+
+    const primitive = validSeed.tokens.find((item) => item.name === "padding-small")!;
+    const primitiveRow = rowIn(baseModel, primitive.id);
+    const primitiveType = baseModel.tokenTypes.find(
+      (item) => item.id === primitive.tokenTypeId,
+    )!;
+    expect(
+      createTokenEditorDraft(
+        primitiveRow.name,
+        primitiveRow,
+        primitiveType.category,
+        primitiveType.kind,
+      ),
+    ).toEqual({
+      kind: "single",
+      name: "padding-small",
+      value: primitiveRow.value.kind === "single" ? primitiveRow.value.value : "",
+    });
+  });
+
+  it("marks unavailable and unset semantic single references as incomplete", () => {
+    const token = validSeed.tokens.find((item) => item.name === "button-corner-regular")!;
+    const row = rowIn(baseModel, token.id);
+    const type = baseModel.tokenTypes.find((item) => item.id === token.tokenTypeId)!;
+    const referenceOptions = buildSingleReferenceOptions(baseModel, "radius");
+    const initialDraft = createTokenEditorDraft(row.name, row, type.category, type.kind);
+    if (initialDraft.kind !== "single-reference") {
+      throw new Error("Expected a semantic single-reference draft.");
+    }
+
+    for (const draft of [
+      { ...initialDraft, valueReferencedTokenId: "missing" },
+      { ...initialDraft, valueReferencedTokenId: undefined },
+    ] satisfies TokenEditorDraft[]) {
+      const model = withRow(baseModel, {
+        ...row,
+        ...buildTokenEditorUpdate(type.category, draft),
+      });
+      const state = getTokenEditorState(
+        draft,
+        initialDraft,
+        row,
+        options,
+        typographyOptions,
+        createTokenDisplayResolver(model),
+        type.category,
+        type.kind,
+        referenceOptions,
+      );
+
+      expect(state.incomplete).toBe(true);
+      if (draft.valueReferencedTokenId === "missing") {
+        expect(state.missingReference).toBe(true);
+        expect(state.previewValue.preview).toBeUndefined();
+      }
+    }
+  });
 
   it("flags primitive CSS variables in the editor and referenced preview", () => {
     const surface = validSeed.tokens.find((item) => item.name === "surface")!;
