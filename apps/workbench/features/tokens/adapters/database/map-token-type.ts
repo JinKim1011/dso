@@ -33,6 +33,7 @@ export function mapTokenType(
 
   return {
     id: tokenType.id,
+    parentTypeId: tokenType.parentTypeId,
     category,
     type: tokenType.name,
     kind: tokenType.kind,
