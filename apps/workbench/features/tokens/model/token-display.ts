@@ -1,5 +1,6 @@
 import {
   resolveModes,
+  resolveSingleReference,
   resolveTypography,
   type SlotContext,
 } from "@/features/tokens/model/token-display-reference";
@@ -8,6 +9,7 @@ import type {
   TokenTypeViewModel,
   TokenValueViewModel,
 } from "@/features/tokens/model/token-graph";
+import { isSemanticSingleReference } from "@/features/tokens/model/single-reference";
 import { containsCssVariable } from "@repo/contracts/validation/token-value";
 
 type ResolverRows = {
@@ -38,7 +40,17 @@ function resolveTokenDisplay(
   };
 
   switch (row.value.kind) {
-    case "single":
+    case "single": {
+      if (isSemanticSingleReference(type.category, type.kind)) {
+        const { meta, preview, incomplete, missing } = resolveSingleReference(context);
+
+        return {
+          value: { ...row, meta, preview },
+          missingReference: missing,
+          incomplete,
+        };
+      }
+
       return {
         value: {
           ...row,
@@ -52,6 +64,7 @@ function resolveTokenDisplay(
         missingReference: false,
         incomplete: false,
       };
+    }
     case "modes": {
       const { meta, preview, incomplete, missing } = resolveModes(context);
 
