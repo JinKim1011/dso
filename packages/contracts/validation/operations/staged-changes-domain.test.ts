@@ -57,6 +57,64 @@ function validate(
 }
 
 describe("validateSaveStagedChanges", () => {
+  it("rejects non-canonical names on the proposed state", () => {
+    const request: SaveStagedChangesRequest = {
+      projectId: fixtureIds.project,
+      changes: [
+        {
+          tokenId: modeToken.id,
+          name: { before: modeToken.name, after: "Invalid Name" },
+          references: [],
+        },
+      ],
+    };
+
+    expect(validate(request)).toMatchObject({
+      success: false,
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "invalid-name",
+          tokenId: modeToken.id,
+          field: "name",
+        }),
+      ]),
+    });
+  });
+
+  it("rejects generated CSS path conflicts on the proposed state", () => {
+    const conflicting = {
+      ...modeToken,
+      id: "00000000-0000-4000-8000-00000000000d",
+      name: "surface-copy",
+    };
+    const request: SaveStagedChangesRequest = {
+      projectId: fixtureIds.project,
+      changes: [
+        {
+          tokenId: modeToken.id,
+          name: { before: modeToken.name, after: conflicting.name },
+          references: [],
+        },
+      ],
+    };
+
+    expect(
+      validate(request, [...tokens, conflicting], tokenTypes, [
+        reference,
+        { ...reference, referencingTokenId: conflicting.id },
+      ]),
+    ).toMatchObject({
+      success: false,
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "duplicate-css-variable",
+          tokenId: modeToken.id,
+          field: "name",
+        }),
+      ]),
+    });
+  });
+
   it.each(["var(--missing)", "calc(1px + VAR (--spacing))", "v\\61 r(--missing)"])(
     "rejects primitive CSS variables in the final batch: %s",
     (value) => {
