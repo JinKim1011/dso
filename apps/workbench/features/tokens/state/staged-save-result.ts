@@ -131,7 +131,7 @@ export function reconcileSavedRows(
   const types: TokenType[] = base.tokenTypes.map((type) => ({
     id: type.id,
     projectId,
-    parentTypeId: null,
+    parentTypeId: type.parentTypeId,
     category: type.category,
     name: type.type,
     kind: type.kind,
