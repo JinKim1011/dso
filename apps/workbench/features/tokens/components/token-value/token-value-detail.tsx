@@ -8,6 +8,7 @@ import { TokenValuePreview } from "@/features/tokens/components/token-value/toke
 import type { TokenDisplayResolver } from "@/features/tokens/model/token-display";
 import type {
   TokenReferenceOption,
+  TokenGraphViewModel,
   TokenValueDetailUpdate,
   TokenValueViewModel,
   TypographyReferenceOptions,
@@ -23,6 +24,8 @@ type TokenValueDetailProps = {
   meta?: string;
   category: TokenCategory;
   kind: TokenKind;
+  tokenTypeId: string;
+  draftModel: TokenGraphViewModel;
   value: TokenValueViewModel;
   modeOptions: TokenReferenceOption[];
   singleReferenceOptions: TokenReferenceOption[];
@@ -37,6 +40,8 @@ export function TokenValueDetail({
   name,
   category,
   kind,
+  tokenTypeId,
+  draftModel,
   value,
   modeOptions,
   singleReferenceOptions,
@@ -59,6 +64,8 @@ export function TokenValueDetail({
     value,
     category,
     kind,
+    tokenTypeId,
+    draftModel,
     modeOptions,
     singleReferenceOptions,
     resolveDisplay,
