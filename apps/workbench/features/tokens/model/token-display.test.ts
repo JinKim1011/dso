@@ -62,7 +62,7 @@ const options = baseModel.tokenTypes.flatMap((type) =>
 );
 const typographyOptions = { fontSize: options, fontWeight: options, lineHeight: options };
 const cases = [
-  { name: "surface", kind: "modes" as const, slots: ["light", "dark"] as const },
+  { name: "default", kind: "modes" as const, slots: ["light", "dark"] as const },
   {
     name: "body",
     kind: "typography" as const,
@@ -204,7 +204,14 @@ describe("token previews across database, editor and staged models", () => {
   });
 
   it("flags primitive CSS variables in the editor and referenced preview", () => {
-    const surface = validSeed.tokens.find((item) => item.name === "surface")!;
+    const surface = validSeed.tokens.find(
+      (item) =>
+        item.name === "default" &&
+        item.tokenTypeId ===
+          validSeed.tokenTypes.find(
+            (type) => type.category === "color" && type.name === "surface",
+          )?.id,
+    )!;
     const row = rowIn(baseModel, surface.id);
     const targetId = row.references!.light!;
     const primitive = rowIn(baseModel, targetId);
@@ -435,7 +442,14 @@ describe("token previews across database, editor and staged models", () => {
   }
 
   it("discards legacy drafts without a project or baseline", () => {
-    const token = validSeed.tokens.find((item) => item.name === "surface")!;
+    const token = validSeed.tokens.find(
+      (item) =>
+        item.name === "default" &&
+        item.tokenTypeId ===
+          validSeed.tokenTypes.find(
+            (type) => type.category === "color" && type.name === "surface",
+          )?.id,
+    )!;
     const row = rowIn(baseModel, token.id);
     const body = validSeed.tokens.find(
       (item) => item.name === "body" && item.value.kind === "typography",
@@ -461,7 +475,14 @@ describe("token previews across database, editor and staged models", () => {
   });
 
   it("shows a valid mode while flagging an unavailable reference", () => {
-    const token = validSeed.tokens.find((item) => item.name === "surface")!;
+    const token = validSeed.tokens.find(
+      (item) =>
+        item.name === "default" &&
+        item.tokenTypeId ===
+          validSeed.tokenTypes.find(
+            (type) => type.category === "color" && type.name === "surface",
+          )?.id,
+    )!;
     const row = rowIn(baseModel, token.id);
     const type = baseModel.tokenTypes.find((item) => item.id === token.tokenTypeId)!;
     const broken = { ...row, references: { ...row.references, dark: "missing" } };
