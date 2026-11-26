@@ -220,6 +220,40 @@ The current Workbench has project read and membership behavior but no authentica
 
 The deployment also selects one configured Workbench project through `DSO_WORKBENCH_PROJECT_ID`. The `/projects` page can list accessible projects, but token pages load the configured project. Multi-project switching is therefore present only as partial groundwork and is not a complete operator-created project experience.
 
+### Manual project provisioning and project switching
+
+Supporting operator-created projects requires application work beyond inserting rows into Neon. A `projects` row and a `project_members` row make the project discoverable and authorize the user, but they do not make that project the active Workbench project.
+
+Current behavior:
+
+1. Authentication lists projects that have a membership row for the current user.
+2. `/projects` displays that accessible list.
+3. Token pages use the single project selected by `DSO_WORKBENCH_PROJECT_ID`.
+4. Staged drafts are stored per project ID in browser local storage.
+5. Publish and API-key requests validate their submitted project ID against the authenticated membership and role.
+
+Required follow-up work:
+
+1. Replace the global project selection with a user/request project selection.
+2. Make project routes project-specific, for example `/projects/:projectId/tokens/color`.
+3. Keep authorization checks on every project load and mutation.
+4. Store or derive the active project after a user selects it from `/projects`.
+5. Load token types, tokens, references, components, templates, and releases for the selected project.
+6. Keep staged drafts isolated by project.
+7. Preserve membership role behavior for editor, publisher, and admin.
+8. Either retain `DSO_WORKBENCH_PROJECT_ID` as a default fallback or remove it after multi-project routing is complete.
+
+Completion criteria for this follow-up:
+
+- The operator can manually create a project and its initial data in PostgreSQL.
+- The operator can add a user with an explicit `project_members.role`.
+- The user sees that project on `/projects`.
+- Selecting the project opens only that project's data.
+- Direct URL access to another project is denied without membership.
+- Drafts and publishes remain isolated between projects.
+- Project switching does not mix browser-local drafts or published releases.
+- No `DSO_WORKBENCH_PROJECT_ID` change or redeploy is needed to switch an individual user.
+
 | Item                                    | State                                      | Owner                    |
 | --------------------------------------- | ------------------------------------------ | ------------------------ |
 | Enforced nonce-based CSP                | Deferred                                   | Workbench implementation |
