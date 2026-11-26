@@ -200,6 +200,26 @@ Neon Monitoring displayed “Some metrics are unavailable” for PostgreSQL conn
 
 ## Remaining Risks and Ownership
 
+### Closed-beta account operations
+
+The service has no self-service signup, invitation-link, first-login password setup, or password-reset flow. Closed-beta users must therefore be provisioned manually by the operator.
+
+The preferred operating model is one user per person and a least-privilege `project_members` role:
+
+- `editor` for read and draft editing
+- `publisher` for publishing
+- `admin` for API-key creation and revocation
+
+The operator generates a random temporary password, hashes it with Argon2id locally, stores only the hash in `users`, assigns the required project membership, and sends credentials through a password manager or separated secure channels. Shared seed accounts should be retained for development and verification rather than used as routine individual accounts.
+
+This operating model has explicit limitations: a user cannot set or rotate their password in the application, invitations do not expire, and account recovery requires operator action. Invitation links and first-login password setup are therefore open product work for a later stage; production credentials should be rotated or revoked when the closed beta ends.
+
+### Project provisioning
+
+The current Workbench has project read and membership behavior but no authenticated project-creation UI or API. If a beta user only needs access to an existing project, the operator assigns a `project_members` row and does not need to create another project. If users need isolated projects, the operator must create each project and its project data manually; the product does not yet provide self-service project creation.
+
+The deployment also selects one configured Workbench project through `DSO_WORKBENCH_PROJECT_ID`. The `/projects` page can list accessible projects, but token pages load the configured project. Multi-project switching is therefore present only as partial groundwork and is not a complete operator-created project experience.
+
 | Item                                    | State                                      | Owner                    |
 | --------------------------------------- | ------------------------------------------ | ------------------------ |
 | Enforced nonce-based CSP                | Deferred                                   | Workbench implementation |
