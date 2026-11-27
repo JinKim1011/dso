@@ -132,6 +132,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
             cookie: `dso_session=${sessionId}`,
           },
           body: JSON.stringify({
+            requestId: crypto.randomUUID(),
             projectId: fixture.project.id,
             changes: [
               {
@@ -185,6 +186,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
         expiresAt: new Date(now + 60_000).toISOString(),
       });
       const payload = {
+        requestId: crypto.randomUUID(),
         projectId: fixture.project.id,
         changes: [
           {
@@ -213,11 +215,9 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
         ok: true,
         release: { version: "1", status: "published" },
       });
-      const conflict = await POST(makeRequest(payload));
-      expect(conflict.status).toBe(409);
-      expect(await conflict.json()).toMatchObject({
-        error: { code: "staged-changes-conflict" },
-      });
+      const replay = await POST(makeRequest(payload));
+      expect(replay.status).toBe(200);
+      expect(await replay.json()).toEqual(result);
       expect((await POST(makeRequest(payload, editorSession))).status).toBe(403);
       expect((await database.query("SELECT id FROM releases")).rows).toHaveLength(1);
       expect((await database.query("SELECT id FROM audit_events")).rows).toHaveLength(2);
