@@ -74,6 +74,22 @@ DSO_RELEASE_SIGNING_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVA
 
 The signing private key must be an Ed25519 PKCS#8 PEM value. Represent newlines as `\n` in a one-line environment file. Never commit a real private key.
 
+Generate a one-time key pair without writing it to the repository:
+
+```bash
+npm run signing:generate -- release-key-2026-11
+```
+
+The command prints a private-key environment value and separate public trust-file content for the supplied key ID. Treat the terminal output as secret and clear the terminal history afterward.
+
+Verify a configured signing environment without printing either key:
+
+```bash
+DSO_RELEASE_SIGNING_KEY_ID='release-key-2026-11' \
+DSO_RELEASE_SIGNING_PRIVATE_KEY='...' \
+npm run signing:verify
+```
+
 ## 4. Start the Workbench
 
 Install workspace dependencies once after a clean checkout:
