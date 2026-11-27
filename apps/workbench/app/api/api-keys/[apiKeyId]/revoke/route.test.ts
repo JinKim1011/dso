@@ -105,6 +105,14 @@ describe("POST /api/api-keys/:apiKeyId/revoke", () => {
     },
   );
 
+  it("is available in production when API-key management is explicitly enabled", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DSO_API_KEY_MANAGEMENT_ENABLED", "true");
+
+    expect((await invoke()).status).toBe(200);
+    expect(revokeApiKey).toHaveBeenCalled();
+  });
+
   it.each(["missing-origin", "foreign-origin", "missing-header", "cross-site"])(
     "rejects CSRF violations before authentication: %s",
     async (kind) => {
