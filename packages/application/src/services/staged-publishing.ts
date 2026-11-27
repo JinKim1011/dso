@@ -4,6 +4,10 @@ import {
   requireProjectAccess,
 } from "@repo/application/services/authorization";
 import { withProjectTransaction } from "@repo/application/services/project-transaction";
+import {
+  recordPublishRequest,
+  resolvePublishRequest,
+} from "@repo/application/services/publish-requests";
 import { publishRelease } from "@repo/application/services/releases";
 import { saveStagedChanges } from "@repo/application/services/staged-changes";
 import type { AuthorizationContext } from "@repo/application/types";
@@ -51,10 +55,14 @@ export async function publishStagedChanges(
       releaseId: release.id,
     });
 
-    return {
+    const response = {
       release: published,
       tokens: saved.tokens,
       references: saved.references,
     };
+
+    await recordPublishRequest(client, context.userId, request, response);
+
+    return response;
   });
 }
