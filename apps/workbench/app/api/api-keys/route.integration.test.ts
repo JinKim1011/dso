@@ -79,6 +79,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
       const fixture = await seedProject(database, "admin");
       const sessionId = await createSession(fixture.user.id);
       const { release } = await publishStagedChanges(database, fixture.context, {
+        requestId: crypto.randomUUID(),
         projectId: fixture.project.id,
         changes: [
           {
@@ -143,6 +144,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
       const fixture = await seedProject(database, "admin");
       const sessionId = await createSession(fixture.user.id);
       const { release } = await publishStagedChanges(database, fixture.context, {
+        requestId: crypto.randomUUID(),
         projectId: fixture.project.id,
         changes: [
           {
