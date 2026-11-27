@@ -3,7 +3,7 @@ import type { SeedData } from "@repo/contracts/seed";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import { validateLimitedStringField } from "@repo/contracts/validation/operations/common";
 import { validateSeedData } from "@repo/contracts/validation/seed";
-import { closeDatabasePool, createDatabasePool } from "@repo/db/client";
+import { closeDatabasePool, createRuntimeDatabasePool } from "@repo/db/client";
 import { runMigrations } from "@repo/db/migrations/index";
 import { seedDatabase } from "@repo/db/seed";
 import { validSeed } from "@repo/seed-data/valid-seed";
@@ -41,7 +41,7 @@ async function main(): Promise<void> {
 
   const seed = await withSeedUserPasswords(validSeed);
 
-  const pool = createDatabasePool();
+  const pool = createRuntimeDatabasePool();
 
   try {
     await pool.query("SELECT 1");
