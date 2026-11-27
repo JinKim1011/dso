@@ -26,6 +26,9 @@ export async function publishStagedChanges(
   requiredProjectRole(membership, projectId, "publisher");
 
   return withProjectTransaction(database, projectId, async (client) => {
+    const existing = await resolvePublishRequest(client, context.userId, request);
+    if (existing) return existing;
+
     const saved = await saveStagedChanges(client, context, request);
 
     if (saved.changedTokenIds.length === 0) {
