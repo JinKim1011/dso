@@ -3,6 +3,7 @@ import { isTrustedMutationRequest } from "@/server/csrf";
 import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
 import { isApiKeyManagementEnabled } from "@/server/env";
+import { checkRateLimit, rateLimitResponse } from "@/server/rate-limit";
 import { readJsonBody } from "@/server/request-body";
 import { revokeApiKey } from "@repo/application/services/api-keys";
 import {
@@ -81,6 +82,15 @@ export async function POST(
         },
         { status: 400, headers: { "Cache-Control": "no-store" } },
       );
+    }
+
+    if (process.env.NODE_ENV === "production") {
+      const decision = await checkRateLimit("api-key-revoke", [
+        context.userId,
+        parsed.value.projectId.toLowerCase(),
+      ]);
+
+      if (!decision.allowed) return rateLimitResponse(decision);
     }
 
     const revoked = await revokeApiKey(getDatabasePool(), context, parsed.value);
