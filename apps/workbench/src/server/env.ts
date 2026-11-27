@@ -9,6 +9,11 @@ export type ReleaseSigningEnvironment = {
   privateKey: string | undefined;
 };
 
+export type WorkbenchFeatureEnvironment = {
+  publishEnabled: boolean;
+  apiKeyManagementEnabled: boolean;
+};
+
 function loadNodeEnvironment(value: string | undefined): SecurityEnvironment["nodeEnv"] {
   if (value === "production") {
     return "production";
@@ -44,6 +49,50 @@ export function isWorkbenchAuthenticationEnabled(env: NodeJS.ProcessEnv): boolea
     env.NODE_ENV === "development" ||
     (env.NODE_ENV === "production" && env.DSO_WORKBENCH_AUTH_ENABLED === "true")
   );
+}
+
+function loadExplicitFeatureFlag(
+  env: NodeJS.ProcessEnv,
+  name: string,
+): boolean {
+  const value = env[name];
+
+  if (value === undefined || value === "false") {
+    return false;
+  }
+
+  if (value === "true") {
+    return true;
+  }
+
+  throw new Error(`${name} must be "true" or "false".`);
+}
+
+export function loadWorkbenchFeatureEnvironment(
+  env: NodeJS.ProcessEnv,
+): WorkbenchFeatureEnvironment {
+  if (env.NODE_ENV === "development") {
+    return {
+      publishEnabled: true,
+      apiKeyManagementEnabled: true,
+    };
+  }
+
+  return {
+    publishEnabled: loadExplicitFeatureFlag(env, "DSO_PUBLISH_ENABLED"),
+    apiKeyManagementEnabled: loadExplicitFeatureFlag(
+      env,
+      "DSO_API_KEY_MANAGEMENT_ENABLED",
+    ),
+  };
+}
+
+export function isPublishEnabled(env: NodeJS.ProcessEnv): boolean {
+  return loadWorkbenchFeatureEnvironment(env).publishEnabled;
+}
+
+export function isApiKeyManagementEnabled(env: NodeJS.ProcessEnv): boolean {
+  return loadWorkbenchFeatureEnvironment(env).apiKeyManagementEnabled;
 }
 
 export function loadReleaseSigningEnvironment(
