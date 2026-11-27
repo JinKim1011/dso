@@ -2,6 +2,7 @@ import { mapApiError } from "@/server/api-error";
 import { isTrustedMutationRequest } from "@/server/csrf";
 import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
+import { isPublishEnabled } from "@/server/env";
 import { readJsonBody } from "@/server/request-body";
 import { publishStagedChanges } from "@repo/application/services/staged-publishing";
 import type { PublishStagedChangesResponse } from "@repo/contracts/operation";
@@ -17,7 +18,7 @@ function failure(status: number, code: string, message: string): Response {
 }
 
 export async function POST(request: Request): Promise<Response> {
-  if (process.env.NODE_ENV !== "development") {
+  if (!isPublishEnabled(process.env)) {
     return failure(404, "not-found", "Not found.");
   }
 
