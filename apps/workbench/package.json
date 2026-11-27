@@ -20,6 +20,8 @@
     "@repo/db": "*",
     "@repo/release-protocol": "*",
     "@repo/ui": "*",
+    "@upstash/ratelimit": "^2.2.3",
+    "@upstash/redis": "^1.41.1",
     "@xyflow/react": "^12.10.2",
     "framer-motion": "12.29.2",
     "next": "^16.4.6",
