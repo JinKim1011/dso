@@ -1,8 +1,9 @@
 import { mapApiError } from "@/server/api-error";
 import { SESSION_COOKIE } from "@/server/auth-session-cookie";
-import { getDatabasePool } from "@/server/database";
 import { isTrustedMutationRequest } from "@/server/csrf";
+import { getDatabasePool } from "@/server/database";
 import { isWorkbenchAuthenticationEnabled } from "@/server/env";
+import { checkRateLimit, getRequestIp, rateLimitResponse } from "@/server/rate-limit";
 import { readJsonBody } from "@/server/request-body";
 import { login } from "@repo/application/services/authentication";
 import { parseLoginRequest } from "@repo/contracts/validation/operations/authentication";
@@ -29,7 +30,11 @@ export async function POST(request: Request): Promise<Response> {
 
     const mediaType = request.headers.get("content-type")?.split(";", 1)[0]?.trim();
     if (mediaType?.toLowerCase() !== "application/json") {
-      return failure(415, "unsupported-media-type", "Content-Type must be application/json.");
+      return failure(
+        415,
+        "unsupported-media-type",
+        "Content-Type must be application/json.",
+      );
     }
 
     const parsed = parseLoginRequest(await readJsonBody(request));
@@ -47,11 +52,24 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
+    if (process.env.NODE_ENV === "production") {
+      const decision = await checkRateLimit("login", [
+        getRequestIp(request),
+        parsed.value.email.trim().toLowerCase(),
+      ]);
+
+      if (!decision.allowed) {
+        return rateLimitResponse(decision);
+      }
+    }
+
     const result = await login(getDatabasePool(), parsed.value);
     const response = NextResponse.json(result.response, {
       headers: { "Cache-Control": "no-store" },
     });
+
     response.cookies.set(SESSION_COOKIE.name, result.sessionId, SESSION_COOKIE);
+
     return response;
   } catch (error) {
     return mapApiError(error);
