@@ -1,7 +1,12 @@
 import { getDatabasePool } from "@/server/database";
 import {
+  RateLimitUnavailableError,
+  checkRateLimit,
+} from "@/server/rate-limit";
+import {
   DomainValidationError,
   ProjectAccessDeniedError,
+  SessionExpiredError,
   StagedChangesConflictError,
 } from "@repo/application/errors";
 import { authenticateSession } from "@repo/application/services/authentication";
@@ -11,6 +16,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "./route";
 
 vi.mock("@/server/database", () => ({ getDatabasePool: vi.fn() }));
+vi.mock("@/server/rate-limit", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/server/rate-limit")>();
+  return { ...actual, checkRateLimit: vi.fn() };
+});
 vi.mock("@repo/application/services/authentication", () => ({
   authenticateSession: vi.fn(),
 }));
@@ -55,6 +64,12 @@ describe("publish request boundary", () => {
     vi.stubEnv("DATABASE_URL", "postgres://localhost/example");
     vi.stubEnv("DSO_WORKBENCH_ORIGIN", origin);
     vi.stubEnv("SESSION_COOKIE_NAME", "dso_session");
+    vi.mocked(checkRateLimit).mockResolvedValue({
+      allowed: true,
+      limit: 10,
+      remaining: 9,
+      resetAt: Date.now() + 600_000,
+    });
     vi.mocked(authenticateSession).mockResolvedValue(context);
     vi.mocked(publishStagedChanges).mockResolvedValue({
       release,
@@ -100,6 +115,60 @@ describe("publish request boundary", () => {
 
     expect((await POST(request())).status).toBe(200);
     expect(publishStagedChanges).toHaveBeenCalled();
+    expect(checkRateLimit).toHaveBeenCalledWith("publish", [
+      context.userId,
+      projectId.toLowerCase(),
+    ]);
+  });
+
+  it("returns 429 before publishing when the production limit is exceeded", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DSO_PUBLISH_ENABLED", "true");
+    vi.mocked(checkRateLimit).mockResolvedValue({
+      allowed: false,
+      limit: 10,
+      remaining: 0,
+      resetAt: Date.now() + 10_000,
+    });
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(429);
+    expect(response.headers.get("retry-after")).toBe("10");
+    expect(response.headers.get("x-ratelimit-limit")).toBe("10");
+    expect(publishStagedChanges).not.toHaveBeenCalled();
+  });
+
+  it("fails closed when the publish limiter is unavailable", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DSO_PUBLISH_ENABLED", "true");
+    vi.mocked(checkRateLimit).mockRejectedValue(new RateLimitUnavailableError());
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(503);
+    expect(response.headers.get("cache-control")).toBe("no-store");
+    expect(publishStagedChanges).not.toHaveBeenCalled();
+  });
+
+  it("does not consume publish quota for invalid, unauthenticated, or CSRF requests", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DSO_PUBLISH_ENABLED", "true");
+
+    expect((await POST(request("{"))).status).toBe(400);
+    vi.mocked(authenticateSession).mockRejectedValue(new SessionExpiredError());
+    expect((await POST(request())).status).toBe(401);
+    expect(
+      (
+        await POST(
+          request(undefined, {
+            origin: "http://evil.test",
+          }),
+        )
+      ).status,
+    ).toBe(403);
+    expect(checkRateLimit).not.toHaveBeenCalled();
   });
 
   it.each(["missing-origin", "foreign-origin", "missing-header", "cross-site"])(
