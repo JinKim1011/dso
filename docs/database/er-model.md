@@ -14,6 +14,7 @@ Find relevant reads in:
 ```mermaid
 erDiagram
     PROJECTS ||--o{ RELEASES : owns
+    PROJECTS ||--o{ PUBLISH_REQUESTS : scopes
     PROJECTS ||--o{ TOKEN_TYPES : owns
     PROJECTS ||--o{ TOKENS : owns
     PROJECTS ||--o{ COMPONENTS : owns
@@ -22,6 +23,7 @@ erDiagram
     PROJECTS ||--o{ API_KEYS : scopes
     PROJECTS o|--o{ AUDIT_EVENTS : contains
     RELEASES ||--o| RELEASE_SNAPSHOTS : snapshots
+    RELEASES ||--o| PUBLISH_REQUESTS : created_by
 
     TOKEN_TYPES o|--o{ TOKEN_TYPES : parent_of
     TOKEN_TYPES ||--o{ TOKENS : classifies
@@ -33,6 +35,7 @@ erDiagram
     USERS ||--o{ SESSIONS : has
     USERS ||--o{ PROJECT_MEMBERS : joins
     USERS o|--o{ AUDIT_EVENTS : performs
+    USERS ||--o{ PUBLISH_REQUESTS : submits
 
     PROJECTS {
         uuid id PK
@@ -62,6 +65,16 @@ erDiagram
         jsonb reference_data
         jsonb components
         jsonb templates
+        timestamp created_at
+    }
+
+    PUBLISH_REQUESTS {
+        uuid project_id PK, FK
+        uuid user_id PK, FK
+        uuid request_id PK
+        text request_hash
+        uuid release_id FK
+        jsonb response_data
         timestamp created_at
     }
 
@@ -146,8 +159,10 @@ erDiagram
 
 ## Cardinality and relationship notes
 
-- A project owns releases, token types, tokens, components, document templates, project memberships, API keys, and project-scoped audit events.
+- A project owns releases, publish requests, token types, tokens, components, document templates, project memberships, API keys, and project-scoped audit events.
 - A release has at most one release snapshot.
+- A publish request records the durable idempotency key, payload hash, and first successful response for one publication.
+- The composite primary key `(project_id, user_id, request_id)` scopes retry identity to both the project and submitting user.
 - A user has zero or many sessions and project memberships.
 - A project membership identifies the user's role for one project.
 - A token type has zero or one parent and zero or many child token types.
