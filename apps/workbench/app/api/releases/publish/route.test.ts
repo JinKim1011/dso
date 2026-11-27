@@ -94,6 +94,14 @@ describe("publish request boundary", () => {
     },
   );
 
+  it("is available in production when publishing is explicitly enabled", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DSO_PUBLISH_ENABLED", "true");
+
+    expect((await POST(request())).status).toBe(200);
+    expect(publishStagedChanges).toHaveBeenCalled();
+  });
+
   it.each(["missing-origin", "foreign-origin", "missing-header", "cross-site"])(
     "rejects CSRF violations before authentication: %s",
     async (kind) => {
