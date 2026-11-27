@@ -130,23 +130,24 @@ export type SaveStagedChangesRequest = {
   changes: StagedTokenChange[];
 };
 
+type ApiFailureResponse = {
+  ok: false;
+  error: {
+    code: string;
+    message: string;
+    correlationId?: string;
+    issues?: readonly {
+      code: string;
+      message: string;
+      field?: string;
+      tokenId?: string;
+      referencedTokenId?: string;
+    }[];
+  };
+};
+
 export type SaveStagedChangesResponse =
-  | { ok: true; tokens: Token[]; references: TokenReference[] }
-  | {
-      ok: false;
-      error: {
-        code: string;
-        message: string;
-        correlationId?: string;
-        issues?: readonly {
-          code: string;
-          message: string;
-          field?: string;
-          tokenId?: string;
-          referencedTokenId?: string;
-        }[];
-      };
-    };
+  { ok: true; tokens: Token[]; references: TokenReference[] } | ApiFailureResponse;
 
 export type PublishStagedChangesResult = {
   release: Release;
@@ -159,5 +160,4 @@ export type PublishStagedChangesRequest = SaveStagedChangesRequest & {
 };
 
 export type PublishStagedChangesResponse =
-  | ({ ok: true } & PublishStagedChangesResult)
-  | Extract<SaveStagedChangesResponse, { ok: false }>;
+  ({ ok: true } & PublishStagedChangesResult) | ApiFailureResponse;
