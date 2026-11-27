@@ -7,7 +7,7 @@ import { checkRateLimit, rateLimitResponse } from "@/server/rate-limit";
 import { readJsonBody } from "@/server/request-body";
 import { publishStagedChanges } from "@repo/application/services/staged-publishing";
 import type { PublishStagedChangesResponse } from "@repo/contracts/operation";
-import { parseSaveStagedChangesRequest } from "@repo/contracts/validation/operations/staged-changes";
+import { parsePublishStagedChangesRequest } from "@repo/contracts/validation/operations/staged-changes";
 
 export const runtime = "nodejs";
 
@@ -44,7 +44,7 @@ export async function POST(request: Request): Promise<Response> {
       return failure(401, "authentication-required", "Authentication is required.");
     }
 
-    const parsed = parseSaveStagedChangesRequest(await readJsonBody(request));
+    const parsed = parsePublishStagedChangesRequest(await readJsonBody(request));
 
     if (!parsed.success) {
       return Response.json(
