@@ -14,6 +14,11 @@ export type WorkbenchFeatureEnvironment = {
   apiKeyManagementEnabled: boolean;
 };
 
+export type RateLimitEnvironment = {
+  restUrl: string;
+  restToken: string;
+};
+
 function loadNodeEnvironment(value: string | undefined): SecurityEnvironment["nodeEnv"] {
   if (value === "production") {
     return "production";
@@ -93,6 +98,27 @@ export function isPublishEnabled(env: NodeJS.ProcessEnv): boolean {
 
 export function isApiKeyManagementEnabled(env: NodeJS.ProcessEnv): boolean {
   return loadWorkbenchFeatureEnvironment(env).apiKeyManagementEnabled;
+}
+
+export function loadRateLimitEnvironment(
+  env: NodeJS.ProcessEnv,
+): RateLimitEnvironment {
+  const restUrl = env.KV_REST_API_URL ?? env.UPSTASH_REDIS_REST_URL;
+  const restToken = env.KV_REST_API_TOKEN ?? env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (!restUrl) {
+    throw new Error(
+      "KV_REST_API_URL or UPSTASH_REDIS_REST_URL is required for rate limiting.",
+    );
+  }
+
+  if (!restToken) {
+    throw new Error(
+      "KV_REST_API_TOKEN or UPSTASH_REDIS_REST_TOKEN is required for rate limiting.",
+    );
+  }
+
+  return { restUrl, restToken };
 }
 
 export function loadReleaseSigningEnvironment(
