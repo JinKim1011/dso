@@ -46,7 +46,7 @@ Current state:
 
 - Login rate limiting is not implemented.
 - Publish, API-key create/revoke, and release-download rate limiting are not implemented.
-- Production publish and API-key mutation routes remain development-gated.
+- Production publish and API-key mutation routes remain disabled by default; they require separate explicit flags, `DSO_PUBLISH_ENABLED` and `DSO_API_KEY_MANAGEMENT_ENABLED`, and are still not enabled in Vercel.
 - Release download is available through its authenticated boundary but does not currently enforce request throttling.
 
 Recommended follow-up priority:
