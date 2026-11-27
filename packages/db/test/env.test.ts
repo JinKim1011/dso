@@ -70,3 +70,22 @@ describe("loadTestDatabaseEnvironment", () => {
     ).toThrow("TEST_DATABASE_URL must be different from DATABASE_URL.");
   });
 });
+
+describe("loadMigrationDatabaseEnvironment", () => {
+  it("loads only the direct migration URL", () => {
+    expect(
+      loadMigrationDatabaseEnvironment({
+        DIRECT_DATABASE_URL: "postgres://localhost/dso_direct",
+      }),
+    ).toEqual({
+      databaseUrl: "postgres://localhost/dso_direct",
+      poolMax: 10,
+    });
+  });
+
+  it("rejects a missing direct URL", () => {
+    expect(() => loadMigrationDatabaseEnvironment({})).toThrow(
+      "DIRECT_DATABASE_URL is required for migrations.",
+    );
+  });
+});
