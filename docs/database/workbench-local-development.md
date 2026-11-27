@@ -101,6 +101,18 @@ JavaScript.
 
 ## Database Tests
 
+Apply pending schema migrations without running the non-idempotent seed:
+
+```bash
+read -rsp 'Direct migration URL: ' DIRECT_DATABASE_URL
+echo
+export DIRECT_DATABASE_URL
+npm run db:migrate
+unset DIRECT_DATABASE_URL
+```
+
+Use a direct PostgreSQL URL for migration execution. Do not use the pooled runtime URL or the application `DATABASE_URL`.
+
 Create the test database once:
 
 ```bash
