@@ -79,7 +79,7 @@ Production currently uses:
 | `DSO_WORKBENCH_PROJECT_ID` | Vercel Production | Seeded project loaded by the Workbench |
 | `DSO_WORKBENCH_AUTH_ENABLED` | Vercel Production | Explicit Production login/logout enablement |
 | `DSO_WORKBENCH_ORIGIN` | Vercel Production | Production HTTPS mutation origin |
-| `DIRECT_DATABASE_URL` | Migration operator only | Planned explicit migration-script variable |
+| `DIRECT_DATABASE_URL` | Migration operator only | Direct URL consumed by `npm run db:migrate` |
 | `DSO_SEED_USER_PASSWORD` | Migration operator only | Seed password hashing input |
 
 Actual URLs, passwords, private keys, and cookie values are not recorded in this document.
