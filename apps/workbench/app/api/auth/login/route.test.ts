@@ -1,4 +1,8 @@
 import { getDatabasePool } from "@/server/database";
+import {
+  RateLimitUnavailableError,
+  checkRateLimit,
+} from "@/server/rate-limit";
 import { InvalidCredentialsError } from "@repo/application/errors";
 import { login } from "@repo/application/services/authentication";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
@@ -13,6 +17,10 @@ vi.mock("@/server/config", () => ({
   },
 }));
 vi.mock("@/server/database", () => ({ getDatabasePool: vi.fn() }));
+vi.mock("@/server/rate-limit", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/server/rate-limit")>();
+  return { ...actual, checkRateLimit: vi.fn() };
+});
 vi.mock("@repo/application/services/authentication", () => ({ login: vi.fn() }));
 
 const origin = "http://localhost:3000";
@@ -38,6 +46,12 @@ describe("login request boundary", () => {
     vi.resetAllMocks();
     vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("DSO_WORKBENCH_ORIGIN", origin);
+    vi.mocked(checkRateLimit).mockResolvedValue({
+      allowed: true,
+      limit: 10,
+      remaining: 9,
+      resetAt: Date.now() + 300_000,
+    });
     vi.mocked(login).mockResolvedValue({ response: loginResponse, sessionId });
   });
 
@@ -71,6 +85,60 @@ describe("login request boundary", () => {
 
     expect(response.status).toBe(200);
     expect(login).toHaveBeenCalled();
+    expect(checkRateLimit).toHaveBeenCalledWith("login", [
+      "unknown",
+      "user@example.test",
+    ]);
+  });
+
+  it("uses Vercel client IP and canonical email for production rate limiting", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DSO_WORKBENCH_AUTH_ENABLED", "true");
+
+    const incoming = request(
+      JSON.stringify({ email: "User@Example.Test", password: "password" }),
+      {
+        "x-vercel-forwarded-for": "203.0.113.10",
+        "x-forwarded-for": "198.51.100.4, 10.0.0.1",
+      },
+    );
+
+    expect((await POST(incoming)).status).toBe(200);
+    expect(checkRateLimit).toHaveBeenCalledWith("login", [
+      "203.0.113.10",
+      "user@example.test",
+    ]);
+  });
+
+  it("returns 429 before querying the database when the login limit is exceeded", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DSO_WORKBENCH_AUTH_ENABLED", "true");
+    vi.mocked(checkRateLimit).mockResolvedValue({
+      allowed: false,
+      limit: 10,
+      remaining: 0,
+      resetAt: Date.now() + 10_000,
+    });
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(429);
+    expect(response.headers.get("retry-after")).toBe("10");
+    expect(login).not.toHaveBeenCalled();
+  });
+
+  it("fails closed when the production login limiter is unavailable", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DSO_WORKBENCH_AUTH_ENABLED", "true");
+    vi.mocked(checkRateLimit).mockRejectedValue(new RateLimitUnavailableError());
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(503);
+    expect(response.headers.get("cache-control")).toBe("no-store");
+    expect(login).not.toHaveBeenCalled();
+    expect(log).toHaveBeenCalled();
   });
 
   it("returns only the safe response and sets the configured secure session cookie", async () => {
