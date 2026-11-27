@@ -1,14 +1,10 @@
 import { loadDatabaseEnvironment } from "@repo/db/env";
 import { Pool } from "pg";
 
-export function createDatabasePool(
-  connectionString = loadDatabaseEnvironment(process.env).databaseUrl,
-): Pool {
-  const environment = loadDatabaseEnvironment(process.env);
-
+export function createDatabasePool(connectionString: string, poolMax: number): Pool {
   return new Pool({
     connectionString,
-    max: environment.poolMax,
+    max: poolMax,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 5_000,
   });
