@@ -1,4 +1,5 @@
 import { RequestBodyError } from "@/server/request-body";
+import { RateLimitUnavailableError } from "@/server/rate-limit";
 import {
   ApiKeyScopeDeniedError,
   AuthenticationRequiredError,
@@ -67,6 +68,17 @@ export function mapApiError(error: unknown): Response {
       code: error.code,
       message: error.message,
       issues: error.issues,
+    });
+  }
+
+  if (error instanceof RateLimitUnavailableError) {
+    const correlationId = crypto.randomUUID();
+    console.error("Rate-limit backend unavailable.", { correlationId });
+
+    return failure(503, {
+      code: "rate-limit-unavailable",
+      message: "The request cannot be completed right now.",
+      correlationId,
     });
   }
 
