@@ -12,9 +12,9 @@ const migrationsDirectory = path.resolve(
 );
 
 export function createTestDatabasePool(): Pool {
-  const { testDatabaseUrl } = loadTestDatabaseEnvironment(process.env);
+  const { testDatabaseUrl, poolMax } = loadTestDatabaseEnvironment(process.env);
 
-  return createDatabasePool(testDatabaseUrl);
+  return createDatabasePool(testDatabaseUrl, poolMax);
 }
 
 export async function setupDatabase(): Promise<Pool> {
