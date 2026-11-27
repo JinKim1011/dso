@@ -53,7 +53,8 @@ export function useStagedActions({
 
   const updateRow = useCallback(
     (rowId: string, update: Partial<TokenValueViewModel>) => {
-      if (!outcomeUnknown) setSaveError(null);
+      if (outcomeUnknown) return;
+      setSaveError(null);
 
       setModels((current) => ({
         ...current,
@@ -73,6 +74,7 @@ export function useStagedActions({
 
   const discardRow = useCallback(
     (rowId: string) => {
+      if (outcomeUnknown) return;
       setSaveError(null);
 
       setModels((current) => {
@@ -85,14 +87,15 @@ export function useStagedActions({
           : current;
       });
     },
-    [setModels],
+    [outcomeUnknown, setModels],
   );
 
   const resetDraft = useCallback(() => {
+    if (outcomeUnknown) return;
     setSaveError(null);
 
     setModels((current) => ({ ...current, draftModel: current.baseModel }));
-  }, [setModels]);
+  }, [outcomeUnknown, setModels]);
 
   const applyDraft = useCallback(async (): Promise<Response> => {
     if (!canApply || outcomeUnknown) {
