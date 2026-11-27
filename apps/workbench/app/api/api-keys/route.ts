@@ -2,6 +2,7 @@ import { mapApiError } from "@/server/api-error";
 import { isTrustedMutationRequest } from "@/server/csrf";
 import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
+import { isApiKeyManagementEnabled } from "@/server/env";
 import { readJsonBody } from "@/server/request-body";
 import { createApiKey } from "@repo/application/services/api-keys";
 import type { CreateApiKeyResponse } from "@repo/contracts/operation";
@@ -17,7 +18,7 @@ function failure(status: number, code: string, message: string): Response {
 }
 
 export async function POST(request: Request): Promise<Response> {
-  if (process.env.NODE_ENV !== "development") {
+  if (!isApiKeyManagementEnabled(process.env)) {
     return failure(404, "not-found", "Not found.");
   }
 
