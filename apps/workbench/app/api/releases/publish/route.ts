@@ -3,6 +3,7 @@ import { isTrustedMutationRequest } from "@/server/csrf";
 import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
 import { isPublishEnabled } from "@/server/env";
+import { checkRateLimit, rateLimitResponse } from "@/server/rate-limit";
 import { readJsonBody } from "@/server/request-body";
 import { publishStagedChanges } from "@repo/application/services/staged-publishing";
 import type { PublishStagedChangesResponse } from "@repo/contracts/operation";
@@ -57,6 +58,17 @@ export async function POST(request: Request): Promise<Response> {
         } satisfies PublishStagedChangesResponse,
         { status: 400, headers: { "Cache-Control": "no-store" } },
       );
+    }
+
+    if (process.env.NODE_ENV === "production") {
+      const decision = await checkRateLimit("publish", [
+        context.userId,
+        parsed.value.projectId.toLowerCase(),
+      ]);
+
+      if (!decision.allowed) {
+        return rateLimitResponse(decision);
+      }
     }
 
     const result = await publishStagedChanges(getDatabasePool(), context, parsed.value);
