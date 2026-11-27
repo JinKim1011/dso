@@ -4,6 +4,7 @@ import {
   UpstashRateLimitBackend,
   checkRateLimit,
   createRateLimitIdentifier,
+  getRequestIp,
   rateLimitResponse,
 } from "@/server/rate-limit";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -11,6 +12,21 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 afterEach(() => vi.restoreAllMocks());
 
 describe("rate limiting", () => {
+  it("prefers the Vercel forwarded client IP", () => {
+    const request = new Request("https://example.test", {
+      headers: {
+        "x-vercel-forwarded-for": "203.0.113.10",
+        "x-forwarded-for": "198.51.100.4, 10.0.0.1",
+      },
+    });
+
+    expect(getRequestIp(request)).toBe("203.0.113.10");
+  });
+
+  it("falls back to an unknown client IP", () => {
+    expect(getRequestIp(new Request("https://example.test"))).toBe("unknown");
+  });
+
   it("hashes compound identifiers without retaining readable values", () => {
     const identifier = createRateLimitIdentifier([
       "login",
