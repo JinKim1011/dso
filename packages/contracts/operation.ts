@@ -154,6 +154,10 @@ export type PublishStagedChangesResult = {
   references: TokenReference[];
 };
 
+export type PublishStagedChangesRequest = SaveStagedChangesRequest & {
+  requestId: string;
+};
+
 export type PublishStagedChangesResponse =
   | ({ ok: true } & PublishStagedChangesResult)
   | Extract<SaveStagedChangesResponse, { ok: false }>;
