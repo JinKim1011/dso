@@ -1,11 +1,9 @@
 import { getDatabasePool } from "@/server/database";
-import {
-  RateLimitUnavailableError,
-  checkRateLimit,
-} from "@/server/rate-limit";
+import { RateLimitUnavailableError, checkRateLimit } from "@/server/rate-limit";
 import {
   DomainValidationError,
   ProjectAccessDeniedError,
+  PublishRequestConflictError,
   SessionExpiredError,
   StagedChangesConflictError,
 } from "@repo/application/errors";
@@ -30,6 +28,7 @@ vi.mock("@repo/application/services/staged-publishing", () => ({
 const origin = "http://localhost:3000";
 const projectId = "00000000-0000-4000-8000-000000000001";
 const sessionId = "00000000-0000-4000-8000-000000000002";
+const requestId = "00000000-0000-4000-8000-000000000003";
 const context = { sessionId, userId: "00000000-0000-4000-8000-000000000004" };
 const release = {
   id: "00000000-0000-4000-8000-000000000005",
@@ -41,7 +40,7 @@ const release = {
 };
 
 function request(
-  body = JSON.stringify({ projectId, changes: [] }),
+  body = JSON.stringify({ requestId, projectId, changes: [] }),
   headers: Record<string, string> = {},
 ) {
   return new Request(`${origin}/api/releases/publish`, {
@@ -93,6 +92,7 @@ describe("publish request boundary", () => {
       references: [],
     });
     expect(publishStagedChanges).toHaveBeenCalledWith(getDatabasePool(), context, {
+      requestId,
       projectId,
       changes: [],
     });
@@ -200,14 +200,26 @@ describe("publish request boundary", () => {
   it("validates the JSON body and enforces the byte and change-count limits", async () => {
     expect((await POST(request("{"))).status).toBe(400);
     expect(
-      (await POST(request(JSON.stringify({ projectId, changes: [], extra: true }))))
-        .status,
+      (
+        await POST(
+          request(JSON.stringify({ requestId, projectId, changes: [], extra: true })),
+        )
+      ).status,
     ).toBe(400);
     expect(
-      (await POST(request(JSON.stringify({ projectId, changes: Array(1001).fill({}) }))))
-        .status,
+      (
+        await POST(
+          request(
+            JSON.stringify({
+              requestId,
+              projectId,
+              changes: Array(1001).fill({}),
+            }),
+          ),
+        )
+      ).status,
     ).toBe(400);
-    const json = JSON.stringify({ projectId, changes: [] });
+    const json = JSON.stringify({ requestId, projectId, changes: [] });
     const atLimit = json + " ".repeat(CONTRACT_LIMITS.requestBodyBytes - json.length);
     expect((await POST(request(atLimit))).status).toBe(200);
     expect((await POST(request(atLimit + " ", { "content-length": "1" }))).status).toBe(
@@ -232,6 +244,18 @@ describe("publish request boundary", () => {
     expect(response.status).toBe(status);
     expect(response.headers.get("cache-control")).toBe("no-store");
     expect(await response.json()).toMatchObject({ ok: false, error: { code } });
+  });
+
+  it("maps reused request IDs with different payloads to 409", async () => {
+    vi.mocked(publishStagedChanges).mockRejectedValue(new PublishRequestConflictError());
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(409);
+    expect(await response.json()).toMatchObject({
+      ok: false,
+      error: { code: "publish-request-conflict" },
+    });
   });
 
   it("does not expose unexpected error details", async () => {
