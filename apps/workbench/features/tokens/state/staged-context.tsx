@@ -127,7 +127,7 @@ export function StagedContextProvider({
       changedRowCount: changedRows.length,
       isStaleDraft,
       draftLoadError,
-      canApply: hasHydratedDraft && !isStaleDraft && !draftLoadError && !outcomeUnknown,
+      canApply: hasHydratedDraft && !isStaleDraft && !draftLoadError,
       isApplying,
       saveError,
       outcomeUnknown,
