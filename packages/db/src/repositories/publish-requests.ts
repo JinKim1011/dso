@@ -3,11 +3,13 @@ import type { PoolClient, QueryResultRow } from "pg";
 
 type PublishRequestRow = QueryResultRow & {
   request_hash: string;
+  release_id: string;
   response_data: PublishStagedChangesResult;
 };
 
 export type StoredPublishRequest = {
   requestHash: string;
+  releaseId: string;
   response: PublishStagedChangesResult;
 };
 
@@ -19,7 +21,7 @@ export async function findPublishRequest(
 ): Promise<StoredPublishRequest | null> {
   const result = await client.query<PublishRequestRow>(
     `
-      SELECT request_hash, response_data
+      SELECT request_hash, release_id, response_data
       FROM publish_requests
       WHERE project_id = $1
         AND user_id = $2
@@ -29,7 +31,13 @@ export async function findPublishRequest(
   );
 
   const row = result.rows[0];
-  return row ? { requestHash: row.request_hash, response: row.response_data } : null;
+  return row
+    ? {
+        requestHash: row.request_hash,
+        releaseId: row.release_id,
+        response: row.response_data,
+      }
+    : null;
 }
 
 export async function insertPublishRequest(
