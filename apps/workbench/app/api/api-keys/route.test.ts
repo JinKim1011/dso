@@ -1,4 +1,5 @@
 import { getDatabasePool } from "@/server/database";
+import { RateLimitUnavailableError, checkRateLimit } from "@/server/rate-limit";
 import { ProjectAccessDeniedError } from "@repo/application/errors";
 import { authenticateSession } from "@repo/application/services/authentication";
 import { createApiKey } from "@repo/application/services/api-keys";
@@ -7,6 +8,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "./route";
 
 vi.mock("@/server/database", () => ({ getDatabasePool: vi.fn() }));
+vi.mock("@/server/rate-limit", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/server/rate-limit")>();
+  return { ...actual, checkRateLimit: vi.fn() };
+});
 vi.mock("@repo/application/services/authentication", () => ({
   authenticateSession: vi.fn(),
 }));
@@ -61,6 +66,12 @@ describe("POST /api/api-keys", () => {
     vi.stubEnv("SESSION_COOKIE_NAME", "dso_session");
     vi.mocked(authenticateSession).mockResolvedValue(context);
     vi.mocked(createApiKey).mockResolvedValue(created);
+    vi.mocked(checkRateLimit).mockResolvedValue({
+      allowed: true,
+      limit: 5,
+      remaining: 4,
+      resetAt: Date.now() + 3_600_000,
+    });
   });
 
   afterEach(() => {
@@ -94,6 +105,27 @@ describe("POST /api/api-keys", () => {
 
     expect((await POST(request())).status).toBe(201);
     expect(createApiKey).toHaveBeenCalled();
+    expect(checkRateLimit).toHaveBeenCalledWith("api-key-create", [
+      context.userId,
+      projectId,
+    ]);
+  });
+
+  it("returns 429 or 503 before API-key creation", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DSO_API_KEY_MANAGEMENT_ENABLED", "true");
+    vi.mocked(checkRateLimit).mockResolvedValueOnce({
+      allowed: false,
+      limit: 5,
+      remaining: 0,
+      resetAt: Date.now() + 10_000,
+    });
+    expect((await POST(request())).status).toBe(429);
+
+    vi.mocked(checkRateLimit).mockRejectedValueOnce(new RateLimitUnavailableError());
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    expect((await POST(request())).status).toBe(503);
+    expect(createApiKey).not.toHaveBeenCalled();
   });
 
   it.each(["missing-origin", "foreign-origin", "missing-header", "cross-site"])(
