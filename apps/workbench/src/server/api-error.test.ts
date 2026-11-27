@@ -12,6 +12,7 @@ import {
 } from "@repo/application/errors";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mapApiError } from "./api-error";
+import { RateLimitUnavailableError } from "./rate-limit";
 import { RequestBodyError } from "./request-body";
 
 afterEach(() => vi.restoreAllMocks());
@@ -113,5 +114,24 @@ describe("API error mapper", () => {
     const second = await mapApiError(new Error()).json();
 
     expect(first.error.correlationId).not.toBe(second.error.correlationId);
+  });
+
+  it("fails closed without exposing rate-limit backend details", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    const response = mapApiError(new RateLimitUnavailableError());
+    const body = await response.json();
+
+    expect(response.status).toBe(503);
+    expect(body).toEqual({
+      ok: false,
+      error: {
+        code: "rate-limit-unavailable",
+        message: "The request cannot be completed right now.",
+        correlationId: expect.any(String),
+      },
+    });
+    expect(log).toHaveBeenCalledWith("Rate-limit backend unavailable.", {
+      correlationId: body.error.correlationId,
+    });
   });
 });
