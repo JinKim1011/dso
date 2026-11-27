@@ -1,8 +1,8 @@
-import { createDatabasePool } from "@repo/db/client";
+import { createRuntimeDatabasePool } from "@repo/db/client";
 
-let pool: ReturnType<typeof createDatabasePool> | undefined;
+let pool: ReturnType<typeof createRuntimeDatabasePool> | undefined;
 
 export function getDatabasePool() {
-  pool ??= createDatabasePool();
+  pool ??= createRuntimeDatabasePool();
   return pool;
 }
