@@ -44,8 +44,9 @@ Three intentionally invalid Production login attempts each returned 401. No `429
 
 Current state:
 
-- Login rate limiting is not implemented.
-- Publish, API-key create/revoke, and release-download rate limiting are not implemented.
+- A shared rate-limit infrastructure is now implemented with Upstash REST, sliding windows, hashed compound identifiers, `429`/`Retry-After`, and fail-closed `503` behavior.
+- The login route uses the shared limiter in Production and records the attempt with a hashed combination of Vercel client IP and normalized email before database authentication.
+- The publish route uses a 10-request/10-minute limit keyed by authenticated user and project after CSRF, session, and body validation. API-key create/revoke and release-download integration remain open.
 - Production publish and API-key mutation routes remain disabled by default; they require separate explicit flags, `DSO_PUBLISH_ENABLED` and `DSO_API_KEY_MANAGEMENT_ENABLED`, and are still not enabled in Vercel.
 - Release download is available through its authenticated boundary but does not currently enforce request throttling.
 
@@ -258,7 +259,7 @@ Completion criteria for this follow-up:
 | --------------------------------------- | ------------------------------------------ | ------------------------ |
 | Enforced nonce-based CSP                | Deferred                                   | Workbench implementation |
 | CSP violation collection                | Deferred                                   | Security and operations  |
-| Login throttling                        | Open                                       | Workbench implementation |
+| Endpoint rate-limit integration         | Login and publish ready; API-key/download open | Workbench implementation |
 | Publish/API-key throttling              | Required before Production enablement      | Workbench implementation |
 | Release-download throttling             | Open                                       | API implementation       |
 | Development-tool dependency updates     | 8 moderate advisories accepted temporarily | Maintainer               |
@@ -280,7 +281,7 @@ Completed:
 
 Not yet completed:
 
-- Rate-limit implementation
+- Rate-limit endpoint integration
 - Enforced nonce-based CSP
 - CSP reporting endpoint
 - Quantitative concurrent connection-load test
