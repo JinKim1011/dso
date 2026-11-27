@@ -113,6 +113,13 @@ export async function checkRateLimit(
   );
 }
 
+export function getRequestIp(request: Request): string {
+  const forwarded = request.headers.get("x-vercel-forwarded-for") ??
+    request.headers.get("x-forwarded-for");
+
+  return forwarded?.split(",", 1)[0]?.trim() || "unknown";
+}
+
 export function rateLimitResponse(decision: RateLimitDecision): Response {
   const retryAfterSeconds = Math.max(
     1,
