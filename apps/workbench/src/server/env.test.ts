@@ -1,6 +1,7 @@
 import {
   isApiKeyManagementEnabled,
   isPublishEnabled,
+  loadRateLimitEnvironment,
   loadWorkbenchFeatureEnvironment,
 } from "@/server/env";
 import { describe, expect, it } from "vitest";
@@ -40,5 +41,27 @@ describe("workbench feature environment", () => {
         DSO_PUBLISH_ENABLED: value,
       }),
     ).toThrow('DSO_PUBLISH_ENABLED must be "true" or "false".');
+  });
+
+  it("loads Vercel Upstash REST credentials", () => {
+    expect(
+      loadRateLimitEnvironment({
+        NODE_ENV: "production",
+        KV_REST_API_URL: "https://redis.example.test",
+        KV_REST_API_TOKEN: "token",
+      }),
+    ).toEqual({
+      restUrl: "https://redis.example.test",
+      restToken: "token",
+    });
+  });
+
+  it("rejects incomplete rate-limit credentials", () => {
+    expect(() =>
+      loadRateLimitEnvironment({
+        NODE_ENV: "production",
+        KV_REST_API_URL: "https://redis.example.test",
+      }),
+    ).toThrow("KV_REST_API_TOKEN or UPSTASH_REDIS_REST_TOKEN is required");
   });
 });
