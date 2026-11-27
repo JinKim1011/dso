@@ -50,6 +50,10 @@ Current state:
 - Production publish and API-key mutation routes remain disabled by default; they require separate explicit flags, `DSO_PUBLISH_ENABLED` and `DSO_API_KEY_MANAGEMENT_ENABLED`, and are still not enabled in Vercel.
 - Release download is available through its authenticated boundary but does not currently enforce request throttling.
 
+Publish idempotency is implemented for new publication requests. The client sends a UUID request ID, the server hashes the normalized request payload, and `publish_requests` atomically stores the first successful response with the release. Sequential and concurrent replay return the same result; reusing the request ID with different changes returns `409 publish-request-conflict`.
+
+Migration `009_add_publish_idempotency.sql` is verified locally and applied to Neon Production through `DIRECT_DATABASE_URL`. Neon currently reports 9 migrations, 15 public tables, 36 indexes, and the runtime role can use `publish_requests` for DML without schema `CREATE` permission.
+
 Recommended follow-up priority:
 
 1. Login, keyed by source address and normalized email.
@@ -255,16 +259,16 @@ Completion criteria for this follow-up:
 - Project switching does not mix browser-local drafts or published releases.
 - No `DSO_WORKBENCH_PROJECT_ID` change or redeploy is needed to switch an individual user.
 
-| Item                                    | State                                      | Owner                    |
-| --------------------------------------- | ------------------------------------------ | ------------------------ |
-| Enforced nonce-based CSP                | Deferred                                   | Workbench implementation |
-| CSP violation collection                | Deferred                                   | Security and operations  |
+| Item                                    | State                                          | Owner                    |
+| --------------------------------------- | ---------------------------------------------- | ------------------------ |
+| Enforced nonce-based CSP                | Deferred                                       | Workbench implementation |
+| CSP violation collection                | Deferred                                       | Security and operations  |
 | Endpoint rate-limit integration         | Login and publish ready; API-key/download open | Workbench implementation |
-| Publish/API-key throttling              | Required before Production enablement      | Workbench implementation |
-| Release-download throttling             | Open                                       | API implementation       |
-| Development-tool dependency updates     | 8 moderate advisories accepted temporarily | Maintainer               |
-| Quantitative pool concurrency/load test | Blocked by unavailable Neon metric         | Performance owner        |
-| Long-term backup policy                 | Open                                       | Project operator         |
+| Publish/API-key throttling              | Required before Production enablement          | Workbench implementation |
+| Release-download throttling             | Open                                           | API implementation       |
+| Development-tool dependency updates     | 8 moderate advisories accepted temporarily     | Maintainer               |
+| Quantitative pool concurrency/load test | Blocked by unavailable Neon metric             | Performance owner        |
+| Long-term backup policy                 | Open                                           | Project operator         |
 
 ## D3 Completion
 
