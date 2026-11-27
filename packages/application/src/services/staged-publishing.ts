@@ -8,8 +8,8 @@ import { publishRelease } from "@repo/application/services/releases";
 import { saveStagedChanges } from "@repo/application/services/staged-changes";
 import type { AuthorizationContext } from "@repo/application/types";
 import type {
+  PublishStagedChangesRequest,
   PublishStagedChangesResult,
-  SaveStagedChangesRequest,
 } from "@repo/contracts/operation";
 import { insertRelease, nextReleaseVersion } from "@repo/db/repositories/releases";
 import type { Pool } from "pg";
@@ -17,7 +17,7 @@ import type { Pool } from "pg";
 export async function publishStagedChanges(
   database: Pool,
   context: AuthorizationContext,
-  request: SaveStagedChangesRequest,
+  request: PublishStagedChangesRequest,
 ): Promise<PublishStagedChangesResult> {
   const projectId = request.projectId.toLowerCase();
 
