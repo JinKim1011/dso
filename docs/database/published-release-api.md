@@ -19,6 +19,8 @@ The route accepts either a workbench session or a CLI API key. Only a release wi
 
 The response is returned by both authentication paths and signed once at the HTTP boundary.
 
+The publish request includes a `requestId`, and the durable `publish_requests` record is not part of the signed release response or the CLI download contract.
+
 ## Authentication
 
 Workbench sessions require project membership. CLI clients send the combined credential as a bearer token:
