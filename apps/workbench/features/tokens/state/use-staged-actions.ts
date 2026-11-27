@@ -11,7 +11,7 @@ import {
   parsePublishedRows,
   reconcileSavedRows,
 } from "@/features/tokens/state/staged-save-result";
-import type { SaveStagedChangesRequest } from "@repo/contracts/operation";
+import type { PublishStagedChangesRequest } from "@repo/contracts/operation";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import { isRecord } from "@repo/contracts/validation/operations/common";
 import {
@@ -46,6 +46,7 @@ export function useStagedActions({
   const [outcomeUnknown, setOutcomeUnknown] = useState(false);
   const [completion, setCompletion] = useState(0);
   const busy = useRef(false);
+  const pendingPublish = useRef<{ requestBody: string; requestId: string } | null>(null);
 
   useLayoutEffect(() => {
     if (!isApplying) busy.current = false;
@@ -98,7 +99,7 @@ export function useStagedActions({
   }, [outcomeUnknown, setModels]);
 
   const applyDraft = useCallback(async (): Promise<Response> => {
-    if (!canApply || outcomeUnknown) {
+    if (!canApply) {
       return new Response("Draft is not ready to push.", { status: 409 });
     }
 
@@ -112,11 +113,22 @@ export function useStagedActions({
       return new Response(message, { status: 400 });
     }
 
-    const request: SaveStagedChangesRequest = {
+    const requestBase = {
       projectId,
       changes: rows.map((row) => row.change),
     };
+    const requestBody = JSON.stringify(requestBase);
+    const pending =
+      pendingPublish.current?.requestBody === requestBody
+        ? pendingPublish.current
+        : { requestBody, requestId: crypto.randomUUID() };
+    pendingPublish.current = pending;
+    const request: PublishStagedChangesRequest = {
+      requestId: pending.requestId,
+      ...requestBase,
+    };
     const body = JSON.stringify(request);
+
     if (
       rows.length > CONTRACT_LIMITS.collectionItems ||
       new TextEncoder().encode(body).byteLength > CONTRACT_LIMITS.requestBodyBytes
@@ -168,8 +180,7 @@ export function useStagedActions({
         }
         if (response.status === 408 || response.status >= 500) {
           setOutcomeUnknown(true);
-          message +=
-            " The push outcome is unknown; check the published releases before trying again.";
+          message += " The push outcome is unknown. Retry without changing the draft.";
         }
         setSaveError(message);
         return response;
@@ -177,6 +188,8 @@ export function useStagedActions({
 
       const payload: unknown = await response.clone().json();
       const result = parsePublishedRows(payload, request, models.baseModel);
+      pendingPublish.current = null;
+      setOutcomeUnknown(false);
       reconcileSavedRows(
         models.baseModel,
         models.draftModel,
@@ -198,7 +211,7 @@ export function useStagedActions({
       console.error("Push request or response failed.", error);
       setOutcomeUnknown(true);
       setSaveError(
-        "Push outcome is unknown. Your draft was preserved; check the published releases before trying again.",
+        "Push outcome is unknown. Your draft was preserved. Retry without changing it.",
       );
       return new Response("Push outcome is unknown.", { status: 503 });
     } finally {
@@ -206,7 +219,7 @@ export function useStagedActions({
 
       setCompletion((current) => current + 1);
     }
-  }, [canApply, models, outcomeUnknown, projectId, setModels]);
+  }, [canApply, models, projectId, setModels]);
 
   return {
     updateRow,
