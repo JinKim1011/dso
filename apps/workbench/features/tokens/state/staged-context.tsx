@@ -5,15 +5,19 @@ import type { TokenGraphViewModel } from "@/features/tokens/model/token-graph";
 import type { TokenRowUpdate } from "@/features/tokens/model/token-row";
 import {
   clearPersistedDraftModel,
+  clearPersistedPendingPublish,
   discardLegacyDraft,
   loadPersistedDraftModel,
+  loadPersistedPendingPublish,
   persistDraftModel,
+  type PersistedPendingPublish,
 } from "@/features/tokens/state/staged-draft-storage";
 import { buildChangedRows } from "@/features/tokens/state/staged-graph-model";
 import { useStagedActions } from "@/features/tokens/state/use-staged-actions";
 import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -56,6 +60,11 @@ export function StagedContextProvider({
   const [hasHydratedDraft, setHasHydratedDraft] = useState(false);
   const [isStaleDraft, setIsStaleDraft] = useState(false);
   const [draftLoadError, setDraftLoadError] = useState(false);
+  const [restoredPendingPublish, setRestoredPendingPublish] =
+    useState<PersistedPendingPublish | null>(null);
+  const resolveRestoredPendingPublish = useCallback(() => {
+    setRestoredPendingPublish(null);
+  }, []);
 
   const {
     updateRow,
@@ -67,13 +76,28 @@ export function StagedContextProvider({
     outcomeUnknown,
   } = useStagedActions({
     projectId,
-    canApply: hasHydratedDraft && !isStaleDraft && !draftLoadError,
+    canApply:
+      hasHydratedDraft &&
+      (!isStaleDraft || restoredPendingPublish !== null) &&
+      !draftLoadError,
     models,
     setModels,
+    restoredPendingPublish,
+    onPendingPublishResolved: resolveRestoredPendingPublish,
   });
 
   useEffect(() => {
     discardLegacyDraft();
+    let pending: PersistedPendingPublish | null = null;
+
+    try {
+      pending = loadPersistedPendingPublish(projectId);
+    } catch (error) {
+      console.warn("Failed to restore pending publish.", error);
+
+      clearPersistedPendingPublish(projectId);
+    }
+
     try {
       const persistedDraft = loadPersistedDraftModel(projectId);
       if (persistedDraft) {
@@ -84,11 +108,34 @@ export function StagedContextProvider({
         setIsStaleDraft(
           JSON.stringify(persistedDraft.baseModel) !== JSON.stringify(baseManifest),
         );
+      } else if (pending) {
+        setModels({
+          baseModel: pending.submittedBaseModel,
+          draftModel: pending.submittedDraftModel,
+        });
+
+        setIsStaleDraft(
+          JSON.stringify(pending.submittedBaseModel) !== JSON.stringify(baseManifest),
+        );
       }
     } catch (error) {
       console.warn("Failed to restore staged draft.", error);
-      setDraftLoadError(true);
+
+      if (pending) {
+        setModels({
+          baseModel: pending.submittedBaseModel,
+          draftModel: pending.submittedDraftModel,
+        });
+
+        setIsStaleDraft(
+          JSON.stringify(pending.submittedBaseModel) !== JSON.stringify(baseManifest),
+        );
+      } else {
+        setDraftLoadError(true);
+      }
     }
+
+    if (pending) setRestoredPendingPublish(pending);
 
     setHasHydratedDraft(true);
   }, [projectId, baseManifest]);
@@ -127,14 +174,17 @@ export function StagedContextProvider({
       changedRowCount: changedRows.length,
       isStaleDraft,
       draftLoadError,
-      canApply: hasHydratedDraft && !isStaleDraft && !draftLoadError,
+      canApply:
+        hasHydratedDraft &&
+        (!isStaleDraft || outcomeUnknown || restoredPendingPublish !== null) &&
+        !draftLoadError,
       isApplying,
       saveError,
       outcomeUnknown,
       updateRow,
       resetDraft: () => {
         resetDraft();
-        if (isStaleDraft || draftLoadError) {
+        if (!outcomeUnknown && (isStaleDraft || draftLoadError)) {
           clearPersistedDraftModel(projectId);
           setModels({ baseModel: baseManifest, draftModel: baseManifest });
           setIsStaleDraft(false);
@@ -151,6 +201,7 @@ export function StagedContextProvider({
       isStaleDraft,
       draftLoadError,
       hasHydratedDraft,
+      restoredPendingPublish,
       isApplying,
       saveError,
       outcomeUnknown,
