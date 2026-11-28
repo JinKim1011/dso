@@ -1,12 +1,15 @@
 import type { TokenGraphViewModel } from "@/features/tokens/model/token-graph";
 import { isCategory, isSupportedTokenKind } from "@repo/contracts/validation/enum";
 import { isRecord } from "@repo/contracts/validation/operations/common";
+import { parsePublishStagedChangesRequest } from "@repo/contracts/validation/operations/staged-changes";
 import { tokenReferenceSlots } from "@repo/contracts/validation/token-reference-slots";
 import { validateTokenValue } from "@repo/contracts/validation/token-value";
 
 const STORAGE_VERSION = 2;
+const PENDING_PUBLISH_STORAGE_VERSION = 1;
 const LEGACY_STORAGE_KEY = "dso-workbench-staged-draft";
 const STORAGE_PREFIX = `${LEGACY_STORAGE_KEY}:`;
+const PENDING_PUBLISH_STORAGE_PREFIX = "dso-workbench-pending-publish:";
 
 export type PersistedDraft = {
   version: 2;
@@ -15,8 +18,22 @@ export type PersistedDraft = {
   draftModel: TokenGraphViewModel;
 };
 
+export type PersistedPendingPublish = {
+  version: 1;
+  projectId: string;
+  requestId: string;
+  requestBody: string;
+  requestBaseBody: string;
+  submittedBaseModel: TokenGraphViewModel;
+  submittedDraftModel: TokenGraphViewModel;
+};
+
 function storageKey(projectId: string): string {
   return `${STORAGE_PREFIX}${projectId.toLowerCase()}`;
+}
+
+function pendingPublishStorageKey(projectId: string): string {
+  return `${PENDING_PUBLISH_STORAGE_PREFIX}${projectId.toLowerCase()}`;
 }
 
 function isGraph(value: unknown): value is TokenGraphViewModel {
@@ -148,5 +165,101 @@ export function persistDraftModel(
     window.localStorage.setItem(storageKey(projectId), JSON.stringify(payload));
   } catch (error) {
     console.warn("Failed to persist staged draft to local storage.", error);
+  }
+}
+
+export function clearPersistedPendingPublish(projectId: string) {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.removeItem(pendingPublishStorageKey(projectId));
+  } catch (error) {
+    console.warn("Failed to clear pending publish from local storage.", error);
+  }
+}
+
+export function persistPendingPublish(
+  projectId: string,
+  pending: Omit<PersistedPendingPublish, "version" | "projectId">,
+): boolean {
+  if (typeof window === "undefined") return false;
+
+  try {
+    const payload: PersistedPendingPublish = {
+      version: PENDING_PUBLISH_STORAGE_VERSION,
+      projectId,
+      ...pending,
+    };
+
+    window.localStorage.setItem(
+      pendingPublishStorageKey(projectId),
+      JSON.stringify(payload),
+    );
+
+    return true;
+  } catch (error) {
+    console.warn("Failed to persist pending publish to local storage.", error);
+
+    return false;
+  }
+}
+
+export function loadPersistedPendingPublish(
+  projectId: string,
+): PersistedPendingPublish | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw = window.localStorage.getItem(pendingPublishStorageKey(projectId));
+
+    if (!raw) return null;
+
+    const parsed: unknown = JSON.parse(raw);
+
+    if (
+      typeof parsed !== "object" ||
+      parsed === null ||
+      !("version" in parsed) ||
+      parsed.version !== PENDING_PUBLISH_STORAGE_VERSION ||
+      !("projectId" in parsed) ||
+      typeof parsed.projectId !== "string" ||
+      parsed.projectId.toLowerCase() !== projectId.toLowerCase() ||
+      !("requestId" in parsed) ||
+      typeof parsed.requestId !== "string" ||
+      !("requestBody" in parsed) ||
+      typeof parsed.requestBody !== "string" ||
+      !("requestBaseBody" in parsed) ||
+      typeof parsed.requestBaseBody !== "string" ||
+      !("submittedBaseModel" in parsed) ||
+      !isGraph(parsed.submittedBaseModel) ||
+      !("submittedDraftModel" in parsed) ||
+      !isGraph(parsed.submittedDraftModel)
+    ) {
+      throw new Error("Invalid pending publish was not restored or removed.");
+    }
+
+    const request = parsePublishStagedChangesRequest(JSON.parse(parsed.requestBody));
+
+    if (
+      !request.success ||
+      request.value.requestId !== parsed.requestId ||
+      request.value.projectId.toLowerCase() !== projectId.toLowerCase()
+    ) {
+      throw new Error("Invalid pending publish request body.");
+    }
+
+    return {
+      version: PENDING_PUBLISH_STORAGE_VERSION,
+      projectId: parsed.projectId,
+      requestId: parsed.requestId,
+      requestBody: parsed.requestBody,
+      requestBaseBody: parsed.requestBaseBody,
+      submittedBaseModel: parsed.submittedBaseModel,
+      submittedDraftModel: parsed.submittedDraftModel,
+    };
+  } catch (error) {
+    throw new Error("Failed to load pending publish from local storage.", {
+      cause: error,
+    });
   }
 }
