@@ -50,7 +50,7 @@ export async function GET(
       if (process.env.NODE_ENV === "production") {
         const decision = await checkRateLimit("release-download", [
           context.userId,
-          parsed.value.releaseId,
+          parsed.value.releaseId.toLocaleLowerCase(),
         ]);
 
         if (!decision.allowed) return rateLimitResponse(decision);
