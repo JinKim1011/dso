@@ -35,6 +35,123 @@ describe("Publising release service integration", () => {
   });
 
   describe("staged publishing service integration", () => {
+    it("returns the original result when the same publish request is retried", async () => {
+      const database = getTestDatabase();
+      const fixture = await seedProject(database, "publisher");
+      const primitive = fixture.referencedToken;
+      const requestId = crypto.randomUUID();
+      const request = {
+        requestId,
+        projectId: fixture.project.id,
+        changes: [
+          {
+            tokenId: primitive.id,
+            name: { before: primitive.name, after: "idempotent-name" },
+            references: [],
+          },
+        ],
+      };
+
+      const first = await publishStagedChanges(database, fixture.context, request);
+      const retried = await publishStagedChanges(database, fixture.context, request);
+
+      expect(retried).toEqual(first);
+      expect(
+        (await database.query("SELECT release_id FROM publish_requests")).rows,
+      ).toEqual([{ release_id: first.release.id }]);
+      expect((await database.query("SELECT id FROM releases")).rows).toHaveLength(1);
+    });
+
+    it("rejects reuse of a publish request ID for different changes", async () => {
+      const database = getTestDatabase();
+      const fixture = await seedProject(database, "publisher");
+      const primitive = fixture.referencedToken;
+      const requestId = crypto.randomUUID();
+
+      await publishStagedChanges(database, fixture.context, {
+        requestId,
+        projectId: fixture.project.id,
+        changes: [
+          {
+            tokenId: primitive.id,
+            name: { before: primitive.name, after: "first-name" },
+            references: [],
+          },
+        ],
+      });
+
+      await expect(
+        publishStagedChanges(database, fixture.context, {
+          requestId,
+          projectId: fixture.project.id,
+          changes: [
+            {
+              tokenId: primitive.id,
+              name: { before: "first-name", after: "different-name" },
+              references: [],
+            },
+          ],
+        }),
+      ).rejects.toMatchObject({ code: "publish-request-conflict" });
+    });
+
+    it("rejects a corrupted stored publication response", async () => {
+      const database = getTestDatabase();
+      const fixture = await seedProject(database, "publisher");
+      const primitive = fixture.referencedToken;
+      const request = {
+        requestId: crypto.randomUUID(),
+        projectId: fixture.project.id,
+        changes: [
+          {
+            tokenId: primitive.id,
+            name: { before: primitive.name, after: "stored-response-name" },
+            references: [],
+          },
+        ],
+      };
+
+      await publishStagedChanges(database, fixture.context, request);
+      await database.query(
+        `UPDATE publish_requests
+         SET response_data = jsonb_set(response_data, '{release,id}', to_jsonb($1::text))
+         WHERE request_id = $2`,
+        [crypto.randomUUID(), request.requestId],
+      );
+
+      await expect(
+        publishStagedChanges(database, fixture.context, request),
+      ).rejects.toThrow("Stored publish response is invalid.");
+    });
+
+    it("serializes concurrent retries of the same publish request", async () => {
+      const database = getTestDatabase();
+      const fixture = await seedProject(database, "publisher");
+      const primitive = fixture.referencedToken;
+      const request = {
+        requestId: crypto.randomUUID(),
+        projectId: fixture.project.id,
+        changes: [
+          {
+            tokenId: primitive.id,
+            name: { before: primitive.name, after: "concurrent-name" },
+            references: [],
+          },
+        ],
+      };
+
+      const [first, second] = await Promise.all([
+        publishStagedChanges(database, fixture.context, request),
+        publishStagedChanges(database, fixture.context, request),
+      ]);
+
+      expect(second).toEqual(first);
+      expect((await database.query("SELECT id FROM releases")).rows).toHaveLength(1);
+      expect(
+        (await database.query("SELECT request_id FROM publish_requests")).rows,
+      ).toHaveLength(1);
+    });
+
     it("saves changes, publishes their snapshot, and records both audit events", async () => {
       const database = getTestDatabase();
       const fixture = await seedProject(database, "publisher");
@@ -42,6 +159,7 @@ describe("Publising release service integration", () => {
       const semantic = fixture.referencingToken;
 
       const result = await publishStagedChanges(database, fixture.context, {
+        requestId: crypto.randomUUID(),
         projectId: fixture.project.id.toUpperCase(),
         changes: [
           {
@@ -111,6 +229,7 @@ describe("Publising release service integration", () => {
       const token = fixture.referencedToken;
       const results = await Promise.all([
         publishStagedChanges(database, fixture.context, {
+          requestId: crypto.randomUUID(),
           projectId: fixture.project.id,
           changes: [
             {
@@ -121,6 +240,7 @@ describe("Publising release service integration", () => {
           ],
         }),
         publishStagedChanges(database, fixture.context, {
+          requestId: crypto.randomUUID(),
           projectId: fixture.project.id,
           changes: [
             {
@@ -178,6 +298,7 @@ describe("Publising release service integration", () => {
       ]) {
         await expect(
           publishStagedChanges(database, fixture.context, {
+            requestId: crypto.randomUUID(),
             projectId: fixture.project.id,
             changes,
           }),
@@ -196,6 +317,7 @@ describe("Publising release service integration", () => {
       const token = fixture.referencedToken;
       await expect(
         publishStagedChanges(database, fixture.context, {
+          requestId: crypto.randomUUID(),
           projectId: fixture.project.id,
           changes: [
             {
@@ -219,6 +341,7 @@ describe("Publising release service integration", () => {
       const other = await seedProject(database, "publisher");
       await expect(
         publishStagedChanges(database, other.context, {
+          requestId: crypto.randomUUID(),
           projectId: fixture.project.id,
           changes: [
             {
@@ -241,6 +364,7 @@ describe("Publising release service integration", () => {
       const fixture = await seedProject(database, "publisher");
       await expect(
         publishStagedChanges(database, fixture.context, {
+          requestId: crypto.randomUUID(),
           projectId: fixture.project.id,
           changes: [
             {
@@ -286,6 +410,7 @@ describe("Publising release service integration", () => {
 
       await expect(
         publishStagedChanges(database, fixture.context, {
+          requestId: crypto.randomUUID(),
           projectId: fixture.project.id,
           changes: [
             {
@@ -342,6 +467,7 @@ describe("Publising release service integration", () => {
         try {
           await expect(
             publishStagedChanges(database, fixture.context, {
+              requestId: crypto.randomUUID(),
               projectId: fixture.project.id,
               changes: [
                 {
@@ -397,6 +523,7 @@ describe("Publising release service integration", () => {
       }
       const token = fixture.referencedToken;
       const result = await publishStagedChanges(database, fixture.context, {
+        requestId: crypto.randomUUID(),
         projectId: fixture.project.id,
         changes: [
           {
@@ -418,6 +545,7 @@ describe("Publising release service integration", () => {
       });
       await expect(
         publishStagedChanges(database, fixture.context, {
+          requestId: crypto.randomUUID(),
           projectId: fixture.project.id,
           changes: [
             {
@@ -443,6 +571,7 @@ describe("Publising release service integration", () => {
     const fixture = await seedProject(database, "admin");
 
     const { release } = await publishStagedChanges(database, fixture.context, {
+      requestId: crypto.randomUUID(),
       projectId: fixture.project.id,
       changes: [
         {
@@ -471,6 +600,7 @@ describe("Publising release service integration", () => {
     const fixture = await seedProject(database, "publisher");
 
     const { release } = await publishStagedChanges(database, fixture.context, {
+      requestId: crypto.randomUUID(),
       projectId: fixture.project.id,
       changes: [
         {

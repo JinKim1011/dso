@@ -1,4 +1,5 @@
 import type {
+  PublishStagedChangesRequest,
   ReferenceChange,
   SaveStagedChangesRequest,
   StagedTokenChange,
@@ -25,6 +26,8 @@ const REQUEST_FIELDS = [
   "projectId",
   "changes",
 ] as const satisfies readonly (keyof SaveStagedChangesRequest)[];
+
+const PUBLISH_REQUEST_FIELDS = ["requestId", ...REQUEST_FIELDS] as const;
 
 const TOKEN_CHANGE_FIELDS = [
   "tokenId",
@@ -233,4 +236,29 @@ export function parseSaveStagedChangesRequest(
     return { success: false, issues };
   }
   return { success: true, value: { projectId: input.projectId, changes } };
+}
+
+export function parsePublishStagedChangesRequest(
+  input: unknown,
+): ValidationResult<PublishStagedChangesRequest> {
+  if (!isRecord(input)) return invalidRequestBody();
+
+  const requestIdIssue = validateUuidField(input.requestId, "requestId");
+  const parsed = parseSaveStagedChangesRequest({
+    projectId: input.projectId,
+    changes: input.changes,
+  });
+  const issues = collectUnknownFields(input, PUBLISH_REQUEST_FIELDS);
+
+  if (requestIdIssue) issues.push(requestIdIssue);
+  if (!parsed.success) issues.push(...parsed.issues);
+
+  if (issues.length > 0 || typeof input.requestId !== "string" || !parsed.success) {
+    return { success: false, issues };
+  }
+
+  return {
+    success: true,
+    value: { requestId: input.requestId, ...parsed.value },
+  };
 }

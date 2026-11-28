@@ -2,10 +2,12 @@ import { mapApiError } from "@/server/api-error";
 import { isTrustedMutationRequest } from "@/server/csrf";
 import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
+import { isPublishEnabled } from "@/server/env";
+import { checkRateLimit, rateLimitResponse } from "@/server/rate-limit";
 import { readJsonBody } from "@/server/request-body";
 import { publishStagedChanges } from "@repo/application/services/staged-publishing";
 import type { PublishStagedChangesResponse } from "@repo/contracts/operation";
-import { parseSaveStagedChangesRequest } from "@repo/contracts/validation/operations/staged-changes";
+import { parsePublishStagedChangesRequest } from "@repo/contracts/validation/operations/staged-changes";
 
 export const runtime = "nodejs";
 
@@ -17,7 +19,7 @@ function failure(status: number, code: string, message: string): Response {
 }
 
 export async function POST(request: Request): Promise<Response> {
-  if (process.env.NODE_ENV !== "development") {
+  if (!isPublishEnabled(process.env)) {
     return failure(404, "not-found", "Not found.");
   }
 
@@ -42,7 +44,7 @@ export async function POST(request: Request): Promise<Response> {
       return failure(401, "authentication-required", "Authentication is required.");
     }
 
-    const parsed = parseSaveStagedChangesRequest(await readJsonBody(request));
+    const parsed = parsePublishStagedChangesRequest(await readJsonBody(request));
 
     if (!parsed.success) {
       return Response.json(
@@ -56,6 +58,17 @@ export async function POST(request: Request): Promise<Response> {
         } satisfies PublishStagedChangesResponse,
         { status: 400, headers: { "Cache-Control": "no-store" } },
       );
+    }
+
+    if (process.env.NODE_ENV === "production") {
+      const decision = await checkRateLimit("publish", [
+        context.userId,
+        parsed.value.projectId.toLowerCase(),
+      ]);
+
+      if (!decision.allowed) {
+        return rateLimitResponse(decision);
+      }
     }
 
     const result = await publishStagedChanges(getDatabasePool(), context, parsed.value);

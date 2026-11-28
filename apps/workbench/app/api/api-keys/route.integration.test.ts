@@ -1,4 +1,5 @@
 import { getDatabasePool } from "@/server/database";
+import { getReleaseSigningConfiguration } from "@/server/config";
 import { seedProject } from "@repo/application/fixtures";
 import { publishStagedChanges } from "@repo/application/services/staged-publishing";
 import { insertSession } from "@repo/db/repositories/sessions";
@@ -16,10 +17,15 @@ import {
 import { GET as getRelease } from "../releases/[releaseId]/route";
 import { POST as revokeApiKeyRoute } from "./[apiKeyId]/revoke/route";
 import { POST } from "./route";
+import { generateKeyPairSync } from "node:crypto";
 
 vi.mock("@/server/database", () => ({ getDatabasePool: vi.fn() }));
+vi.mock("@/server/config", () => ({
+  getReleaseSigningConfiguration: vi.fn(),
+}));
 
 const origin = "http://localhost:3000";
+const signingKeyPair = generateKeyPairSync("ed25519");
 let database: Awaited<ReturnType<typeof setupDatabase>>;
 
 async function createSession(userId: string): Promise<string> {
@@ -66,6 +72,10 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
       vi.stubEnv("DSO_WORKBENCH_ORIGIN", origin);
       vi.stubEnv("SESSION_COOKIE_NAME", "dso_session");
       vi.mocked(getDatabasePool).mockReturnValue(database);
+      vi.mocked(getReleaseSigningConfiguration).mockReturnValue({
+        keyId: "release-key-integration",
+        privateKey: signingKeyPair.privateKey,
+      });
     });
     afterEach(() => {
       vi.unstubAllEnvs();
@@ -79,6 +89,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
       const fixture = await seedProject(database, "admin");
       const sessionId = await createSession(fixture.user.id);
       const { release } = await publishStagedChanges(database, fixture.context, {
+        requestId: crypto.randomUUID(),
         projectId: fixture.project.id,
         changes: [
           {
@@ -143,6 +154,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)(
       const fixture = await seedProject(database, "admin");
       const sessionId = await createSession(fixture.user.id);
       const { release } = await publishStagedChanges(database, fixture.context, {
+        requestId: crypto.randomUUID(),
         projectId: fixture.project.id,
         changes: [
           {

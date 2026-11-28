@@ -72,15 +72,15 @@ Strict migration-credential exclusion from all DML remains outside the current m
 
 Production currently uses:
 
-| Variable | Scope or location | Purpose |
-| --- | --- | --- |
-| `DATABASE_URL` | Vercel Production | `dso_runtime` pooled Neon URL |
-| `DB_POOL_MAX` | Vercel Production | Initial pool maximum of 5 |
-| `DSO_WORKBENCH_PROJECT_ID` | Vercel Production | Seeded project loaded by the Workbench |
-| `DSO_WORKBENCH_AUTH_ENABLED` | Vercel Production | Explicit Production login/logout enablement |
-| `DSO_WORKBENCH_ORIGIN` | Vercel Production | Production HTTPS mutation origin |
-| `DIRECT_DATABASE_URL` | Migration operator only | Planned explicit migration-script variable |
-| `DSO_SEED_USER_PASSWORD` | Migration operator only | Seed password hashing input |
+| Variable                     | Scope or location       | Purpose                                     |
+| ---------------------------- | ----------------------- | ------------------------------------------- |
+| `DATABASE_URL`               | Vercel Production       | `dso_runtime` pooled Neon URL               |
+| `DB_POOL_MAX`                | Vercel Production       | Initial pool maximum of 5                   |
+| `DSO_WORKBENCH_PROJECT_ID`   | Vercel Production       | Seeded project loaded by the Workbench      |
+| `DSO_WORKBENCH_AUTH_ENABLED` | Vercel Production       | Explicit Production login/logout enablement |
+| `DSO_WORKBENCH_ORIGIN`       | Vercel Production       | Production HTTPS mutation origin            |
+| `DIRECT_DATABASE_URL`        | Migration operator only | Direct URL consumed by `npm run db:migrate` |
+| `DSO_SEED_USER_PASSWORD`     | Migration operator only | Seed password hashing input                 |
 
 Actual URLs, passwords, private keys, and cookie values are not recorded in this document.
 
@@ -150,7 +150,7 @@ Build and runtime logs were scanned for connection strings, private-key markers,
 ## Deferred or Open
 
 - Create a separate Neon Preview branch and Preview database variables.
-- Support `DIRECT_DATABASE_URL` explicitly in the migration and seed scripts.
+- Keep seed execution on an explicit operator workflow separate from `db:migrate`; do not expose `DIRECT_DATABASE_URL` to Vercel runtime.
 - Decide whether changed seed data requires a controlled reset/reseed.
 - Enforce CSP instead of report-only mode.
 - Choose a longer-term backup policy before persistent production data requires more than 6-hour recovery.

@@ -60,7 +60,7 @@ Migration operator or future migration CI
 | `DIRECT_DATABASE_URL`    | Direct Neon connection used for migrations       |
 | `DSO_SEED_USER_PASSWORD` | Password used only to derive seed account hashes |
 
-The current migration seed script loads `DATABASE_URL`. Deployment should not use the runtime URL when migrations are run until the scripts support a separate `DIRECT_DATABASE_URL` explicitly.
+`npm run db:migrate` loads `DIRECT_DATABASE_URL` and applies migrations without seed execution. The combined development seed script still loads `DATABASE_URL`; do not use that script with the runtime pooled URL.
 
 ### CLI clients
 

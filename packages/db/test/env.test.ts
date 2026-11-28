@@ -1,10 +1,14 @@
-import { loadDatabaseEnvironment, loadTestDatabaseEnvironment } from "@repo/db/env";
+import {
+  loadMigrationDatabaseEnvironment,
+  loadRuntimeDatabaseEnvironment,
+  loadTestDatabaseEnvironment,
+} from "@repo/db/env";
 import { describe, expect, it } from "vitest";
 
-describe("loadDatabaseEnvironment", () => {
+describe("loadRuntimeDatabaseEnvironment", () => {
   it("loads required values and applies the pool default", () => {
     expect(
-      loadDatabaseEnvironment({
+      loadRuntimeDatabaseEnvironment({
         DATABASE_URL: "postgres://localhost/dso",
       }),
     ).toEqual({
@@ -15,7 +19,7 @@ describe("loadDatabaseEnvironment", () => {
 
   it("parses DB_POOL_MAX", () => {
     expect(
-      loadDatabaseEnvironment({
+      loadRuntimeDatabaseEnvironment({
         DATABASE_URL: "postgres://localhost/dso",
         DB_POOL_MAX: "20",
       }),
@@ -26,12 +30,12 @@ describe("loadDatabaseEnvironment", () => {
   });
 
   it("rejects a missing database URL", () => {
-    expect(() => loadDatabaseEnvironment({})).toThrow("DATABASE_URL is required.");
+    expect(() => loadRuntimeDatabaseEnvironment({})).toThrow("DATABASE_URL is required.");
   });
 
   it("rejects an invalid pool size", () => {
     expect(() =>
-      loadDatabaseEnvironment({
+      loadRuntimeDatabaseEnvironment({
         DATABASE_URL: "postgres://localhost/dso",
         DB_POOL_MAX: "0",
       }),
@@ -68,5 +72,24 @@ describe("loadTestDatabaseEnvironment", () => {
         TEST_DATABASE_URL: "postgres://localhost/dso",
       }),
     ).toThrow("TEST_DATABASE_URL must be different from DATABASE_URL.");
+  });
+});
+
+describe("loadMigrationDatabaseEnvironment", () => {
+  it("loads only the direct migration URL", () => {
+    expect(
+      loadMigrationDatabaseEnvironment({
+        DIRECT_DATABASE_URL: "postgres://localhost/dso_direct",
+      }),
+    ).toEqual({
+      databaseUrl: "postgres://localhost/dso_direct",
+      poolMax: 10,
+    });
+  });
+
+  it("rejects a missing direct URL", () => {
+    expect(() => loadMigrationDatabaseEnvironment({})).toThrow(
+      "DIRECT_DATABASE_URL is required for migrations.",
+    );
   });
 });

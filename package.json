@@ -7,7 +7,10 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "db:seed": "tsx scripts/seed-database.ts"
+    "db:migrate": "tsx scripts/migrate-database.ts",
+    "db:seed": "tsx scripts/seed-database.ts",
+    "signing:generate": "tsx --tsconfig scripts/tsconfig.json scripts/generate-release-signing-key.ts",
+    "signing:verify": "tsx --tsconfig scripts/tsconfig.json scripts/verify-release-signing-environment.ts"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",

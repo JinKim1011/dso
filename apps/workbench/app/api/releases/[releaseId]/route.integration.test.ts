@@ -33,6 +33,7 @@ let database: Awaited<ReturnType<typeof setupDatabase>>;
 
 async function publishRelease(fixture: Awaited<ReturnType<typeof seedProject>>) {
   return publishStagedChanges(database, fixture.context, {
+    requestId: crypto.randomUUID(),
     projectId: fixture.project.id,
     changes: [
       {

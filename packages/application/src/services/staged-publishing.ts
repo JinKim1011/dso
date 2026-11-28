@@ -4,12 +4,16 @@ import {
   requireProjectAccess,
 } from "@repo/application/services/authorization";
 import { withProjectTransaction } from "@repo/application/services/project-transaction";
+import {
+  recordPublishRequest,
+  resolvePublishRequest,
+} from "@repo/application/services/publish-requests";
 import { publishRelease } from "@repo/application/services/releases";
 import { saveStagedChanges } from "@repo/application/services/staged-changes";
 import type { AuthorizationContext } from "@repo/application/types";
 import type {
+  PublishStagedChangesRequest,
   PublishStagedChangesResult,
-  SaveStagedChangesRequest,
 } from "@repo/contracts/operation";
 import { insertRelease, nextReleaseVersion } from "@repo/db/repositories/releases";
 import type { Pool } from "pg";
@@ -17,7 +21,7 @@ import type { Pool } from "pg";
 export async function publishStagedChanges(
   database: Pool,
   context: AuthorizationContext,
-  request: SaveStagedChangesRequest,
+  request: PublishStagedChangesRequest,
 ): Promise<PublishStagedChangesResult> {
   const projectId = request.projectId.toLowerCase();
 
@@ -26,6 +30,9 @@ export async function publishStagedChanges(
   requiredProjectRole(membership, projectId, "publisher");
 
   return withProjectTransaction(database, projectId, async (client) => {
+    const existing = await resolvePublishRequest(client, context.userId, request);
+    if (existing) return existing;
+
     const saved = await saveStagedChanges(client, context, request);
 
     if (saved.changedTokenIds.length === 0) {
@@ -48,10 +55,14 @@ export async function publishStagedChanges(
       releaseId: release.id,
     });
 
-    return {
+    const response = {
       release: published,
       tokens: saved.tokens,
       references: saved.references,
     };
+
+    await recordPublishRequest(client, context.userId, request, response);
+
+    return response;
   });
 }

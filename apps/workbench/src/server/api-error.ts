@@ -1,4 +1,5 @@
 import { RequestBodyError } from "@/server/request-body";
+import { RateLimitUnavailableError } from "@/server/rate-limit";
 import {
   ApiKeyScopeDeniedError,
   AuthenticationRequiredError,
@@ -6,6 +7,7 @@ import {
   InvalidApiKeyCredentialError,
   InvalidCredentialsError,
   ProjectAccessDeniedError,
+  PublishRequestConflictError,
   ResourceNotFoundError,
   SessionExpiredError,
   StagedChangesConflictError,
@@ -62,11 +64,26 @@ export function mapApiError(error: unknown): Response {
     });
   }
 
+  if (error instanceof PublishRequestConflictError) {
+    return failure(409, { code: error.code, message: error.message });
+  }
+
   if (error instanceof DomainValidationError) {
     return failure(422, {
       code: error.code,
       message: error.message,
       issues: error.issues,
+    });
+  }
+
+  if (error instanceof RateLimitUnavailableError) {
+    const correlationId = crypto.randomUUID();
+    console.error("Rate-limit backend unavailable.", { correlationId });
+
+    return failure(503, {
+      code: "rate-limit-unavailable",
+      message: "The request cannot be completed right now.",
+      correlationId,
     });
   }
 

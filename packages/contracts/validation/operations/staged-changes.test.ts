@@ -3,7 +3,10 @@ import type {
   StagedTokenChange,
 } from "@repo/contracts/operation";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
-import { parseSaveStagedChangesRequest } from "@repo/contracts/validation/operations/staged-changes";
+import {
+  parsePublishStagedChangesRequest,
+  parseSaveStagedChangesRequest,
+} from "@repo/contracts/validation/operations/staged-changes";
 import { tokenReferenceSlots } from "@repo/contracts/validation/token-reference-slots";
 import { describe, expect, it } from "vitest";
 
@@ -30,6 +33,28 @@ const request = {
 } satisfies SaveStagedChangesRequest;
 
 describe("parseSaveStagedChangesRequest", () => {
+  it("requires a valid request ID only for publication", () => {
+    const requestId = "dddddddd-dddd-dddd-dddd-dddddddddddd";
+    expect(
+      parsePublishStagedChangesRequest({
+        requestId,
+        ...JSON.parse(JSON.stringify(request)),
+      }),
+    ).toEqual({
+      success: true,
+      value: { requestId, ...request },
+    });
+    expect(
+      parsePublishStagedChangesRequest({
+        requestId: "not-a-uuid",
+        ...request,
+      }),
+    ).toMatchObject({
+      success: false,
+      issues: [expect.objectContaining({ field: "requestId" })],
+    });
+  });
+
   it("accepts changed fields and assignment and clear references", () => {
     expect(parseSaveStagedChangesRequest(JSON.parse(JSON.stringify(request)))).toEqual({
       success: true,

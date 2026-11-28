@@ -1,0 +1,17 @@
+{
+  "extends": "../packages/typescript-config/base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node"],
+    "paths": {
+      "@/*": ["../apps/workbench/app/*"],
+      "@/features/*": ["../apps/workbench/features/*"],
+      "@/server/*": ["../apps/workbench/src/server/*"],
+      "@/server/env": ["../apps/workbench/src/server/env.ts"],
+      "@/server/release-signing-config": [
+        "../apps/workbench/src/server/release-signing-config.ts"
+      ]
+    }
+  },
+  "include": ["./**/*.ts"]
+}

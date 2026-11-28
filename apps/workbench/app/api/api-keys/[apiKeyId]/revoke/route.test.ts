@@ -1,4 +1,5 @@
 import { getDatabasePool } from "@/server/database";
+import { RateLimitUnavailableError, checkRateLimit } from "@/server/rate-limit";
 import {
   ProjectAccessDeniedError,
   ResourceNotFoundError,
@@ -10,6 +11,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "./route";
 
 vi.mock("@/server/database", () => ({ getDatabasePool: vi.fn() }));
+vi.mock("@/server/rate-limit", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/server/rate-limit")>();
+  return { ...actual, checkRateLimit: vi.fn() };
+});
 vi.mock("@repo/application/services/authentication", () => ({
   authenticateSession: vi.fn(),
 }));
@@ -64,6 +69,12 @@ describe("POST /api/api-keys/:apiKeyId/revoke", () => {
     vi.stubEnv("SESSION_COOKIE_NAME", "dso_session");
     vi.mocked(authenticateSession).mockResolvedValue(context);
     vi.mocked(revokeApiKey).mockResolvedValue(revoked);
+    vi.mocked(checkRateLimit).mockResolvedValue({
+      allowed: true,
+      limit: 20,
+      remaining: 19,
+      resetAt: Date.now() + 600_000,
+    });
   });
 
   afterEach(() => {
@@ -104,6 +115,35 @@ describe("POST /api/api-keys/:apiKeyId/revoke", () => {
       expect(getDatabasePool).not.toHaveBeenCalled();
     },
   );
+
+  it("is available in production when API-key management is explicitly enabled", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DSO_API_KEY_MANAGEMENT_ENABLED", "true");
+
+    expect((await invoke()).status).toBe(200);
+    expect(revokeApiKey).toHaveBeenCalled();
+    expect(checkRateLimit).toHaveBeenCalledWith("api-key-revoke", [
+      context.userId,
+      projectId,
+    ]);
+  });
+
+  it("returns 429 or 503 before API-key revocation", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DSO_API_KEY_MANAGEMENT_ENABLED", "true");
+    vi.mocked(checkRateLimit).mockResolvedValueOnce({
+      allowed: false,
+      limit: 20,
+      remaining: 0,
+      resetAt: Date.now() + 10_000,
+    });
+    expect((await invoke()).status).toBe(429);
+
+    vi.mocked(checkRateLimit).mockRejectedValueOnce(new RateLimitUnavailableError());
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    expect((await invoke()).status).toBe(503);
+    expect(revokeApiKey).not.toHaveBeenCalled();
+  });
 
   it.each(["missing-origin", "foreign-origin", "missing-header", "cross-site"])(
     "rejects CSRF violations before authentication: %s",

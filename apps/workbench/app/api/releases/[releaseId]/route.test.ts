@@ -6,7 +6,11 @@ import {
   InvalidApiKeyCredentialError,
   ResourceNotFoundError,
 } from "@repo/application/errors";
-import { downloadReleaseWithApiKey } from "@repo/application/services/download-release";
+import {
+  authorizeReleaseDownloadApiKey,
+  downloadReleaseWithAuthorizedApiKey,
+} from "@repo/application/services/download-release";
+import { RateLimitUnavailableError, checkRateLimit } from "@/server/rate-limit";
 import { getPublishedReleaseForSession } from "@repo/application/services/published-releases";
 import { verifyRelease } from "@repo/release-protocol/verify";
 import { generateKeyPairSync } from "node:crypto";
@@ -20,8 +24,13 @@ vi.mock("@/server/current-session", () => ({ getCurrentSession: vi.fn() }));
 vi.mock("@/server/database", () => ({ getDatabasePool: vi.fn() }));
 vi.mock("@/server/config", () => ({ getReleaseSigningConfiguration: vi.fn() }));
 vi.mock("@repo/application/services/download-release", () => ({
-  downloadReleaseWithApiKey: vi.fn(),
+  authorizeReleaseDownloadApiKey: vi.fn(),
+  downloadReleaseWithAuthorizedApiKey: vi.fn(),
 }));
+vi.mock("@/server/rate-limit", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/server/rate-limit")>();
+  return { ...actual, checkRateLimit: vi.fn() };
+});
 vi.mock("@repo/application/services/published-releases", () => ({
   getPublishedReleaseForSession: vi.fn(),
 }));
@@ -67,7 +76,18 @@ describe("GET /api/releases/:releaseId", () => {
     vi.mocked(getCurrentSession).mockResolvedValue(null);
     vi.mocked(getBearerApiKeyCredential).mockReturnValue(credential);
     vi.mocked(getPublishedReleaseForSession).mockResolvedValue(response);
-    vi.mocked(downloadReleaseWithApiKey).mockResolvedValue(response);
+    vi.mocked(authorizeReleaseDownloadApiKey).mockResolvedValue({
+      keyIdentifier: "0011223344556677",
+      projectId: response.release.projectId,
+    });
+    vi.mocked(downloadReleaseWithAuthorizedApiKey).mockResolvedValue(response);
+    vi.mocked(checkRateLimit).mockResolvedValue({
+      allowed: true,
+      limit: 120,
+      remaining: 119,
+      resetAt: Date.now() + 60_000,
+    });
+    vi.stubEnv("NODE_ENV", "development");
     vi.mocked(getReleaseSigningConfiguration).mockReturnValue({
       keyId: signingKeyId,
       privateKey: signingKeyPair.privateKey,
@@ -101,7 +121,7 @@ describe("GET /api/releases/:releaseId", () => {
       releaseId,
     );
     expect(getBearerApiKeyCredential).not.toHaveBeenCalled();
-    expect(downloadReleaseWithApiKey).not.toHaveBeenCalled();
+    expect(downloadReleaseWithAuthorizedApiKey).not.toHaveBeenCalled();
   });
 
   it("uses the parsed Bearer credential when no session is available", async () => {
@@ -119,9 +139,16 @@ describe("GET /api/releases/:releaseId", () => {
     });
     expect(response).toEqual(before);
     expect(getBearerApiKeyCredential).toHaveBeenCalledWith(incoming);
-    expect(downloadReleaseWithApiKey).toHaveBeenCalledWith(
+    expect(authorizeReleaseDownloadApiKey).toHaveBeenCalledWith(
       getDatabasePool(),
       credential,
+    );
+    expect(downloadReleaseWithAuthorizedApiKey).toHaveBeenCalledWith(
+      getDatabasePool(),
+      {
+        keyIdentifier: "0011223344556677",
+        projectId: response.release.projectId,
+      },
       releaseId,
     );
     expect(getPublishedReleaseForSession).not.toHaveBeenCalled();
@@ -139,8 +166,58 @@ describe("GET /api/releases/:releaseId", () => {
       ok: false,
       error: { code: "invalid-api-key-credential" },
     });
-    expect(downloadReleaseWithApiKey).not.toHaveBeenCalled();
+    expect(downloadReleaseWithAuthorizedApiKey).not.toHaveBeenCalled();
     expect(getReleaseSigningConfiguration).not.toHaveBeenCalled();
+  });
+
+  it("rate limits verified API keys before release loading and signing", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.mocked(checkRateLimit).mockResolvedValue({
+      allowed: false,
+      limit: 120,
+      remaining: 0,
+      resetAt: Date.now() + 10_000,
+    });
+
+    const result = await invoke();
+
+    expect(result.status).toBe(429);
+    expect(result.headers.get("retry-after")).toBe("10");
+    expect(checkRateLimit).toHaveBeenCalledWith("release-download", [
+      response.release.projectId,
+      "0011223344556677",
+    ]);
+    expect(downloadReleaseWithAuthorizedApiKey).not.toHaveBeenCalled();
+    expect(getReleaseSigningConfiguration).not.toHaveBeenCalled();
+  });
+
+  it("rate limits verified session downloads by user and release", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.mocked(getCurrentSession).mockResolvedValue(context);
+    vi.mocked(checkRateLimit).mockResolvedValue({
+      allowed: false,
+      limit: 120,
+      remaining: 0,
+      resetAt: Date.now() + 10_000,
+    });
+
+    expect((await invoke()).status).toBe(429);
+    expect(checkRateLimit).toHaveBeenCalledWith("release-download", [
+      context.userId,
+      releaseId,
+    ]);
+    expect(getPublishedReleaseForSession).not.toHaveBeenCalled();
+  });
+
+  it("fails closed when the release-download limiter is unavailable", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.mocked(checkRateLimit).mockRejectedValue(new RateLimitUnavailableError());
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const result = await invoke();
+
+    expect(result.status).toBe(503);
+    expect(downloadReleaseWithAuthorizedApiKey).not.toHaveBeenCalled();
   });
 
   it("maps inaccessible session releases to 404", async () => {
@@ -157,7 +234,7 @@ describe("GET /api/releases/:releaseId", () => {
   it.each([new InvalidApiKeyCredentialError(), new ResourceNotFoundError()])(
     "maps API-key release errors: %s",
     async (error) => {
-      vi.mocked(downloadReleaseWithApiKey).mockRejectedValue(error);
+      vi.mocked(authorizeReleaseDownloadApiKey).mockRejectedValue(error);
 
       const result = await invoke();
 
@@ -184,7 +261,7 @@ describe("GET /api/releases/:releaseId", () => {
 
   it("maps unexpected service failures to a generic 500 response", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.mocked(downloadReleaseWithApiKey).mockRejectedValue(
+    vi.mocked(authorizeReleaseDownloadApiKey).mockRejectedValue(
       new Error(`database detail ${credential}`),
     );
 
@@ -213,7 +290,7 @@ describe("GET /api/releases/:releaseId", () => {
 
   it("rejects unsigned payloads that exceed the response limit", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.mocked(downloadReleaseWithApiKey).mockResolvedValue({
+    vi.mocked(downloadReleaseWithAuthorizedApiKey).mockResolvedValue({
       ...response,
       components: [
         {

@@ -1,9 +1,13 @@
 import { mapApiError } from "@/server/api-error";
 import { getBearerApiKeyCredential } from "@/server/bearer-authentication";
-import { getCurrentSession } from "@/server/current-session";
 import { getReleaseSigningConfiguration } from "@/server/config";
+import { getCurrentSession } from "@/server/current-session";
 import { getDatabasePool } from "@/server/database";
-import { downloadReleaseWithApiKey } from "@repo/application/services/download-release";
+import { checkRateLimit, rateLimitResponse } from "@/server/rate-limit";
+import {
+  authorizeReleaseDownloadApiKey,
+  downloadReleaseWithAuthorizedApiKey,
+} from "@repo/application/services/download-release";
 import { getPublishedReleaseForSession } from "@repo/application/services/published-releases";
 import { parseDownloadReleaseRequest } from "@repo/contracts/validation/operations/releases";
 import { createSignedReleaseEnvelope } from "@repo/release-protocol/envelope";
@@ -39,13 +43,45 @@ export async function GET(
     const database = getDatabasePool();
 
     const context = await getCurrentSession(request);
-    const unsignedRelease = context
-      ? await getPublishedReleaseForSession(database, context, parsed.value.releaseId)
-      : await downloadReleaseWithApiKey(
-          database,
-          getBearerApiKeyCredential(request),
-          parsed.value.releaseId,
-        );
+
+    let unsignedRelease;
+
+    if (context) {
+      if (process.env.NODE_ENV === "production") {
+        const decision = await checkRateLimit("release-download", [
+          context.userId,
+          parsed.value.releaseId.toLocaleLowerCase(),
+        ]);
+
+        if (!decision.allowed) return rateLimitResponse(decision);
+      }
+
+      unsignedRelease = await getPublishedReleaseForSession(
+        database,
+        context,
+        parsed.value.releaseId,
+      );
+    } else {
+      const apiKey = await authorizeReleaseDownloadApiKey(
+        database,
+        getBearerApiKeyCredential(request),
+      );
+
+      if (process.env.NODE_ENV === "production") {
+        const decision = await checkRateLimit("release-download", [
+          apiKey.projectId,
+          apiKey.keyIdentifier,
+        ]);
+
+        if (!decision.allowed) return rateLimitResponse(decision);
+      }
+
+      unsignedRelease = await downloadReleaseWithAuthorizedApiKey(
+        database,
+        apiKey,
+        parsed.value.releaseId,
+      );
+    }
 
     const signing = getReleaseSigningConfiguration();
     const signedRelease = createSignedReleaseEnvelope(unsignedRelease, {
