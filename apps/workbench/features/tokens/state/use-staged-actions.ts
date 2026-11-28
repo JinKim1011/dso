@@ -3,6 +3,11 @@ import type {
   TokenValueViewModel,
 } from "@/features/tokens/model/token-graph";
 import {
+  clearPersistedPendingPublish,
+  persistPendingPublish,
+  type PersistedPendingPublish,
+} from "@/features/tokens/state/staged-draft-storage";
+import {
   buildChangedRows,
   findRowById,
   replaceRowInModel,
@@ -14,8 +19,10 @@ import {
 import type { PublishStagedChangesRequest } from "@repo/contracts/operation";
 import { CONTRACT_LIMITS } from "@repo/contracts/validation/limit";
 import { isRecord } from "@repo/contracts/validation/operations/common";
+import { parsePublishStagedChangesRequest } from "@repo/contracts/validation/operations/staged-changes";
 import {
   useCallback,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -33,6 +40,8 @@ type UseStagedManifestActionsProps = {
   canApply: boolean;
   models: StagedModels;
   setModels: Dispatch<SetStateAction<StagedModels>>;
+  restoredPendingPublish: PersistedPendingPublish | null;
+  onPendingPublishResolved: () => void;
 };
 
 export function useStagedActions({
@@ -40,13 +49,43 @@ export function useStagedActions({
   canApply,
   models,
   setModels,
+  restoredPendingPublish,
+  onPendingPublishResolved,
 }: UseStagedManifestActionsProps) {
   const [isApplying, setIsApplying] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [outcomeUnknown, setOutcomeUnknown] = useState(false);
   const [completion, setCompletion] = useState(0);
   const busy = useRef(false);
-  const pendingPublish = useRef<{ requestBody: string; requestId: string } | null>(null);
+  const pendingPublish = useRef<{
+    request: PublishStagedChangesRequest;
+    requestBody: string;
+    requestBaseBody: string;
+    submittedBaseModel: TokenGraphViewModel;
+    submittedDraftModel: TokenGraphViewModel;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!restoredPendingPublish) return;
+
+    const parsed = parsePublishStagedChangesRequest(
+      JSON.parse(restoredPendingPublish.requestBody),
+    );
+
+    if (!parsed.success) return;
+
+    pendingPublish.current = {
+      request: parsed.value,
+      requestBody: restoredPendingPublish.requestBody,
+      requestBaseBody: restoredPendingPublish.requestBaseBody,
+      submittedBaseModel: restoredPendingPublish.submittedBaseModel,
+      submittedDraftModel: restoredPendingPublish.submittedDraftModel,
+    };
+
+    setOutcomeUnknown(true);
+
+    setSaveError("Push outcome is unknown. Your draft was preserved. Retry without it.");
+  }, [restoredPendingPublish]);
 
   useLayoutEffect(() => {
     if (!isApplying) busy.current = false;
@@ -106,8 +145,12 @@ export function useStagedActions({
     if (busy.current)
       return new Response("A push is already in progress.", { status: 409 });
 
-    const rows = buildChangedRows(models.baseModel, models.draftModel);
-    if (rows.length === 0) {
+    const currentPending = pendingPublish.current;
+    const rows = currentPending
+      ? []
+      : buildChangedRows(models.baseModel, models.draftModel);
+
+    if (!currentPending && rows.length === 0) {
       const message = "No staged changes.";
       setSaveError(message);
       return new Response(message, { status: 400 });
@@ -117,27 +160,48 @@ export function useStagedActions({
       projectId,
       changes: rows.map((row) => row.change),
     };
-    const requestBody = JSON.stringify(requestBase);
-    const pending =
-      pendingPublish.current?.requestBody === requestBody
-        ? pendingPublish.current
-        : { requestBody, requestId: crypto.randomUUID() };
-    pendingPublish.current = pending;
-    const request: PublishStagedChangesRequest = {
-      requestId: pending.requestId,
+    const request = currentPending?.request ?? {
+      requestId: crypto.randomUUID(),
       ...requestBase,
     };
-    const body = JSON.stringify(request);
+    const requestBody = currentPending?.requestBaseBody ?? JSON.stringify(requestBase);
+    const bodyToSend = currentPending?.requestBody ?? JSON.stringify(request);
+    const submittedBaseModel = currentPending?.submittedBaseModel ?? models.baseModel;
+    const submittedDraftModel = currentPending?.submittedDraftModel ?? models.draftModel;
 
     if (
-      rows.length > CONTRACT_LIMITS.collectionItems ||
-      new TextEncoder().encode(body).byteLength > CONTRACT_LIMITS.requestBodyBytes
+      request.changes.length > CONTRACT_LIMITS.collectionItems ||
+      new TextEncoder().encode(bodyToSend).byteLength > CONTRACT_LIMITS.requestBodyBytes
     ) {
       const message =
         "The staged batch exceeds the push limit. Reduce the number or size of staged changes before pushing.";
       setSaveError(message);
       return new Response(message, { status: 413 });
     }
+
+    const persisted =
+      currentPending !== null ||
+      persistPendingPublish(projectId, {
+        requestId: request.requestId,
+        requestBody: bodyToSend,
+        requestBaseBody: requestBody,
+        submittedBaseModel,
+        submittedDraftModel,
+      });
+    if (!persisted) {
+      pendingPublish.current = null;
+      setSaveError(
+        "The push could not be saved for safe retry. Nothing was sent. Please try again.",
+      );
+      return new Response("The push could not be persisted.", { status: 503 });
+    }
+    pendingPublish.current = {
+      request,
+      requestBody: bodyToSend,
+      requestBaseBody: requestBody,
+      submittedBaseModel,
+      submittedDraftModel,
+    };
 
     busy.current = true;
     setIsApplying(true);
@@ -147,7 +211,7 @@ export function useStagedActions({
       const response = await fetch("/api/releases/publish", {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-DSO-CSRF": "1" },
-        body,
+        body: bodyToSend,
       });
       if (!response.ok) {
         let message = `Push failed (${response.status}). Your draft was preserved.`;
@@ -181,19 +245,26 @@ export function useStagedActions({
         if (response.status === 408 || response.status >= 500) {
           setOutcomeUnknown(true);
           message += " The push outcome is unknown. Retry without changing the draft.";
+        } else {
+          clearPersistedPendingPublish(projectId);
+          pendingPublish.current = null;
+          setOutcomeUnknown(false);
+          onPendingPublishResolved();
         }
         setSaveError(message);
         return response;
       }
 
       const payload: unknown = await response.clone().json();
-      const result = parsePublishedRows(payload, request, models.baseModel);
+      const result = parsePublishedRows(payload, request, submittedBaseModel);
       pendingPublish.current = null;
+      clearPersistedPendingPublish(projectId);
       setOutcomeUnknown(false);
+      onPendingPublishResolved();
       reconcileSavedRows(
-        models.baseModel,
-        models.draftModel,
-        models.draftModel,
+        submittedBaseModel,
+        submittedDraftModel,
+        submittedDraftModel,
         projectId,
         result,
       );
@@ -201,7 +272,7 @@ export function useStagedActions({
         reconcileSavedRows(
           current.baseModel,
           current.draftModel,
-          models.draftModel,
+          submittedDraftModel,
           projectId,
           result,
         ),
@@ -219,7 +290,7 @@ export function useStagedActions({
 
       setCompletion((current) => current + 1);
     }
-  }, [canApply, models, projectId, setModels]);
+  }, [canApply, models, onPendingPublishResolved, projectId, setModels]);
 
   return {
     updateRow,
