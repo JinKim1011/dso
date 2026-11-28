@@ -98,8 +98,13 @@ export class UpstashRateLimitBackend implements RateLimitBackend {
 let backend: RateLimitBackend | undefined;
 
 export function getRateLimitBackend(): RateLimitBackend {
-  backend ??= new UpstashRateLimitBackend(process.env);
-  return backend;
+  try {
+    backend ??= new UpstashRateLimitBackend(process.env);
+
+    return backend;
+  } catch {
+    throw new RateLimitUnavailableError();
+  }
 }
 
 export async function checkRateLimit(
@@ -114,7 +119,8 @@ export async function checkRateLimit(
 }
 
 export function getRequestIp(request: Request): string {
-  const forwarded = request.headers.get("x-vercel-forwarded-for") ??
+  const forwarded =
+    request.headers.get("x-vercel-forwarded-for") ??
     request.headers.get("x-forwarded-for");
 
   return forwarded?.split(",", 1)[0]?.trim() || "unknown";
