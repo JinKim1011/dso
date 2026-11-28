@@ -68,10 +68,12 @@ function referencesFor(tokenId: string) {
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
-  const promise = new Promise<T>((done) => {
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((done, fail) => {
     resolve = done;
+    reject = fail;
   });
-  return { promise, resolve };
+  return { promise, resolve, reject };
 }
 
 describe("staged save reconciliation", () => {
@@ -585,6 +587,165 @@ describe("staged save reconciliation", () => {
     expect(hook.result.current.outcomeUnknown).toBe(false);
     expect(hook.result.current.canApply).toBe(true);
     await waitFor(() => expect(localStorage.length).toBe(0));
+  });
+
+  it("restores and retries an unknown publish independently of stale draft state", async () => {
+    const fetch = vi
+      .spyOn(globalThis, "fetch")
+      .mockRejectedValueOnce(new Error("network"))
+      .mockResolvedValueOnce(savedResponse([{ ...surface, name: "draft" }]));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const first = renderHook(() => useStagedContext(), { wrapper });
+    await waitFor(() => expect(first.result.current.canApply).toBe(true));
+    act(() => first.result.current.updateRow(surface.id, { name: "draft" }));
+    await act(async () => {
+      expect((await first.result.current.applyDraft()).status).toBe(503);
+    });
+    const firstRequest = JSON.parse(String(fetch.mock.calls[0]?.[1]?.body));
+    first.unmount();
+
+    const updatedBase = {
+      ...base,
+      tokenTypes: base.tokenTypes.map((type) => ({
+        ...type,
+        values: type.values.map((row) =>
+          row.id === surface.id ? { ...row, name: "server edit" } : row,
+        ),
+      })),
+    };
+    const updatedWrapper = ({ children }: { children: ReactNode }) => (
+      <StagedContextProvider projectId={projectId} baseManifest={updatedBase}>
+        {children}
+        <Toaster />
+      </StagedContextProvider>
+    );
+
+    const restored = renderHook(() => useStagedContext(), {
+      wrapper: updatedWrapper,
+    });
+    await waitFor(() => expect(restored.result.current.outcomeUnknown).toBe(true));
+    expect(restored.result.current.isStaleDraft).toBe(true);
+    expect(restored.result.current.canApply).toBe(true);
+
+    await act(async () => {
+      expect((await restored.result.current.applyDraft()).status).toBe(200);
+    });
+    const replay = JSON.parse(String(fetch.mock.calls[1]?.[1]?.body));
+    expect(replay.requestId).toBe(firstRequest.requestId);
+    expect(replay.changes).toEqual(firstRequest.changes);
+    expect(restored.result.current.outcomeUnknown).toBe(false);
+    await waitFor(() => {
+      expect(
+        localStorage.getItem("dso-workbench-pending-publish:" + projectId.toLowerCase()),
+      ).toBeNull();
+    });
+  });
+
+  it("preserves edits made after submission when a pending publish is restored", async () => {
+    const pending = deferred<Response>();
+    const fetch = vi
+      .spyOn(globalThis, "fetch")
+      .mockReturnValueOnce(pending.promise)
+      .mockResolvedValueOnce(savedResponse([{ ...surface, name: "submitted" }]));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const first = renderHook(() => useStagedContext(), { wrapper });
+    await waitFor(() => expect(first.result.current.canApply).toBe(true));
+    act(() => first.result.current.updateRow(surface.id, { name: "submitted" }));
+    let request!: Promise<Response>;
+    act(() => {
+      request = first.result.current.applyDraft();
+    });
+    act(() => first.result.current.updateRow(surface.id, { name: "later edit" }));
+    await waitFor(() => {
+      const draft = JSON.parse(
+        localStorage.getItem("dso-workbench-staged-draft:" + projectId.toLowerCase())!,
+      );
+      expect(
+        draft.draftModel.tokenTypes
+          .flatMap((type: { values: Array<{ id: string; name: string }> }) => type.values)
+          .find((row: { id: string }) => row.id === surface.id)?.name,
+      ).toBe("later edit");
+    });
+    first.unmount();
+    pending.reject(new Error("network"));
+    expect((await request).status).toBe(503);
+
+    const restored = renderHook(() => useStagedContext(), { wrapper });
+    await waitFor(() => expect(restored.result.current.outcomeUnknown).toBe(true));
+    expect(findRowById(restored.result.current.draftModel, surface.id)?.name).toBe(
+      "later edit",
+    );
+
+    await act(async () => {
+      expect((await restored.result.current.applyDraft()).status).toBe(200);
+    });
+    const replay = JSON.parse(String(fetch.mock.calls[1]?.[1]?.body));
+    expect(
+      replay.changes.find((change: { tokenId: string }) => change.tokenId === surface.id),
+    ).toMatchObject({ name: { before: surface.name, after: "submitted" } });
+    expect(findRowById(restored.result.current.draftModel, surface.id)?.name).toBe(
+      "later edit",
+    );
+  });
+
+  it("ends restored unknown state when replay receives a definite failure", async () => {
+    vi.spyOn(globalThis, "fetch")
+      .mockRejectedValueOnce(new Error("network"))
+      .mockResolvedValueOnce(
+        Response.json(
+          {
+            ok: false,
+            error: { code: "staged-changes-conflict", message: "Conflict." },
+          },
+          { status: 409 },
+        ),
+      );
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const first = renderHook(() => useStagedContext(), { wrapper });
+    await waitFor(() => expect(first.result.current.canApply).toBe(true));
+    act(() => first.result.current.updateRow(surface.id, { name: "draft" }));
+    await act(async () => {
+      await first.result.current.applyDraft();
+    });
+    first.unmount();
+
+    const restored = renderHook(() => useStagedContext(), { wrapper });
+    await waitFor(() => expect(restored.result.current.outcomeUnknown).toBe(true));
+    await act(async () => {
+      expect((await restored.result.current.applyDraft()).status).toBe(409);
+    });
+    expect(restored.result.current.outcomeUnknown).toBe(false);
+    expect(
+      localStorage.getItem("dso-workbench-pending-publish:" + projectId.toLowerCase()),
+    ).toBeNull();
+  });
+
+  it("does not send a publish when its retry record cannot be persisted", async () => {
+    const fetch = vi.spyOn(globalThis, "fetch");
+    const setItem = Storage.prototype.setItem;
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(function (
+      this: Storage,
+      key,
+      value,
+    ) {
+      if (key.startsWith("dso-workbench-pending-publish:")) {
+        throw new DOMException("Storage unavailable", "QuotaExceededError");
+      }
+      setItem.call(this, key, value);
+    });
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    const hook = renderHook(() => useStagedContext(), { wrapper });
+    await waitFor(() => expect(hook.result.current.canApply).toBe(true));
+    act(() => hook.result.current.updateRow(surface.id, { name: "draft" }));
+
+    await act(async () => {
+      expect((await hook.result.current.applyDraft()).status).toBe(503);
+    });
+    expect(fetch).not.toHaveBeenCalled();
+    expect(hook.result.current.saveError).toContain("Nothing was sent");
   });
 
   it("does not accept an incomplete successful response", async () => {
